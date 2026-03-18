@@ -62,16 +62,16 @@ type Props = {
 };
 
 const QUICK_QUESTIONS = [
-    "Geef een volledige briefing",
-    "Moet ik nu kopen?",
-    "Zet een trade met mij op",
-    "Hoe gaat mijn open trade?",
-    "Is dit een goed asset om te leren traden?",
-    "Welk asset zou jij kiezen vandaag?",
-    "Geef me 3 scenario's",
-    "Wat is mijn stop-loss strategie?",
-    "Leg de RSI uit",
-    "Hoe werkt R/R?",
+    { label: "Wat doen we vandaag?", prompt: "Marcus, wat gaan we vandaag doen? Stel een concrete oefening of taak voor die me dichter bij zelfstandig traden brengt. Kijk naar de markt en kies iets praktisch: een trade opzetten, een patroon analyseren, of een concept oefenen. Wees specifiek en stap voor stap." },
+    { label: "Geef een briefing", prompt: "Geef een volledige briefing" },
+    { label: "Moet ik nu kopen?", prompt: "Moet ik nu kopen?" },
+    { label: "Zet trade op met mij", prompt: "Zet een trade op met mij — begeleid me stap voor stap: entry, stop-loss, target en hoeveel ik inzet." },
+    { label: "Vergelijk alle assets", prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg." },
+    { label: "Hoe gaat mijn trade?", prompt: "Hoe gaat mijn open trade?" },
+    { label: "3 scenario's", prompt: "Geef me 3 scenario's voor dit asset: bullish, bearish en sideways. Wat doe ik in elk scenario?" },
+    { label: "Stop-loss strategie", prompt: "Wat is mijn stop-loss strategie voor dit asset? Leg uit waarom die stop-loss logisch is." },
+    { label: "Leg RSI uit", prompt: "Leg de RSI uit aan de hand van de huidige waarde van dit asset." },
+    { label: "Hoe werkt R/R?", prompt: "Hoe werkt risk/reward? Bereken het voor mijn huidige situatie." },
 ];
 
 export default function MentorChat({ marketContext, asset }: Props) {
@@ -265,13 +265,13 @@ export default function MentorChat({ marketContext, asset }: Props) {
             <div className="terminal-chat-quick">
                 {QUICK_QUESTIONS.map((q) => (
                     <button
-                        key={q}
+                        key={q.label}
                         type="button"
-                        className="terminal-chat-chip"
-                        onClick={() => send(q)}
+                        className={`terminal-chat-chip${q.label === "Wat doen we vandaag?" ? " terminal-chat-chip-primary" : ""}`}
+                        onClick={() => send(q.prompt)}
                         disabled={userSending}
                     >
-                        {q}
+                        {q.label === "Wat doen we vandaag?" ? "⭐ " : ""}{q.label}
                     </button>
                 ))}
             </div>
