@@ -146,7 +146,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
     useEffect(() => {
         if (didAutoBriefRef.current || !marketContext || loading || !loaded) return;
         didAutoBriefRef.current = true;
-        sendInternal("Hoi Marcus! Ik open het scherm. Doe een korte analyse: 1) Wat is de trend nu — omhoog, omlaag of zijwaarts? 2) Is dit een goed moment voor een paper trade of moet ik wachten? 3) Wat is het eerste concrete ding dat ik nu moet doen? Wees direct — als de setup goed is, zeg het. Als niet, leg uit waarom. Spreek als een coach, niet als een leesboek.");
+        sendInternal("Ik open het scherm. Geef me een directe analyse van dit asset: 1) Wat is de trend nu — omhoog, omlaag of zijwaarts? 2) Is dit een goed moment voor een paper trade in onze app of moet ik wachten? 3) Wat is het eerste concrete ding dat ik nu moet doen in de app? Verwijs naar de grafiek en de tabbladen hier. Wees direct en spreek als een coach.");
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [marketContext, loaded]);
 

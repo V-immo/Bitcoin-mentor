@@ -4006,13 +4006,14 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
     gap: 8px;
   }
 
+  /* Nav — hamburger is nu de enige nav op mobiel, oude span-hiding verwijderd */
   .app-nav {
-    padding: 6px 10px;
-    gap: 4px;
+    padding: 0 14px;
+    gap: 8px;
   }
-  .app-nav a span,
-  .app-nav button span {
-    display: none;
+  /* Hamburger streepjes NOOIT verbergen */
+  .nav-hamburger-icon span {
+    display: block !important;
   }
 
   .card {
