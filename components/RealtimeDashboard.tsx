@@ -652,6 +652,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                   currentPrice={chartPrice} status={signal.status} action={signal.action}
                   entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
                   entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
+                  resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
                   riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
                   autoExecuteAmount={autoExecuteAmount}
                 />

@@ -38,6 +38,8 @@ type Props = {
     entryZoneLow: number;
     entryZoneHigh: number;
     stopLoss: number;
+    resistanceZoneLow: number;
+    resistanceZoneHigh: number;
     riskRewardEstimate: string | number;
     asset: string;
     autoExecuteAmount?: number | null;
@@ -89,6 +91,8 @@ export default function TerminalPaperPanel({
     entryZoneLow,
     entryZoneHigh,
     stopLoss,
+    resistanceZoneLow,
+    resistanceZoneHigh,
     riskRewardEstimate,
     asset,
     autoExecuteAmount,
@@ -423,29 +427,52 @@ export default function TerminalPaperPanel({
                 </button>
             )}
 
-            {/* Stop-loss info */}
-            {stopLoss > 0 && (
-                <div className="paper-stoploss-strip">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: 12, fontWeight: 600 }}>🛑 Stop-loss niveau</span>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>
-                            ${Math.round(stopLoss).toLocaleString("en-US")}
+            {/* Trade plan: entry zone + target + stop-loss */}
+            <div className="paper-tradeplan">
+                <div className="paper-tradeplan-title">📋 Trade plan</div>
+                <div className="paper-tradeplan-grid">
+                    <div className="paper-tradeplan-row">
+                        <span className="paper-tradeplan-label">🟢 Instapzone</span>
+                        <span className="paper-tradeplan-value" style={{ color: "#26c57c" }}>
+                            ${Math.round(entryZoneLow).toLocaleString("en-US")} – ${Math.round(entryZoneHigh).toLocaleString("en-US")}
                         </span>
                     </div>
-                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
-                        <span>Afstand: {currentPrice > 0 ? ((currentPrice - stopLoss) / currentPrice * 100).toFixed(1) : "—"}% onder huidige prijs</span>
-                        <span>R/R verhouding: {riskRewardEstimate}</span>
+                    {resistanceZoneLow > 0 && (
+                        <div className="paper-tradeplan-row">
+                            <span className="paper-tradeplan-label">🎯 Take profit</span>
+                            <span className="paper-tradeplan-value" style={{ color: "#f59e0b" }}>
+                                ${Math.round(resistanceZoneLow).toLocaleString("en-US")} – ${Math.round(resistanceZoneHigh).toLocaleString("en-US")}
+                            </span>
+                        </div>
+                    )}
+                    {stopLoss > 0 && (
+                        <div className="paper-tradeplan-row">
+                            <span className="paper-tradeplan-label">🛑 Stop-loss</span>
+                            <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
+                                ${Math.round(stopLoss).toLocaleString("en-US")}
+                                <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 6 }}>
+                                    ({currentPrice > 0 ? ((currentPrice - stopLoss) / currentPrice * 100).toFixed(1) : "—"}% onder huidig)
+                                </span>
+                            </span>
+                        </div>
+                    )}
+                    <div className="paper-tradeplan-row">
+                        <span className="paper-tradeplan-label">⚖️ R/R verhouding</span>
+                        <span className="paper-tradeplan-value">{riskRewardEstimate}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4, lineHeight: 1.4 }}>
-                        Als de prijs daalt naar <strong style={{ color: "#ef4444" }}>${Math.round(stopLoss).toLocaleString("en-US")}</strong>, sluit je de trade handmatig om verlies te beperken.
-                        {Number(buyAmount) > 0 && stopLoss > 0 && currentPrice > 0 && (
-                            <> Verlies bij stop: <strong style={{ color: "#ef4444" }}>
+                    {Number(buyAmount) > 0 && stopLoss > 0 && currentPrice > 0 && (
+                        <div className="paper-tradeplan-row">
+                            <span className="paper-tradeplan-label">💸 Max verlies</span>
+                            <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
                                 {eur(Number(buyAmount) * (currentPrice - stopLoss) / currentPrice)}
-                            </strong></>
-                        )}
-                    </div>
+                            </span>
+                        </div>
+                    )}
                 </div>
-            )}
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6, lineHeight: 1.5 }}>
+                    Sluit de trade handmatig als de prijs de <strong>stop-loss</strong> raakt. Neem winst bij de <strong>take profit</strong> zone.
+                </div>
+            </div>
 
             {/* Koop sectie */}
             <div className="paper-buy-section">

@@ -4195,12 +4195,36 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   margin-bottom: 10px;
 }
 
-.paper-stoploss-strip {
-  background: rgba(239,68,68,0.08);
-  border: 1px solid rgba(239,68,68,0.25);
+.paper-tradeplan {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   margin-bottom: 10px;
+}
+.paper-tradeplan-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.paper-tradeplan-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.paper-tradeplan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.paper-tradeplan-label {
+  color: var(--text-secondary);
+}
+.paper-tradeplan-value {
+  font-weight: 600;
+  text-align: right;
 }
 
 .paper-goal-strip {
