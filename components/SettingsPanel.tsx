@@ -11,6 +11,8 @@ type Settings = {
   startCapital: number;
   preferredAssets: string[];
   aiLanguage: "nl" | "en";
+  bitvavoApiKey?: string;
+  bitvavoApiSecret?: string;
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -38,6 +40,15 @@ export default function SettingsPanel() {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Bitvavo
+  const [bitvavoKey, setBitvavoKey] = useState("");
+  const [bitvavoSecret, setBitvavoSecret] = useState("");
+  const [bitvavoSaved, setBitvavoSaved] = useState(false);
+  const [bitvavoBalance, setBitvavoBalance] = useState<{ symbol: string; available: string }[] | null>(null);
+  const [bitvavoConnected, setBitvavoConnected] = useState<boolean | null>(null);
+  const [bitvavoChecking, setBitvavoChecking] = useState(false);
+  const [bitvavoSaving, setBitvavoSaving] = useState(false);
+
   // Wachtwoord wijzigen
   const [pwCurrent, setPwCurrent] = useState("");
   const [pwNew, setPwNew] = useState("");
@@ -45,7 +56,7 @@ export default function SettingsPanel() {
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [pwSaving, setPwSaving] = useState(false);
 
-  // Laad instellingen vanuit DB
+  // Laad instellingen + check Bitvavo status vanuit DB
   useEffect(() => {
     fetch("/api/me/settings")
       .then((r) => r.ok ? r.json() : null)
@@ -54,6 +65,20 @@ export default function SettingsPanel() {
       })
       .catch(() => {/* gebruik defaults */})
       .finally(() => setLoading(false));
+
+    // Check of Bitvavo al gekoppeld is
+    fetch("/api/bitvavo/balance")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.connected) {
+          setBitvavoConnected(true);
+          const nonZero = (data.balance ?? []).filter((b: { available: string }) => parseFloat(b.available) > 0);
+          setBitvavoBalance(nonZero);
+        } else {
+          setBitvavoConnected(false);
+        }
+      })
+      .catch(() => setBitvavoConnected(false));
   }, []);
 
   function update<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -172,6 +197,108 @@ export default function SettingsPanel() {
           {saved ? "✓ Opgeslagen!" : "Instellingen opslaan"}
         </button>
       </div>
+
+      {/* Bitvavo koppeling */}
+      <section className="settings-card">
+        <div className="settings-card-title">🔗 Bitvavo koppeling</div>
+        <div className="settings-card-desc">
+          Koppel je Bitvavo account om je echte saldo te zien. Maak een read-only API key aan
+          via Bitvavo → Account → API → Nieuwe sleutel (alleen &quot;Accountinformatie lezen&quot; aanzetten).
+        </div>
+
+        {bitvavoConnected === true && (
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>
+            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✓ Bitvavo gekoppeld</div>
+            {bitvavoBalance && bitvavoBalance.length > 0 ? (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {bitvavoBalance.map((b) => (
+                  <span key={b.symbol} style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "#86efac" }}>
+                    {b.symbol}: {parseFloat(b.available).toFixed(4)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div style={{ color: "#86efac", fontSize: 13 }}>Geen saldo gevonden (alle posities zijn 0)</div>
+            )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Key</label>
+            <input
+              type="text"
+              value={bitvavoKey}
+              onChange={e => setBitvavoKey(e.target.value)}
+              placeholder={bitvavoConnected ? "••••••••••••••••" : "Voer je Bitvavo API key in"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Secret</label>
+            <input
+              type="password"
+              value={bitvavoSecret}
+              onChange={e => setBitvavoSecret(e.target.value)}
+              placeholder={bitvavoConnected ? "••••••••••••••••" : "Voer je Bitvavo API secret in"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              className="terminal-btn terminal-btn-primary"
+              disabled={bitvavoSaving || (!bitvavoKey && !bitvavoSecret)}
+              style={{ alignSelf: "flex-start" }}
+              onClick={async () => {
+                if (!bitvavoKey || !bitvavoSecret) return;
+                setBitvavoSaving(true);
+                // Sla keys op via settings API
+                await fetch("/api/me/settings", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ ...settings, bitvavoApiKey: bitvavoKey, bitvavoApiSecret: bitvavoSecret }),
+                });
+                // Test de verbinding
+                setBitvavoChecking(true);
+                const res = await fetch("/api/bitvavo/balance");
+                const data = await res.json();
+                if (data?.connected) {
+                  setBitvavoConnected(true);
+                  const nonZero = (data.balance ?? []).filter((b: { available: string }) => parseFloat(b.available) > 0);
+                  setBitvavoBalance(nonZero);
+                  setBitvavoSaved(true);
+                  setTimeout(() => setBitvavoSaved(false), 3000);
+                  setBitvavoKey(""); setBitvavoSecret("");
+                } else {
+                  setBitvavoConnected(false);
+                  alert(data.error ?? "Verbinding mislukt — controleer je API keys.");
+                }
+                setBitvavoSaving(false);
+                setBitvavoChecking(false);
+              }}
+            >
+              {bitvavoSaving ? (bitvavoChecking ? "Testen…" : "Opslaan…") : bitvavoSaved ? "✓ Gekoppeld!" : "Opslaan & testen"}
+            </button>
+            {bitvavoConnected && (
+              <button
+                className="terminal-btn terminal-btn-muted"
+                onClick={async () => {
+                  setBitvavoChecking(true);
+                  const res = await fetch("/api/bitvavo/balance");
+                  const data = await res.json();
+                  if (data?.connected) {
+                    const nonZero = (data.balance ?? []).filter((b: { available: string }) => parseFloat(b.available) > 0);
+                    setBitvavoBalance(nonZero);
+                  }
+                  setBitvavoChecking(false);
+                }}
+              >
+                {bitvavoChecking ? "Laden…" : "↻ Saldo vernieuwen"}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* Wachtwoord wijzigen */}
       <section className="settings-card">

@@ -4195,6 +4195,14 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   margin-bottom: 10px;
 }
 
+.paper-stoploss-strip {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
 .paper-goal-strip {
   background: rgba(139,92,246,0.1);
   border: 1px solid rgba(139,92,246,0.25);

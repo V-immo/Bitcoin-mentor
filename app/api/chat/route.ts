@@ -111,15 +111,29 @@ export async function POST(request: NextRequest) {
   let weakTopics: string[] = body.weakTopics ?? [];
   let aiLanguage: "nl" | "en" = "nl";
 
+  let quizHistorySummary = "";
+
   if (userId) {
     try {
       const db = getDb();
       const quiz = db
-        .prepare("SELECT level, weak_topics FROM quiz_progress WHERE user_id = ?")
-        .get(userId) as { level: number; weak_topics: string } | undefined;
+        .prepare("SELECT level, xp, streak, weak_topics, history FROM quiz_progress WHERE user_id = ?")
+        .get(userId) as { level: number; xp: number; streak: number; weak_topics: string; history: string } | undefined;
       if (quiz) {
         traderLevel = quiz.level;
         weakTopics = JSON.parse(quiz.weak_topics ?? "[]");
+        // Leervoortgang samenvatting voor Marcus
+        const history: { date: string; score: number; total: number; topics: string[] }[] = JSON.parse(quiz.history ?? "[]");
+        const recentSessions = history.slice(0, 10);
+        const coveredTopics = [...new Set(recentSessions.flatMap(s => s.topics ?? []))];
+        const avgScore = recentSessions.length > 0
+          ? Math.round(recentSessions.reduce((s, r) => s + (r.score / r.total), 0) / recentSessions.length * 100)
+          : 0;
+        if (recentSessions.length > 0) {
+          quizHistorySummary = `Niveau: ${quiz.level}/5 | XP: ${quiz.xp} | Streak: ${quiz.streak} dag(en) | Gem. score: ${avgScore}%
+Al behandeld in quiz: ${coveredTopics.join(", ") || "nog geen"}
+Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
+        }
       }
       const settings = db
         .prepare("SELECT ai_language, trading_mode FROM settings WHERE user_id = ?")
@@ -228,6 +242,9 @@ ${macroContext}
 MARKTOVERZICHT ALLE ASSETS (voor vergelijking):
 ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de scanner pagina even te openen."}
 
+LEERVOORTGANG VAN DEZE GEBRUIKER:
+${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe gebruiker."}
+
 OPEN POSITIES VAN DEZE GEBRUIKER:
 ${openPositionsContext || "Geen open paper trades."}
 
@@ -272,10 +289,14 @@ HOE JIJ ALS MENTOR WERKT:
    - "Je zit in [asset] op $X — nu op $Y, dat is €Z winst/verlies"
    - Waarschuw als prijs stop-loss nadert
 
-6. VOORTGANG BIJHOUDEN
-   - Onthoud binnen het gesprek wat de gebruiker al geleerd heeft
-   - Bouw voort: "Vorige keer had je moeite met stop-losses — laten we dat toepassen"
-   - Complimenteer vooruitgang, maar blijf eerlijk over fouten
+6. VOORTGANG BIJHOUDEN — KRITISCH
+   - Gebruik de LEERVOORTGANG hierboven om te zien wat al behandeld is
+   - Introduceer NOOIT opnieuw iets wat de gebruiker al 3x gezien heeft — ga dieper
+   - Behandel elk onderwerp in een logische volgorde: beginner → gevorderd
+   - Als zwakke punten bekend zijn: werk die actief aan in elke sessie
+   - Als streak hoog is (5+): complimenteer en verhoog de moeilijkheidsgraad
+   - Voorbeeld progressie niveau 1: trend → koopzone → stop-loss → R/R → paper trade
+   - Voorbeeld progressie niveau 3: multi-timeframe → positiegrootte → psychologie → live trade
 
 VERBODEN:
 - Nooit vragen of iemand een externe broker, exchange of app heeft

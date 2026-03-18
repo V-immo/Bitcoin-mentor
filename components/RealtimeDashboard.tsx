@@ -13,6 +13,8 @@ import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
 import NewsPanel from "./NewsPanel";
 import Leaderboard from "./Leaderboard";
+import AITradeCoach from "./AITradeCoach";
+import LiveSimpleMode from "./LiveSimpleMode";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -382,6 +384,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   function handleAssetChange(sym: string) {
     localStorage.setItem("bitcoin-mentor-selected-asset", sym);
     setAsset(sym);
+    setBottomTab("chat");
   }
 
   async function refreshSignal(sym?: string) {
@@ -648,7 +651,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 <TerminalPaperPanel
                   currentPrice={chartPrice} status={signal.status} action={signal.action}
                   entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
-                  entryZoneHigh={signal.entryZoneHigh} asset={asset}
+                  entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
+                  riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
                   autoExecuteAmount={autoExecuteAmount}
                 />
               </>
@@ -658,6 +662,28 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             )}
             {bottomTab === "analyse" && (
               <>
+                {signalReady && (
+                  <AITradeCoach
+                    status={signal.status} action={signal.action} currentPrice={chartPrice}
+                    entryZoneLow={signal.entryZoneLow} entryZoneHigh={signal.entryZoneHigh}
+                    stopLoss={signal.stopLoss} resistanceZoneLow={signal.resistanceZoneLow}
+                    resistanceZoneHigh={signal.resistanceZoneHigh}
+                    riskRewardEstimate={signal.riskRewardEstimate} score={signal.score}
+                    setupGrade={signal.setupGrade} blockers={signal.blockers} warnings={signal.warnings}
+                    trend4h={signal.trend4h} trend1h={signal.trend1h} structure4h={signal.structure4h}
+                    rsi4h={signal.rsi4h} liveMode={liveMode} lastTickLabel={lastTickLabel}
+                  />
+                )}
+                {signalReady && (
+                  <LiveSimpleMode
+                    currentPrice={chartPrice} entryZoneLow={signal.entryZoneLow}
+                    entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
+                    resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
+                    status={signal.status} action={signal.action}
+                    livePriceConnected={liveMode} liveCandleConnected={liveMode}
+                    lastTickLabel={lastTickLabel} tickKey={Math.round(chartPrice)}
+                  />
+                )}
                 <TerminalMentorPanel
                   status={signal.status} action={signal.action} currentPrice={chartPrice}
                   entryZoneLow={signal.entryZoneLow} entryZoneHigh={signal.entryZoneHigh}
