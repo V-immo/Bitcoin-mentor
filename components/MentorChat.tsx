@@ -66,7 +66,7 @@ const QUICK_QUESTIONS = [
     { label: "Geef een briefing", prompt: "Geef een volledige briefing" },
     { label: "Moet ik nu kopen?", prompt: "Moet ik nu kopen?" },
     { label: "Zet trade op met mij", prompt: "Zet een trade op met mij — begeleid me stap voor stap: entry, stop-loss, target en hoeveel ik inzet." },
-    { label: "Vergelijk alle assets", prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg." },
+    { label: "Vergelijk alle assets", prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg.", prewarm: true },
     { label: "Hoe gaat mijn trade?", prompt: "Hoe gaat mijn open trade?" },
     { label: "3 scenario's", prompt: "Geef me 3 scenario's voor dit asset: bullish, bearish en sideways. Wat doe ik in elk scenario?" },
     { label: "Stop-loss strategie", prompt: "Wat is mijn stop-loss strategie voor dit asset? Leg uit waarom die stop-loss logisch is." },
@@ -268,7 +268,15 @@ export default function MentorChat({ marketContext, asset }: Props) {
                         key={q.label}
                         type="button"
                         className={`terminal-chat-chip${q.label === "Wat doen we vandaag?" ? " terminal-chat-chip-primary" : ""}`}
-                        onClick={() => send(q.prompt)}
+                        onClick={async () => {
+                            if (q.prewarm) {
+                                // Pre-warm de scan cache zodat Marcus alle assets kan vergelijken
+                                fetch("/api/market-scan").catch(() => {});
+                                // Korte wachttijd zodat de cache gevuld kan worden
+                                await new Promise(r => setTimeout(r, 800));
+                            }
+                            send(q.prompt);
+                        }}
                         disabled={userSending}
                     >
                         {q.label === "Wat doen we vandaag?" ? "⭐ " : ""}{q.label}

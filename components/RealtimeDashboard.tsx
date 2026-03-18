@@ -644,10 +644,18 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           <div className="bottom-tab-content">
             {bottomTab === "paper" && (
               <>
+                <div className="paper-step-label">
+                  <span className="paper-step-num">Stap 1</span>
+                  <span className="paper-step-title">AI Analyse — moet ik deze trade doen?</span>
+                </div>
                 <TradePartnerPanel
                   signal={signal} currentPrice={chartPrice} asset={asset}
                   signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
                 />
+                <div className="paper-step-label" style={{ marginTop: 8 }}>
+                  <span className="paper-step-num">Stap 2</span>
+                  <span className="paper-step-title">Voer de trade uit met je paper geld</span>
+                </div>
                 <TerminalPaperPanel
                   currentPrice={chartPrice} status={signal.status} action={signal.action}
                   entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
