@@ -282,6 +282,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean; onPlay: () => void }) {
+  const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
   return (
     <div className="resources-video-card">
       {playing ? (
@@ -293,6 +294,9 @@ function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean;
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
+          <div className="resources-yt-fallback">
+            Werkt de video niet? <a href={ytUrl} target="_blank" rel="noopener noreferrer">Bekijk op YouTube →</a>
+          </div>
         </div>
       ) : (
         <div
@@ -306,7 +310,12 @@ function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean;
             src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
             alt={v.title}
             className="resources-thumb-img"
-            onError={(e) => { (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${v.id}/default.jpg`; }}
+            onError={(e) => {
+              const img = e.target as HTMLImageElement;
+              if (!img.src.includes("default.jpg")) {
+                img.src = `https://img.youtube.com/vi/${v.id}/default.jpg`;
+              }
+            }}
           />
           <div className="resources-play-btn">▶</div>
           <div className="resources-duration">{v.duration}</div>

@@ -2947,12 +2947,24 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .resources-embed-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+}
+.resources-yt-fallback {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 4px 0;
+}
+.resources-yt-fallback a {
+  color: #e91e63;
+  text-decoration: none;
+}
+.resources-yt-fallback a:hover {
+  text-decoration: underline;
 }
 
 .resources-embed {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16/9;
   border: none;
   display: block;
 }

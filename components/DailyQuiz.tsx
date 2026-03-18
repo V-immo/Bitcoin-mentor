@@ -124,9 +124,9 @@ export default function DailyQuiz() {
           weakTopics: history.weakTopics.slice(0, 3),
         }),
       });
-      if (!res.ok) throw new Error("Server fout");
-      const data: QuizResponse = await res.json();
-      if (!data.questions?.length) throw new Error("Geen vragen ontvangen");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Server fout");
+      if (!data.questions?.length) throw new Error("Geen vragen ontvangen. Probeer het opnieuw.");
       setQuestions(data.questions);
       setMarketSnapshot(data.marketSnapshot);
       setPhase("quiz");

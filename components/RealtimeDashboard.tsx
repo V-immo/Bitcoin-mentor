@@ -600,16 +600,16 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             <span className="terminal-tf-desc">{activeTf.desc}</span>
           </div>
 
-          {/* Markt gesloten melding voor aandelen/grondstoffen */}
+          {/* Geen intraday data melding voor aandelen/grondstoffen */}
           {candlesEmpty && dailyCandles.length > 0 && (
             <div className="chart-market-closed-banner">
-              🕐 <strong>Markt momenteel gesloten</strong> — geen intraday data beschikbaar.
-              Historische dagdata (1D) wordt automatisch geladen.
+              🕐 Geen recente intraday data — beurs is gesloten of data niet beschikbaar.
+              Dagelijkse historische grafiek (1D) wordt getoond.
             </div>
           )}
           {candlesEmpty && dailyCandles.length === 0 && (
             <div className="chart-market-closed-banner">
-              ⏳ Chartdata laden… (beurs kan gesloten zijn)
+              ⏳ Chartdata laden…
             </div>
           )}
 
