@@ -376,6 +376,21 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval)!;
   const liveMode = isBinance ? priceWsState === "live" && klineWsState === "live" : priceWsState === "live";
 
+  // Finnhub stocks: als chart leeg is voor huidig timeframe, toon melding en switch naar 1D
+  const candlesEmpty = !isBinance && activeInterval !== "multi" && visibleCandles.length === 0;
+  const dailyCandles = candleMap["1d"] || [];
+  useEffect(() => {
+    if (!isBinance && activeInterval !== "multi" && activeInterval !== "1d") {
+      // Wacht tot candles geladen zijn, dan check of ze leeg zijn
+      const timer = setTimeout(() => {
+        const c = candleMap[activeInterval];
+        if (c !== undefined && c.length === 0) setActiveInterval("1d");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBinance, activeInterval, candleMap]);
+
   function handlePartnerExecute(amountEur: number) {
     setAutoExecuteAmount(amountEur);
     setTimeout(() => setAutoExecuteAmount(null), 300);
@@ -584,6 +599,19 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             ))}
             <span className="terminal-tf-desc">{activeTf.desc}</span>
           </div>
+
+          {/* Markt gesloten melding voor aandelen/grondstoffen */}
+          {candlesEmpty && dailyCandles.length > 0 && (
+            <div className="chart-market-closed-banner">
+              🕐 <strong>Markt momenteel gesloten</strong> — geen intraday data beschikbaar.
+              Historische dagdata (1D) wordt automatisch geladen.
+            </div>
+          )}
+          {candlesEmpty && dailyCandles.length === 0 && (
+            <div className="chart-market-closed-banner">
+              ⏳ Chartdata laden… (beurs kan gesloten zijn)
+            </div>
+          )}
 
           {/* Chart */}
           {activeInterval === "multi" ? (

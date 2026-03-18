@@ -4195,6 +4195,16 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   margin-bottom: 10px;
 }
 
+.chart-market-closed-banner {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #f59e0b;
+  margin-bottom: 6px;
+}
+
 .paper-step-label {
   display: flex;
   align-items: center;
