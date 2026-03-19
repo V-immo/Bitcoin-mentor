@@ -70,12 +70,14 @@ function aggregate4h(candles: Candle[]): Candle[] {
 export async function getYahooCandles(
   symbol: string,
   interval: string = "1d",
+  rangeOverride?: string,
 ): Promise<Candle[]> {
-  const cacheKey = `candles:${symbol}:${interval}`;
+  const cacheKey = `candles:${symbol}:${interval}:${rangeOverride ?? ""}`;
   const cached = getCached<Candle[]>(cacheKey);
   if (cached) return cached;
 
-  const { yInterval, yRange, closeSec } = YAHOO_INTERVAL_MAP[interval] ?? YAHOO_INTERVAL_MAP["1d"];
+  const { yInterval, yRange: defaultRange, closeSec } = YAHOO_INTERVAL_MAP[interval] ?? YAHOO_INTERVAL_MAP["1d"];
+  const yRange = rangeOverride ?? defaultRange;
 
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${yInterval}&includePrePost=false`;
   const res = await fetch(url, { headers: HEADERS, cache: "no-store" });
