@@ -27,4 +27,14 @@ try {
 } catch (e) {
   console.error("❌ Fout bij ensure-admin:", e.message);
 }
+
+// Eenmalige cleanup: verwijder dubbel admin account 'ms amary'
+try {
+  const result = db.prepare("DELETE FROM users WHERE username = ?").run("ms amary");
+  if (result.changes > 0) {
+    console.log("🗑️  Dubbel admin account 'ms amary' verwijderd.");
+  }
+} catch (e) {
+  console.error("❌ Fout bij cleanup ms amary:", e.message);
+}
 db.close();
