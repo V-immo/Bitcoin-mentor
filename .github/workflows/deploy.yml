@@ -17,7 +17,9 @@ jobs:
           script: |
             cd /var/www/bitcoin-mentor
             git pull origin main
+            npm install --legacy-peer-deps
             node db/migrate-goal.js || true
             node db/migrate-bitvavo.js || true
+            node db/migrate-push.js || true
             npm run build
             pm2 restart bitcoin-mentor
