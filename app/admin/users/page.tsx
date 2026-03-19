@@ -33,20 +33,32 @@ export default function AdminUsersPage() {
   const [newUser, setNewUser] = useState({ username: "", email: "", password: "", role: "user", startCapital: 10000 });
   const [createError, setCreateError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
-  function load() {
+  function load(showSpinner = false) {
+    if (showSpinner) setRefreshing(true);
     fetch("/api/admin/users")
-      .then((r) => r.json())
-      .then(setUsers)
-      .finally(() => setLoading(false));
+      .then(async (r) => {
+        const data = await r.json();
+        if (r.ok && Array.isArray(data)) setUsers(data);
+      })
+      .catch(() => {})
+      .finally(() => { setLoading(false); setRefreshing(false); });
   }
 
   useEffect(() => { load(); }, []);
 
   async function deleteUser(id: number) {
-    await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    setDeleteError("");
+    const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setDeleteError(data.error ?? "Verwijderen mislukt");
+      return;
+    }
     setConfirmDelete(null);
-    load();
+    load(true);
   }
 
   async function createUser() {
@@ -56,11 +68,11 @@ export default function AdminUsersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newUser),
     });
-    const data = await res.json();
-    if (!res.ok) { setCreateError(data.error ?? "Fout"); return; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { setCreateError(data.error ?? "Aanmaken mislukt"); return; }
     setCreating(false);
     setNewUser({ username: "", email: "", password: "", role: "user", startCapital: 10000 });
-    load();
+    load(true);
   }
 
   const filtered = users.filter(
@@ -74,7 +86,10 @@ export default function AdminUsersPage() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1 className="admin-page-title">Gebruikers</h1>
+        <h1 className="admin-page-title">
+          Gebruikers
+          {refreshing && <span style={{ fontSize: 13, fontWeight: 400, marginLeft: 10, opacity: 0.5 }}>verversen…</span>}
+        </h1>
         <div className="admin-header-actions">
           <input
             className="admin-search"
@@ -90,14 +105,15 @@ export default function AdminUsersPage() {
 
       {/* Delete bevestiging modal */}
       {confirmDelete && (
-        <div className="admin-modal-backdrop" onClick={() => setConfirmDelete(null)}>
+        <div className="admin-modal-backdrop" onClick={() => { setConfirmDelete(null); setDeleteError(""); }}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <div className="admin-modal-title">Gebruiker verwijderen</div>
             <p style={{ margin: "8px 0 16px" }}>
               Weet je zeker dat je <strong>{confirmDelete.name}</strong> wilt verwijderen? Dit kan niet ongedaan worden.
             </p>
+            {deleteError && <div className="admin-error" style={{ marginBottom: 12 }}>{deleteError}</div>}
             <div className="admin-modal-actions">
-              <button className="admin-btn" onClick={() => setConfirmDelete(null)}>Annuleren</button>
+              <button className="admin-btn" onClick={() => { setConfirmDelete(null); setDeleteError(""); }}>Annuleren</button>
               <button className="admin-btn admin-btn-danger" onClick={() => deleteUser(confirmDelete.id)}>Verwijderen</button>
             </div>
           </div>
