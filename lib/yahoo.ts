@@ -36,16 +36,48 @@ type YahooChartResult = {
   };
 };
 
+// Interval → Yahoo Finance interval + range
+const YAHOO_INTERVAL_MAP: Record<string, { yInterval: string; yRange: string; closeSec: number }> = {
+  "1m":  { yInterval: "1m",  yRange: "1d",  closeSec: 60 },
+  "5m":  { yInterval: "5m",  yRange: "5d",  closeSec: 300 },
+  "15m": { yInterval: "15m", yRange: "1mo", closeSec: 900 },
+  "1h":  { yInterval: "60m", yRange: "3mo", closeSec: 3600 },
+  "4h":  { yInterval: "60m", yRange: "1y",  closeSec: 3600 },
+  "1d":  { yInterval: "1d",  yRange: "5y",  closeSec: 86400 },
+};
+
+function aggregate4h(candles: Candle[]): Candle[] {
+  const buckets = new Map<number, Candle[]>();
+  const bucketMs = 4 * 3600 * 1000;
+  for (const c of candles) {
+    const bucket = Math.floor(c.openTime / bucketMs) * bucketMs;
+    if (!buckets.has(bucket)) buckets.set(bucket, []);
+    buckets.get(bucket)!.push(c);
+  }
+  return Array.from(buckets.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([bucketTime, chunk]) => ({
+      openTime: bucketTime,
+      open: chunk[0].open,
+      high: Math.max(...chunk.map(c => c.high)),
+      low: Math.min(...chunk.map(c => c.low)),
+      close: chunk[chunk.length - 1].close,
+      volume: chunk.reduce((s, c) => s + c.volume, 0),
+      closeTime: bucketTime + bucketMs - 1,
+    }));
+}
+
 export async function getYahooCandles(
   symbol: string,
-  interval: "1d" | "1h" = "1d",
-  range: string = "2y"
+  interval: string = "1d",
 ): Promise<Candle[]> {
-  const cacheKey = `candles:${symbol}:${interval}:${range}`;
+  const cacheKey = `candles:${symbol}:${interval}`;
   const cached = getCached<Candle[]>(cacheKey);
   if (cached) return cached;
 
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
+  const { yInterval, yRange, closeSec } = YAHOO_INTERVAL_MAP[interval] ?? YAHOO_INTERVAL_MAP["1d"];
+
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${yInterval}&includePrePost=false`;
   const res = await fetch(url, { headers: HEADERS, cache: "no-store" });
   if (!res.ok) throw new Error(`Yahoo Finance fout voor ${symbol}: ${res.status}`);
 
@@ -73,12 +105,13 @@ export async function getYahooCandles(
       low: l,
       close: c,
       volume: v ?? 0,
-      closeTime: (timestamp[i] + (interval === "1d" ? 86400 : 3600)) * 1000,
+      closeTime: (timestamp[i] + closeSec) * 1000,
     });
   }
 
-  setCache(cacheKey, candles);
-  return candles;
+  const result2 = interval === "4h" ? aggregate4h(candles) : candles;
+  setCache(cacheKey, result2);
+  return result2;
 }
 
 export async function getYahooPrice(symbol: string): Promise<number> {

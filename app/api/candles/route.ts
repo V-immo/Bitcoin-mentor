@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { getCandles } from "@/lib/market";
-import { getFinnhubCandles } from "@/lib/finnhub";
-import { isFinnhubAsset, getFinnhubSymbol } from "@/lib/assets";
+import { getYahooCandles } from "@/lib/yahoo";
+import { isFinnhubAsset } from "@/lib/assets";
 
 // Cache-TTL per interval (seconden)
 const CACHE_TTL: Record<string, number> = {
@@ -55,8 +55,9 @@ export async function GET(request: NextRequest) {
   try {
     let candles: unknown;
     if (isFinnhubAsset(symbol)) {
-      const finnhubSymbol = getFinnhubSymbol(symbol);
-      candles = await getFinnhubCandles(finnhubSymbol, interval);
+      // Yahoo Finance: gratis, geen API key, werkt voor aandelen/ETFs/grondstoffen
+      // symbol is al compatibel met Yahoo (NFLX, GC=F, SI=F, etc.)
+      candles = await getYahooCandles(symbol, interval);
     } else {
       const limit = BINANCE_LIMIT[interval] ?? 500;
       candles = await getCandles(
