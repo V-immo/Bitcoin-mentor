@@ -552,8 +552,17 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           </div>
         </div>
         <div className="terminal-topbar-right">
-          <span className={`terminal-status-badge ${statusTone}`}>{signal.status}</span>
-          <span className="terminal-soft-badge">{signal.action}</span>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <span className={`terminal-status-badge ${statusTone}`}>{signal.status}</span>
+              <span className="terminal-soft-badge">{signal.action}</span>
+            </div>
+            {signalReady && signal.shortWhy && (
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", maxWidth: 280, textAlign: "right", lineHeight: 1.4 }}>
+                {signal.shortWhy}
+              </div>
+            )}
+          </div>
           <span className="terminal-soft-badge">Analyse: {lastRefresh || "bij laden"}</span>
           {!notifAllowed && "Notification" in (typeof window !== "undefined" ? window : {}) && (
             <button

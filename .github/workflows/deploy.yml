@@ -17,5 +17,7 @@ jobs:
           script: |
             cd /var/www/bitcoin-mentor
             git pull origin main
+            node db/migrate-goal.js || true
+            node db/migrate-bitvavo.js || true
             npm run build
             pm2 restart bitcoin-mentor
