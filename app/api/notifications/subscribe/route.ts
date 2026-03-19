@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   db.prepare(`
     INSERT INTO push_subscriptions (user_id, endpoint, p256dh, auth)
     VALUES (?, ?, ?, ?)
-    ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id, updated_at = datetime('now')
+    ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id
   `).run(userId, body.endpoint, body.keys.p256dh, body.keys.auth);
 
   return Response.json({ ok: true });

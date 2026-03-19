@@ -3,13 +3,15 @@ import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 import webpush from "web-push";
 
-webpush.setVapidDetails(
-  process.env.VAPID_EMAIL!,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-);
-
 export async function POST(request: NextRequest) {
+  const vapidEmail = process.env.VAPID_EMAIL;
+  const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+  if (!vapidEmail || !vapidPublic || !vapidPrivate) {
+    return Response.json({ error: "Push notificaties niet geconfigureerd" }, { status: 503 });
+  }
+  webpush.setVapidDetails(vapidEmail, vapidPublic, vapidPrivate);
+
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") {
     return Response.json({ error: "Geen toegang" }, { status: 403 });
