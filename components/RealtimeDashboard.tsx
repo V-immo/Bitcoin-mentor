@@ -152,7 +152,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [lastRefresh, setLastRefresh] = useState("");
   const [livePrice, setLivePrice] = useState<number>(initialData.price);
   const [change24h, setChange24h] = useState<number>(0);
-  const [activeInterval, setActiveInterval] = useState<ViewMode>("4h");
+  const [activeInterval, setActiveInterval] = useState<ViewMode>(isFinnhubAsset(initialAsset) ? "1d" : "4h");
   const [candleMap, setCandleMap] = useState<Record<string, Candle[]>>({
     "1m": [], "5m": [], "15m": [], "1h": [], "4h": initialData.chartCandles4h, "1d": [],
   });
@@ -373,7 +373,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
   const chartPrice = useMemo(() => livePrice || signal.price, [livePrice, signal.price]);
   const visibleCandles = useMemo(() => candleMap[activeInterval === "multi" ? "1d" : activeInterval] || [], [candleMap, activeInterval]);
-  const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval)!;
+  const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval) ?? TIMEFRAMES[0];
   const liveMode = isBinance ? priceWsState === "live" && klineWsState === "live" : priceWsState === "live";
 
   // Finnhub stocks: als chart leeg is voor huidig timeframe, toon melding en switch naar 1D

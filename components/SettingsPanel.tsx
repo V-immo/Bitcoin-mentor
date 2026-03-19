@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePushNotifications } from "@/lib/usePushNotifications";
 
 type TradingMode = "day" | "swing" | "long";
 type RiskLevel = "low" | "medium" | "high";
@@ -48,6 +49,8 @@ export default function SettingsPanel() {
   const [bitvavoConnected, setBitvavoConnected] = useState<boolean | null>(null);
   const [bitvavoChecking, setBitvavoChecking] = useState(false);
   const [bitvavoSaving, setBitvavoSaving] = useState(false);
+
+  const push = usePushNotifications();
 
   // Wachtwoord wijzigen
   const [pwCurrent, setPwCurrent] = useState("");
@@ -385,6 +388,39 @@ export default function SettingsPanel() {
           </button>
         </div>
       </section>
+
+      {/* Push notificaties */}
+      {push.supported && (
+        <section className="settings-card">
+          <div className="settings-card-title">🔔 Push notificaties</div>
+          <div className="settings-card-desc">
+            Ontvang een melding op je telefoon of computer als het signaal verandert naar &quot;Kopen overwegen&quot;.
+          </div>
+          {push.subscribed ? (
+            <div>
+              <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
+                ✓ Notificaties ingeschakeld
+              </div>
+              <button
+                className="admin-btn"
+                onClick={push.unsubscribe}
+                disabled={push.loading}
+                style={{ fontSize: 13 }}
+              >
+                {push.loading ? "Bezig…" : "Uitschakelen"}
+              </button>
+            </div>
+          ) : (
+            <button
+              className="admin-btn admin-btn-primary"
+              onClick={push.subscribe}
+              disabled={push.loading}
+            >
+              {push.loading ? "Bezig…" : "🔔 Notificaties inschakelen"}
+            </button>
+          )}
+        </section>
+      )}
 
     </div>
   );
