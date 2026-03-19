@@ -30,6 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# database files (live data op server, nooit committen)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.sqlite
+db/mentor.db
+
 # env files (can opt-in for committing if needed)
 .env*
 .env.local
