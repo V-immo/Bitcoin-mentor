@@ -149,6 +149,7 @@ export default function TradingChart({
 }: Props) {
   const [showBB, setShowBB] = useState(false);
   const [showMACD, setShowMACD] = useState(false);
+  const [chartInitKey, setChartInitKey] = useState(0);
 
   const mainRef = useRef<HTMLDivElement>(null);
   const rsiRef = useRef<HTMLDivElement>(null);
@@ -358,9 +359,9 @@ export default function TradingChart({
           macdHistSeries.setData(showMACDRef.current ? macdData.histogram : []);
         }
 
-        chart.timeScale().scrollToRealTime();
-        rsiChart.timeScale().scrollToRealTime();
-        macdChart?.timeScale().scrollToRealTime();
+        chart.timeScale().fitContent();
+        rsiChart.timeScale().fitContent();
+        macdChart?.timeScale().fitContent();
       }
 
       // Zones
@@ -375,6 +376,9 @@ export default function TradingChart({
         price: currentPrice, color: "#ffffff", lineWidth: 1,
         lineStyle: LineStyle.Solid, axisLabelVisible: true, title: "",
       });
+
+      // Signal dat de chart klaar is — triggert de candle update effect opnieuw
+      setChartInitKey(k => k + 1);
 
       // ResizeObserver — handles orientation change and container resize on mobile
       const ro = new ResizeObserver((entries) => {
@@ -435,10 +439,10 @@ export default function TradingChart({
       macdHistRef.current.setData(showMACD ? macdData.histogram : []);
     }
 
-    chartRef.current?.timeScale().scrollToRealTime();
-    rsiChartRef.current?.timeScale().scrollToRealTime();
-    macdChartRef.current?.timeScale().scrollToRealTime();
-  }, [candles, showBB, showMACD]);
+    chartRef.current?.timeScale().fitContent();
+    rsiChartRef.current?.timeScale().fitContent();
+    macdChartRef.current?.timeScale().fitContent();
+  }, [candles, showBB, showMACD, chartInitKey]);
 
   // Toggle BB
   useEffect(() => {
