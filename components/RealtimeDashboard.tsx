@@ -84,20 +84,9 @@ function fmtPrice(price: number, symbol: string): string {
 
 async function fetchBinanceCandles(symbol: string, interval: string): Promise<Candle[]> {
   try {
-    const res = await fetch(
-      `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=500`
-    );
+    const res = await fetch(`/api/candles?symbol=${encodeURIComponent(symbol)}&interval=${interval}`);
     if (!res.ok) return [];
-    const data = (await res.json()) as (string | number)[][];
-    return data.map((k) => ({
-      openTime: Number(k[0]),
-      open: parseFloat(String(k[1])),
-      high: parseFloat(String(k[2])),
-      low: parseFloat(String(k[3])),
-      close: parseFloat(String(k[4])),
-      volume: parseFloat(String(k[5])),
-      closeTime: Number(k[6]),
-    }));
+    return await res.json();
   } catch {
     return [];
   }

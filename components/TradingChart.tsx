@@ -202,10 +202,16 @@ export default function TradingChart({
     let cleanupFn: (() => void) | undefined;
 
     async function init() {
+      // Wait for layout to complete (critical on mobile — container may have 0 width initially)
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      if (destroyed || !mainRef.current || !rsiRef.current) return;
+
       const lc = await import("lightweight-charts");
       if (destroyed || !mainRef.current || !rsiRef.current) return;
 
       const { createChart, ColorType, CrosshairMode, LineStyle, CandlestickSeries, HistogramSeries, LineSeries } = lc;
+
+      const containerW = mainRef.current.clientWidth || 320;
 
       const commonLayout = {
         layout: { background: { type: ColorType.Solid, color: BG }, textColor: TEXT },
@@ -217,8 +223,8 @@ export default function TradingChart({
         handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
       };
 
-      // Main chart
-      const chart = createChart(mainRef.current, { ...commonLayout, autoSize: true });
+      // Main chart — explicit width instead of autoSize to prevent 0-width init on mobile
+      const chart = createChart(mainRef.current, { ...commonLayout, width: containerW, height });
 
       const candleSeries = chart.addSeries(CandlestickSeries, {
         upColor: "#26c57c", downColor: "#ef4444",
@@ -266,7 +272,8 @@ export default function TradingChart({
       // RSI chart
       const rsiChart = createChart(rsiRef.current, {
         ...commonLayout,
-        autoSize: true,
+        width: containerW,
+        height: rsiH,
         timeScale: { ...commonLayout.timeScale, barSpacing: 8, minBarSpacing: 2 },
         rightPriceScale: { ...commonLayout.rightPriceScale, scaleMargins: { top: 0.1, bottom: 0.1 } },
       });
@@ -294,7 +301,8 @@ export default function TradingChart({
       if (macdRef.current) {
         macdChart = createChart(macdRef.current, {
           ...commonLayout,
-          autoSize: true,
+          width: containerW,
+          height: macdH,
           timeScale: { ...commonLayout.timeScale, barSpacing: 8, minBarSpacing: 2 },
           rightPriceScale: { ...commonLayout.rightPriceScale, scaleMargins: { top: 0.15, bottom: 0.15 } },
         });
@@ -368,7 +376,18 @@ export default function TradingChart({
         lineStyle: LineStyle.Solid, axisLabelVisible: true, title: "",
       });
 
+      // ResizeObserver — handles orientation change and container resize on mobile
+      const ro = new ResizeObserver((entries) => {
+        const w = entries[0]?.contentRect.width;
+        if (!w || w <= 0) return;
+        chart.applyOptions({ width: w });
+        rsiChart.applyOptions({ width: w });
+        macdChart?.applyOptions({ width: w });
+      });
+      if (mainRef.current) ro.observe(mainRef.current);
+
       cleanupFn = () => {
+        ro.disconnect();
         chart.remove();
         rsiChart.remove();
         macdChart?.remove();
