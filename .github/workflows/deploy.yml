@@ -19,6 +19,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             npm install --legacy-peer-deps
+            node db/init.js || true
             node db/migrate-goal.js || true
             node db/migrate-bitvavo.js || true
             node db/migrate-push.js || true
