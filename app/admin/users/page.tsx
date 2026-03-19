@@ -32,6 +32,7 @@ export default function AdminUsersPage() {
   const [creating, setCreating] = useState(false);
   const [newUser, setNewUser] = useState({ username: "", email: "", password: "", role: "user", startCapital: 10000 });
   const [createError, setCreateError] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
 
   function load() {
     fetch("/api/admin/users")
@@ -42,9 +43,9 @@ export default function AdminUsersPage() {
 
   useEffect(() => { load(); }, []);
 
-  async function deleteUser(id: number, name: string) {
-    if (!confirm(`Gebruiker "${name}" verwijderen? Dit kan niet ongedaan worden.`)) return;
+  async function deleteUser(id: number) {
     await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    setConfirmDelete(null);
     load();
   }
 
@@ -86,6 +87,22 @@ export default function AdminUsersPage() {
           </button>
         </div>
       </div>
+
+      {/* Delete bevestiging modal */}
+      {confirmDelete && (
+        <div className="admin-modal-backdrop" onClick={() => setConfirmDelete(null)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-title">Gebruiker verwijderen</div>
+            <p style={{ margin: "8px 0 16px" }}>
+              Weet je zeker dat je <strong>{confirmDelete.name}</strong> wilt verwijderen? Dit kan niet ongedaan worden.
+            </p>
+            <div className="admin-modal-actions">
+              <button className="admin-btn" onClick={() => setConfirmDelete(null)}>Annuleren</button>
+              <button className="admin-btn admin-btn-danger" onClick={() => deleteUser(confirmDelete.id)}>Verwijderen</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create modal */}
       {creating && (
@@ -164,7 +181,7 @@ export default function AdminUsersPage() {
                     </Link>
                     <button
                       className="admin-btn admin-btn-sm admin-btn-danger"
-                      onClick={() => deleteUser(u.id, u.username)}
+                      onClick={() => setConfirmDelete({ id: u.id, name: u.username })}
                     >
                       ✕
                     </button>
