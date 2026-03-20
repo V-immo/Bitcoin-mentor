@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePushNotifications } from "@/lib/usePushNotifications";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type TradingMode = "day" | "swing" | "long";
 type RiskLevel = "low" | "medium" | "high";
@@ -24,19 +25,15 @@ const DEFAULT_SETTINGS: Settings = {
   aiLanguage: "nl",
 };
 
-const TRADING_MODES: { key: TradingMode; label: string; desc: string }[] = [
-  { key: "day",   label: "Day Trade",   desc: "Trades binnen één dag — hoog tempo, snelle beslissingen" },
-  { key: "swing", label: "Swing Trade", desc: "Trades van 2–14 dagen — rustigere benadering" },
-  { key: "long",  label: "Long Term",   desc: "Weken tot maanden vasthouden — geduldig beleggen" },
-];
-
-const RISK_LEVELS: { key: RiskLevel; label: string; pct: string; color: string }[] = [
-  { key: "low",    label: "Conservatief", pct: "1–2% per trade", color: "#26c57c" },
-  { key: "medium", label: "Gemiddeld",    pct: "2–5% per trade", color: "#f59e0b" },
-  { key: "high",   label: "Agressief",   pct: "5–10% per trade", color: "#ef4444" },
+const TRADING_MODE_KEYS: TradingMode[] = ["day", "swing", "long"];
+const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
+  { key: "low",    color: "#26c57c" },
+  { key: "medium", color: "#f59e0b" },
+  { key: "high",   color: "#ef4444" },
 ];
 
 export default function SettingsPanel() {
+  const { lang, setLang, t } = useLanguage();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -89,13 +86,9 @@ export default function SettingsPanel() {
     setSaved(false);
   }
 
-  async function saveLanguage(lang: "nl" | "en") {
-    setSettings((prev) => ({ ...prev, aiLanguage: lang }));
-    await fetch("/api/me/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...settings, aiLanguage: lang }),
-    });
+  function saveLanguage(l: "nl" | "en") {
+    setSettings((prev) => ({ ...prev, aiLanguage: l }));
+    setLang(l); // schakelt hele app om + slaat op in DB
   }
 
   async function save() {
@@ -111,7 +104,7 @@ export default function SettingsPanel() {
   }
 
   if (loading) {
-    return <div className="settings-panels"><div className="settings-loading">Instellingen laden…</div></div>;
+    return <div className="settings-panels"><div className="settings-loading">{t("settings_loading")}</div></div>;
   }
 
   return (
@@ -119,19 +112,17 @@ export default function SettingsPanel() {
 
       {/* Trading modus */}
       <section className="settings-card">
-        <div className="settings-card-title">Trading modus</div>
-        <div className="settings-card-desc">
-          Kies hoe je wilt traden. De AI past zijn aanbevelingen hierop aan.
-        </div>
+        <div className="settings-card-title">{t("settings_title_trading_mode")}</div>
+        <div className="settings-card-desc">{t("settings_desc_trading_mode")}</div>
         <div className="settings-options">
-          {TRADING_MODES.map((m) => (
+          {TRADING_MODE_KEYS.map((key) => (
             <button
-              key={m.key}
-              className={`settings-option${settings.tradingMode === m.key ? " active" : ""}`}
-              onClick={() => update("tradingMode", m.key)}
+              key={key}
+              className={`settings-option${settings.tradingMode === key ? " active" : ""}`}
+              onClick={() => update("tradingMode", key)}
             >
-              <div className="settings-option-title">{m.label}</div>
-              <div className="settings-option-desc">{m.desc}</div>
+              <div className="settings-option-title">{t(`settings_${key === "day" ? "day_trade" : key === "swing" ? "swing_trade" : "long_term"}` as Parameters<typeof t>[0])}</div>
+              <div className="settings-option-desc">{t(`settings_${key === "day" ? "day_trade" : key === "swing" ? "swing_trade" : "long_term"}_desc` as Parameters<typeof t>[0])}</div>
             </button>
           ))}
         </div>
@@ -139,12 +130,10 @@ export default function SettingsPanel() {
 
       {/* Risico niveau */}
       <section className="settings-card">
-        <div className="settings-card-title">Risico niveau</div>
-        <div className="settings-card-desc">
-          Bepaalt hoeveel van je kapitaal per trade op het spel staat.
-        </div>
+        <div className="settings-card-title">{t("settings_title_risk")}</div>
+        <div className="settings-card-desc">{t("settings_desc_risk")}</div>
         <div className="settings-options settings-options-3">
-          {RISK_LEVELS.map((r) => (
+          {RISK_LEVEL_KEYS.map((r) => (
             <button
               key={r.key}
               className={`settings-option${settings.riskLevel === r.key ? " active" : ""}`}
@@ -152,9 +141,9 @@ export default function SettingsPanel() {
               style={settings.riskLevel === r.key ? { borderColor: r.color, background: `${r.color}15` } : {}}
             >
               <div className="settings-option-title" style={settings.riskLevel === r.key ? { color: r.color } : {}}>
-                {r.label}
+                {t(`settings_risk_${r.key}` as Parameters<typeof t>[0])}
               </div>
-              <div className="settings-option-desc">{r.pct}</div>
+              <div className="settings-option-desc">{t(`settings_risk_${r.key}_pct` as Parameters<typeof t>[0])}</div>
             </button>
           ))}
         </div>
@@ -162,10 +151,8 @@ export default function SettingsPanel() {
 
       {/* Start kapitaal — alleen lezen, door admin ingesteld */}
       <section className="settings-card">
-        <div className="settings-card-title">Start kapitaal</div>
-        <div className="settings-card-desc">
-          Jouw startkapitaal voor paper trading. Dit wordt ingesteld door de admin.
-        </div>
+        <div className="settings-card-title">{t("settings_title_capital")}</div>
+        <div className="settings-card-desc">{t("settings_desc_capital")}</div>
         <div className="settings-capital-wrap">
           <div className="settings-capital-prefix">€</div>
           <input
@@ -176,29 +163,25 @@ export default function SettingsPanel() {
             disabled
           />
         </div>
-        <div className="settings-hint">
-          Neem contact op met de admin om je startkapitaal te wijzigen.
-        </div>
+        <div className="settings-hint">{t("settings_capital_hint")}</div>
       </section>
 
       {/* AI taal */}
       <section className="settings-card">
-        <div className="settings-card-title">AI communicatie</div>
-        <div className="settings-card-desc">
-          In welke taal wil je dat de AI met je praat?
-        </div>
+        <div className="settings-card-title">{t("settings_title_language")}</div>
+        <div className="settings-card-desc">{t("settings_desc_language")}</div>
         <div className="settings-options settings-options-2">
           <button
-            className={`settings-option${settings.aiLanguage === "nl" ? " active" : ""}`}
+            className={`settings-option${lang === "nl" ? " active" : ""}`}
             onClick={() => saveLanguage("nl")}
           >
-            <div className="settings-option-title">🇳🇱 Nederlands</div>
+            <div className="settings-option-title">{t("lang_nl")}</div>
           </button>
           <button
             className={`settings-option${settings.aiLanguage === "en" ? " active" : ""}`}
             onClick={() => saveLanguage("en")}
           >
-            <div className="settings-option-title">🇬🇧 English</div>
+            <div className="settings-option-title">{t("lang_en")}</div>
           </button>
         </div>
       </section>
@@ -206,17 +189,14 @@ export default function SettingsPanel() {
       {/* Opslaan */}
       <div className="settings-actions">
         <button className="terminal-btn terminal-btn-primary" onClick={save}>
-          {saved ? "✓ Opgeslagen!" : "Instellingen opslaan"}
+          {saved ? t("saved") : t("settings_save_btn")}
         </button>
       </div>
 
       {/* Bitvavo koppeling */}
       <section className="settings-card">
-        <div className="settings-card-title">🔗 Bitvavo koppeling</div>
-        <div className="settings-card-desc">
-          Koppel je Bitvavo account om je echte saldo te zien. Maak een read-only API key aan
-          via Bitvavo → Account → API → Nieuwe sleutel (alleen &quot;Accountinformatie lezen&quot; aanzetten).
-        </div>
+        <div className="settings-card-title">{t("settings_title_bitvavo")}</div>
+        <div className="settings-card-desc">{t("settings_desc_bitvavo")}</div>
 
         {bitvavoConnected === true && (
           <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>

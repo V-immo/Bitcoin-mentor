@@ -194,16 +194,29 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset]);
 
-  // Laad alle candles bij asset-wissel
+  // Laad alle candles bij asset-wissel — actief interval eerst voor snelle weergave
   useEffect(() => {
+    let cancelled = false;
     setCandleMap({ "1m": [], "5m": [], "15m": [], "1h": [], "4h": [], "1d": [] });
+
     async function loadAll() {
-      const results = await Promise.all(INTERVALS.map((iv) => fetchCandles(asset, iv)));
-      const map: Record<string, Candle[]> = {};
-      INTERVALS.forEach((iv, i) => { map[iv] = results[i]; });
-      setCandleMap(map);
+      // Stap 1: laad actief interval direct (chart zichtbaar zo snel mogelijk)
+      const priority = activeInterval === "multi" ? "1h" : activeInterval;
+      const first = await fetchCandles(asset, priority as string);
+      if (cancelled) return;
+      setCandleMap(prev => ({ ...prev, [priority]: first }));
+
+      // Stap 2: laad resterende intervals op de achtergrond
+      const rest = INTERVALS.filter(iv => iv !== priority);
+      const results = await Promise.all(rest.map(iv => fetchCandles(asset, iv)));
+      if (cancelled) return;
+      const extra: Record<string, Candle[]> = {};
+      rest.forEach((iv, i) => { extra[iv] = results[i]; });
+      setCandleMap(prev => ({ ...prev, ...extra }));
     }
     loadAll();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset]);
 
   // Futures data (funding rate + open interest)

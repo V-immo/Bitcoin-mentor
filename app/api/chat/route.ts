@@ -4,9 +4,9 @@ import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 import { sharedScanCache } from "@/lib/scan-cache";
 
-// Rate limiting: max 20 chat calls per uur per user
+// Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
-const CHAT_MAX = 20;
+const CHAT_MAX = 100;
 const CHAT_WINDOW = 60 * 60 * 1000; // 1 uur
 
 function checkChatRate(key: string): boolean {
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   const rateKey = userId ? `user:${userId}` : (request.headers.get("x-forwarded-for") ?? "anon");
   if (!checkChatRate(rateKey)) {
     return Response.json(
-      { reply: "Je hebt het uurtarief bereikt (20 berichten/uur). Probeer het later opnieuw." },
+      { reply: "Je hebt het uurtarief bereikt (100 berichten/uur). Probeer het later opnieuw." },
       { status: 429 }
     );
   }

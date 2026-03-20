@@ -2,6 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import SessionWrapper from "@/components/SessionWrapper";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import LanguagePicker from "@/components/LanguagePicker";
 
 export const metadata: Metadata = {
   title: "Bitcoin Mentor",
@@ -23,8 +25,11 @@ export default function RootLayout({
       </head>
       <body>
         <SessionWrapper>
-          <Nav />
-          <div className="app-content">{children}</div>
+          <LanguageProvider>
+            <LanguagePicker />
+            <Nav />
+            <div className="app-content">{children}</div>
+          </LanguageProvider>
         </SessionWrapper>
       </body>
     </html>
