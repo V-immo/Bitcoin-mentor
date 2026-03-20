@@ -19,31 +19,26 @@ const LanguageContext = createContext<LanguageContextType>({
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("nl");
 
-  // Laad taal uit localStorage bij mount
+  // Laad taal uit localStorage bij mount (client-only)
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const stored = localStorage.getItem("app_lang") as Lang | null;
     if (stored === "nl" || stored === "en") {
       setLangState(stored);
-    } else {
-      // Sync vanuit DB als ingelogd
-      fetch("/api/me/settings")
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (data?.aiLanguage === "en") setLangState("en");
-        })
-        .catch(() => {});
     }
   }, []);
 
   function setLang(l: Lang) {
     setLangState(l);
-    localStorage.setItem("app_lang", l);
-    // Sync naar DB
-    fetch("/api/me/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ aiLanguage: l }),
-    }).catch(() => {});
+    if (typeof window !== "undefined") {
+      localStorage.setItem("app_lang", l);
+      // Sync naar DB (enkel in browser)
+      window.fetch("/api/me/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aiLanguage: l }),
+      }).catch(() => {});
+    }
   }
 
   const translations = getTranslations(lang);
