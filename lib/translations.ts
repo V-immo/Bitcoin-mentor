@@ -19,6 +19,14 @@ const translations = {
     nav_checklist: "Checklist",
     nav_news: "Nieuws",
     nav_ranking: "Ranking",
+    nav_link_scanner: "Scanner",
+    nav_link_trade: "Traden",
+    nav_link_learn: "Leren",
+    nav_link_stats: "Statistieken",
+    nav_link_profile: "Profiel",
+    nav_link_settings: "Instellingen",
+    nav_link_help: "Help",
+    nav_logout: "Uitloggen",
 
     // === ASSET GROEPEN ===
     group_crypto: "Crypto",
@@ -225,6 +233,14 @@ const translations = {
     nav_checklist: "Checklist",
     nav_news: "News",
     nav_ranking: "Ranking",
+    nav_link_scanner: "Scanner",
+    nav_link_trade: "Trade",
+    nav_link_learn: "Learn",
+    nav_link_stats: "Statistics",
+    nav_link_profile: "Profile",
+    nav_link_settings: "Settings",
+    nav_link_help: "Help",
+    nav_logout: "Sign out",
 
     // === ASSET GROEPEN ===
     group_crypto: "Crypto",

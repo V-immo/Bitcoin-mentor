@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -25,7 +27,7 @@ export default function LoginPage() {
 
     setLoading(false);
     if (res?.error) {
-      setError("Gebruikersnaam of wachtwoord onjuist.");
+      setError(t("login_error"));
     } else {
       router.push("/");
       router.refresh();
@@ -40,24 +42,24 @@ export default function LoginPage() {
           <span className="login-logo-name">Bitcoin Mentor</span>
         </div>
 
-        <div className="login-title">Inloggen</div>
+        <div className="login-title">{t("login_title")}</div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="login-field">
-            <label className="login-label">Gebruikersnaam</label>
+            <label className="login-label">{t("login_username")}</label>
             <input
               className="login-input"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="jouw gebruikersnaam"
+              placeholder={t("login_username_placeholder")}
               autoComplete="username"
               disabled={loading}
             />
           </div>
 
           <div className="login-field">
-            <label className="login-label">Wachtwoord</label>
+            <label className="login-label">{t("login_password")}</label>
             <input
               className="login-input"
               type="password"
@@ -76,7 +78,7 @@ export default function LoginPage() {
             className="login-btn"
             disabled={loading || !username || !password}
           >
-            {loading ? "Bezig…" : "Inloggen →"}
+            {loading ? t("login_loading") : t("login_btn")}
           </button>
         </form>
       </div>

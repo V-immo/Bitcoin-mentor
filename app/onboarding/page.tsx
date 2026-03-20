@@ -2,42 +2,44 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const STEPS = [
-  {
-    icon: "₿",
-    title: "Welkom bij Bitcoin Mentor!",
-    subtitle: "Je persoonlijke AI-coach voor crypto trading",
-    body: "Marcus begeleidt je stap voor stap — van absolute beginner tot zelfstandig trader. Het doel: binnen 3 maanden weten wat je doet.",
-    cta: "Laten we beginnen →",
-  },
-  {
-    icon: "📊",
-    title: "Hoe werkt het?",
-    subtitle: "Alles op één plek",
-    items: [
-      { icon: "⚡", label: "Scanner", desc: "Zie in één oogopslag welke assets kansen bieden" },
-      { icon: "📈", label: "Traden", desc: "Live analyse, grafiek en Marcus AI voor elk asset" },
-      { icon: "🎓", label: "Leren", desc: "Dagelijkse quiz en video's om te groeien" },
-      { icon: "📊", label: "Statistieken", desc: "Volg je voortgang en paper trading resultaten" },
-    ],
-    cta: "Begrepen →",
-  },
-  {
-    icon: "🎯",
-    title: "Stel je doel in",
-    subtitle: "Hoeveel wil je investeren?",
-    body: "Vul in met hoeveel startkapitaal je wil beginnen. Dit wordt gebruikt voor position sizing en risicoberekeningen.",
-    cta: "Opslaan & starten →",
-    hasCapital: true,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const [capital, setCapital] = useState("1000");
   const [saving, setSaving] = useState(false);
+
+  const STEPS = [
+    {
+      icon: "₿",
+      title: t("onboarding_welcome_title"),
+      subtitle: t("onboarding_welcome_subtitle"),
+      body: t("onboarding_welcome_body"),
+      cta: t("onboarding_welcome_cta"),
+    },
+    {
+      icon: "📊",
+      title: t("onboarding_how_title"),
+      subtitle: t("onboarding_how_subtitle"),
+      items: [
+        { icon: "⚡", label: t("onboarding_feature_scanner"), desc: t("onboarding_feature_scanner_desc") },
+        { icon: "📈", label: t("onboarding_feature_trade"),   desc: t("onboarding_feature_trade_desc") },
+        { icon: "🎓", label: t("onboarding_feature_learn"),   desc: t("onboarding_feature_learn_desc") },
+        { icon: "📊", label: t("onboarding_feature_stats"),   desc: t("onboarding_feature_stats_desc") },
+      ],
+      cta: t("onboarding_how_cta"),
+    },
+    {
+      icon: "🎯",
+      title: t("onboarding_goal_title"),
+      subtitle: t("onboarding_goal_subtitle"),
+      body: t("onboarding_goal_body"),
+      cta: t("onboarding_goal_cta"),
+      hasCapital: true,
+    },
+  ];
 
   async function next() {
     if (step === STEPS.length - 1) {
@@ -100,7 +102,7 @@ export default function OnboardingPage() {
 
         {s.hasCapital && (
           <div className="login-field" style={{ marginBottom: 20 }}>
-            <label className="login-label">Startkapitaal (€)</label>
+            <label className="login-label">{t("onboarding_capital_label")}</label>
             <input
               className="login-input"
               type="number"
@@ -108,16 +110,16 @@ export default function OnboardingPage() {
               max={1000000}
               value={capital}
               onChange={(e) => setCapital(e.target.value)}
-              placeholder="bijv. 1000"
+              placeholder={t("onboarding_capital_placeholder")}
             />
             <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6 }}>
-              Je kunt dit later aanpassen in instellingen. Paper trading gebruikt dit bedrag.
+              {t("onboarding_capital_hint")}
             </p>
           </div>
         )}
 
         <button className="login-btn" onClick={next} disabled={saving}>
-          {saving ? "Opslaan…" : s.cta}
+          {saving ? t("saving") : s.cta}
         </button>
 
         {step > 0 && (
@@ -125,7 +127,7 @@ export default function OnboardingPage() {
             onClick={() => setStep((s) => s - 1)}
             style={{ display: "block", margin: "12px auto 0", background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 13 }}
           >
-            ← Terug
+            {t("back")}
           </button>
         )}
       </div>

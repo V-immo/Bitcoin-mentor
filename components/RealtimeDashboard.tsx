@@ -11,6 +11,7 @@ import RisicoCalculator from "./RisicoCalculator";
 import EntryChecklist from "./EntryChecklist";
 import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
+import { useLanguage } from "@/contexts/LanguageContext";
 import NewsPanel from "./NewsPanel";
 import Leaderboard from "./Leaderboard";
 import AITradeCoach from "./AITradeCoach";
@@ -22,47 +23,21 @@ const INTERVALS = ["1m", "5m", "15m", "1h", "4h", "1d"] as const;
 type Interval = (typeof INTERVALS)[number];
 type ViewMode = Interval | "multi";
 
-// Crypto (Binance): alle timeframes inclusief native 4H
-const TIMEFRAMES_CRYPTO: { key: ViewMode; label: string; desc: string }[] = [
-  { key: "1m",    label: "1m",      desc: "Scalpen — ultrasnel" },
-  { key: "5m",    label: "5m",      desc: "Scalpen — heel snel" },
-  { key: "15m",   label: "15m",     desc: "Korte termijn" },
-  { key: "1h",    label: "1H",      desc: "Dagtrend" },
-  { key: "4h",    label: "4H",      desc: "Swing trading" },
-  { key: "1d",    label: "1D",      desc: "Groot plaatje" },
-  { key: "multi", label: "🔍 Multi", desc: "Pro-view: 1D + 4H + 1H tegelijk" },
+// Asset groepen — labels via i18n in component
+const ASSET_GROUPS_DEF: { key: "group_crypto" | "group_stocks" | "group_commodities"; types: string[] }[] = [
+  { key: "group_crypto",       types: ["crypto"] },
+  { key: "group_stocks",       types: ["stock", "etf"] },
+  { key: "group_commodities",  types: ["metal"] },
 ];
 
-// Aandelen/grondstoffen (Finnhub): geen 4H (bestaat niet als native interval)
-const TIMEFRAMES_FINNHUB: { key: ViewMode; label: string; desc: string }[] = [
-  { key: "1m",    label: "1m",      desc: "Scalpen — ultrasnel" },
-  { key: "5m",    label: "5m",      desc: "Scalpen — heel snel" },
-  { key: "15m",   label: "15m",     desc: "Korte termijn" },
-  { key: "1h",    label: "1H",      desc: "Dagtrend" },
-  { key: "1d",    label: "1D",      desc: "Groot plaatje" },
-  { key: "multi", label: "🔍 Multi", desc: "Pro-view: 1D + 1H + 15m tegelijk" },
-];
-
-const MULTI_TFS_CRYPTO = [
-  { key: "1d" as Interval, label: "1D — Grote trend",    hint: "Stijgt of daalt de markt op de lange termijn?" },
-  { key: "4h" as Interval, label: "4H — Setup",          hint: "Is er een koopzone zichtbaar? Staat RSI laag?" },
-  { key: "1h" as Interval, label: "1H — Instapmoment",   hint: "Is dit het juiste moment om in te stappen?" },
-];
-
-const MULTI_TFS_FINNHUB = [
-  { key: "1d"  as Interval, label: "1D — Grote trend",    hint: "Stijgt of daalt de markt op de lange termijn?" },
-  { key: "1h"  as Interval, label: "1H — Setup",          hint: "Is er een koopzone zichtbaar? Staat RSI laag?" },
-  { key: "15m" as Interval, label: "15m — Instapmoment",  hint: "Is dit het juiste moment om in te stappen?" },
-];
-
-// Asset groepen voor de balk
-const ASSET_GROUPS = [
-  { label: "Crypto",    types: ["crypto"] },
-  { label: "Aandelen",  types: ["stock", "etf"] },
-  { label: "Grondstoffen", types: ["metal"] },
-];
-
-function nl(val: string): string {
+function nlTrend(val: string, lang: string): string {
+  if (lang === "en") {
+    const map: Record<string, string> = {
+      bullish: "rising", bearish: "falling", neutral: "sideways",
+      strong: "strong", weak: "weak", ok: "ok",
+    };
+    return map[val?.toLowerCase()] ?? val;
+  }
   const map: Record<string, string> = {
     bullish: "stijgt", bearish: "daalt", neutral: "zijwaarts",
     strong: "sterk", weak: "zwak", ok: "goed",
@@ -123,16 +98,48 @@ async function fetchFuturesData(symbol: string) {
 }
 
 type BottomTab = "paper" | "analyse" | "chat" | "nieuws" | "checklist" | "leaderboard";
-const BOTTOM_TABS: { key: BottomTab; label: string; icon: string }[] = [
-  { key: "chat",        label: "Marcus AI",      icon: "🤖" },
-  { key: "paper",       label: "Paper Trading",  icon: "💰" },
-  { key: "analyse",     label: "Analyse",        icon: "📊" },
-  { key: "checklist",   label: "Checklist",      icon: "✅" },
-  { key: "nieuws",      label: "Nieuws",         icon: "📰" },
-  { key: "leaderboard", label: "Ranking",        icon: "🏆" },
-];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
+  const { t, lang } = useLanguage();
+
+  // Vertaalde arrays — reageren op taalwisseling
+  const TIMEFRAMES_CRYPTO: { key: ViewMode; label: string; desc: string }[] = [
+    { key: "1m",    label: "1m",        desc: t("tf_1m_desc") },
+    { key: "5m",    label: "5m",        desc: t("tf_5m_desc") },
+    { key: "15m",   label: "15m",       desc: t("tf_15m_desc") },
+    { key: "1h",    label: "1H",        desc: t("tf_1h_desc") },
+    { key: "4h",    label: "4H",        desc: t("tf_4h_desc") },
+    { key: "1d",    label: "1D",        desc: t("tf_1d_desc") },
+    { key: "multi", label: t("tf_multi_label"), desc: t("tf_multi_desc_crypto") },
+  ];
+  const TIMEFRAMES_FINNHUB: { key: ViewMode; label: string; desc: string }[] = [
+    { key: "1m",    label: "1m",        desc: t("tf_1m_desc") },
+    { key: "5m",    label: "5m",        desc: t("tf_5m_desc") },
+    { key: "15m",   label: "15m",       desc: t("tf_15m_desc") },
+    { key: "1h",    label: "1H",        desc: t("tf_1h_desc") },
+    { key: "1d",    label: "1D",        desc: t("tf_1d_desc") },
+    { key: "multi", label: t("tf_multi_label"), desc: t("tf_multi_desc_stock") },
+  ];
+  const MULTI_TFS_CRYPTO = [
+    { key: "1d" as Interval, label: t("mtf_1d"),  hint: t("mtf_hint_trend") },
+    { key: "4h" as Interval, label: t("mtf_4h"),  hint: t("mtf_hint_setup") },
+    { key: "1h" as Interval, label: t("mtf_1h"),  hint: t("mtf_hint_entry") },
+  ];
+  const MULTI_TFS_FINNHUB = [
+    { key: "1d"  as Interval, label: t("mtf_1d"),  hint: t("mtf_hint_trend") },
+    { key: "1h"  as Interval, label: t("mtf_1h"),  hint: t("mtf_hint_setup") },
+    { key: "15m" as Interval, label: t("mtf_15m"), hint: t("mtf_hint_entry") },
+  ];
+  const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
+  const BOTTOM_TABS: { key: BottomTab; label: string; icon: string }[] = [
+    { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖" },
+    { key: "paper",       label: t("nav_paper_trading"), icon: "💰" },
+    { key: "analyse",     label: t("nav_analysis"),      icon: "📊" },
+    { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
+    { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
+    { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
+  ];
+
   const [asset, setAsset] = useState<string>(initialAsset);
   const [signal, setSignal] = useState<MentorSignal>(initialData);
   const [bottomTab, setBottomTab] = useState<BottomTab>("chat");
@@ -443,46 +450,47 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     const aboveBuyZone = chartPrice > signal.entryZoneHigh;
     const belowBuyZone = chartPrice < signal.entryZoneLow;
     if (signal.blockers.length > 0) return {
-      headline: "Ik zou je nu niet laten kopen",
-      verdict: "Er is op dit moment iets fundamenteel zwaks. Ik bescherm je hier.",
-      bestAction: "Blijf kijken. Begrijp wat de markt fout maakt.",
-      biggestMistake: "Toch kopen omdat je hoopt dat de prijs ineens omkeert.",
-      lesson: "Een slechte setup overslaan is zelf ook een goede beslissing.",
-      marketTone: "De markt laat zwakte zien — wachten is de juiste move.",
+      headline: t("advice_no_buy_title"),
+      verdict: t("advice_no_buy_verdict"),
+      bestAction: t("advice_no_buy_action"),
+      biggestMistake: t("advice_no_buy_mistake"),
+      lesson: t("advice_no_buy_lesson"),
+      marketTone: t("advice_no_buy_tone"),
     };
     if (signal.status === "Goed moment" && inBuyZone) return {
-      headline: "Dit is een netter instapmoment",
-      verdict: "De setup klopt en de prijs staat op een logische plek.",
-      bestAction: "Blijf klein en gedisciplineerd. Dit is een oefentrade.",
-      biggestMistake: "Te veel willen verdienen op één trade.",
-      lesson: "Een goede trade is meestal saai, gecontroleerd en duidelijk.",
-      marketTone: signal.trend4h === "bullish" ? "Trend helpt mee — positief." : "Gemengde trend — extra voorzichtig.",
+      headline: t("advice_entry_title"),
+      verdict: t("advice_entry_verdict"),
+      bestAction: t("advice_entry_action"),
+      biggestMistake: t("advice_entry_mistake"),
+      lesson: t("advice_entry_lesson"),
+      marketTone: signal.trend4h === "bullish" ? t("advice_entry_tone_bull") : t("advice_entry_tone_mixed"),
     };
     if (aboveBuyZone) return {
-      headline: "Te hoog om nu in te stappen",
-      verdict: "De setup is niet slecht, maar de prijs staat te hoog voor een nette entry.",
+      headline: t("advice_too_high_title"),
+      verdict: t("advice_too_high_verdict"),
       bestAction: `Wacht tot $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
-      biggestMistake: "Instappen uit FOMO dat de stijging zonder jou doorgaat.",
-      lesson: "Waar je koopt is bijna even belangrijk als wat je koopt.",
-      marketTone: "Prijs beweegt, maar jouw moment is er nog niet.",
+      biggestMistake: t("advice_too_high_mistake"),
+      lesson: t("advice_too_high_lesson"),
+      marketTone: t("advice_too_high_tone"),
     };
     if (belowBuyZone) return {
-      headline: "Wacht op bevestiging",
-      verdict: "Prijs staat onder de koopzone — kan interessant worden, maar extra risico.",
-      bestAction: "Wacht tot de prijs laat zien dat hij wil stabiliseren.",
-      biggestMistake: "Denken dat een lagere prijs automatisch een betere koop is.",
-      lesson: "Een vallend mes vangen is vaak te vroeg.",
-      marketTone: "Eerst bevestiging zien, dan vertrouwen.",
+      headline: t("advice_wait_title"),
+      verdict: t("advice_wait_verdict"),
+      bestAction: t("advice_wait_action"),
+      biggestMistake: t("advice_wait_mistake"),
+      lesson: t("advice_wait_lesson"),
+      marketTone: t("advice_wait_tone"),
     };
     return {
-      headline: "De markt is nog niet klaar",
-      verdict: "Begrijp eerst wat je ziet voordat je iets doet.",
-      bestAction: "Gebruik dit moment als training.",
-      biggestMistake: "Traden uit verveling of ongeduld.",
-      lesson: "Je leert sneller als je wacht op kwaliteit.",
-      marketTone: "Nog niet klikken.",
+      headline: t("advice_default_title"),
+      verdict: t("advice_default_verdict"),
+      bestAction: t("advice_default_action"),
+      biggestMistake: t("advice_default_mistake"),
+      lesson: t("advice_default_lesson"),
+      marketTone: t("advice_default_tone"),
     };
-  }, [chartPrice, signal]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chartPrice, signal, lang]);
 
   const marketContext = useMemo(() =>
     [
@@ -491,7 +499,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       `24h: ${change24h >= 0 ? "+" : ""}${change24h.toFixed(2)}%`,
       `Status: ${signal.status} — ${signal.action}`,
       `Score: ${signal.score}/100, Grade: ${signal.setupGrade}`,
-      `Trends: Dagelijks ${nl(signal.trend1d)}, 4H ${nl(signal.trend4h)}, 1H ${nl(signal.trend1h)}`,
+      `Trends: Dagelijks ${nlTrend(signal.trend1d, lang)}, 4H ${nlTrend(signal.trend4h, lang)}, 1H ${nlTrend(signal.trend1h, lang)}`,
       `RSI: 4H ${signal.rsi4h.toFixed(1)}, Dagelijks ${signal.rsi1d.toFixed(1)}`,
       `Koopzone: ${signal.entryZoneText}`,
       `Support: $${Math.round(signal.supportZoneLow).toLocaleString("en-US")}–$${Math.round(signal.supportZoneHigh).toLocaleString("en-US")}`,
@@ -573,12 +581,12 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               title="Ontvang een melding als de prijs de koopzone raakt"
               style={{ height: 30, fontSize: 12, padding: "0 12px" }}
             >
-              🔔 Meldingen aan
+              {t("status_notifications_on")}
             </button>
           )}
           {notifAllowed && (
             <span className="terminal-soft-badge" title="Browser meldingen actief" style={{ fontSize: 11 }}>
-              🔔 Meldingen actief
+              {t("status_notifications_active")}
             </span>
           )}
           <button
@@ -587,7 +595,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             disabled={refreshing}
             style={{ height: 30, fontSize: 12, padding: "0 12px" }}
           >
-            {refreshing ? "⟳ Laden…" : "↻ Vernieuwen"}
+            {refreshing ? t("loading") : t("refresh")}
           </button>
         </div>
       </section>
@@ -614,13 +622,12 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           {/* Geen intraday data melding voor aandelen/grondstoffen */}
           {candlesEmpty && dailyCandles.length > 0 && (
             <div className="chart-market-closed-banner">
-              🕐 Geen recente intraday data — beurs is gesloten of data niet beschikbaar.
-              Dagelijkse historische grafiek (1D) wordt getoond.
+              {t("notif_market_closed")}
             </div>
           )}
           {candlesEmpty && dailyCandles.length === 0 && (
             <div className="chart-market-closed-banner">
-              ⏳ Chartdata laden…
+              {t("status_loading_chart")}
             </div>
           )}
 
@@ -634,7 +641,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     <div className="terminal-multi-chart-header">
                       <span className="terminal-multi-chart-label">{tf.label}</span>
                       <span className="terminal-multi-chart-hint">{tf.hint}</span>
-                      {tfCandles.length === 0 && <span className="terminal-multi-chart-loading">laden…</span>}
+                      {tfCandles.length === 0 && <span className="terminal-multi-chart-loading">{t("loading")}</span>}
                     </div>
                     <TradingChart
                       candles={tfCandles}
@@ -667,14 +674,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
           {/* Bottom tab bar */}
           <div className="bottom-tab-bar">
-            {BOTTOM_TABS.map(t => (
+            {BOTTOM_TABS.map(tab => (
               <button
-                key={t.key}
-                className={`bottom-tab-btn${bottomTab === t.key ? " active" : ""}`}
-                onClick={() => setBottomTab(t.key)}
+                key={tab.key}
+                className={`bottom-tab-btn${bottomTab === tab.key ? " active" : ""}`}
+                onClick={() => setBottomTab(tab.key)}
               >
-                <span className="bottom-tab-icon">{t.icon}</span>
-                <span className="bottom-tab-label">{t.label}</span>
+                <span className="bottom-tab-icon">{tab.icon}</span>
+                <span className="bottom-tab-label">{tab.label}</span>
               </button>
             ))}
           </div>
@@ -684,16 +691,16 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "paper" && (
               <>
                 <div className="paper-step-label">
-                  <span className="paper-step-num">Stap 1</span>
-                  <span className="paper-step-title">AI Analyse — moet ik deze trade doen?</span>
+                  <span className="paper-step-num">{t("step1_label")}</span>
+                  <span className="paper-step-title">{t("step1_title")}</span>
                 </div>
                 <TradePartnerPanel
                   signal={signal} currentPrice={chartPrice} asset={asset}
                   signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
                 />
                 <div className="paper-step-label" style={{ marginTop: 8 }}>
-                  <span className="paper-step-num">Stap 2</span>
-                  <span className="paper-step-title">Voer de trade uit met je paper geld</span>
+                  <span className="paper-step-num">{t("step2_label")}</span>
+                  <span className="paper-step-title">{t("step2_title")}</span>
                 </div>
                 <TerminalPaperPanel
                   currentPrice={chartPrice} status={signal.status} action={signal.action}
@@ -744,14 +751,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 />
                 <div className="terminal-data-grid" style={{ marginTop: 12 }}>
                   {[
-                    ["Trend 1H", nl(signal.trend1h)], ["Trend 4H", nl(signal.trend4h)],
-                    ["Trend dagelijks", nl(signal.trend1d)],
-                    ["RSI 1H", signal.rsi1h.toFixed(1)], ["RSI 4H", signal.rsi4h.toFixed(1)],
-                    ["RSI dagelijks", signal.rsi1d.toFixed(1)],
-                    ["Score", `${signal.score}/100`], ["Grade", signal.setupGrade],
-                    ["R/R verhouding", String(signal.riskRewardEstimate)],
-                    ["Ruimte naar boven", `${signal.distanceToResistancePct.toFixed(1)}%`],
-                    ...(isBinance ? [["Funding rate", fundingRate], ["Open interest", openInterest]] : []),
+                    [t("label_trend_1h"), nlTrend(signal.trend1h, lang)], [t("label_trend_4h"), nlTrend(signal.trend4h, lang)],
+                    [t("label_trend_1d"), nlTrend(signal.trend1d, lang)],
+                    [t("label_rsi_1h"), signal.rsi1h.toFixed(1)], [t("label_rsi_4h"), signal.rsi4h.toFixed(1)],
+                    [t("label_rsi_1d"), signal.rsi1d.toFixed(1)],
+                    [t("label_score"), `${signal.score}/100`], [t("label_grade"), signal.setupGrade],
+                    [t("label_rr"), String(signal.riskRewardEstimate)],
+                    [t("label_upside"), `${signal.distanceToResistancePct.toFixed(1)}%`],
+                    ...(isBinance ? [[t("label_funding"), fundingRate], [t("label_oi"), openInterest]] : []),
                   ].map(([label, value]) => (
                     <div key={label} className="terminal-data-box">
                       <span className="terminal-data-label">{label}</span>

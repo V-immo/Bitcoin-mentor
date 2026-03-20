@@ -4,20 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const LINKS = [
-  { href: "/",             label: "Scanner",       icon: "⚡" },
-  { href: "/trade",        label: "Traden",        icon: "📈" },
-  { href: "/leren",        label: "Leren",         icon: "🎓" },
-  { href: "/stats",        label: "Statistieken",  icon: "📊" },
-  { href: "/profiel",      label: "Profiel",       icon: "👤" },
-  { href: "/instellingen", label: "Instellingen",  icon: "⚙️" },
-  { href: "/help",         label: "Help",          icon: "❓" },
-];
+  { href: "/",             key: "nav_link_scanner",  icon: "⚡" },
+  { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
+  { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
+  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+  { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
+  { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
+  { href: "/help",         key: "nav_link_help",     icon: "❓" },
+] as const;
 
 export default function Nav() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -33,7 +35,7 @@ export default function Nav() {
   if (pathname.startsWith("/auth/")) return null;
 
   const allLinks = isAdmin
-    ? [...LINKS, { href: "/admin", label: "Admin", icon: "🛡️" }]
+    ? [...LINKS, { href: "/admin", key: "Admin" as const, icon: "🛡️" }]
     : LINKS;
 
   return (
@@ -55,7 +57,7 @@ export default function Nav() {
                 className={`app-nav-link${active ? " active" : ""}`}
               >
                 <span className="app-nav-icon">{l.icon}</span>
-                <span className="app-nav-label">{l.label}</span>
+                <span className="app-nav-label">{l.key.startsWith("nav_") ? t(l.key as Parameters<typeof t>[0]) : l.key}</span>
               </Link>
             );
           })}
@@ -70,7 +72,7 @@ export default function Nav() {
               className="app-nav-logout"
               onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
             >
-              Uitloggen
+              {t("nav_logout")}
             </button>
           </div>
         )}
@@ -114,7 +116,7 @@ export default function Nav() {
                     className={`nav-mobile-link${active ? " active" : ""}`}
                   >
                     <span className="nav-mobile-link-icon">{l.icon}</span>
-                    <span>{l.label}</span>
+                    <span>{l.key.startsWith("nav_") ? t(l.key as Parameters<typeof t>[0]) : l.key}</span>
                   </Link>
                 );
               })}
@@ -125,7 +127,7 @@ export default function Nav() {
                 className="nav-mobile-logout"
                 onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
               >
-                Uitloggen
+                {t("nav_logout")}
               </button>
             )}
           </div>
