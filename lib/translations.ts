@@ -416,6 +416,6 @@ const translations = {
 
 export type TranslationKey = keyof typeof translations.nl;
 
-export function getTranslations(lang: Lang): typeof translations.nl {
-  return translations[lang] ?? translations.nl;
+export function getTranslations(lang: Lang): Record<TranslationKey, string> {
+  return translations[lang] as Record<TranslationKey, string>;
 }
