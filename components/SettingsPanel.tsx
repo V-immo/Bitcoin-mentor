@@ -89,6 +89,15 @@ export default function SettingsPanel() {
     setSaved(false);
   }
 
+  async function saveLanguage(lang: "nl" | "en") {
+    setSettings((prev) => ({ ...prev, aiLanguage: lang }));
+    await fetch("/api/me/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...settings, aiLanguage: lang }),
+    });
+  }
+
   async function save() {
     const res = await fetch("/api/me/settings", {
       method: "PUT",
@@ -181,13 +190,13 @@ export default function SettingsPanel() {
         <div className="settings-options settings-options-2">
           <button
             className={`settings-option${settings.aiLanguage === "nl" ? " active" : ""}`}
-            onClick={() => update("aiLanguage", "nl")}
+            onClick={() => saveLanguage("nl")}
           >
             <div className="settings-option-title">🇳🇱 Nederlands</div>
           </button>
           <button
             className={`settings-option${settings.aiLanguage === "en" ? " active" : ""}`}
-            onClick={() => update("aiLanguage", "en")}
+            onClick={() => saveLanguage("en")}
           >
             <div className="settings-option-title">🇬🇧 English</div>
           </button>
