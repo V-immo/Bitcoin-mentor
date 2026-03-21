@@ -5,9 +5,9 @@ import { getYahooPrice } from "@/lib/yahoo";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 
-// Rate limiting: max 3 quiz generaties per dag per user
+// Rate limiting: max 10 quiz generaties per dag per user
 const quizRateMap = new Map<string, { count: number; resetAt: number }>();
-const QUIZ_MAX = 3;
+const QUIZ_MAX = 10;
 
 function checkQuizRate(key: string): boolean {
   const now = Date.now();
@@ -77,7 +77,7 @@ async function getMarketSnapshot(): Promise<string> {
   try {
     const [btcCandles, ethCandles] = await Promise.race([
       Promise.all([getCandles("4h", 14, "BTCUSDT"), getCandles("4h", 14, "ETHUSDT")]),
-      timeout(6000).then(() => { throw new Error("timeout"); }),
+      timeout(3000).then(() => { throw new Error("timeout"); }),
     ]);
 
     const btcPrice = btcCandles[btcCandles.length - 1]?.close ?? 0;
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
   const rateKey = userId ? `user:${userId}` : (request.headers.get("x-forwarded-for") ?? "anon");
   if (!checkQuizRate(rateKey)) {
     return Response.json(
-      { error: "Je hebt het dagelijkse quotum bereikt (3 quizzen/dag). Kom morgen terug!" },
+      { error: "RATE_LIMIT" },
       { status: 429 }
     );
   }
@@ -200,8 +200,8 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
 
   try {
     const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 1500,
+      model: "claude-haiku-4-5",
+      max_tokens: 900,
       messages: [{ role: "user", content: prompt }],
     });
 

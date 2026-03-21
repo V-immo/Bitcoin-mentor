@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { QuizQuestion } from "@/app/api/quiz/route";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const QUIZ_KEY = "bitcoin-mentor-quiz";
 
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export default function QuizChat({ question, selectedAnswer }: Props) {
+  const { t, lang } = useLanguage();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -66,13 +68,14 @@ Gegeven antwoord van de trader: ${selectedAnswer}${selectedAnswer !== question.c
           traderLevel: profile.level,
           weakTopics: profile.weakTopics,
           questionContext,
+          lang,
         }),
       });
       const json = await res.json();
-      const reply = json.reply ?? "Geen antwoord ontvangen.";
+      const reply = json.reply ?? t("quiz_chat_no_reply");
       setMessages([...next, { role: "assistant", content: reply }]);
     } catch {
-      setMessages([...next, { role: "assistant", content: "Fout bij verbinden met Marcus." }]);
+      setMessages([...next, { role: "assistant", content: t("quiz_chat_error") }]);
     }
     setLoading(false);
   }
@@ -88,8 +91,8 @@ Gegeven antwoord van de trader: ${selectedAnswer}${selectedAnswer !== question.c
     <div className="quiz-chat">
       <div className="quiz-chat-header">
         <span className="quiz-chat-avatar">M</span>
-        <span className="quiz-chat-title">Vraag het aan Marcus</span>
-        <span className="quiz-chat-hint">Snap je de uitleg niet helemaal? Vraag door.</span>
+        <span className="quiz-chat-title">{t("quiz_chat_title")}</span>
+        <span className="quiz-chat-hint">{t("quiz_chat_hint")}</span>
       </div>
 
       {messages.length > 0 && (
@@ -118,7 +121,7 @@ Gegeven antwoord van de trader: ${selectedAnswer}${selectedAnswer !== question.c
         <textarea
           ref={inputRef}
           className="quiz-chat-input"
-          placeholder="Stel een vraag over deze uitleg…"
+          placeholder={t("quiz_chat_placeholder")}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}

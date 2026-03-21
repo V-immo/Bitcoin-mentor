@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { MentorSignal, TradeBrief } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
   signal: MentorSignal;
@@ -19,6 +20,7 @@ function eur(n: number) {
 }
 
 export default function TradePartnerPanel({ signal, currentPrice, asset, signalReady, onExecuteTrade }: Props) {
+  const { t } = useLanguage();
   const [brief, setBrief] = useState<TradeBrief | null>(null);
   const [loading, setLoading] = useState(false);
   const [executed, setExecuted] = useState(false);
@@ -65,26 +67,28 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
 
   return (
     <section className="terminal-side-card">
-      <div className="terminal-label">Trading Partner</div>
+      <div className="terminal-label">{t("partner_label")}</div>
       <div style={{ fontSize: 12, color: "#8b95ad", marginBottom: 8, lineHeight: 1.5 }}>
-        Je virtuele tradingpartner analyseert het signaal en vertelt je of het slim is om nu in te stappen — inclusief risico, doel en uitleg. Klik op &ldquo;Open deze trade&rdquo; om het automatisch in je Paper Trading te zetten.
+        {t("partner_desc")}
       </div>
       <div className="terminal-side-title" style={{ marginBottom: 0 }}>
-        {!brief && !loading && "Wacht op signaal…"}
-        {loading && "Briefing laden…"}
+        {!brief && !loading && t("partner_waiting")}
+        {loading && t("partner_loading")}
         {brief && !loading && (
           <span style={{ color: isLong ? "#26c57c" : "#f59e0b", fontWeight: 700 }}>
-            {isLong ? `Ik ga long op ${ticker}` : `Ik sla deze ${ticker} over`}
+            {isLong
+              ? `${t("partner_long")} ${ticker}`
+              : `${t("partner_skip")} ${ticker}${t("partner_skip_suffix") ? " " + t("partner_skip_suffix") : ""}`}
           </span>
         )}
       </div>
 
       {brief && !loading && (
         <>
-          {/* Niveaus */}
+          {/* Levels */}
           <div className="terminal-paper-stats" style={{ marginTop: 10 }}>
             <div className="terminal-mini-box">
-              <span className="terminal-mini-label">Instap</span>
+              <span className="terminal-mini-label">{t("partner_entry")}</span>
               <span className="terminal-mini-value">${fmt(brief.entryPrice, 0)}</span>
             </div>
             <div className="terminal-mini-box">
@@ -92,7 +96,7 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
               <span className="terminal-mini-value" style={{ color: "#ef4444" }}>${fmt(brief.stopLoss, 0)}</span>
             </div>
             <div className="terminal-mini-box">
-              <span className="terminal-mini-label">Doel</span>
+              <span className="terminal-mini-label">{t("partner_target")}</span>
               <span className="terminal-mini-value" style={{ color: "#26c57c" }}>${fmt(brief.target, 0)}</span>
             </div>
             <div className="terminal-mini-box">
@@ -101,48 +105,48 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
             </div>
           </div>
 
-          {/* Euro bedragen */}
+          {/* Euro amounts */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 6 }}>
             <div className="terminal-mini-box" style={{ borderColor: "rgba(239,68,68,0.2)" }}>
-              <span className="terminal-mini-label">Risico</span>
+              <span className="terminal-mini-label">{t("partner_risk")}</span>
               <span className="terminal-mini-value" style={{ color: "#ef4444" }}>−{eur(brief.riskEur)}</span>
-              <span style={{ fontSize: 10, color: "#8b95ad" }}>als stop geraakt</span>
+              <span style={{ fontSize: 10, color: "#8b95ad" }}>{t("partner_if_stop")}</span>
             </div>
             <div className="terminal-mini-box" style={{ borderColor: "rgba(38,197,124,0.2)" }}>
-              <span className="terminal-mini-label">Verwachte winst</span>
+              <span className="terminal-mini-label">{t("partner_expected_profit")}</span>
               <span className="terminal-mini-value" style={{ color: "#26c57c" }}>+{eur(brief.expectedProfitEur)}</span>
-              <span style={{ fontSize: 10, color: "#8b95ad" }}>als doel gehaald</span>
+              <span style={{ fontSize: 10, color: "#8b95ad" }}>{t("partner_if_target")}</span>
             </div>
           </div>
 
-          {/* Uitleg secties */}
+          {/* Explanation sections */}
           <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
             <div className="trade-partner-section">
-              <div className="trade-partner-label">Waarom nu?</div>
+              <div className="trade-partner-label">{t("partner_why_now")}</div>
               <div className="trade-partner-text">{brief.waaromNu}</div>
             </div>
             <div className="trade-partner-section">
-              <div className="trade-partner-label">Wanneer uitstappen?</div>
+              <div className="trade-partner-label">{t("partner_when_exit")}</div>
               <div className="trade-partner-text">{brief.wanneerUitStappen}</div>
             </div>
             <div className="trade-partner-section" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-              <div className="trade-partner-label" style={{ color: "#ef4444" }}>Grootste risico</div>
+              <div className="trade-partner-label" style={{ color: "#ef4444" }}>{t("partner_biggest_risk")}</div>
               <div className="trade-partner-text">{brief.grootsteRisico}</div>
             </div>
             <div className="trade-partner-section">
-              <div className="trade-partner-label">Verwacht scenario</div>
+              <div className="trade-partner-label">{t("partner_expected_scenario")}</div>
               <div className="trade-partner-text">{brief.verwachtScenario}</div>
               {brief.tijdshorizon && (
-                <div style={{ marginTop: 4, fontSize: 11, color: "#8b95ad" }}>Tijdshorizon: {brief.tijdshorizon}</div>
+                <div style={{ marginTop: 4, fontSize: 11, color: "#8b95ad" }}>{t("partner_time_horizon")} {brief.tijdshorizon}</div>
               )}
             </div>
           </div>
 
-          {/* Actie */}
+          {/* Action */}
           {isLong && (
             <div style={{ marginTop: 12 }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 6 }}>
-                <label className="terminal-mini-label" style={{ whiteSpace: "nowrap" }}>Bedrag (€)</label>
+                <label className="terminal-mini-label" style={{ whiteSpace: "nowrap" }}>{t("partner_amount_label")}</label>
                 <input
                   className="terminal-terminal-input"
                   value={tradeAmount}
@@ -156,11 +160,11 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
                 onClick={handleExecute}
                 style={{ width: "100%", fontWeight: 700, fontSize: 13 }}
               >
-                ▶ Open deze trade ({eur(Number(tradeAmount) || 1000)})
+                {t("partner_open_trade")} ({eur(Number(tradeAmount) || 1000)})
               </button>
               {executed && (
                 <div className="trade-partner-executed">
-                  ✓ Trade geopend in paper trading
+                  {t("partner_executed")}
                 </div>
               )}
             </div>
@@ -170,7 +174,7 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
 
       {loading && (
         <div style={{ marginTop: 12, color: "#8b95ad", fontSize: 13, textAlign: "center" }}>
-          Analyseer markt…
+          {t("partner_analysing")}
         </div>
       )}
 
@@ -181,12 +185,12 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
           disabled={loading}
           style={{ flex: 1, fontSize: 12 }}
         >
-          {loading ? "⟳ Laden…" : "↻ Heranalyseer"}
+          {loading ? `⟳ ${t("loading")}` : t("partner_reanalyse")}
         </button>
       </div>
 
       <div style={{ marginTop: 6, fontSize: 11, color: "#4b5563", textAlign: "center" }}>
-        Educatief · geen financieel advies · test geld
+        {t("partner_disclaimer")}
       </div>
     </section>
   );

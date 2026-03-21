@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
     currentPrice: number;
@@ -16,6 +17,7 @@ function eur(value: number) {
 }
 
 export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
+    const { t } = useLanguage();
     const [accountSize, setAccountSize] = useState("10000");
     const [riskPct, setRiskPct] = useState("1");
     const [customStop, setCustomStop] = useState(String(Math.round(stopLoss)));
@@ -47,18 +49,18 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
 
     return (
         <section className="terminal-side-card">
-            <div className="terminal-label">Risico-calculator</div>
+            <div className="terminal-label">{t("calc_label")}</div>
 
-            {/* Compacte invoer op 1 rij */}
+            {/* Compact input on 1 row */}
             <div style={{ display: "flex", gap: 8, alignItems: "flex-end", flexWrap: "wrap", marginTop: 10 }}>
                 <div style={{ flex: "1 1 90px", minWidth: 80 }}>
-                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>Kapitaal €</div>
+                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_capital")}</div>
                     <input className="terminal-terminal-input" style={{ width: "100%" }}
                         value={accountSize} onChange={(e) => setAccountSize(e.target.value)}
                         inputMode="decimal" placeholder="10000" />
                 </div>
                 <div style={{ flex: "0 0 auto" }}>
-                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>Risico %</div>
+                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_risk_pct")}</div>
                     <div style={{ display: "flex", gap: 4 }}>
                         {["0.5","1","2"].map(v => (
                             <button key={v}
@@ -70,36 +72,36 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
                     </div>
                 </div>
                 <div style={{ flex: "1 1 90px", minWidth: 80 }}>
-                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>Stop $</div>
+                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_stop")}</div>
                     <input className="terminal-terminal-input" style={{ width: "100%" }}
                         value={customStop} onChange={(e) => setCustomStop(e.target.value)}
                         inputMode="decimal" placeholder={String(Math.round(stopLoss))} />
                 </div>
             </div>
 
-            {/* Resultaat op 1 rij */}
+            {/* Result on 1 row */}
             {result ? (
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 10, padding: "8px 10px", background: "var(--surface-2)", borderRadius: 8, alignItems: "center" }}>
                     <div>
-                        <div className="terminal-mini-label">Max positie</div>
+                        <div className="terminal-mini-label">{t("calc_max_position")}</div>
                         <div style={{ fontWeight: 700, fontSize: 16, color: "var(--primary)" }}>{eur(result.positionSize)}</div>
                     </div>
                     <div className="terminal-mini-box">
-                        <span className="terminal-mini-label">Risico</span>
+                        <span className="terminal-mini-label">{t("calc_risk")}</span>
                         <span className="terminal-mini-value terminal-mini-value-red">{eur(result.riskAmount)}</span>
                     </div>
                     <div className="terminal-mini-box">
-                        <span className="terminal-mini-label">Stop %</span>
+                        <span className="terminal-mini-label">{t("calc_stop_pct")}</span>
                         <span className="terminal-mini-value">{result.stopDistancePct.toFixed(1)}%</span>
                     </div>
                     <div className="terminal-mini-box">
-                        <span className="terminal-mini-label">Target 1:2</span>
+                        <span className="terminal-mini-label">{t("calc_target")}</span>
                         <span className="terminal-mini-value">${Math.round(result.rrTarget).toLocaleString("en-US")}</span>
                     </div>
                 </div>
             ) : (
                 <div className="terminal-chat-empty" style={{ marginTop: 8, fontSize: 12 }}>
-                    Vul kapitaal + stop in om te berekenen.
+                    {t("calc_fill_hint")}
                 </div>
             )}
         </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function escape(s: string) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -61,20 +62,22 @@ type Props = {
     asset: string;
 };
 
-const QUICK_QUESTIONS = [
-    { label: "Wat doen we vandaag?", prompt: "Marcus, wat gaan we vandaag doen? Stel een concrete oefening of taak voor die me dichter bij zelfstandig traden brengt. Kijk naar de markt en kies iets praktisch: een trade opzetten, een patroon analyseren, of een concept oefenen. Wees specifiek en stap voor stap." },
-    { label: "Geef een briefing", prompt: "Geef een volledige briefing" },
-    { label: "Moet ik nu kopen?", prompt: "Moet ik nu kopen?" },
-    { label: "Zet trade op met mij", prompt: "Zet een trade op met mij — begeleid me stap voor stap: entry, stop-loss, target en hoeveel ik inzet." },
-    { label: "Vergelijk alle assets", prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg.", prewarm: true },
-    { label: "Hoe gaat mijn trade?", prompt: "Hoe gaat mijn open trade?" },
-    { label: "3 scenario's", prompt: "Geef me 3 scenario's voor dit asset: bullish, bearish en sideways. Wat doe ik in elk scenario?" },
-    { label: "Stop-loss strategie", prompt: "Wat is mijn stop-loss strategie voor dit asset? Leg uit waarom die stop-loss logisch is." },
-    { label: "Leg RSI uit", prompt: "Leg de RSI uit aan de hand van de huidige waarde van dit asset." },
-    { label: "Hoe werkt R/R?", prompt: "Hoe werkt risk/reward? Bereken het voor mijn huidige situatie." },
+// Static Dutch prompts sent to the AI — these stay in Dutch (AI language)
+const QUICK_QUESTION_PROMPTS = [
+    { labelKey: "chat_q_today" as const, prompt: "Marcus, wat gaan we vandaag doen? Stel een concrete oefening of taak voor die me dichter bij zelfstandig traden brengt. Kijk naar de markt en kies iets praktisch: een trade opzetten, een patroon analyseren, of een concept oefenen. Wees specifiek en stap voor stap.", isPrimary: true },
+    { labelKey: "chat_q_briefing" as const, prompt: "Geef een volledige briefing" },
+    { labelKey: "chat_q_buy" as const, prompt: "Moet ik nu kopen?" },
+    { labelKey: "chat_q_trade" as const, prompt: "Zet een trade op met mij — begeleid me stap voor stap: entry, stop-loss, target en hoeveel ik inzet." },
+    { labelKey: "chat_q_compare" as const, prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg.", prewarm: true },
+    { labelKey: "chat_q_trade_status" as const, prompt: "Hoe gaat mijn open trade?" },
+    { labelKey: "chat_q_scenarios" as const, prompt: "Geef me 3 scenario's voor dit asset: bullish, bearish en sideways. Wat doe ik in elk scenario?" },
+    { labelKey: "chat_q_stoploss" as const, prompt: "Wat is mijn stop-loss strategie voor dit asset? Leg uit waarom die stop-loss logisch is." },
+    { labelKey: "chat_q_rsi" as const, prompt: "Leg de RSI uit aan de hand van de huidige waarde van dit asset." },
+    { labelKey: "chat_q_rr" as const, prompt: "Hoe werkt risk/reward? Bereken het voor mijn huidige situatie." },
 ];
 
 export default function MentorChat({ marketContext, asset }: Props) {
+    const { t, lang } = useLanguage();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
@@ -165,14 +168,14 @@ export default function MentorChat({ marketContext, asset }: Props) {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics }),
+                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang }),
             });
             const json = await res.json();
-            const finalMessages: Message[] = [{ role: "assistant", content: json.reply || "Geen antwoord." }];
+            const finalMessages: Message[] = [{ role: "assistant", content: json.reply || t("chat_no_reply") }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
         } catch {
-            setMessages([{ role: "assistant", content: "Verbindingsfout bij opstarten." }]);
+            setMessages([{ role: "assistant", content: t("chat_error_start") }]);
         } finally {
             setLoading(false);
         }
@@ -192,19 +195,19 @@ export default function MentorChat({ marketContext, asset }: Props) {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics }),
+                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang }),
             });
             const json = await res.json();
             const finalMessages: Message[] = [
                 ...next,
-                { role: "assistant", content: json.reply || "Geen antwoord." },
+                { role: "assistant", content: json.reply || t("chat_no_reply") },
             ];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
         } catch {
             setMessages((prev) => [
                 ...prev,
-                { role: "assistant", content: "Verbindingsfout. Probeer opnieuw." },
+                { role: "assistant", content: t("chat_error_retry") },
             ]);
         } finally {
             setLoading(false);
@@ -220,15 +223,15 @@ export default function MentorChat({ marketContext, asset }: Props) {
     return (
         <section className="terminal-side-card terminal-chat-card">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div className="terminal-label">Vraag de mentor</div>
+                <div className="terminal-label">{t("chat_label")}</div>
                 {messages.length > 0 && (
                     <button
                         className="terminal-btn terminal-btn-muted"
                         onClick={clearChat}
                         style={{ fontSize: 11, padding: "2px 8px", height: 24 }}
-                        title="Wis gesprek en start opnieuw"
+                        title={t("chat_clear_title")}
                     >
-                        Wis chat
+                        {t("chat_clear_btn")}
                     </button>
                 )}
             </div>
@@ -236,7 +239,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
             <div className="terminal-chat-messages">
                 {messages.length === 0 && (
                     <div className="terminal-chat-empty">
-                        Stel een vraag over de markt, je trade of strategie.
+                        {t("chat_empty")}
                     </div>
                 )}
 
@@ -256,18 +259,18 @@ export default function MentorChat({ marketContext, asset }: Props) {
 
                 {loading && (
                     <div className="terminal-chat-msg terminal-chat-assistant">
-                        <span className="terminal-chat-typing">Denkt na...</span>
+                        <span className="terminal-chat-typing">{t("chat_thinking")}</span>
                     </div>
                 )}
                 <div ref={bottomRef} />
             </div>
 
             <div className="terminal-chat-quick">
-                {QUICK_QUESTIONS.map((q) => (
+                {QUICK_QUESTION_PROMPTS.map((q) => (
                     <button
-                        key={q.label}
+                        key={q.labelKey}
                         type="button"
-                        className={`terminal-chat-chip${q.label === "Wat doen we vandaag?" ? " terminal-chat-chip-primary" : ""}`}
+                        className={`terminal-chat-chip${q.isPrimary ? " terminal-chat-chip-primary" : ""}`}
                         onClick={async () => {
                             if (q.prewarm) {
                                 // Pre-warm de scan cache zodat Marcus alle assets kan vergelijken
@@ -279,7 +282,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
                         }}
                         disabled={userSending}
                     >
-                        {q.label === "Wat doen we vandaag?" ? "⭐ " : ""}{q.label}
+                        {q.isPrimary ? "⭐ " : ""}{t(q.labelKey)}
                     </button>
                 ))}
             </div>
@@ -289,7 +292,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
                     className="terminal-terminal-input"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Stel een vraag..."
+                    placeholder={t("chat_placeholder")}
                     disabled={loading}
                 />
                 <button

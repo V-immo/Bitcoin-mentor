@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
   status: string;
@@ -24,12 +25,6 @@ type Props = {
   lastTickLabel: string;
 };
 
-function getConfidence(score: number, grade: string) {
-  if (grade === "A" && score >= 72) return "Hoog";
-  if (grade === "B" || grade === "C") return "Middel";
-  return "Laag";
-}
-
 export default function AITradeCoach({
   status,
   action,
@@ -51,6 +46,14 @@ export default function AITradeCoach({
   liveMode,
   lastTickLabel,
 }: Props) {
+  const { t } = useLanguage();
+
+  function getConfidence(s: number, grade: string) {
+    if (grade === "A" && s >= 72) return t("coach_confidence_high");
+    if (grade === "B" || grade === "C") return t("coach_confidence_mid");
+    return t("coach_confidence_low");
+  }
+
   const coach = useMemo(() => {
     const inBuyZone =
       currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
@@ -66,80 +69,53 @@ export default function AITradeCoach({
     let simpleTranslation = "";
 
     if (blockers.length > 0) {
-      headline = "Ik zou je nu niet laten kopen";
-      verdict =
-        "Er zit op dit moment iets fundamenteel zwaks in deze setup. Daarom wil ik je hier beschermen.";
-      bestAction =
-        "Blijf kijken en oefen alleen met begrijpen wat de markt fout maakt.";
-      biggestMistake =
-        "Toch kopen omdat je hoopt dat de prijs ineens draait.";
-      lesson =
-        "Een slechte setup overslaan is ook een goede trade-beslissing.";
-      simpleTranslation =
-        "Simpel gezegd: de basis is nu niet gezond genoeg.";
+      headline = t("coach_no_buy_headline");
+      verdict = t("coach_no_buy_verdict");
+      bestAction = t("coach_no_buy_action");
+      biggestMistake = t("coach_no_buy_mistake");
+      lesson = t("coach_no_buy_lesson");
+      simpleTranslation = t("coach_no_buy_simple");
     } else if (status === "Goed moment" && inBuyZone) {
-      headline = "Dit is een netter leer-moment";
-      verdict =
-        "De setup is op dit moment bruikbaar en de prijs zit op een logischere plek.";
-      bestAction =
-        "Blijf klein en gedisciplineerd. Behandel dit als een oefentrade, niet als een gok.";
-      biggestMistake =
-        "Te veel willen verdienen op één trade.";
-      lesson =
-        "Een goede trade is meestal saai, gecontroleerd en duidelijk.";
-      simpleTranslation =
-        "Simpel gezegd: dit is een veel properere plek om naar een entry te kijken.";
+      headline = t("coach_entry_headline");
+      verdict = t("coach_entry_verdict");
+      bestAction = t("coach_entry_action");
+      biggestMistake = t("coach_entry_mistake");
+      lesson = t("coach_entry_lesson");
+      simpleTranslation = t("coach_entry_simple");
     } else if (status === "Nog even wachten" && aboveBuyZone) {
-      headline = "Ik wil je uit FOMO houden";
-      verdict =
-        "De setup is niet slecht, maar de prijs zit nog te hoog voor een nette entry.";
+      headline = t("coach_fomo_headline");
+      verdict = t("coach_fomo_verdict");
       bestAction =
-        `Wacht liever tot de prijs terug dichter bij ${Math.round(
+        `${t("coach_fomo_action_prefix")} ${Math.round(
           entryZoneLow
         ).toLocaleString("en-US")} - ${Math.round(entryZoneHigh).toLocaleString(
           "en-US"
-        )} komt.`;
-      biggestMistake =
-        "Instappen omdat je bang bent dat de move zonder jou doorgaat.";
-      lesson =
-        "Niet elke stijgende prijs is een goede koop. Waar je koopt is bijna net zo belangrijk als wat je koopt.";
-      simpleTranslation =
-        "Simpel gezegd: de markt is niet het probleem, jouw entry wel.";
+        )} ${t("coach_fomo_action_suffix")}`;
+      biggestMistake = t("coach_fomo_mistake");
+      lesson = t("coach_fomo_lesson");
+      simpleTranslation = t("coach_fomo_simple");
     } else if (belowBuyZone) {
-      headline = "Goedkoper voelt verleidelijk, maar wacht";
-      verdict =
-        "De prijs zit onder de koopzone. Dat lijkt interessant, maar kan ook betekenen dat de markt nog onrustig is.";
-      bestAction =
-        "Laat de prijs eerst tonen dat hij ergens wil houden in plaats van zomaar te blijven vallen.";
-      biggestMistake =
-        "Denken dat lager automatisch beter is.";
-      lesson =
-        "Een vallend mes vangen voelt soms slim, maar is vaak gewoon te vroeg.";
-      simpleTranslation =
-        "Simpel gezegd: eerst bevestiging, dan pas vertrouwen.";
+      headline = t("coach_below_headline");
+      verdict = t("coach_below_verdict");
+      bestAction = t("coach_below_action");
+      biggestMistake = t("coach_below_mistake");
+      lesson = t("coach_below_lesson");
+      simpleTranslation = t("coach_below_simple");
     } else {
-      headline = "De markt is nog niet klaar genoeg";
-      verdict =
-        "Ik wil dat je nu eerst begrijpt wat je ziet in plaats van iets te forceren.";
-      bestAction =
-        "Observeer en gebruik dit moment als training, niet als haastige trade-kans.";
-      biggestMistake =
-        "Traden uit verveling of ongeduld.";
-      lesson =
-        "Je groeit sneller als je leert wachten op kwaliteit.";
-      simpleTranslation =
-        "Simpel gezegd: nog niet klikken.";
+      headline = t("coach_default_headline");
+      verdict = t("coach_default_verdict");
+      bestAction = t("coach_default_action");
+      biggestMistake = t("coach_default_mistake");
+      lesson = t("coach_default_lesson");
+      simpleTranslation = t("coach_default_simple");
     }
 
     if (trend4h === "bullish" && structure4h === "bullish") {
-      marketTone =
-        "De 4H trend en structuur helpen mee. Dat is positief voor een long idee.";
+      marketTone = t("coach_tone_bull");
     } else if (trend4h === "bearish" || structure4h === "bearish") {
-      marketTone =
-        "De 4H trend of structuur werkt tegen. Daardoor is blind kopen gevaarlijker.";
+      marketTone = t("coach_tone_bear");
     } else {
-      marketTone =
-        "De markt is nog gemengd. Daarom wil ik dat je meer op prijspositie let.";
+      marketTone = t("coach_tone_mixed");
     }
 
     return {
@@ -151,6 +127,7 @@ export default function AITradeCoach({
       marketTone,
       simpleTranslation,
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     blockers,
     status,
@@ -163,6 +140,7 @@ export default function AITradeCoach({
 
   const confidence = useMemo(
     () => getConfidence(score, setupGrade),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [score, setupGrade]
   );
 
@@ -170,56 +148,56 @@ export default function AITradeCoach({
     <div className="mentor-hero-card">
       <div className="mentor-hero-top">
         <div>
-          <div className="label">Jouw mentor voor deze trade</div>
+          <div className="label">{t("coach_label")}</div>
           <div className="mentor-hero-title">{coach.headline}</div>
         </div>
 
         <div className="mentor-live-pill">
-          {liveMode ? "Ik kijk live met je mee" : "Ik werk op laatste analyse"}
+          {liveMode ? t("coach_live") : t("coach_last_analysis")}
           {lastTickLabel ? ` • ${lastTickLabel}` : ""}
         </div>
       </div>
 
       <div className="mentor-summary-row">
         <div className="mentor-summary-box">
-          <span className="mentor-summary-label">Status</span>
+          <span className="mentor-summary-label">{t("coach_status")}</span>
           <span className="mentor-summary-value">{status}</span>
         </div>
 
         <div className="mentor-summary-box">
-          <span className="mentor-summary-label">Actie</span>
+          <span className="mentor-summary-label">{t("coach_action")}</span>
           <span className="mentor-summary-value">{action}</span>
         </div>
 
         <div className="mentor-summary-box">
-          <span className="mentor-summary-label">Vertrouwen</span>
+          <span className="mentor-summary-label">{t("coach_confidence")}</span>
           <span className="mentor-summary-value">{confidence}</span>
         </div>
 
         <div className="mentor-summary-box">
-          <span className="mentor-summary-label">Grade</span>
+          <span className="mentor-summary-label">{t("coach_grade")}</span>
           <span className="mentor-summary-value">{setupGrade}</span>
         </div>
       </div>
 
       <div className="mentor-main-grid">
         <div className="mentor-main-box">
-          <div className="mentor-main-label">Wat ik je nu eerlijk zeg</div>
+          <div className="mentor-main-label">{t("coach_verdict_label")}</div>
           <div className="mentor-main-text">{coach.verdict}</div>
         </div>
 
         <div className="mentor-main-box">
-          <div className="mentor-main-label">Wat jij nu best doet</div>
+          <div className="mentor-main-label">{t("coach_best_action_label")}</div>
           <div className="mentor-main-text">{coach.bestAction}</div>
         </div>
 
         <div className="mentor-main-box">
-          <div className="mentor-main-label">Grootste fout nu</div>
+          <div className="mentor-main-label">{t("coach_biggest_mistake_label")}</div>
           <div className="mentor-main-text">{coach.biggestMistake}</div>
         </div>
 
         <div className="mentor-main-box">
-          <div className="mentor-main-label">Wat je vandaag leert</div>
+          <div className="mentor-main-label">{t("coach_lesson_label")}</div>
           <div className="mentor-main-text">{coach.lesson}</div>
         </div>
       </div>
@@ -228,41 +206,41 @@ export default function AITradeCoach({
         <div className="mentor-soft-item">{coach.simpleTranslation}</div>
         <div className="mentor-soft-item">{coach.marketTone}</div>
         <div className="mentor-soft-item">
-          Stop-loss rond ${Math.round(stopLoss).toLocaleString("en-US")} •
-          Resistance ${Math.round(resistanceZoneLow).toLocaleString("en-US")} - $
+          {t("coach_stop_resistance")} ${Math.round(stopLoss).toLocaleString("en-US")} •
+          {t("coach_resistance")} ${Math.round(resistanceZoneLow).toLocaleString("en-US")} - $
           {Math.round(resistanceZoneHigh).toLocaleString("en-US")}
         </div>
         <div className="mentor-soft-item">
-          Risk/reward {riskRewardEstimate} • Score {score}/100
+          {t("coach_rr_score")} {riskRewardEstimate} • {t("coach_score")} {score}/100
         </div>
 
         {trend1h === "bearish" && (
           <div className="mentor-soft-item">
-            De korte trend is nog zwak. Dat betekent: niet te snel springen.
+            {t("coach_short_trend_weak")}
           </div>
         )}
 
         {rsi4h > 72 && (
           <div className="mentor-soft-item">
-            RSI 4H is hoog. De markt kan te heet zijn.
+            {t("coach_rsi_high")}
           </div>
         )}
 
         {rsi4h < 35 && (
           <div className="mentor-soft-item">
-            RSI 4H is laag. Dat kan op extra zwakte wijzen.
+            {t("coach_rsi_low")}
           </div>
         )}
 
         {warnings.length > 0 && (
           <div className="mentor-soft-item">
-            Waarschuwing: {warnings[0]}
+            {t("coach_warning_prefix")} {warnings[0]}
           </div>
         )}
 
         {blockers.length > 0 && (
           <div className="mentor-soft-item mentor-soft-item-red">
-            Blocker: {blockers[0]}
+            {t("coach_blocker_prefix")} {blockers[0]}
           </div>
         )}
       </div>

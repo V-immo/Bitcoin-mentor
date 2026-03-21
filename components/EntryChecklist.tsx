@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 type Props = {
     currentPrice: number;
     entryZoneLow: number;
@@ -50,6 +52,8 @@ export default function EntryChecklist({
     stopLoss,
     riskRewardEstimate,
 }: Props) {
+    const { t } = useLanguage();
+
     const inZone = currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
     const aboveZone = currentPrice > entryZoneHigh;
     const belowZone = currentPrice < entryZoneLow;
@@ -57,95 +61,95 @@ export default function EntryChecklist({
     const stopPct = stopLoss > 0 ? pct(currentPrice, stopLoss) : 0;
     const toZonePct = belowZone ? pct(entryZoneLow, currentPrice) : 0;
 
-    // ── Dynamische checks ──────────────────────────────────────────────────
+    // ── Dynamic checks ──────────────────────────────────────────────────
 
     const checks: Check[] = [];
 
-    // 1. Dagelijkse trend — meest bepalend
+    // 1. Daily trend — most decisive
     checks.push({
-        label: "Grote trend (dagelijks)",
+        label: t("checklist_trend_daily_label"),
         status: trend1d === "bullish" ? "green" : trend1d === "neutral" ? "orange" : "red",
         detail: trend1d === "bullish"
-            ? "Dagelijkse trend is omhoog — rug tegen de wind ✓"
+            ? t("checklist_trend_daily_up")
             : trend1d === "neutral"
-                ? "Dagelijkse trend zijwaarts — wacht op duidelijkheid"
-                : "Dagelijkse trend omlaag — gevaarlijk om nu te kopen",
+                ? t("checklist_trend_daily_side")
+                : t("checklist_trend_daily_down"),
         why: trend1d === "bullish"
-            ? "De grote trend is je vriend. Als die omhoog gaat, werkt de markt voor je."
+            ? "The major trend is your friend. When it's going up, the market works for you."
             : trend1d === "neutral"
-                ? "Bij een zijwaartse markt is timing cruciaal — je kunt beter wachten op een duidelijke uitbraak."
-                : "Kopen tegen een dalende trend is als zwemmen tegen de stroom. Wacht op herstel of kies een ander asset.",
+                ? "In a sideways market timing is crucial — better to wait for a clear breakout."
+                : "Buying against a falling trend is like swimming upstream. Wait for recovery or choose a different asset.",
         priority: trend1d !== "bullish" ? 1 : 4,
     });
 
     // 2. 4H trend — timing
     checks.push({
-        label: "4H timing",
+        label: t("checklist_trend_4h_label"),
         status: trend4h === "bullish" ? "green" : trend4h === "neutral" ? "orange" : "red",
         detail: trend4h === "bullish"
-            ? "4H omhoog — timing klopt ✓"
+            ? t("checklist_trend_4h_up")
             : trend4h === "neutral"
-                ? "4H zijwaarts — onduidelijk instapmoment"
-                : "4H omlaag — te vroeg voor entry",
+                ? t("checklist_trend_4h_side")
+                : t("checklist_trend_4h_down"),
         why: trend4h === "bullish"
-            ? "De 4H bevestigt de dag-trend. Dit is het juiste moment om naar een entry te kijken."
+            ? "The 4H confirms the daily trend. This is the right time to look for an entry."
             : trend4h === "neutral"
-                ? "Je kunt te vroeg instappen als de 4H nog geen richting heeft. Wacht op een groen 4H-signaal."
-                : "Als de 4H daalt terwijl jij koopt, zit je meteen op verlies. Wacht tot de 4H draait.",
+                ? "You could enter too early if the 4H has no direction yet. Wait for a green 4H signal."
+                : "If the 4H is falling while you're buying, you're immediately at a loss. Wait until the 4H turns.",
         priority: trend4h !== "bullish" ? 2 : 5,
     });
 
-    // 3. Prijs vs koopzone
+    // 3. Price vs buy zone
     checks.push({
-        label: "Prijs in koopzone",
+        label: t("checklist_price_zone_label"),
         status: inZone ? "green" : aboveZone ? "orange" : "red",
         detail: inZone
             ? `$${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 2 })} in zone $${Math.round(entryZoneLow).toLocaleString("en-US")}–$${Math.round(entryZoneHigh).toLocaleString("en-US")} ✓`
             : aboveZone
-                ? `${pct(currentPrice, entryZoneHigh).toFixed(1)}% boven de zone — te duur`
-                : `${toZonePct.toFixed(1)}% onder zone — wacht tot de prijs stijgt naar $${Math.round(entryZoneLow).toLocaleString("en-US")}`,
+                ? `${pct(currentPrice, entryZoneHigh).toFixed(1)}% above zone — too expensive`
+                : `${toZonePct.toFixed(1)}% below zone — wait for price to rise to $${Math.round(entryZoneLow).toLocaleString("en-US")}`,
         why: inZone
-            ? "Je koopt op support — dat is precies de plek waar de kans het grootst is dat de prijs stijgt."
+            ? "You're buying at support — that's exactly the spot where the chance of price rising is highest."
             : aboveZone
-                ? "Je koopt nu te duur. Je stop-loss staat te ver weg en je R/R wordt slecht. Wacht op een pullback."
-                : "De prijs is nog niet bij de koopzone. Geduld — wacht tot die zone bereikt wordt voor een betere positie.",
+                ? "You're buying too expensive now. Your stop-loss is too far away and your R/R becomes poor. Wait for a pullback."
+                : "The price hasn't reached the buy zone yet. Patience — wait until that zone is reached for a better position.",
         priority: !inZone ? 1 : 6,
     });
 
-    // 4. RSI — dynamische drempel op basis van waarde
+    // 4. RSI — dynamic threshold based on value
     const rsiStatus: CheckStatus = rsi4h < 60 ? "green" : rsi4h < 72 ? "orange" : "red";
     checks.push({
-        label: "RSI 4H — momentum",
+        label: t("checklist_rsi_label"),
         status: rsiStatus,
         detail: rsi4h < 60
-            ? `RSI ${rsi4h.toFixed(1)} — ruimte om te stijgen ✓`
+            ? `RSI ${rsi4h.toFixed(1)} — room to rise ✓`
             : rsi4h < 72
-                ? `RSI ${rsi4h.toFixed(1)} — licht verhit, positie verkleinen`
-                : `RSI ${rsi4h.toFixed(1)} — overbought, wacht op afkoeling`,
+                ? `RSI ${rsi4h.toFixed(1)} — slightly overheated, reduce position`
+                : `RSI ${rsi4h.toFixed(1)} — overbought, wait for cooldown`,
         why: rsi4h < 60
-            ? `RSI ${rsi4h.toFixed(1)} geeft aan dat er nog voldoende koopkracht is. Geen tekenen van uitputting.`
+            ? `RSI ${rsi4h.toFixed(1)} indicates there's still enough buying power. No signs of exhaustion.`
             : rsi4h < 72
-                ? `RSI ${rsi4h.toFixed(1)} is licht verhit. Kopen kan, maar bouw een kleinere positie op voor minder risico.`
-                : `RSI ${rsi4h.toFixed(1)} betekent dat kopers bijna uitgeput zijn. Een correctie is waarschijnlijk — wacht.`,
+                ? `RSI ${rsi4h.toFixed(1)} is slightly overheated. Buying is possible, but build a smaller position for less risk.`
+                : `RSI ${rsi4h.toFixed(1)} means buyers are almost exhausted. A correction is likely — wait.`,
         priority: rsi4h >= 72 ? 2 : rsi4h >= 60 ? 4 : 7,
     });
 
-    // 5. Stop-loss kwaliteit — alleen als beschikbaar
+    // 5. Stop-loss quality — only if available
     if (stopLoss > 0 && stopPct > 0) {
         const stopStatus: CheckStatus = stopPct <= 5 ? "green" : stopPct <= 10 ? "orange" : "red";
         checks.push({
-            label: "Stop-loss afstand",
+            label: t("checklist_stop_label"),
             status: stopStatus,
             detail: stopPct <= 5
-                ? `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico ✓`
+                ? `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk ✓`
                 : stopPct <= 10
-                    ? `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico, wat ruim`
-                    : `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico, te ver`,
+                    ? `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk, a bit wide`
+                    : `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk, too far`,
             why: stopPct <= 5
-                ? `Met ${stopPct.toFixed(1)}% risico houd jij je verlies beperkt als het fout gaat.`
+                ? `With ${stopPct.toFixed(1)}% risk you keep your loss limited if things go wrong.`
                 : stopPct <= 10
-                    ? `${stopPct.toFixed(1)}% naar je stop is acceptabel maar pas je positiegrootte aan — kleiner inzetten.`
-                    : `Met ${stopPct.toFixed(1)}% risico naar je stop verlies je te veel als de trade tegenvalt. Zoek een betere entry of trade dit niet.`,
+                    ? `${stopPct.toFixed(1)}% to your stop is acceptable but adjust your position size — trade smaller.`
+                    : `With ${stopPct.toFixed(1)}% risk to your stop you lose too much if the trade goes against you. Find a better entry or don't trade this.`,
             priority: stopPct > 10 ? 2 : stopPct > 5 ? 5 : 7,
         });
     }
@@ -153,40 +157,40 @@ export default function EntryChecklist({
     // 6. Risk/reward
     const rrStatus: CheckStatus = rrVal >= 2 ? "green" : rrVal >= 1.5 ? "orange" : "red";
     checks.push({
-        label: "Risk/reward verhouding",
+        label: t("checklist_rr_label"),
         status: rrStatus,
         detail: rrVal >= 2
-            ? `R/R 1:${rrVal.toFixed(1)} — uitstekend ✓`
+            ? `R/R 1:${rrVal.toFixed(1)} — excellent ✓`
             : rrVal >= 1.5
-                ? `R/R 1:${rrVal.toFixed(1)} — acceptabel`
+                ? `R/R 1:${rrVal.toFixed(1)} — acceptable`
                 : rrVal > 0
-                    ? `R/R 1:${rrVal.toFixed(1)} — te laag`
-                    : `R/R onbekend`,
+                    ? `R/R 1:${rrVal.toFixed(1)} — too low`
+                    : `R/R unknown`,
         why: rrVal >= 2
-            ? `Je kunt ${rrVal.toFixed(1)}x je risico verdienen. Zelfs als je 40% van je trades verliest, ben je winstgevend.`
+            ? `You can earn ${rrVal.toFixed(1)}x your risk. Even losing 40% of your trades you stay profitable.`
             : rrVal >= 1.5
-                ? `Minimaal acceptabel. Je moet meer dan 40% van je trades winnen om winstgevend te blijven.`
-                : `Bij een R/R onder 1.5 moet je meer dan 60% van je trades winnen om break-even te draaien. Structureel verliezend.`,
+                ? `Minimum acceptable. You need to win more than 40% of your trades to stay profitable.`
+                : `With an R/R below 1.5 you need to win more than 60% of your trades to break even. Structurally losing.`,
         priority: rrVal < 1.5 ? 3 : rrVal < 2 ? 5 : 8,
     });
 
     // 7. Blockers
     const blockerStatus: CheckStatus = blockers.length === 0 ? "green" : blockers.length <= 1 ? "orange" : "red";
     checks.push({
-        label: "Blokkades",
+        label: t("checklist_blockers_label"),
         status: blockerStatus,
         detail: blockers.length === 0
-            ? "Geen blokkades gevonden ✓"
+            ? t("checklist_blockers_none")
             : `${blockers.length} blocker${blockers.length > 1 ? "s" : ""}: ${blockers.slice(0, 2).join(", ")}`,
         why: blockers.length === 0
-            ? "Geen technische rode vlaggen. Het systeem ziet geen directe reden om NIET in te stappen."
+            ? "No technical red flags. The system sees no direct reason NOT to enter."
             : blockers.length === 1
-                ? `"${blockers[0]}" is een waarschuwing. Je kunt instappen maar wees extra alert.`
-                : `Meerdere blockers tegelijk betekent: niet doen. Wacht tot ze opgelost zijn.`,
+                ? `"${blockers[0]}" is a warning. You can enter but be extra alert.`
+                : `Multiple blockers at the same time means: don't do it. Wait until they're resolved.`,
         priority: blockers.length >= 2 ? 1 : blockers.length === 1 ? 4 : 8,
     });
 
-    // Sorteer op prioriteit (lager = eerst tonen bij opsomming)
+    // Sort by priority (lower = shown first)
     const sorted = [...checks].sort((a, b) => a.priority - b.priority);
     const greenCount = checks.filter((c) => c.status === "green").length;
     const redCount = checks.filter((c) => c.status === "red").length;
@@ -197,25 +201,25 @@ export default function EntryChecklist({
 
     const overallLabel =
         overallStatus === "green"
-            ? "Goede setup — klaar om in te stappen"
+            ? t("checklist_overall_good")
             : overallStatus === "orange"
-                ? "Gemengde setup — pas op met positiegrootte"
-                : "Slechte setup — beter even wachten";
+                ? t("checklist_overall_mixed")
+                : t("checklist_overall_bad");
 
     return (
         <section className="terminal-side-card">
-            <div className="terminal-label">Entry-checklist</div>
+            <div className="terminal-label">{t("checklist_label")}</div>
 
             <div className={`terminal-checklist-score terminal-checklist-score-${overallStatus}`}>
                 <span className="terminal-checklist-score-icon">{icon(overallStatus)}</span>
                 <div>
                     <div className="terminal-checklist-score-label">{overallLabel}</div>
-                    <div className="terminal-checklist-score-sub">{greenCount}/{checks.length} checks groen</div>
+                    <div className="terminal-checklist-score-sub">{greenCount}/{checks.length} {t("checklist_green_count")}</div>
                 </div>
             </div>
 
             <details className="terminal-checklist-details">
-                <summary className="terminal-checklist-summary">Bekijk alle checks</summary>
+                <summary className="terminal-checklist-summary">{t("checklist_view_all")}</summary>
                 <div className="terminal-checklist-items">
                     {sorted.map((check) => (
                         <div key={check.label} className={`terminal-checklist-item terminal-checklist-item-${check.status}`}>

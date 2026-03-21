@@ -109,7 +109,8 @@ export async function POST(request: NextRequest) {
   // Haal quiz profiel op uit DB als ingelogd (niet vertrouwen op client body)
   let traderLevel: number = body.traderLevel ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
-  let aiLanguage: "nl" | "en" = "nl";
+  // Taal: body.lang als snelle fallback (gestuurd door frontend), DB als authoritative
+  let aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
 
   let quizHistorySummary = "";
 
@@ -221,10 +222,12 @@ Seizoenspatronen: Aandelen en edelmetalen kennen typische seizoensbewegingen (OP
     : "";
 
   const langNote = aiLanguage === "en"
-    ? "IMPORTANT: Always respond in English. The user prefers English."
-    : "BELANGRIJK: Antwoord altijd in het Nederlands.";
+    ? "CRITICAL LANGUAGE RULE: You MUST respond in English ONLY. Every single message must be in English. Never switch to Dutch. The user has selected English as their language."
+    : "TAALREGEL: Antwoord ALTIJD in het Nederlands. Nooit in het Engels.";
 
-  const systemPrompt = `Je bent Marcus, een ervaren trading mentor. ${langNote}
+  const systemPrompt = `You are Marcus, an experienced trading mentor. ${langNote}
+
+RESPONSE LANGUAGE: ${aiLanguage === "en" ? "ENGLISH" : "NEDERLANDS"} — this is mandatory for every response.
 
 JOUW MISSIE: Mensen leren ZELFSTANDIG traden in maximaal 3 maanden. Elke sessie brengt de gebruiker één meetbare stap dichter bij onafhankelijkheid. Je bent de BESTE trading mentor ter wereld — niet een chatbot. Jij hebt al honderden mensen leren traden. Je weet exact wanneer iemand klaar is voor de volgende stap en wanneer ze moeten herhalen.
 

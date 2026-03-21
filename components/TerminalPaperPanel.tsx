@@ -230,7 +230,8 @@ export default function TerminalPaperPanel({
         const amount = Number(buyAmount);
         if (!Number.isFinite(amount) || amount <= 0) return;
         if (amount > state.cash) return;
-        const inZone = currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
+        if (currentPrice <= 0) return; // prijs nog niet geladen
+        const inZone = entryZoneHigh > 0 && currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
         if (!inZone && !force) { setZoneWarning(true); return; }
         setZoneWarning(false);
         const btcAmount = amount / currentPrice;
@@ -254,6 +255,7 @@ export default function TerminalPaperPanel({
 
     function closeTrade() {
         if (state.openBtc <= 0) return;
+        if (currentPrice <= 0) return; // prijs nog niet geladen
         const valueNow = state.openBtc * currentPrice;
         const pnl = (currentPrice - state.avgEntry) * state.openBtc;
         const newId = crypto.randomUUID();
@@ -523,15 +525,15 @@ export default function TerminalPaperPanel({
                             className="terminal-btn terminal-btn-primary"
                             onClick={() => openBuy()}
                             style={{ flex: 2, fontSize: 14, fontWeight: 700 }}
-                            disabled={Number(buyAmount) > state.cash || Number(buyAmount) <= 0}
+                            disabled={Number(buyAmount) > state.cash || Number(buyAmount) <= 0 || currentPrice <= 0}
                         >
-                            {t("paper_btn_buy")}
+                            {currentPrice <= 0 ? t("loading") : t("paper_btn_buy")}
                         </button>
                         <button
                             className="terminal-btn"
                             onClick={closeTrade}
                             style={{ flex: 2, fontSize: 14, fontWeight: 700, borderColor: "#ef444455", color: state.openBtc > 0 ? "#ef4444" : undefined }}
-                            disabled={state.openBtc <= 0}
+                            disabled={state.openBtc <= 0 || currentPrice <= 0}
                         >
                             {t("paper_btn_sell")}
                         </button>
@@ -553,18 +555,20 @@ export default function TerminalPaperPanel({
                 <span>{t("paper_btn_hints_sell")} <strong>{t("paper_btn_hints_sell_label")}</strong> {t("paper_btn_hints_sell_desc")}</span>
             </div>
 
-            {/* Zone waarschuwing */}
+            {/* Zone waarschuwing — inline boven de knoppen, blokkeert niks */}
             {zoneWarning && (
-                <div className="terminal-zone-warning">
-                    <div className="terminal-zone-warning-title">{t("paper_zone_warning_title")}</div>
+                <div className="terminal-zone-warning" style={{ marginBottom: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div className="terminal-zone-warning-title">{t("paper_zone_warning_title")}</div>
+                        <button onClick={() => setZoneWarning(false)} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>✕</button>
+                    </div>
                     <div className="terminal-zone-warning-body">
                         {t("paper_zone_warning_body_prefix")} <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
                         {" "}{t("paper_zone_warning_body_suffix")}
                     </div>
-                    <div className="terminal-paper-actions" style={{ marginTop: 8 }}>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setZoneWarning(false)}>{t("paper_zone_wait")}</button>
-                        <button className="terminal-btn terminal-btn-danger" onClick={() => openBuy(true)}>{t("paper_zone_buy_anyway")}</button>
-                    </div>
+                    <button className="terminal-btn terminal-btn-danger" style={{ width: "100%", marginTop: 6 }} onClick={() => { setZoneWarning(false); openBuy(true); }}>
+                        {t("paper_zone_buy_anyway")}
+                    </button>
                 </div>
             )}
 

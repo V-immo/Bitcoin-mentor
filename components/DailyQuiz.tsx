@@ -134,6 +134,7 @@ export default function DailyQuiz() {
         }),
       });
       const data = await res.json();
+      if (res.status === 429 || data.error === "RATE_LIMIT") throw new Error(t("quiz_error_rate_limit"));
       if (!res.ok) throw new Error(data.error || t("quiz_error_server"));
       if (!data.questions?.length) throw new Error(t("quiz_error_no_questions"));
       setQuestions(data.questions);

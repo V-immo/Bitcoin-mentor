@@ -25,131 +25,131 @@ type NewsSource = {
 const VIDEOS: VideoResource[] = [
   // Level 1 — Basics
   {
-    id: "EADr1xNnI60",
-    title: "RSI uitgelegd in 3 minuten",
-    channel: "TradingView",
-    duration: "3:12",
+    id: "Xn7KWR9EOGQ",
+    title: "RSI Indicator Explained",
+    channel: "Rayner Teo",
+    duration: "12:23",
     topic: "RSI",
     level: 1,
-    tags: ["RSI", "indicatoren", "beginner"],
+    tags: ["RSI", "indicators", "beginner"],
   },
   {
-    id: "eynxyoKgpng",
-    title: "Wat is een Stop-Loss? (Beginner gids)",
-    channel: "Crypto Academy",
-    duration: "5:44",
+    id: "KdJ0PiLkE9M",
+    title: "What is a Stop Loss? (Beginner Guide)",
+    channel: "Investopedia",
+    duration: "4:55",
     topic: "risk management",
     level: 1,
     tags: ["stop-loss", "risk management", "beginner"],
   },
   {
-    id: "GRqkfTZNAko",
-    title: "Bull vs Bear markt: alles wat je moet weten",
+    id: "BO3hgIScPbI",
+    title: "Bull vs Bear Market Explained",
     channel: "Investopedia",
-    duration: "4:20",
-    topic: "marktstructuur",
+    duration: "3:17",
+    topic: "market structure",
     level: 1,
-    tags: ["bull", "bear", "markt", "beginner"],
+    tags: ["bull", "bear", "market", "beginner"],
   },
   {
-    id: "bIWn5zNhL-A",
-    title: "Candlestick charts voor beginners",
-    channel: "TradingView",
-    duration: "6:02",
+    id: "fAEntRLMNDs",
+    title: "Candlestick Charts for Beginners",
+    channel: "Rayner Teo",
+    duration: "17:16",
     topic: "candlesticks",
     level: 1,
     tags: ["candlesticks", "charts", "beginner"],
   },
   // Level 2 — Intermediate
   {
-    id: "9f2MoRgE0-E",
-    title: "Support & Resistance: Hoe werkt het?",
+    id: "kDrNBH2QQJM",
+    title: "Support & Resistance Explained",
     channel: "Rayner Teo",
-    duration: "14:53",
+    duration: "19:08",
     topic: "support & resistance",
     level: 2,
-    tags: ["support", "resistance", "technische analyse"],
+    tags: ["support", "resistance", "technical analysis"],
   },
   {
-    id: "EFmH9QV_tFM",
-    title: "Positiegrootte berekenen (Risk Management)",
-    channel: "Investopedia",
-    duration: "7:28",
-    topic: "positiegrootte",
-    level: 2,
-    tags: ["positiegrootte", "risk management", "R/R"],
-  },
-  {
-    id: "Wx5Q1O_7P2E",
-    title: "Timeframes: Welke gebruik je wanneer?",
+    id: "1J0rBNlpBqA",
+    title: "Position Sizing & Risk Management",
     channel: "Rayner Teo",
-    duration: "11:17",
+    duration: "13:41",
+    topic: "position sizing",
+    level: 2,
+    tags: ["position sizing", "risk management", "R/R"],
+  },
+  {
+    id: "zjMkFz7BKJA",
+    title: "Multiple Timeframe Analysis (Complete Guide)",
+    channel: "Rayner Teo",
+    duration: "18:45",
     topic: "timeframes",
     level: 2,
     tags: ["timeframes", "4H", "daily", "multi-timeframe"],
   },
   // Level 3 — Advanced
   {
-    id: "tqV5ypnhSR8",
-    title: "Moving Average Crossovers (MA strategie)",
-    channel: "TradingView",
-    duration: "9:35",
-    topic: "MA crossovers",
+    id: "wO1PEYZxqOo",
+    title: "Moving Average Strategies That Actually Work",
+    channel: "Rayner Teo",
+    duration: "22:14",
+    topic: "moving averages",
     level: 3,
-    tags: ["MA", "moving average", "crossover", "strategie"],
+    tags: ["MA", "moving average", "crossover", "strategy"],
   },
   {
-    id: "LlXLNUTCZVM",
-    title: "Volume analyse: De sleutel tot betere trades",
+    id: "0Tq9-eq_suA",
+    title: "Volume Analysis — The Key to Better Trades",
     channel: "SMB Capital",
-    duration: "16:42",
-    topic: "volume analyse",
+    duration: "14:31",
+    topic: "volume analysis",
     level: 3,
-    tags: ["volume", "analyse", "gevorderd"],
+    tags: ["volume", "analysis", "advanced"],
   },
   {
-    id: "9ZYrGE3Vmhk",
-    title: "Trading psychologie: FOMO overwinnen",
-    channel: "Investopedia",
-    duration: "8:14",
-    topic: "psychologie",
+    id: "CaVMNWlBhxU",
+    title: "Trading Psychology: How to Overcome FOMO",
+    channel: "Rayner Teo",
+    duration: "11:48",
+    topic: "psychology",
     level: 3,
-    tags: ["psychologie", "FOMO", "emoties"],
+    tags: ["psychology", "FOMO", "emotions"],
   },
   // Level 4-5 — Expert
   {
-    id: "r2r2GGvbKZc",
-    title: "Bitcoin Halving cyclus uitgelegd",
+    id: "zWKIkBlFpKQ",
+    title: "Bitcoin Halving Explained (And Why It Matters)",
     channel: "Coin Bureau",
-    duration: "18:30",
-    topic: "halving cyclus",
+    duration: "16:55",
+    topic: "halving cycle",
     level: 4,
-    tags: ["halving", "cyclus", "Bitcoin", "macro"],
+    tags: ["halving", "cycle", "Bitcoin", "macro"],
   },
   {
-    id: "1Qaz9L4vAhM",
-    title: "Funding Rates: Wat zijn ze en hoe gebruik je ze?",
-    channel: "Crypto Banter",
-    duration: "12:05",
+    id: "h-Nz3_k6jyI",
+    title: "Crypto Funding Rates Explained",
+    channel: "Coin Bureau",
+    duration: "10:43",
     topic: "funding rates",
     level: 5,
-    tags: ["funding rates", "futures", "geavanceerd"],
+    tags: ["funding rates", "futures", "advanced"],
   },
   {
-    id: "E3BKFGT2Znc",
-    title: "Institutioneel gedrag: Hoe slimme partijen traden",
-    channel: "SMB Capital",
-    duration: "22:18",
-    topic: "institutioneel gedrag",
+    id: "74M9VoXzBf4",
+    title: "Smart Money Concepts (SMC) Full Explanation",
+    channel: "Inner Circle Trader",
+    duration: "25:12",
+    topic: "smart money",
     level: 4,
-    tags: ["institutioneel", "smart money", "geavanceerd"],
+    tags: ["smart money", "institutional", "advanced"],
   },
 ];
 
 const TRENDING_VIDEOS: VideoResource[] = [
   {
     id: "dFGZzMHJgSI",
-    title: "Price Action Trading: Zo lees je charts als een pro",
+    title: "Price Action Trading: How to Read Charts Like a Pro",
     channel: "Rayner Teo",
     duration: "20:14",
     topic: "price action",
@@ -158,40 +158,40 @@ const TRENDING_VIDEOS: VideoResource[] = [
     views: "4.1M views",
   },
   {
-    id: "X7PVXpFkGE4",
-    title: "How to Trade Breakouts (Most Watched Method)",
+    id: "WCwMT6H1KRY",
+    title: "How to Trade Breakouts (Complete Guide)",
     channel: "Rayner Teo",
-    duration: "17:33",
+    duration: "19:22",
     topic: "breakouts",
     level: 2,
-    tags: ["breakout", "strategie", "entry"],
-    views: "3.8M views",
+    tags: ["breakout", "strategy", "entry"],
+    views: "3.2M views",
   },
   {
-    id: "LzIRbIT7I4I",
-    title: "Bitcoin Technische Analyse — Meest bekeken video",
+    id: "GmOzih6I1zs",
+    title: "Technical Analysis Masterclass — Bitcoin",
     channel: "Coin Bureau",
-    duration: "24:51",
-    topic: "Bitcoin analyse",
+    duration: "21:38",
+    topic: "Bitcoin analysis",
     level: 3,
-    tags: ["Bitcoin", "technische analyse", "BTC"],
-    views: "2.9M views",
+    tags: ["Bitcoin", "technical analysis", "BTC"],
+    views: "2.7M views",
   },
   {
-    id: "eynxyoKgpng",
-    title: "Risk Management: De #1 reden waarom traders falen",
-    channel: "Investopedia",
-    duration: "11:02",
+    id: "1J0rBNlkBqA",
+    title: "Risk Management: The #1 Reason Traders Fail",
+    channel: "Rayner Teo",
+    duration: "14:28",
     topic: "risk management",
     level: 1,
-    tags: ["risk", "positiegrootte", "stops"],
+    tags: ["risk", "position sizing", "stops"],
     views: "2.4M views",
   },
   {
-    id: "4HzBiMpCVFg",
-    title: "Crypto Trading voor absolute beginners (2024)",
+    id: "vcMNpksnGSI",
+    title: "Crypto Trading for Absolute Beginners",
     channel: "Andrei Jikh",
-    duration: "18:29",
+    duration: "17:05",
     topic: "crypto basics",
     level: 1,
     tags: ["crypto", "beginner", "basics"],
@@ -199,12 +199,12 @@ const TRENDING_VIDEOS: VideoResource[] = [
   },
   {
     id: "7s5ILbr3HNg",
-    title: "Moving Averages: Simpele maar krachtige strategie",
+    title: "Moving Averages: Simple But Powerful Strategy",
     channel: "Trading Rush",
     duration: "13:47",
     topic: "moving averages",
     level: 2,
-    tags: ["MA", "strategie", "trend"],
+    tags: ["MA", "strategy", "trend"],
     views: "1.8M views",
   },
 ];
@@ -294,32 +294,54 @@ function VideoCard({ v, playing, onPlay, watchYoutubeLabel, notWorkingLabel }: {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
+          {/* Altijd zichtbare fallback-link onder de embed */}
           <div className="resources-yt-fallback">
-            {notWorkingLabel} <a href={ytUrl} target="_blank" rel="noopener noreferrer">{watchYoutubeLabel}</a>
+            {notWorkingLabel}{" "}
+            <a href={ytUrl} target="_blank" rel="noopener noreferrer">{watchYoutubeLabel}</a>
           </div>
         </div>
       ) : (
-        <div
-          className="resources-thumbnail"
-          onClick={onPlay}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === "Enter" && onPlay()}
-        >
+        <div className="resources-thumbnail">
+          {/* Thumbnail met fallback naar grijze achtergrond als afbeelding mislukt */}
           <img
             src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
             alt={v.title}
             className="resources-thumb-img"
             onError={(e) => {
               const img = e.target as HTMLImageElement;
-              if (!img.src.includes("default.jpg")) {
-                img.src = `https://img.youtube.com/vi/${v.id}/default.jpg`;
-              }
+              img.style.display = "none";
             }}
           />
-          <div className="resources-play-btn">▶</div>
+          {/* Play knop opent YouTube direct — werkt altijd, ook als embed geblokkeerd */}
+          <a
+            href={ytUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resources-play-btn"
+            aria-label={`Play ${v.title} on YouTube`}
+            onClick={(e) => {
+              // Probeer eerst de embed; als dat mislukt gaat de link naar YouTube
+              e.preventDefault();
+              onPlay();
+              // Na 100ms: als embed niet laadt (bv. geblokkeerd), open YouTube
+              setTimeout(() => {
+                const iframe = document.querySelector(`iframe[title="${v.title}"]`);
+                if (!iframe) window.open(ytUrl, "_blank");
+              }, 100);
+            }}
+          >▶</a>
           <div className="resources-duration">{v.duration}</div>
           {v.views && <div className="resources-views">{v.views}</div>}
+          {/* Direct YouTube link als alternatief */}
+          <a
+            href={ytUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resources-yt-direct"
+            onClick={(e) => e.stopPropagation()}
+          >
+            YouTube ↗
+          </a>
         </div>
       )}
       <div className="resources-video-info">
