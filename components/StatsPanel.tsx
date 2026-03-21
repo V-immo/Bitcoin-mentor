@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type PaperTrade = {
     id: string;
@@ -11,10 +12,19 @@ type PaperTrade = {
     asset?: string;
 };
 
-const DAYS = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
-
 export default function StatsPanel() {
+    const { t } = useLanguage();
     const [trades, setTrades] = useState<PaperTrade[]>([]);
+
+    const DAYS = [
+        t("stats_days_zo"),
+        t("stats_days_ma"),
+        t("stats_days_di"),
+        t("stats_days_wo"),
+        t("stats_days_do"),
+        t("stats_days_vr"),
+        t("stats_days_za"),
+    ];
 
     useEffect(() => {
         async function loadTrades() {
@@ -39,17 +49,17 @@ export default function StatsPanel() {
     }, []);
 
     const sells = useMemo(
-        () => trades.filter((t) => t.side === "sell" && typeof t.pnl === "number"),
+        () => trades.filter((trade) => trade.side === "sell" && typeof trade.pnl === "number"),
         [trades]
     );
 
     const byDay = useMemo(() => {
         const map: Record<number, { pnl: number; count: number }> = {};
-        for (const t of sells) {
-            if (!t.timestamp) continue;
-            const day = new Date(t.timestamp).getDay();
+        for (const trade of sells) {
+            if (!trade.timestamp) continue;
+            const day = new Date(trade.timestamp).getDay();
             if (!map[day]) map[day] = { pnl: 0, count: 0 };
-            map[day].pnl += t.pnl || 0;
+            map[day].pnl += trade.pnl || 0;
             map[day].count++;
         }
         return map;
@@ -57,25 +67,25 @@ export default function StatsPanel() {
 
     const byAsset = useMemo(() => {
         const map: Record<string, { pnl: number; count: number; wins: number }> = {};
-        for (const t of sells) {
-            const key = (t.asset || "?").replace("USDT", "");
+        for (const trade of sells) {
+            const key = (trade.asset || "?").replace("USDT", "");
             if (!map[key]) map[key] = { pnl: 0, count: 0, wins: 0 };
-            map[key].pnl += t.pnl || 0;
+            map[key].pnl += trade.pnl || 0;
             map[key].count++;
-            if ((t.pnl || 0) > 0) map[key].wins++;
+            if ((trade.pnl || 0) > 0) map[key].wins++;
         }
         return map;
     }, [sells]);
 
-    const hasDayData = sells.some((t) => t.timestamp);
-    const hasAssetData = sells.some((t) => t.asset);
+    const hasDayData = sells.some((trade) => trade.timestamp);
+    const hasAssetData = sells.some((trade) => trade.asset);
 
     if (sells.length === 0) {
         return (
             <section className="terminal-side-card">
-                <div className="terminal-label">Dagboek statistieken</div>
+                <div className="terminal-label">{t("stats_panel_title")}</div>
                 <div className="terminal-stats-empty">
-                    Sluit je eerste trade — dan zie je hier welke dag en welk asset het beste voor jou werkt.
+                    {t("stats_panel_empty")}
                 </div>
             </section>
         );
@@ -83,11 +93,11 @@ export default function StatsPanel() {
 
     return (
         <section className="terminal-side-card">
-            <div className="terminal-label">Dagboek statistieken</div>
+            <div className="terminal-label">{t("stats_panel_title")}</div>
 
             {hasDayData && (
                 <>
-                    <div className="terminal-stats-subtitle">P/L per weekdag</div>
+                    <div className="terminal-stats-subtitle">{t("stats_panel_by_day")}</div>
                     <div className="terminal-stats-days">
                         {[1, 2, 3, 4, 5, 6, 0].map((d) => {
                             const data = byDay[d];
@@ -119,7 +129,7 @@ export default function StatsPanel() {
 
             {hasAssetData && Object.keys(byAsset).length >= 1 && (
                 <>
-                    <div className="terminal-stats-subtitle" style={{ marginTop: 12 }}>Per asset</div>
+                    <div className="terminal-stats-subtitle" style={{ marginTop: 12 }}>{t("stats_panel_by_asset")}</div>
                     <div className="terminal-stats-assets">
                         {Object.entries(byAsset).map(([assetName, data]) => {
                             const winrate = data.count > 0 ? Math.round((data.wins / data.count) * 100) : 0;
@@ -127,7 +137,7 @@ export default function StatsPanel() {
                             return (
                                 <div key={assetName} className="terminal-stats-asset-row">
                                     <span className="terminal-stats-asset-name">{assetName}</span>
-                                    <span className="terminal-stats-asset-wr">{winrate}% winrate</span>
+                                    <span className="terminal-stats-asset-wr">{winrate}% {t("stats_panel_winrate")}</span>
                                     <span className="terminal-stats-asset-pnl" style={{ color: isPos ? "#26c57c" : "#ef4444" }}>
                                         {isPos ? "+" : ""}€{data.pnl.toFixed(0)}
                                     </span>

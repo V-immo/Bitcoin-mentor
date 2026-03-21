@@ -1,13 +1,18 @@
+"use client";
+
 import StatsPanel from "@/components/StatsPanel";
 import GoalTracker from "@/components/GoalTracker";
 import Leaderboard from "@/components/Leaderboard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function StatsPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="stats-page">
       <div className="stats-header">
-        <h1 className="stats-title">Statistieken</h1>
-        <p className="stats-subtitle">Je papier-trading voortgang en prestaties</p>
+        <h1 className="stats-title">{t("stats_title")}</h1>
+        <p className="stats-subtitle">{t("stats_subtitle")}</p>
       </div>
 
       <div className="stats-grid">

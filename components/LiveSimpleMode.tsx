@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
   currentPrice: number;
@@ -35,6 +37,8 @@ export default function LiveSimpleMode({
   lastTickLabel,
   tickKey,
 }: Props) {
+  const { t } = useLanguage();
+
   const maxValue = Math.max(currentPrice, resistanceZoneHigh, entryZoneHigh);
   const minValue = Math.min(
     currentPrice,
@@ -59,7 +63,7 @@ export default function LiveSimpleMode({
   return (
     <section className="warm-hero-shell">
       <div className="warm-hero-left card">
-        <div className="label">Bitcoin nu</div>
+        <div className="label">{t("live_bitcoin_now")}</div>
         <div className="big-live-price" key={tickKey}>
           ${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 2 })}
         </div>
@@ -76,48 +80,46 @@ export default function LiveSimpleMode({
             <span
               className={`live-dot ${livePriceConnected ? "live-on" : "live-off"}`}
             />
-            Live prijs {livePriceConnected ? "verbonden" : "offline"}
+            {t("live_price_label")} {livePriceConnected ? t("live_price_connected") : t("live_price_offline")}
           </div>
 
           <div className="live-pill">
             <span
               className={`live-dot ${liveCandleConnected ? "live-on" : "live-off"}`}
             />
-            Live candles {liveCandleConnected ? "verbonden" : "offline"}
+            {t("live_candle_label")} {liveCandleConnected ? t("live_price_connected") : t("live_price_offline")}
           </div>
 
-          <div className="live-pill">Laatste tick: {lastTickLabel || "-"}</div>
+          <div className="live-pill">{t("live_last_tick")} {lastTickLabel || "-"}</div>
         </div>
       </div>
 
       <div className="warm-hero-right card">
-        <div className="label">Veilig leren</div>
+        <div className="label">{t("live_safe_label")}</div>
         <div className="warm-safety-title">
-          Je hoeft nu niets te forceren
+          {t("live_safe_title")}
         </div>
 
         <div className="warm-safety-list">
           <div className="warm-safety-item">
-            Je gebruikt nu nepgeld om te leren zonder risico.
+            {t("live_safe_item1")}
           </div>
           <div className="warm-safety-item">
-            De groene zone is waar de app liever een koop zoekt.
+            {t("live_safe_item2")}
           </div>
           <div className="warm-safety-item">
-            De rode lijn is waar de trade fout wordt in deze versie.
+            {t("live_safe_item3")}
           </div>
           <div className="warm-safety-item">
-            Goed traden begint niet met snel klikken, maar met begrijpen waar je bent.
+            {t("live_safe_item4")}
           </div>
         </div>
       </div>
 
       <div className="warm-zone-board card">
-        <div className="label">Lees dit eerst</div>
+        <div className="label">{t("live_read_label")}</div>
         <div className="warm-zone-board-text">
-          De witte lijn is de prijs nu. De groene zone is waar ik liever koop.
-          De rode lijn is waar de trade fout wordt. De grijze zone is waar het
-          moeilijker wordt om omhoog te gaan.
+          {t("live_zone_text")}
         </div>
 
         <div className="simple-mode-chart-wrap" style={{ marginTop: 14 }}>
@@ -129,7 +131,7 @@ export default function LiveSimpleMode({
                 height: `${Math.max(10, resistanceBottom - resistanceTop)}%`,
               }}
             >
-              <span>Moeilijk punt bovenaan</span>
+              <span>{t("live_resistance")}</span>
               <strong>
                 ${Math.round(resistanceZoneLow).toLocaleString("en-US")} - $
                 {Math.round(resistanceZoneHigh).toLocaleString("en-US")}
@@ -143,7 +145,7 @@ export default function LiveSimpleMode({
                 height: `${Math.max(10, entryBottom - entryTop)}%`,
               }}
             >
-              <span>Betere koopzone</span>
+              <span>{t("live_entry_zone")}</span>
               <strong>
                 ${Math.round(entryZoneLow).toLocaleString("en-US")} - $
                 {Math.round(entryZoneHigh).toLocaleString("en-US")}
@@ -151,7 +153,7 @@ export default function LiveSimpleMode({
             </div>
 
             <div className="simple-line stop-line" style={{ top: `${stopTop}%` }}>
-              <span>Stop-loss</span>
+              <span>{t("live_stop_loss")}</span>
               <strong>${Math.round(stopLoss).toLocaleString("en-US")}</strong>
             </div>
 
@@ -159,7 +161,7 @@ export default function LiveSimpleMode({
               className="simple-line current-line"
               style={{ top: `${currentTop}%` }}
             >
-              <span>NU</span>
+              <span>{t("live_current")}</span>
               <strong>${Math.round(currentPrice).toLocaleString("en-US")}</strong>
             </div>
           </div>

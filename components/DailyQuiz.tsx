@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { QuizQuestion, QuizResponse } from "@/app/api/quiz/route";
 import QuizChat from "@/components/QuizChat";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_CORRECT = 40;
 const XP_PER_LEVEL = 500;
@@ -18,10 +19,6 @@ type QuizHistory = {
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
-}
-
-function getLevelLabel(level: number): string {
-  return ["", "Beginner", "Gevorderd", "Ervaren", "Expert", "Master"][level] ?? "Beginner";
 }
 
 function XpBar({ xp, level }: { xp: number; level: number }) {
@@ -58,6 +55,7 @@ const DEFAULT_HISTORY: QuizHistory = {
 };
 
 export default function DailyQuiz() {
+  const { t } = useLanguage();
   const [history, setHistory] = useState<QuizHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [phase, setPhase] = useState<Phase>("home");
@@ -71,6 +69,17 @@ export default function DailyQuiz() {
   const [wrongQuestions, setWrongQuestions] = useState<QuizQuestion[]>([]);
   const [leveledUp, setLeveledUp] = useState(false);
   const [error, setError] = useState("");
+
+  function getLevelLabel(level: number): string {
+    return [
+      "",
+      t("quiz_level_beginner"),
+      t("quiz_level_advanced"),
+      t("quiz_level_experienced"),
+      t("quiz_level_expert"),
+      t("quiz_level_master"),
+    ][level] ?? t("quiz_level_beginner");
+  }
 
   const saveHistory = useCallback(async (newHistory: QuizHistory) => {
     try {
@@ -125,13 +134,13 @@ export default function DailyQuiz() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Server fout");
-      if (!data.questions?.length) throw new Error("Geen vragen ontvangen. Probeer het opnieuw.");
+      if (!res.ok) throw new Error(data.error || t("quiz_error_server"));
+      if (!data.questions?.length) throw new Error(t("quiz_error_no_questions"));
       setQuestions(data.questions);
       setMarketSnapshot(data.marketSnapshot);
       setPhase("quiz");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Onbekende fout");
+      setError(e instanceof Error ? e.message : t("quiz_error_server"));
       setPhase("home");
     }
   }
@@ -152,7 +161,6 @@ export default function DailyQuiz() {
   function nextQuestion() {
     if (current + 1 >= questions.length) {
       if (phase === "retry") {
-        // If still wrong questions remain, keep them for another retry round
         setPhase("result");
       } else {
         finishQuiz();
@@ -175,15 +183,13 @@ export default function DailyQuiz() {
     const newLevel = Math.min(5, Math.floor(newXp / XP_PER_LEVEL) + 1);
     const didLevelUp = newLevel > oldLevel;
 
-    // Update weak topics: add wrong, remove if recently correct
     const correctTopics = questions
       .filter((q) => !wrongTopics.includes(q.topic))
       .map((q) => q.topic);
     const updatedWeak = [
       ...new Set([...history.weakTopics, ...wrongTopics]),
-    ].filter((t) => !correctTopics.includes(t)).slice(0, 5);
+    ].filter((topic) => !correctTopics.includes(topic)).slice(0, 5);
 
-    // Streak
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yStr = yesterday.toISOString().slice(0, 10);
@@ -208,7 +214,6 @@ export default function DailyQuiz() {
   }
 
   function startRetry() {
-    // Only wrong questions, shuffled, options also shuffled per question
     const retryQs = shuffle(wrongQuestions).map((q) => ({
       ...q,
       options: shuffle(q.options),
@@ -224,13 +229,13 @@ export default function DailyQuiz() {
     setPhase("retry");
   }
 
-  if (loading || !history) return <div className="quiz-loading">Laden…</div>;
+  if (loading || !history) return <div className="quiz-loading">{t("quiz_loading")}</div>;
 
   if (phase === "loading") {
     return (
       <div className="quiz-loading-screen">
         <div className="quiz-spinner" />
-        <div className="quiz-loading-text">Quiz genereren met actuele marktdata…</div>
+        <div className="quiz-loading-text">{t("quiz_generating")}</div>
       </div>
     );
   }
@@ -252,7 +257,7 @@ export default function DailyQuiz() {
         {/* Retry banner */}
         {phase === "retry" && (
           <div className="quiz-retry-banner">
-            🔁 Herhaling — foute vragen in willekeurige volgorde
+            {t("quiz_retry_banner")}
           </div>
         )}
 
@@ -296,7 +301,7 @@ export default function DailyQuiz() {
           <>
             <div className={`quiz-explanation ${selected === q.correct ? "correct" : "wrong"}`}>
               <div className="quiz-explanation-header">
-                {selected === q.correct ? "✓ Correct!" : "✗ Fout"}
+                {selected === q.correct ? t("quiz_correct") : t("quiz_wrong")}
               </div>
               <div className="quiz-explanation-text">{q.explanation}</div>
             </div>
@@ -305,7 +310,7 @@ export default function DailyQuiz() {
             <QuizChat question={q} selectedAnswer={selected ?? ""} />
 
             <button className="quiz-next-btn" onClick={nextQuestion}>
-              {current + 1 >= questions.length ? "Resultaat bekijken →" : "Volgende vraag →"}
+              {current + 1 >= questions.length ? t("quiz_result_btn") : t("quiz_next_btn")}
             </button>
           </>
         )}
@@ -317,14 +322,14 @@ export default function DailyQuiz() {
     const total = questions.length;
     const pct = Math.round((correctCount / total) * 100);
     const xpEarned = correctCount * XP_PER_CORRECT;
-    const grade = pct >= 80 ? "Uitstekend" : pct >= 60 ? "Goed" : pct >= 40 ? "Oefenen" : "Bijspijkeren";
+    const grade = pct >= 80 ? t("quiz_grade_excellent") : pct >= 60 ? t("quiz_grade_good") : pct >= 40 ? t("quiz_grade_practice") : t("quiz_grade_study");
     const gradeColor = pct >= 80 ? "var(--green)" : pct >= 60 ? "var(--orange)" : "var(--red)";
 
     return (
       <div className="quiz-result-screen">
         {leveledUp && (
           <div className="quiz-levelup-banner">
-            🎉 Level up! Je bent nu {getLevelLabel(history.level)}!
+            {t("quiz_levelup")} {getLevelLabel(history.level)}!
           </div>
         )}
 
@@ -332,20 +337,20 @@ export default function DailyQuiz() {
           {correctCount}/{total}
         </div>
         <div className="quiz-result-grade" style={{ color: gradeColor }}>{grade}</div>
-        <div className="quiz-result-pct">{pct}% correct</div>
+        <div className="quiz-result-pct">{pct}{t("quiz_result_pct_correct")}</div>
 
         <div className="quiz-result-stats">
           <div className="quiz-result-stat">
             <span className="quiz-result-stat-val">+{xpEarned}</span>
-            <span className="quiz-result-stat-key">XP verdiend</span>
+            <span className="quiz-result-stat-key">{t("quiz_xp_earned")}</span>
           </div>
           <div className="quiz-result-stat">
             <span className="quiz-result-stat-val">{history.streak}</span>
-            <span className="quiz-result-stat-key">Dagen streak</span>
+            <span className="quiz-result-stat-key">{t("quiz_streak_days")}</span>
           </div>
           <div className="quiz-result-stat">
             <span className="quiz-result-stat-val">{getLevelLabel(history.level)}</span>
-            <span className="quiz-result-stat-key">Niveau</span>
+            <span className="quiz-result-stat-key">{t("quiz_level_label")}</span>
           </div>
         </div>
 
@@ -354,34 +359,34 @@ export default function DailyQuiz() {
         {wrongQuestions.length > 0 && (
           <div className="quiz-weak-topics">
             <div className="quiz-weak-label">
-              {wrongQuestions.length} vra{wrongQuestions.length === 1 ? "ag" : "gen"} fout — wil je ze opnieuw proberen?
+              {wrongQuestions.length} {wrongQuestions.length === 1 ? t("quiz_weak_title_single") : t("quiz_weak_title_plural")}
             </div>
             <div className="quiz-weak-list">
-              {[...new Set(wrongTopics)].map((t) => (
-                <span key={t} className="quiz-weak-tag">{t}</span>
+              {[...new Set(wrongTopics)].map((topic) => (
+                <span key={topic} className="quiz-weak-tag">{topic}</span>
               ))}
             </div>
             <button className="quiz-start-btn quiz-retry-wrong-btn" onClick={startRetry}>
-              🔁 Herhaal foute vragen ({wrongQuestions.length})
+              {t("quiz_retry_wrong_btn")} ({wrongQuestions.length})
             </button>
           </div>
         )}
 
         {wrongQuestions.length === 0 && wrongTopics.length === 0 && correctCount > 0 && (
           <div className="quiz-all-correct">
-            🎯 Alle vragen goed! Geweldig gedaan.
+            {t("quiz_all_correct")}
           </div>
         )}
 
         {marketSnapshot && (
           <div className="quiz-market-snap">
-            <div className="quiz-market-snap-label">Marktdata gebruikt in deze quiz:</div>
+            <div className="quiz-market-snap-label">{t("quiz_market_snap_label")}</div>
             <pre className="quiz-market-snap-data">{marketSnapshot}</pre>
           </div>
         )}
 
         <button className="quiz-retry-btn" onClick={() => setPhase("home")}>
-          ← Terug naar overzicht
+          {t("quiz_back_btn")}
         </button>
       </div>
     );
@@ -407,7 +412,7 @@ export default function DailyQuiz() {
         <div className="quiz-streak">
           <span className="quiz-streak-fire">🔥</span>
           <span className="quiz-streak-count">{history.streak}</span>
-          <span className="quiz-streak-label">streak</span>
+          <span className="quiz-streak-label">{t("quiz_streak_label")}</span>
         </div>
       </div>
 
@@ -416,20 +421,20 @@ export default function DailyQuiz() {
         {alreadyDoneToday ? (
           <div className="quiz-done-today">
             <div className="quiz-done-icon">✓</div>
-            <div className="quiz-done-text">Quiz vandaag al gedaan!</div>
-            <div className="quiz-done-sub">Kom morgen terug voor een nieuwe quiz.</div>
+            <div className="quiz-done-text">{t("quiz_done_today")}</div>
+            <div className="quiz-done-sub">{t("quiz_done_sub")}</div>
             <button className="quiz-start-btn quiz-start-btn-secondary" onClick={startQuiz}>
-              Nog een oefenronde doen →
+              {t("quiz_extra_round")}
             </button>
           </div>
         ) : (
           <>
             <div className="quiz-intro-text">
-              Dagelijkse trading quiz op basis van <strong>actuele marktdata</strong>.
-              Beantwoord vragen, verdien XP en word een betere trader.
+              {t("quiz_intro_text")} <strong>{t("quiz_intro_market")}</strong>.
+              {" "}{t("quiz_intro_desc")}
             </div>
             <button className="quiz-start-btn" onClick={startQuiz}>
-              Start dagelijkse quiz →
+              {t("quiz_start_btn")}
             </button>
           </>
         )}
@@ -439,14 +444,14 @@ export default function DailyQuiz() {
       {/* Weak topics */}
       {history.weakTopics.length > 0 && (
         <div className="quiz-section">
-          <div className="quiz-section-title">Jouw focuspunten</div>
+          <div className="quiz-section-title">{t("quiz_focus_title")}</div>
           <div className="quiz-weak-list">
-            {history.weakTopics.map((t) => (
-              <span key={t} className="quiz-weak-tag">{t}</span>
+            {history.weakTopics.map((topic) => (
+              <span key={topic} className="quiz-weak-tag">{topic}</span>
             ))}
           </div>
           <div className="quiz-section-sub">
-            Deze onderwerpen komen vaker terug in je quiz.
+            {t("quiz_focus_sub")}
           </div>
         </div>
       )}
@@ -454,10 +459,10 @@ export default function DailyQuiz() {
       {/* Recent history */}
       {recentHistory.length > 0 && (
         <div className="quiz-section">
-          <div className="quiz-section-title">Recente resultaten</div>
+          <div className="quiz-section-title">{t("quiz_recent_title")}</div>
           {avgScore > 0 && (
             <div className="quiz-avg-score">
-              Gemiddeld: <strong>{avgScore}%</strong> de laatste {recentHistory.length} quizzes
+              {t("quiz_avg_prefix")} <strong>{avgScore}%</strong> {t("quiz_avg_suffix_1")} {recentHistory.length} {t("quiz_avg_suffix_2")}
             </div>
           )}
           <div className="quiz-history-list">
@@ -484,7 +489,7 @@ export default function DailyQuiz() {
 
       {/* Level overview */}
       <div className="quiz-section">
-        <div className="quiz-section-title">Niveaus</div>
+        <div className="quiz-section-title">{t("quiz_levels_title")}</div>
         <div className="quiz-levels-grid">
           {[1, 2, 3, 4, 5].map((l) => (
             <div key={l} className={`quiz-level-card ${history.level >= l ? "unlocked" : "locked"}`}>

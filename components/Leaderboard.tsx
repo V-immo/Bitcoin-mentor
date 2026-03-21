@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type LeaderboardEntry = {
   rank: number;
@@ -35,10 +36,13 @@ function SkeletonRow() {
 }
 
 export default function Leaderboard() {
+  const { t, lang } = useLanguage();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const timeLocale = lang === "nl" ? "nl-BE" : "en-GB";
 
   async function fetchLeaderboard() {
     try {
@@ -52,7 +56,7 @@ export default function Leaderboard() {
       setLastUpdated(new Date());
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Fout bij laden");
+      setError(err instanceof Error ? err.message : t("trade_error_load"));
     } finally {
       setLoading(false);
     }
@@ -62,6 +66,7 @@ export default function Leaderboard() {
     fetchLeaderboard();
     const interval = setInterval(fetchLeaderboard, 30_000);
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -92,11 +97,11 @@ export default function Leaderboard() {
       `}</style>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-        <div className="label">Leaderboard</div>
+        <div className="label">{t("leaderboard_title")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {lastUpdated && (
             <span className="small-text muted">
-              {lastUpdated.toLocaleTimeString("nl-BE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+              {lastUpdated.toLocaleTimeString(timeLocale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
             </span>
           )}
           <button
@@ -121,11 +126,11 @@ export default function Leaderboard() {
           <thead>
             <tr style={{ borderBottom: "1px solid #2a1a28" }}>
               <th style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>#</th>
-              <th style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600 }}>Naam</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>P&amp;L (€)</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>Winrate</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>Trades</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>Quiz lvl</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_name")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_pnl")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_winrate")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_trades")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_quiz_lvl")}</th>
             </tr>
           </thead>
           <tbody>
@@ -135,8 +140,8 @@ export default function Leaderboard() {
               ? (
                 <tr>
                   <td colSpan={6} style={{ padding: "24px 8px", textAlign: "center" }}>
-                    <div className="muted small-text" style={{ marginBottom: 4 }}>Nog geen trades geplaatst.</div>
-                    <div className="muted small-text">Ga naar <strong>Traden</strong> → paper trading om hier te verschijnen.</div>
+                    <div className="muted small-text" style={{ marginBottom: 4 }}>{t("leaderboard_empty1")}</div>
+                    <div className="muted small-text">{t("leaderboard_empty2")} <strong>{t("leaderboard_empty3")}</strong> {t("leaderboard_empty4")}</div>
                   </td>
                 </tr>
               )
@@ -186,7 +191,7 @@ export default function Leaderboard() {
       </div>
 
       <div className="small-text muted" style={{ marginTop: 8, textAlign: "right" }}>
-        Vernieuwd elke 30 seconden
+        {t("leaderboard_refresh")}
       </div>
     </div>
   );

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function GoalTracker() {
+  const { t, lang } = useLanguage();
   const [goal, setGoal] = useState<number>(0);
   const [editGoal, setEditGoal] = useState(false);
   const [inputVal, setInputVal] = useState("");
@@ -12,8 +14,9 @@ export default function GoalTracker() {
   const [totalPnl, setTotalPnl] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
+  const locale = lang === "nl" ? "nl-NL" : "en-GB";
+
   useEffect(() => {
-    // Haal doel op uit settings API
     fetch("/api/me/settings")
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data?.goal) setGoal(data.goal); })
@@ -21,7 +24,6 @@ export default function GoalTracker() {
 
     async function loadPaperData() {
       try {
-        // Haal alle assets op en sommeer de balansen
         const results = await Promise.all(
           SCAN_ASSETS.map(a =>
             fetch(`/api/me/paper?asset=${encodeURIComponent(a.symbol)}`)
@@ -35,7 +37,6 @@ export default function GoalTracker() {
         let capital = 10000;
         let openPositionValue = 0;
 
-        // Haal live prijzen op voor assets met open posities
         const priceCache: Record<string, number> = {};
         for (const [i, data] of results.entries()) {
           if (!data) continue;
@@ -64,17 +65,15 @@ export default function GoalTracker() {
             if (livePrice > 0) openPositionValue += data.position.openBtc * livePrice;
           }
           const history: { pnl?: number; side?: string }[] = data.history ?? [];
-          for (const t of history) {
-            if (t.side === "sell" && typeof t.pnl === "number") pnl += t.pnl;
+          for (const trade of history) {
+            if (trade.side === "sell" && typeof trade.pnl === "number") pnl += trade.pnl;
           }
         }
 
-        // Gebruik het eerste asset (BTCUSDT) als referentie voor startkapitaal
         const btcData = results[0];
         if (btcData) {
           capital = btcData.startingBalance ?? 10000;
           setStartCapital(capital);
-          // Totaal saldo = cash van alle assets + waarde open posities
           setTotalBalance(totalCash + openPositionValue);
         }
 
@@ -108,15 +107,15 @@ export default function GoalTracker() {
   if (loading) {
     return (
       <section className="terminal-side-card goal-tracker">
-        <div className="terminal-label">Mijn doel</div>
-        <div style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 8 }}>Laden…</div>
+        <div className="terminal-label">{t("goal_title")}</div>
+        <div style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 8 }}>{t("goal_loading")}</div>
       </section>
     );
   }
 
   return (
     <section className="terminal-side-card goal-tracker">
-      <div className="terminal-label">🎯 Mijn doel</div>
+      <div className="terminal-label">{t("goal_title_icon")}</div>
 
       {!editGoal ? (
         <>
@@ -124,14 +123,14 @@ export default function GoalTracker() {
             <>
               <div className="goal-amounts">
                 <div className="goal-current">
-                  <div className="goal-amount-label">Huidig saldo (BTC)</div>
+                  <div className="goal-amount-label">{t("goal_current_label")}</div>
                   <div className={`goal-amount-value ${totalPnl >= 0 ? "pos" : "neg"}`}>
                     €{totalBalance.toFixed(0)}
                   </div>
                 </div>
                 <div className="goal-arrow">→</div>
                 <div className="goal-target">
-                  <div className="goal-amount-label">Doel</div>
+                  <div className="goal-amount-label">{t("goal_target_label")}</div>
                   <div className="goal-amount-value">€{goal.toFixed(0)}</div>
                 </div>
               </div>
@@ -147,13 +146,13 @@ export default function GoalTracker() {
               </div>
 
               {isComplete ? (
-                <div className="goal-complete">🎉 Doel behaald! Zet een nieuw doel.</div>
+                <div className="goal-complete">{t("goal_complete")}</div>
               ) : (
-                <div className="goal-needed">Nog €{needed.toFixed(0)} te gaan</div>
+                <div className="goal-needed">{t("goal_needed")} €{needed.toFixed(0)} {t("goal_needed_suffix")}</div>
               )}
 
               <div className="goal-pnl">
-                Totaal gerealiseerde winst/verlies:{" "}
+                {t("goal_pnl_label")}{" "}
                 <span className={totalPnl >= 0 ? "pos" : "neg"}>
                   {totalPnl >= 0 ? "+" : ""}€{totalPnl.toFixed(2)}
                 </span>
@@ -161,8 +160,8 @@ export default function GoalTracker() {
             </>
           ) : (
             <div className="goal-empty">
-              <p>Stel een doel in! Bijv: &ldquo;Ik wil mijn startkapitaal van €{startCapital.toLocaleString("nl-NL")} laten groeien naar €{(startCapital * 1.1).toFixed(0)}&rdquo;</p>
-              <p style={{ fontSize: 12, opacity: 0.7 }}>10% groei is al een uitstekend resultaat.</p>
+              <p>{t("goal_empty_hint")} &ldquo;{lang === "nl" ? "Ik wil mijn startkapitaal van" : "I want to"} €{startCapital.toLocaleString(locale)} {t("goal_empty_grow")} €{(startCapital * 1.1).toFixed(0)}&rdquo;</p>
+              <p style={{ fontSize: 12, opacity: 0.7 }}>{t("goal_empty_tip")}</p>
             </div>
           )}
 
@@ -170,27 +169,27 @@ export default function GoalTracker() {
             className="terminal-btn terminal-btn-muted goal-edit-btn"
             onClick={() => { setEditGoal(true); setInputVal(goal > 0 ? String(goal) : ""); }}
           >
-            {goal > 0 ? "Doel aanpassen" : "Doel instellen"}
+            {goal > 0 ? t("goal_edit_btn") : t("goal_set_btn")}
           </button>
         </>
       ) : (
         <div className="goal-edit-form">
-          <label className="goal-edit-label">Doelbedrag in euro&apos;s</label>
+          <label className="goal-edit-label">{t("goal_edit_label")}</label>
           <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8 }}>
-            Startkapitaal is €{startCapital.toLocaleString("nl-NL")}. Stel bijv. €{(startCapital * 1.1).toFixed(0)} in voor 10% groei.
+            {t("goal_edit_capital_hint")} €{startCapital.toLocaleString(locale)}. {t("goal_edit_growth_hint")} €{(startCapital * 1.1).toFixed(0)} {t("goal_edit_growth_suffix")}
           </div>
           <input
             className="terminal-terminal-input"
             type="number"
-            placeholder={`bijv. ${(startCapital * 1.1).toFixed(0)}`}
+            placeholder={`${t("goal_edit_placeholder")} ${(startCapital * 1.1).toFixed(0)}`}
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && saveGoal()}
             autoFocus
           />
           <div className="goal-edit-actions">
-            <button className="terminal-btn terminal-btn-primary" onClick={saveGoal}>Opslaan</button>
-            <button className="terminal-btn terminal-btn-muted" onClick={() => setEditGoal(false)}>Annuleren</button>
+            <button className="terminal-btn terminal-btn-primary" onClick={saveGoal}>{t("goal_save")}</button>
+            <button className="terminal-btn terminal-btn-muted" onClick={() => setEditGoal(false)}>{t("goal_cancel")}</button>
           </div>
         </div>
       )}

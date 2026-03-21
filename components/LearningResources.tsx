@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type VideoResource = {
   id: string;       // YouTube video ID
@@ -267,13 +268,6 @@ const NEWS_SOURCES: NewsSource[] = [
   },
 ];
 
-const CATEGORY_LABELS: Record<string, string> = {
-  crypto: "Crypto",
-  stocks: "Aandelen",
-  macro: "Macro",
-  education: "Educatie",
-};
-
 const CATEGORY_COLORS: Record<string, string> = {
   crypto: "#f59e0b",
   stocks: "#22c55e",
@@ -281,7 +275,13 @@ const CATEGORY_COLORS: Record<string, string> = {
   education: "#a78bfa",
 };
 
-function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean; onPlay: () => void }) {
+function VideoCard({ v, playing, onPlay, watchYoutubeLabel, notWorkingLabel }: {
+  v: VideoResource;
+  playing: boolean;
+  onPlay: () => void;
+  watchYoutubeLabel: string;
+  notWorkingLabel: string;
+}) {
   const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
   return (
     <div className="resources-video-card">
@@ -295,7 +295,7 @@ function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean;
             allowFullScreen
           />
           <div className="resources-yt-fallback">
-            Werkt de video niet? <a href={ytUrl} target="_blank" rel="noopener noreferrer">Bekijk op YouTube →</a>
+            {notWorkingLabel} <a href={ytUrl} target="_blank" rel="noopener noreferrer">{watchYoutubeLabel}</a>
           </div>
         </div>
       ) : (
@@ -334,8 +334,8 @@ function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean;
           </span>
         </div>
         <div className="resources-video-tags">
-          {v.tags.slice(0, 3).map((t) => (
-            <span key={t} className="resources-tag">{t}</span>
+          {v.tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="resources-tag">{tag}</span>
           ))}
         </div>
       </div>
@@ -344,6 +344,7 @@ function VideoCard({ v, playing, onPlay }: { v: VideoResource; playing: boolean;
 }
 
 export default function LearningResources() {
+  const { t } = useLanguage();
   const [activeLevel, setActiveLevel] = useState<number | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
@@ -351,13 +352,20 @@ export default function LearningResources() {
     ? VIDEOS.filter((v) => v.level === activeLevel)
     : VIDEOS;
 
+  const CATEGORY_LABELS: Record<string, string> = {
+    crypto: t("resources_cat_crypto"),
+    stocks: t("resources_cat_stocks"),
+    macro: t("resources_cat_macro"),
+    education: t("resources_cat_education"),
+  };
+
   return (
     <div className="resources-wrap">
 
       {/* Trending section */}
       <div className="resources-section">
         <div className="resources-section-title">
-          <span>🔥</span> Trending — Meest bekeken
+          <span>🔥</span> {t("resources_trending_title")}
         </div>
         <div className="resources-videos-grid">
           {TRENDING_VIDEOS.map((v) => (
@@ -366,6 +374,8 @@ export default function LearningResources() {
               v={v}
               playing={playingId === v.id}
               onPlay={() => setPlayingId(v.id)}
+              notWorkingLabel={t("resources_video_not_working")}
+              watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}
         </div>
@@ -375,14 +385,14 @@ export default function LearningResources() {
       <div className="resources-section">
         <div className="resources-section-header">
           <div className="resources-section-title">
-            <span>▶</span> Leervideo&apos;s per niveau
+            <span>▶</span> {t("resources_videos_title")}
           </div>
           <div className="resources-level-filter">
             <button
               className={`resources-level-btn ${activeLevel === null ? "active" : ""}`}
               onClick={() => setActiveLevel(null)}
             >
-              Alle
+              {t("resources_filter_all")}
             </button>
             {[1, 2, 3, 4, 5].map((l) => (
               <button
@@ -390,7 +400,7 @@ export default function LearningResources() {
                 className={`resources-level-btn ${activeLevel === l ? "active" : ""}`}
                 onClick={() => setActiveLevel(l === activeLevel ? null : l)}
               >
-                Lvl {l}
+                {t("resources_filter_lvl")} {l}
               </button>
             ))}
           </div>
@@ -403,6 +413,8 @@ export default function LearningResources() {
               v={v}
               playing={playingId === v.id}
               onPlay={() => setPlayingId(v.id)}
+              notWorkingLabel={t("resources_video_not_working")}
+              watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}
         </div>
@@ -411,7 +423,7 @@ export default function LearningResources() {
       {/* News sources section */}
       <div className="resources-section">
         <div className="resources-section-title">
-          <span>🌐</span> Volg deze bronnen
+          <span>🌐</span> {t("resources_news_title")}
         </div>
         <div className="resources-news-grid">
           {NEWS_SOURCES.map((s) => (

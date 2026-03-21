@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ScanResult } from "@/app/api/market-scan/route";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function Sparkline({ candles }: { candles: { close: number }[] }) {
   if (candles.length < 2) return <div style={{ height: 40 }} />;
@@ -31,6 +32,7 @@ function fmt(n: number): string {
 }
 
 export default function AssetScanner() {
+  const { t } = useLanguage();
   const [results, setResults] = useState<ScanResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "crypto" | "stock" | "metal" | "etf">("all");
@@ -48,24 +50,30 @@ export default function AssetScanner() {
   useEffect(() => { load(); }, []);
 
   function handleClick(symbol: string) {
-    // Sla op in localStorage zodat de trade pagina het oppikt
     localStorage.setItem("bitcoin-mentor-selected-asset", symbol);
     router.push("/trade");
   }
 
   const filtered = filter === "all" ? results : results.filter((r) => r.type === filter);
-  // Sorteer: groen eerst, dan geel, dan rood
   const sorted = [...filtered].sort((a, b) => b.score - a.score);
+
+  const filterLabels: Record<string, string> = {
+    all: t("scanner_filter_all"),
+    crypto: t("scanner_filter_crypto"),
+    stock: t("scanner_filter_stock"),
+    metal: t("scanner_filter_metal"),
+    etf: t("scanner_filter_etf"),
+  };
 
   return (
     <div className="scanner-page">
       <div className="scanner-header">
         <div>
-          <h1 className="scanner-title">Market Scanner</h1>
-          <p className="scanner-subtitle">Klik op een asset om te analyseren en te traden</p>
+          <h1 className="scanner-title">{t("scanner_title")}</h1>
+          <p className="scanner-subtitle">{t("scanner_subtitle")}</p>
         </div>
         <button className="terminal-btn terminal-btn-muted" onClick={load} disabled={loading} style={{ height: 36 }}>
-          {loading ? "⟳ Laden…" : "↻ Vernieuwen"}
+          {loading ? t("scanner_loading") : t("refresh")}
         </button>
       </div>
 
@@ -76,15 +84,15 @@ export default function AssetScanner() {
             className={`scanner-filter-btn${filter === f ? " active" : ""}`}
             onClick={() => setFilter(f)}
           >
-            {f === "all" ? "Alles" : f === "crypto" ? "Crypto" : f === "stock" ? "Aandelen" : f === "metal" ? "Metalen" : "ETF"}
+            {filterLabels[f]}
           </button>
         ))}
       </div>
 
       {loading && results.length === 0 && (
         <div className="scanner-loading">
-          <div className="scanner-loading-text">Marktdata ophalen voor alle assets…</div>
-          <div className="scanner-loading-sub">Dit duurt ~5 seconden</div>
+          <div className="scanner-loading-text">{t("scanner_fetching")}</div>
+          <div className="scanner-loading-sub">{t("scanner_fetching_sub")}</div>
         </div>
       )}
 

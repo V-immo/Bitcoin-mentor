@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type PaperTrade = {
     id: string;
@@ -97,6 +98,7 @@ export default function TerminalPaperPanel({
     asset,
     autoExecuteAmount,
 }: Props) {
+    const { t } = useLanguage();
     const [loaded, setLoaded] = useState(false);
     const [buyAmount, setBuyAmount] = useState("1000");
     const [pendingNoteId, setPendingNoteId] = useState<string | null>(null);
@@ -185,21 +187,21 @@ export default function TerminalPaperPanel({
     const totalPnl = totalBalance - state.startCapital;
     const totalPnlPct = state.startCapital > 0 ? (totalPnl / state.startCapital) * 100 : 0;
 
-    const winCount = state.trades.filter(t => t.side === "sell" && (t.pnl || 0) > 0).length;
-    const lossCount = state.trades.filter(t => t.side === "sell" && (t.pnl || 0) <= 0).length;
+    const winCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) > 0).length;
+    const lossCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) <= 0).length;
     const closedCount = winCount + lossCount;
     const winrate = closedCount > 0 ? (winCount / closedCount) * 100 : 0;
 
     const { avgWin, avgLoss, currentStreak, streakType } = useMemo(() => {
-        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
-        const wins = sells.filter(t => (t.pnl || 0) > 0);
-        const losses = sells.filter(t => (t.pnl || 0) <= 0);
-        const avgWin = wins.length > 0 ? wins.reduce((s, t) => s + (t.pnl || 0), 0) / wins.length : 0;
-        const avgLoss = losses.length > 0 ? losses.reduce((s, t) => s + (t.pnl || 0), 0) / losses.length : 0;
+        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
+        const wins = sells.filter(trade => (trade.pnl || 0) > 0);
+        const losses = sells.filter(trade => (trade.pnl || 0) <= 0);
+        const avgWin = wins.length > 0 ? wins.reduce((s, trade) => s + (trade.pnl || 0), 0) / wins.length : 0;
+        const avgLoss = losses.length > 0 ? losses.reduce((s, trade) => s + (trade.pnl || 0), 0) / losses.length : 0;
         let currentStreak = 0;
         let streakType: "win" | "loss" | null = null;
-        for (const t of sells) {
-            const isWin = (t.pnl || 0) > 0;
+        for (const trade of sells) {
+            const isWin = (trade.pnl || 0) > 0;
             if (streakType === null) { streakType = isWin ? "win" : "loss"; currentStreak = 1; }
             else if ((streakType === "win") === isWin) currentStreak++;
             else break;
@@ -208,12 +210,12 @@ export default function TerminalPaperPanel({
     }, [state.trades]);
 
     const bestTrade = useMemo(() => {
-        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
+        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
         return sells.length === 0 ? null : sells.reduce((a, b) => ((a.pnl || 0) > (b.pnl || 0) ? a : b));
     }, [state.trades]);
 
     const worstTrade = useMemo(() => {
-        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
+        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
         return sells.length === 0 ? null : sells.reduce((a, b) => ((a.pnl || 0) < (b.pnl || 0) ? a : b));
     }, [state.trades]);
 
@@ -276,7 +278,7 @@ export default function TerminalPaperPanel({
         if (!pendingNoteId || !noteInput.trim()) { setPendingNoteId(null); return; }
         setState((prev) => ({
             ...prev,
-            trades: prev.trades.map(t => t.id === pendingNoteId ? { ...t, note: noteInput.trim() } : t),
+            trades: prev.trades.map(trade => trade.id === pendingNoteId ? { ...trade, note: noteInput.trim() } : trade),
         }));
         setPendingNoteId(null);
         setNoteInput("");
@@ -294,8 +296,8 @@ export default function TerminalPaperPanel({
     if (!loaded) {
         return (
             <section className="terminal-side-card">
-                <div className="terminal-label">Nep geld traden</div>
-                <div className="terminal-side-title">Laden...</div>
+                <div className="terminal-label">{t("paper_label")}</div>
+                <div className="terminal-side-title">{t("paper_loading_label")}</div>
             </section>
         );
     }
@@ -310,54 +312,54 @@ export default function TerminalPaperPanel({
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                 <div>
-                    <div className="terminal-label">Nep geld traden</div>
-                    <div className="terminal-side-title" style={{ marginTop: 2 }}>Oefen zonder echt geld</div>
+                    <div className="terminal-label">{t("paper_label")}</div>
+                    <div className="terminal-side-title" style={{ marginTop: 2 }}>{t("paper_subtitle")}</div>
                 </div>
                 <button
                     className="terminal-btn terminal-btn-muted"
                     onClick={() => setShowHelp(v => !v)}
                     style={{ fontSize: 11, padding: "3px 10px" }}
                 >
-                    {showHelp ? "Verberg uitleg" : "? Hoe werkt dit"}
+                    {showHelp ? t("paper_help_toggle_hide") : t("paper_help_toggle_show")}
                 </button>
             </div>
 
             {/* Uitleg */}
             {showHelp && (
                 <div className="paper-help-box">
-                    <div className="paper-help-title">Wat is Paper Trading? 💡</div>
-                    <p>Je traint hier met <strong>nep geld</strong> — precies zoals een echte trade, maar zonder dat je iets kunt verliezen. Perfect om te leren zonder risico.</p>
+                    <div className="paper-help-title">{t("paper_help_title")}</div>
+                    <p>{t("paper_help_intro")} <strong>{t("paper_help_fake_money")}</strong> {t("paper_help_intro2")}</p>
                     <ul>
-                        <li><strong>Startkapitaal</strong> — het bedrag waarmee je begint, ingesteld door de admin</li>
-                        <li><strong>Kopen</strong> — je &quot;koopt&quot; een stuk van de coin met nep geld. Kies een bedrag en klik op Kopen.</li>
-                        <li><strong>Verkopen</strong> — je sluit de trade. Het verschil tussen jouw aankoopprijs en de huidige prijs = winst of verlies.</li>
-                        <li><strong>Koopzone</strong> — de groene zone op de grafiek is het beste moment om te kopen. Als de prijs daarin staat, heb je meer kans op winst.</li>
-                        <li><strong>P/L</strong> — Profit &amp; Loss = winst of verlies op je open positie</li>
+                        <li><strong>{t("paper_help_capital")}</strong> — {t("paper_help_capital_desc")}</li>
+                        <li><strong>{t("paper_help_buy")}</strong> — {t("paper_help_buy_desc")}</li>
+                        <li><strong>{t("paper_help_sell")}</strong> — {t("paper_help_sell_desc")}</li>
+                        <li><strong>{t("paper_help_zone")}</strong> — {t("paper_help_zone_desc")}</li>
+                        <li><strong>{t("paper_help_pl")}</strong> — {t("paper_help_pl_desc")}</li>
                     </ul>
-                    <div className="paper-help-title" style={{ marginTop: 10 }}>Hoe stel je een doel in? 🎯</div>
-                    <p>Een doel helpt je te focussen. Stel jezelf een vraag: <em>&quot;Ik wil mijn startkapitaal laten groeien naar €X&quot;</em>. Stel het doel in via de knop hieronder. Als je doel haalt, zet je het hoger!</p>
-                    <p style={{ marginTop: 4, color: "var(--text-secondary)", fontSize: 12 }}>Tip: begin realistisch. Met €10.000 starten en doel €11.000 = 10% groei. Dat is al heel goed!</p>
+                    <div className="paper-help-title" style={{ marginTop: 10 }}>{t("paper_help_goal_title")}</div>
+                    <p>{t("paper_help_goal_text")} <em>{t("paper_help_goal_quote")}</em>. {t("paper_help_goal_desc")}</p>
+                    <p style={{ marginTop: 4, color: "var(--text-secondary)", fontSize: 12 }}>{t("paper_help_goal_tip")}</p>
                 </div>
             )}
 
             {/* Balans samenvatting */}
             <div className="terminal-paper-stats">
                 <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">Cash beschikbaar</span>
+                    <span className="terminal-mini-label">{t("paper_stat_cash")}</span>
                     <span className="terminal-mini-value">{eur(state.cash)}</span>
                 </div>
                 <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">Open positie</span>
+                    <span className="terminal-mini-label">{t("paper_stat_position")}</span>
                     <span className="terminal-mini-value">{state.openBtc > 0 ? eur(openValue) : "—"}</span>
                 </div>
                 <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">Winst/verlies open</span>
+                    <span className="terminal-mini-label">{t("paper_stat_unrealized")}</span>
                     <span className="terminal-mini-value" style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
                         {state.openBtc > 0 ? eur(unrealized) : "—"}
                     </span>
                 </div>
                 <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">Totaal balans</span>
+                    <span className="terminal-mini-label">{t("paper_stat_total")}</span>
                     <span className="terminal-mini-value" style={{ color: totalPnl >= 0 ? "#26c57c" : "#ef4444" }}>
                         {eur(totalBalance)}
                         <span style={{ fontSize: 11, marginLeft: 4, opacity: 0.7 }}>
@@ -370,7 +372,7 @@ export default function TerminalPaperPanel({
             {/* Open positie info */}
             {state.openBtc > 0 && (
                 <div className="paper-position-strip">
-                    <span>📌 Open @ {state.avgEntry > 0 ? `$${Math.round(state.avgEntry).toLocaleString("en-US")}` : "—"}</span>
+                    <span>{t("paper_position_open")} {state.avgEntry > 0 ? `$${Math.round(state.avgEntry).toLocaleString("en-US")}` : "—"}</span>
                     <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
                         {unrealized >= 0 ? "▲" : "▼"} {eur(unrealized)}
                     </span>
@@ -381,7 +383,7 @@ export default function TerminalPaperPanel({
             {goal !== null ? (
                 <div className="paper-goal-strip">
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>🎯 Doel: {eur(goal)}</span>
+                        <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("paper_goal_label")} {eur(goal)}</span>
                         <button onClick={() => { setGoal(null); setGoalInput(""); }} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 11 }}>✕</button>
                     </div>
                     <div className="paper-goal-bar">
@@ -389,20 +391,20 @@ export default function TerminalPaperPanel({
                     </div>
                     <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 3 }}>
                         {goalPct !== null && goalPct >= 100
-                            ? "🎉 Doel behaald! Zet het hoger."
-                            : `${Math.max(0, goalPct ?? 0).toFixed(0)}% naar doel`}
+                            ? t("paper_goal_achieved")
+                            : `${Math.max(0, goalPct ?? 0).toFixed(0)}${t("paper_goal_pct_suffix")}`}
                     </div>
                 </div>
             ) : showGoalInput ? (
                 <div className="paper-goal-strip">
                     <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 6 }}>
-                        Stel een doel in — bijv. €{(state.startCapital * 1.1).toFixed(0)} (10% groei)
+                        {t("paper_goal_set_hint")} €{(state.startCapital * 1.1).toFixed(0)} {t("paper_goal_growth")}
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
                         <input
                             className="terminal-terminal-input"
                             type="number"
-                            placeholder={`bijv. ${Math.round(state.startCapital * 1.1)}`}
+                            placeholder={`${Math.round(state.startCapital * 1.1)}`}
                             value={goalInput}
                             onChange={e => setGoalInput(e.target.value)}
                             style={{ flex: 1 }}
@@ -423,23 +425,23 @@ export default function TerminalPaperPanel({
                     style={{ fontSize: 12, width: "100%", marginBottom: 8 }}
                     onClick={() => setShowGoalInput(true)}
                 >
-                    🎯 Stel een doel in
+                    {t("paper_goal_set_btn")}
                 </button>
             )}
 
-            {/* Trade plan: entry zone + target + stop-loss */}
+            {/* Trade plan */}
             <div className="paper-tradeplan">
-                <div className="paper-tradeplan-title">📋 Trade plan</div>
+                <div className="paper-tradeplan-title">{t("paper_tradeplan_title")}</div>
                 <div className="paper-tradeplan-grid">
                     <div className="paper-tradeplan-row">
-                        <span className="paper-tradeplan-label">🟢 Instapzone</span>
+                        <span className="paper-tradeplan-label">{t("paper_tradeplan_entry")}</span>
                         <span className="paper-tradeplan-value" style={{ color: "#26c57c" }}>
                             ${Math.round(entryZoneLow).toLocaleString("en-US")} – ${Math.round(entryZoneHigh).toLocaleString("en-US")}
                         </span>
                     </div>
                     {resistanceZoneLow > 0 && (
                         <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">🎯 Take profit</span>
+                            <span className="paper-tradeplan-label">{t("paper_tradeplan_profit")}</span>
                             <span className="paper-tradeplan-value" style={{ color: "#f59e0b" }}>
                                 ${Math.round(resistanceZoneLow).toLocaleString("en-US")} – ${Math.round(resistanceZoneHigh).toLocaleString("en-US")}
                             </span>
@@ -447,22 +449,22 @@ export default function TerminalPaperPanel({
                     )}
                     {stopLoss > 0 && (
                         <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">🛑 Stop-loss</span>
+                            <span className="paper-tradeplan-label">{t("paper_tradeplan_stop")}</span>
                             <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
                                 ${Math.round(stopLoss).toLocaleString("en-US")}
                                 <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 6 }}>
-                                    ({currentPrice > 0 ? ((currentPrice - stopLoss) / currentPrice * 100).toFixed(1) : "—"}% onder huidig)
+                                    ({currentPrice > 0 ? ((currentPrice - stopLoss) / currentPrice * 100).toFixed(1) : "—"}{t("paper_tradeplan_stop_below")}
                                 </span>
                             </span>
                         </div>
                     )}
                     <div className="paper-tradeplan-row">
-                        <span className="paper-tradeplan-label">⚖️ R/R verhouding</span>
+                        <span className="paper-tradeplan-label">{t("paper_tradeplan_rr")}</span>
                         <span className="paper-tradeplan-value">{riskRewardEstimate}</span>
                     </div>
                     {Number(buyAmount) > 0 && stopLoss > 0 && currentPrice > 0 && (
                         <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">💸 Max verlies</span>
+                            <span className="paper-tradeplan-label">{t("paper_tradeplan_maxloss")}</span>
                             <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
                                 {eur(Number(buyAmount) * (currentPrice - stopLoss) / currentPrice)}
                             </span>
@@ -470,16 +472,16 @@ export default function TerminalPaperPanel({
                     )}
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6, lineHeight: 1.5 }}>
-                    Sluit de trade handmatig als de prijs de <strong>stop-loss</strong> raakt. Neem winst bij de <strong>take profit</strong> zone.
+                    {t("paper_tradeplan_hint_prefix")} <strong>{t("paper_tradeplan_stoploss")}</strong> {t("paper_tradeplan_hint_middle")} <strong>{t("paper_tradeplan_takeprofit")}</strong> {t("paper_tradeplan_hint_suffix")}
                 </div>
             </div>
 
             {/* Koop sectie */}
             <div className="paper-buy-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                    <label className="terminal-mini-label">Hoeveel wil je kopen? (€)</label>
+                    <label className="terminal-mini-label">{t("paper_buy_label")}</label>
                     <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-                        Beschikbaar: {eur(state.cash)}
+                        {t("paper_buy_available")} {eur(state.cash)}
                     </span>
                 </div>
 
@@ -502,7 +504,7 @@ export default function TerminalPaperPanel({
                     value={buyAmount}
                     onChange={(e) => setBuyAmount(e.target.value)}
                     inputMode="decimal"
-                    placeholder="Bedrag in euro's"
+                    placeholder={t("paper_buy_placeholder")}
                     style={{ marginTop: 8 }}
                 />
             </div>
@@ -511,9 +513,9 @@ export default function TerminalPaperPanel({
             <div className="terminal-paper-actions" style={{ marginTop: 10 }}>
                 {confirmReset ? (
                     <>
-                        <span style={{ fontSize: 12, color: "#ef4444", alignSelf: "center" }}>Alles wissen. Zeker?</span>
-                        <button className="terminal-btn terminal-btn-danger" onClick={resetAccount}>Ja, opnieuw starten</button>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setConfirmReset(false)}>Annuleer</button>
+                        <span style={{ fontSize: 12, color: "#ef4444", alignSelf: "center" }}>{t("paper_confirm_reset")}</span>
+                        <button className="terminal-btn terminal-btn-danger" onClick={resetAccount}>{t("paper_reset_confirm_btn")}</button>
+                        <button className="terminal-btn terminal-btn-muted" onClick={() => setConfirmReset(false)}>{t("paper_reset_cancel")}</button>
                     </>
                 ) : (
                     <>
@@ -523,7 +525,7 @@ export default function TerminalPaperPanel({
                             style={{ flex: 2, fontSize: 14, fontWeight: 700 }}
                             disabled={Number(buyAmount) > state.cash || Number(buyAmount) <= 0}
                         >
-                            💰 Kopen
+                            {t("paper_btn_buy")}
                         </button>
                         <button
                             className="terminal-btn"
@@ -531,13 +533,13 @@ export default function TerminalPaperPanel({
                             style={{ flex: 2, fontSize: 14, fontWeight: 700, borderColor: "#ef444455", color: state.openBtc > 0 ? "#ef4444" : undefined }}
                             disabled={state.openBtc <= 0}
                         >
-                            📤 Verkopen
+                            {t("paper_btn_sell")}
                         </button>
                         <button
                             className="terminal-btn terminal-btn-muted"
                             onClick={() => setConfirmReset(true)}
                             style={{ fontSize: 11 }}
-                            title="Start opnieuw met je startkapitaal"
+                            title={t("paper_reset_confirm_btn")}
                         >
                             ↺
                         </button>
@@ -547,21 +549,21 @@ export default function TerminalPaperPanel({
 
             {/* Uitleg knoppen */}
             <div className="paper-btn-hints">
-                <span>💰 <strong>Kopen</strong> = je zet nep geld in de coin</span>
-                <span>📤 <strong>Verkopen</strong> = sluit de trade, zie je winst/verlies</span>
+                <span>{t("paper_btn_hints_buy")} <strong>{t("paper_btn_hints_buy_label")}</strong> {t("paper_btn_hints_buy_desc")}</span>
+                <span>{t("paper_btn_hints_sell")} <strong>{t("paper_btn_hints_sell_label")}</strong> {t("paper_btn_hints_sell_desc")}</span>
             </div>
 
             {/* Zone waarschuwing */}
             {zoneWarning && (
                 <div className="terminal-zone-warning">
-                    <div className="terminal-zone-warning-title">⚠️ Prijs staat buiten de aanbevolen koopzone</div>
+                    <div className="terminal-zone-warning-title">{t("paper_zone_warning_title")}</div>
                     <div className="terminal-zone-warning-body">
-                        De beste koopzone is <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
-                        Professionele traders kopen alleen op de juiste plek. Buiten de zone = meer risico.
+                        {t("paper_zone_warning_body_prefix")} <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
+                        {" "}{t("paper_zone_warning_body_suffix")}
                     </div>
                     <div className="terminal-paper-actions" style={{ marginTop: 8 }}>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setZoneWarning(false)}>Wachten</button>
-                        <button className="terminal-btn terminal-btn-danger" onClick={() => openBuy(true)}>Toch kopen (meer risico)</button>
+                        <button className="terminal-btn terminal-btn-muted" onClick={() => setZoneWarning(false)}>{t("paper_zone_wait")}</button>
+                        <button className="terminal-btn terminal-btn-danger" onClick={() => openBuy(true)}>{t("paper_zone_buy_anyway")}</button>
                     </div>
                 </div>
             )}
@@ -570,22 +572,22 @@ export default function TerminalPaperPanel({
             {pendingNoteId && (
                 <div className="terminal-journal-prompt">
                     <div className="terminal-mini-label" style={{ marginBottom: 6 }}>
-                        📓 Wat leerde je van deze trade? (optioneel)
+                        {t("paper_journal_prompt")}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8 }}>
-                        Schrijf op waarom je kocht, wat goed ging, en wat je de volgende keer anders doet. Dit maakt je sneller beter.
+                        {t("paper_journal_desc")}
                     </div>
                     <textarea
                         className="terminal-journal-textarea"
                         value={noteInput}
                         onChange={(e) => setNoteInput(e.target.value)}
-                        placeholder="Bijv: 'Kocht te vroeg buiten de zone. Volgende keer wachten op bevestiging.'"
+                        placeholder={t("paper_journal_placeholder")}
                         rows={3}
                         autoFocus
                     />
                     <div className="terminal-paper-actions" style={{ marginTop: 6 }}>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setPendingNoteId(null)}>Overslaan</button>
-                        <button className="terminal-btn terminal-btn-primary" onClick={saveNote}>Opslaan 📓</button>
+                        <button className="terminal-btn terminal-btn-muted" onClick={() => setPendingNoteId(null)}>{t("paper_journal_skip")}</button>
+                        <button className="terminal-btn terminal-btn-primary" onClick={saveNote}>{t("paper_journal_save")}</button>
                     </div>
                 </div>
             )}
@@ -594,46 +596,46 @@ export default function TerminalPaperPanel({
             {closedCount > 0 && (
                 <div className="terminal-progress-grid" style={{ marginTop: 12 }}>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Winrate</span>
+                        <span className="terminal-progress-label">{t("paper_stats_winrate")}</span>
                         <span className="terminal-progress-value" style={{ color: winrate >= 50 ? "#26c57c" : "#ef4444" }}>
                             {winrate.toFixed(0)}%
                         </span>
                         <span className="terminal-progress-sub">{winCount}W / {lossCount}L</span>
                     </div>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Totaal P/L</span>
+                        <span className="terminal-progress-label">{t("paper_stats_total_pl")}</span>
                         <span className="terminal-progress-value" style={{ color: state.realizedPnl >= 0 ? "#26c57c" : "#ef4444" }}>
                             {eur(state.realizedPnl)}
                         </span>
-                        <span className="terminal-progress-sub">gesloten trades</span>
+                        <span className="terminal-progress-sub">{t("paper_stats_closed")}</span>
                     </div>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Gem. winst</span>
+                        <span className="terminal-progress-label">{t("paper_stats_avg_win")}</span>
                         <span className="terminal-progress-value" style={{ color: "#26c57c" }}>
                             {avgWin > 0 ? eur(avgWin) : "—"}
                         </span>
-                        <span className="terminal-progress-sub">per winst</span>
+                        <span className="terminal-progress-sub">{t("paper_stats_per_win")}</span>
                     </div>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Gem. verlies</span>
+                        <span className="terminal-progress-label">{t("paper_stats_avg_loss")}</span>
                         <span className="terminal-progress-value" style={{ color: "#ef4444" }}>
                             {avgLoss < 0 ? eur(avgLoss) : "—"}
                         </span>
-                        <span className="terminal-progress-sub">per verlies</span>
+                        <span className="terminal-progress-sub">{t("paper_stats_per_loss")}</span>
                     </div>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Reeks</span>
+                        <span className="terminal-progress-label">{t("paper_stats_streak")}</span>
                         <span className="terminal-progress-value" style={{ color: streakType === "win" ? "#26c57c" : streakType === "loss" ? "#ef4444" : "#8b95ad" }}>
                             {currentStreak > 0 ? `${currentStreak}× ${streakType === "win" ? "🔥" : "❄️"}` : "—"}
                         </span>
-                        <span className="terminal-progress-sub">op rij</span>
+                        <span className="terminal-progress-sub">{t("paper_stats_streak_sub")}</span>
                     </div>
                     <div className="terminal-progress-box">
-                        <span className="terminal-progress-label">Beste trade</span>
+                        <span className="terminal-progress-label">{t("paper_stats_best")}</span>
                         <span className="terminal-progress-value" style={{ color: "#26c57c" }}>
                             {bestTrade ? eur(bestTrade.pnl || 0) : "—"}
                         </span>
-                        <span className="terminal-progress-sub">slechtste: {worstTrade ? eur(worstTrade.pnl || 0) : "—"}</span>
+                        <span className="terminal-progress-sub">{t("paper_stats_worst_prefix")} {worstTrade ? eur(worstTrade.pnl || 0) : "—"}</span>
                     </div>
                 </div>
             )}
@@ -641,25 +643,25 @@ export default function TerminalPaperPanel({
             {/* Trade geschiedenis */}
             <details className="terminal-history">
                 <summary>
-                    Trade geschiedenis
-                    {state.trades.length > 0 && <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>({state.trades.length} trades)</span>}
+                    {t("paper_history_title")}
+                    {state.trades.length > 0 && <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>({state.trades.length} {t("paper_history_trades_suffix")}</span>}
                 </summary>
                 <div style={{ fontSize: 12, color: "var(--text-secondary)", padding: "6px 0", marginBottom: 4 }}>
-                    Elke aankoop en verkoop staat hier. Groene P/L = winst, rode P/L = verlies.
+                    {t("paper_history_desc")}
                 </div>
                 <div className="terminal-history-list">
                     {state.trades.length === 0 && (
                         <div className="terminal-history-item" style={{ color: "var(--text-secondary)" }}>
-                            Nog geen trades. Klik op &quot;Kopen&quot; om je eerste trade te doen!
+                            {t("paper_history_empty")}
                         </div>
                     )}
                     {state.trades.map((trade) => (
                         <div key={trade.id} className="terminal-history-item">
                             <strong style={{ color: trade.side === "buy" ? "#26c57c" : "#ef4444" }}>
-                                {trade.side === "buy" ? "✅ Koop" : "📤 Verkoop"}
+                                {trade.side === "buy" ? t("paper_history_buy") : t("paper_history_sell")}
                             </strong>
                             {" "}&bull;{" "}{trade.time} &bull; {eur(trade.amountEur)}
-                            {" "}&bull; prijs ${trade.price.toFixed(0)}
+                            {" "}&bull; {t("paper_history_price")} ${trade.price.toFixed(0)}
                             {typeof trade.pnl === "number" && (
                                 <span style={{ color: trade.pnl >= 0 ? "#26c57c" : "#ef4444", marginLeft: 4 }}>
                                     &bull; {trade.pnl >= 0 ? "+" : ""}{eur(trade.pnl)}

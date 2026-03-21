@@ -1,89 +1,92 @@
 "use client";
 import Link from "next/link";
-
-const SECTIONS = [
-  {
-    icon: "📈",
-    title: "Traden",
-    items: [
-      { q: "Wat zie ik op het tradescherm?", a: "De grafiek toont de echte marktprijs van het asset dat je gekozen hebt. Groene/rode kaarsen zijn prijsbewegingen. De gekleurde zones zijn koopzone (groen), stop-loss (rood) en weerstand (oranje)." },
-      { q: "Wat zijn de tijdframes?", a: "1m en 5m zijn voor snelle traders (scalpen). 15m en 1H zijn voor dagtraders. 1D is voor wie wekelijks tradt. Multi toont 3 tijdframes tegelijk voor een volledig beeld." },
-      { q: "Wat betekent de kleur van de status?", a: "Groen = goed moment om te kijken voor een koop. Oranje = wachten. Rood = vermijden. Dit is gebaseerd op RSI, trend en marktstructuur." },
-      { q: "Wat is de koopzone?", a: "Het prijsbereik dat onze AI als interessant beschouwt voor een mogelijke koop. Wacht tot de prijs hier staat voordat je instapt." },
-    ],
-  },
-  {
-    icon: "🤖",
-    title: "Marcus AI (Mentor)",
-    items: [
-      { q: "Wie is Marcus?", a: "Marcus is jouw virtuele tradingmentor. Hij analyseert de markt en geeft uitleg op jouw niveau — of je nu beginner of gevorderde bent." },
-      { q: "Hoe gebruik ik de snelle vraagknoppen?", a: "Klik op één van de chips (bijv. 'Moet ik nu kopen?') om direct een vraag te stellen. Je kan ook zelf typen en op Enter drukken of de pijlknop klikken." },
-      { q: "Waarom geeft Marcus geen advies tijdens het laden?", a: "Als Marcus bezig is met een antwoord, zie je 'Denkt na...'. Wacht even — daarna kan je gewoon verder vragen." },
-      { q: "Kan ik het gesprek wissen?", a: "Ja, klik op 'Wis chat' bovenaan het chatvenster. Marcus begint dan opnieuw met een verse analyse." },
-    ],
-  },
-  {
-    icon: "💰",
-    title: "Paper Trading (nep geld)",
-    items: [
-      { q: "Wat is paper trading?", a: "Je tradt met nep geld zodat je kunt oefenen zonder echt geld te verliezen. Alles werkt zoals echt, behalve dat de verliezen en winsten niet echt zijn." },
-      { q: "Hoe koop ik?", a: "Ga naar het 'Paper Trading' tabblad, kies een bedrag (of gebruik 5%/10%/25%/Max), en klik op 'Kopen'. De trade wordt uitgevoerd op de huidige marktprijs." },
-      { q: "Hoe verkoop ik?", a: "Als je een open positie hebt, zie je de 'Verkopen' knop. Klik erop om je positie te sluiten. Je ziet meteen je winst of verlies." },
-      { q: "Wat is mijn startkapitaal?", a: "Je admin stelt het startkapitaal in (standaard €10.000). Je kunt dit zien bovenaan het paper trading paneel." },
-    ],
-  },
-  {
-    icon: "🎯",
-    title: "Doel stellen",
-    items: [
-      { q: "Wat is het doel?", a: "Op de Statistieken pagina kan je een doelbedrag instellen. Bijv: 'Ik wil groeien van €10.000 naar €11.000'. De voortgangsbalk toont hoever je bent." },
-      { q: "Hoe stel ik een doel in?", a: "Ga naar Statistieken → klik op 'Doel instellen' → vul een bedrag in dat hoger is dan je startkapitaal → sla op. 10% groei is al uitstekend." },
-    ],
-  },
-  {
-    icon: "🧠",
-    title: "Quiz",
-    items: [
-      { q: "Wat is de dagelijkse quiz?", a: "Elke dag krijg je 5 vragen over trading. Je verdient XP (ervaringspunten) en bouwt een streak op. Hoe meer je leert, hoe moeilijker de vragen worden." },
-      { q: "Wat zijn zwakke topics?", a: "Als je een categorie vaker fout hebt, wordt dat een zwak topic. Marcus past zijn uitleg automatisch aan om je daarin te helpen." },
-    ],
-  },
-  {
-    icon: "📊",
-    title: "Statistieken",
-    items: [
-      { q: "Wat zie ik op de statistieken pagina?", a: "Je ziet je totale winst/verlies, welke dag je het best tradt, en per asset hoe goed je presteert. Dit helpt je patronen te herkennen in je eigen gedrag." },
-    ],
-  },
-  {
-    icon: "📰",
-    title: "Nieuws & Leren",
-    items: [
-      { q: "Wat staat er in het nieuws?", a: "Het nieuwsblok toont het laatste financiële nieuws voor het asset dat je bekijkt. Nieuws beïnvloedt vaak de prijs — goed om te volgen." },
-      { q: "Wat staat er op de leerpagina?", a: "Video's, artikelen en een gratis cursus om trading van nul te leren. Ideaal als je nog helemaal nieuw bent." },
-    ],
-  },
-  {
-    icon: "🏆",
-    title: "Leaderboard",
-    items: [
-      { q: "Hoe kom ik op het leaderboard?", a: "Het leaderboard toont de traders met het hoogste paper trading saldo. Trade slim, bouw je saldo op en klim de ranglijst." },
-    ],
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function HelpPage() {
+  const { t } = useLanguage();
+
+  const SECTIONS = [
+    {
+      icon: "📈",
+      title: t("help_section_trade"),
+      items: [
+        { q: t("help_q_trade1"), a: t("help_a_trade1") },
+        { q: t("help_q_trade2"), a: t("help_a_trade2") },
+        { q: t("help_q_trade3"), a: t("help_a_trade3") },
+        { q: t("help_q_trade4"), a: t("help_a_trade4") },
+      ],
+    },
+    {
+      icon: "🤖",
+      title: t("help_section_marcus"),
+      items: [
+        { q: t("help_q_marcus1"), a: t("help_a_marcus1") },
+        { q: t("help_q_marcus2"), a: t("help_a_marcus2") },
+        { q: t("help_q_marcus3"), a: t("help_a_marcus3") },
+        { q: t("help_q_marcus4"), a: t("help_a_marcus4") },
+      ],
+    },
+    {
+      icon: "💰",
+      title: t("help_section_paper"),
+      items: [
+        { q: t("help_q_paper1"), a: t("help_a_paper1") },
+        { q: t("help_q_paper2"), a: t("help_a_paper2") },
+        { q: t("help_q_paper3"), a: t("help_a_paper3") },
+        { q: t("help_q_paper4"), a: t("help_a_paper4") },
+      ],
+    },
+    {
+      icon: "🎯",
+      title: t("help_section_goal"),
+      items: [
+        { q: t("help_q_goal1"), a: t("help_a_goal1") },
+        { q: t("help_q_goal2"), a: t("help_a_goal2") },
+      ],
+    },
+    {
+      icon: "🧠",
+      title: t("help_section_quiz"),
+      items: [
+        { q: t("help_q_quiz1"), a: t("help_a_quiz1") },
+        { q: t("help_q_quiz2"), a: t("help_a_quiz2") },
+      ],
+    },
+    {
+      icon: "📊",
+      title: t("help_section_stats"),
+      items: [
+        { q: t("help_q_stats1"), a: t("help_a_stats1") },
+      ],
+    },
+    {
+      icon: "📰",
+      title: t("help_section_news"),
+      items: [
+        { q: t("help_q_news1"), a: t("help_a_news1") },
+        { q: t("help_q_news2"), a: t("help_a_news2") },
+      ],
+    },
+    {
+      icon: "🏆",
+      title: t("help_section_leaderboard"),
+      items: [
+        { q: t("help_q_lb1"), a: t("help_a_lb1") },
+      ],
+    },
+  ];
+
   return (
     <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 60px" }}>
       <div style={{ marginBottom: 24 }}>
-        <Link href="/trade" className="page-back-btn">← Terug naar Traden</Link>
+        <Link href="/trade" className="page-back-btn">{t("help_back")}</Link>
       </div>
 
       <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>
-        ❓ Hoe werkt Bitcoin Mentor?
+        {t("help_title")}
       </h1>
       <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
-        Alles uitgelegd voor beginners. Klik op een vraag om het antwoord te zien.
+        {t("help_subtitle")}
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -121,10 +124,10 @@ export default function HelpPage() {
 
       <div className="terminal-side-card" style={{ marginTop: 20, textAlign: "center" }}>
         <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12 }}>
-          Kom je er niet uit? Vraag het gewoon aan Marcus — hij legt alles uit op jouw niveau.
+          {t("help_footer_text")}
         </p>
         <Link href="/trade" className="terminal-btn terminal-btn-primary" style={{ display: "inline-block" }}>
-          → Ga naar Traden
+          {t("help_footer_btn")}
         </Link>
       </div>
     </main>

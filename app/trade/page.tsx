@@ -5,8 +5,10 @@ import Link from "next/link";
 import RealtimeDashboard from "@/components/RealtimeDashboard";
 import { SCAN_ASSETS } from "@/lib/assets";
 import type { MentorSignal } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function TradePage() {
+  const { t } = useLanguage();
   const [signal, setSignal] = useState<MentorSignal | null>(null);
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const [showPicker, setShowPicker] = useState(false);
@@ -61,14 +63,13 @@ export default function TradePage() {
       <main className="container-page">
         <div style={{ marginBottom: 12 }}>
           <Link href="/leren" className="page-back-btn">
-            ← Ga eerst leren
+            {t("trade_back_learn")}
           </Link>
         </div>
         <div className="asset-picker-screen">
-          <div className="asset-picker-title">Wat wil je vandaag traden?</div>
+          <div className="asset-picker-title">{t("trade_picker_title")}</div>
           <div className="asset-picker-sub">
-            Kies een asset om de analyse, grafiek en Marcus AI te laden.
-            Je kunt later altijd wisselen.
+            {t("trade_picker_sub")}
           </div>
           <div className="asset-picker-grid">
             {SCAN_ASSETS.map((a) => (
@@ -80,7 +81,9 @@ export default function TradePage() {
                 <span className="asset-picker-emoji">{a.emoji}</span>
                 <span className="asset-picker-name">{a.name}</span>
                 <span className="asset-picker-ticker">{a.ticker}</span>
-                <span className="asset-picker-type">{a.type === "crypto" ? "Crypto" : a.type === "metal" ? "Edelmetaal" : "Aandeel"}</span>
+                <span className="asset-picker-type">
+                  {a.type === "crypto" ? t("trade_type_crypto") : a.type === "metal" ? t("trade_type_metal") : t("trade_type_stock")}
+                </span>
               </button>
             ))}
           </div>
@@ -93,12 +96,12 @@ export default function TradePage() {
     return (
       <main className="container-page clean-page">
         <div className="card">
-          <div className="value-sm red">Kon analyse niet laden</div>
+          <div className="value-sm red">{t("trade_error_load")}</div>
           <p className="small-text muted" style={{ marginTop: 8 }}>
-            Controleer je verbinding en probeer opnieuw.
+            {t("trade_error_desc")}
           </p>
           <button className="admin-btn admin-btn-primary" style={{ marginTop: 12 }} onClick={() => selectedAsset && loadSignal(selectedAsset)}>
-            Opnieuw proberen
+            {t("trade_error_retry")}
           </button>
         </div>
       </main>
@@ -110,9 +113,9 @@ export default function TradePage() {
     return (
       <main className="container-page">
         <div className="trade-loading">
-          <div className="trade-loading-text">Analyse laden…</div>
+          <div className="trade-loading-text">{t("trade_loading_text")}</div>
           <div className="trade-loading-sub">
-            {assetDef ? `${assetDef.emoji} ${assetDef.name} marktdata ophalen` : `Marktdata ophalen voor ${selectedAsset}`}
+            {assetDef ? `${assetDef.emoji} ${assetDef.name} ${t("trade_loading_market")}` : `${t("trade_loading_market")} ${selectedAsset}`}
           </div>
         </div>
       </main>
@@ -125,18 +128,18 @@ export default function TradePage() {
       {showIntro && (
         <div className="intro-banner intro-banner-overlay">
           <div className="intro-banner-content">
-            <div className="intro-banner-title">Hoe werkt het handelsscherm? 📈</div>
+            <div className="intro-banner-title">{t("trade_intro_title")}</div>
             <div className="intro-banner-body">
               <ul>
-                <li><strong>Grafiek</strong> — Live koersgrafiek. Wissel tijdsframe (1u, 4u, dagelijks). Zet Bollinger Bands of MACD aan voor extra analyse.</li>
-                <li><strong>Marcus AI (eerste tab)</strong> — Jouw persoonlijke mentor. Stel vragen, klik op &quot;Moet ik nu kopen?&quot; of laat hem de markt uitleggen.</li>
-                <li><strong>Paper Trading</strong> — Oefen met nep-geld. Koop en verkoop zonder echt risico om strategieën te testen.</li>
-                <li><strong>Analyse</strong> — Automatisch gegenereerde signalen: trend, RSI, support/resistance, advies.</li>
-                <li><strong>Asset wisselen</strong> — Gebruik de balk boven de grafiek om naar BTC, ETH, aandelen of goud te switchen.</li>
+                <li><strong>{t("trade_intro_chart")}</strong> — {t("trade_intro_chart_desc")}</li>
+                <li><strong>{t("trade_intro_marcus")}</strong> — {t("trade_intro_marcus_desc")}</li>
+                <li><strong>{t("trade_intro_paper")}</strong> — {t("trade_intro_paper_desc")}</li>
+                <li><strong>{t("trade_intro_analysis")}</strong> — {t("trade_intro_analysis_desc")}</li>
+                <li><strong>{t("trade_intro_switch")}</strong> — {t("trade_intro_switch_desc")}</li>
               </ul>
             </div>
             <button className="intro-banner-close" onClick={dismissIntro}>
-              Begrepen, laten we traden →
+              {t("trade_intro_cta")}
             </button>
           </div>
         </div>

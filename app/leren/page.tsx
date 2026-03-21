@@ -4,15 +4,17 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DailyQuiz from "@/components/DailyQuiz";
 import LearningResources from "@/components/LearningResources";
-
-const TABS = [
-  { id: "quiz", label: "Dagelijkse quiz", icon: "🎓" },
-  { id: "resources", label: "Leerbronnen", icon: "📚" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LerenPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState("quiz");
   const [showIntro, setShowIntro] = useState(false);
+
+  const TABS = [
+    { id: "quiz", label: t("leren_tab_quiz"), icon: "🎓" },
+    { id: "resources", label: t("leren_tab_resources"), icon: "📚" },
+  ];
 
   useEffect(() => {
     const seen = localStorage.getItem("btcmentor-leren-intro");
@@ -29,7 +31,7 @@ export default function LerenPage() {
       {/* Terug knop */}
       <div style={{ marginBottom: 12 }}>
         <Link href="/trade" className="page-back-btn">
-          ← Terug naar Traden
+          {t("leren_back")}
         </Link>
       </div>
 
@@ -37,31 +39,31 @@ export default function LerenPage() {
       {showIntro && (
         <div className="intro-banner">
           <div className="intro-banner-content">
-            <div className="intro-banner-title">Welkom bij Leren 🎓</div>
+            <div className="intro-banner-title">{t("leren_intro_title")}</div>
             <div className="intro-banner-body">
-              <p>Hier word je stap voor stap een betere trader. Er zijn twee onderdelen:</p>
+              <p>{t("leren_intro_body1")}</p>
               <ul>
-                <li><strong>Dagelijkse quiz</strong> — Beantwoord vragen over trading, verdien XP en stijg in niveau. Elke dag nieuwe vragen op basis van actuele marktdata.</li>
-                <li><strong>Leerbronnen</strong> — Video&apos;s en artikelen per niveau. Begin bij level 1 als je nieuw bent, of kies een hoger niveau als je al wat weet.</li>
+                <li><strong>{t("leren_intro_quiz_title")}</strong> — {t("leren_intro_quiz_desc")}</li>
+                <li><strong>{t("leren_intro_resources_title")}</strong> — {t("leren_intro_resources_desc")}</li>
               </ul>
-              <p>Je quiz-voortgang (niveau, XP, streak) wordt bijgehouden. Probeer elke dag een quiz te doen voor maximale groei.</p>
+              <p>{t("leren_intro_progress")}</p>
             </div>
             <button className="intro-banner-close" onClick={dismissIntro}>
-              Begrepen, aan de slag →
+              {t("leren_intro_cta")}
             </button>
           </div>
         </div>
       )}
 
       <div className="leren-tabs">
-        {TABS.map((t) => (
+        {TABS.map((tabItem) => (
           <button
-            key={t.id}
-            className={`leren-tab${tab === t.id ? " active" : ""}`}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            className={`leren-tab${tab === tabItem.id ? " active" : ""}`}
+            onClick={() => setTab(tabItem.id)}
           >
-            <span>{t.icon}</span>
-            {t.label}
+            <span>{tabItem.icon}</span>
+            {tabItem.label}
           </button>
         ))}
       </div>
@@ -72,7 +74,7 @@ export default function LerenPage() {
       {/* Onderaan terug knop */}
       <div style={{ marginTop: 32, paddingBottom: 16 }}>
         <Link href="/trade" className="page-back-btn">
-          ← Terug naar Traden
+          {t("leren_back")}
         </Link>
       </div>
     </main>

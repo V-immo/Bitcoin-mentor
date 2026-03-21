@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -48,8 +49,9 @@ interface PaperData {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function ProfielPage() {
+  const { t, lang } = useLanguage();
   const { data: session } = useSession();
-  const username = (session?.user as { name?: string })?.name ?? "Gebruiker";
+  const username = (session?.user as { name?: string })?.name ?? t("profiel_role_user");
   const role = (session?.user as { role?: string })?.role ?? "user";
 
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -103,11 +105,11 @@ export default function ProfielPage() {
     e.preventDefault();
     setPwStatus(null);
     if (newPw !== confirmPw) {
-      setPwStatus({ type: "error", msg: "Nieuwe wachtwoorden komen niet overeen" });
+      setPwStatus({ type: "error", msg: t("profiel_pw_mismatch") });
       return;
     }
     if (newPw.length < 8) {
-      setPwStatus({ type: "error", msg: "Wachtwoord moet minimaal 8 tekens zijn" });
+      setPwStatus({ type: "error", msg: t("profiel_pw_too_short") });
       return;
     }
     setPwLoading(true);
@@ -119,15 +121,15 @@ export default function ProfielPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setPwStatus({ type: "success", msg: "Wachtwoord succesvol gewijzigd" });
+        setPwStatus({ type: "success", msg: t("profiel_pw_success") });
         setCurrentPw("");
         setNewPw("");
         setConfirmPw("");
       } else {
-        setPwStatus({ type: "error", msg: data.error ?? "Er is een fout opgetreden" });
+        setPwStatus({ type: "error", msg: data.error ?? t("profiel_pw_error_generic") });
       }
     } catch {
-      setPwStatus({ type: "error", msg: "Netwerkfout" });
+      setPwStatus({ type: "error", msg: t("profiel_pw_network_error") });
     } finally {
       setPwLoading(false);
     }
@@ -147,6 +149,8 @@ export default function ProfielPage() {
   const xpPct = quiz ? Math.min(100, Math.round((quiz.xp / xpMax) * 100)) : 0;
 
   const last10 = quiz?.history?.slice(0, 10) ?? [];
+
+  const dateLocale = lang === "nl" ? "nl-NL" : "en-GB";
 
   return (
     <div className="container-page" style={{ maxWidth: 760 }}>
@@ -170,22 +174,22 @@ export default function ProfielPage() {
               marginTop: 4,
             }}
           >
-            {role === "admin" ? "Admin" : "Gebruiker"}
+            {role === "admin" ? t("profiel_role_admin") : t("profiel_role_user")}
           </span>
         </div>
       </div>
 
       {loading ? (
-        <div style={{ color: "#bf7a99", padding: "24px 0" }}>Laden...</div>
+        <div style={{ color: "#bf7a99", padding: "24px 0" }}>{t("profiel_loading")}</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
           {/* ── Wachtwoord wijzigen ── */}
           <div className="card">
-            <div style={sectionTitle}>Wachtwoord wijzigen</div>
+            <div style={sectionTitle}>{t("profiel_pw_title")}</div>
             <form onSubmit={handlePasswordChange} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
               <div style={fieldGroup}>
-                <label style={labelStyle}>Huidig wachtwoord</label>
+                <label style={labelStyle}>{t("profiel_pw_current")}</label>
                 <input
                   type="password"
                   value={currentPw}
@@ -196,7 +200,7 @@ export default function ProfielPage() {
                 />
               </div>
               <div style={fieldGroup}>
-                <label style={labelStyle}>Nieuw wachtwoord</label>
+                <label style={labelStyle}>{t("profiel_pw_new")}</label>
                 <input
                   type="password"
                   value={newPw}
@@ -208,7 +212,7 @@ export default function ProfielPage() {
                 />
               </div>
               <div style={fieldGroup}>
-                <label style={labelStyle}>Bevestig nieuw wachtwoord</label>
+                <label style={labelStyle}>{t("profiel_pw_confirm")}</label>
                 <input
                   type="password"
                   value={confirmPw}
@@ -251,7 +255,7 @@ export default function ProfielPage() {
                     opacity: pwLoading ? 0.7 : 1,
                   }}
                 >
-                  {pwLoading ? "Bezig..." : "Opslaan"}
+                  {pwLoading ? t("profiel_pw_saving") : t("profiel_pw_save")}
                 </button>
               </div>
             </form>
@@ -259,18 +263,18 @@ export default function ProfielPage() {
 
           {/* ── Quiz stats ── */}
           <div className="card">
-            <div style={sectionTitle}>Quiz statistieken</div>
+            <div style={sectionTitle}>{t("profiel_quiz_title")}</div>
             {quiz ? (
               <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 14 }}>
                 <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
                   <Stat label="Level" value={String(quiz.level)} />
                   <Stat label="XP" value={`${quiz.xp} / ${xpMax}`} />
-                  <Stat label="Streak" value={`${quiz.streak} dag${quiz.streak !== 1 ? "en" : ""}`} />
+                  <Stat label="Streak" value={`${quiz.streak} ${quiz.streak !== 1 ? t("profiel_quiz_streak_plural") : t("profiel_quiz_streak")}`} />
                 </div>
                 {/* XP bar */}
                 <div>
                   <div style={{ fontSize: 12, color: "#bf7a99", marginBottom: 6 }}>
-                    XP voortgang naar level {quiz.level + 1}
+                    {t("profiel_quiz_xp_progress")} {quiz.level + 1}
                   </div>
                   <div
                     style={{
@@ -295,12 +299,12 @@ export default function ProfielPage() {
                 {quiz.weakTopics && quiz.weakTopics.length > 0 && (
                   <div>
                     <div style={{ fontSize: 12, color: "#bf7a99", marginBottom: 8 }}>
-                      Verbeterpunten
+                      {t("profiel_quiz_weak")}
                     </div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {quiz.weakTopics.map((t) => (
+                      {quiz.weakTopics.map((topic) => (
                         <span
-                          key={t}
+                          key={topic}
                           style={{
                             background: "rgba(233,30,99,0.1)",
                             border: "1px solid rgba(233,30,99,0.25)",
@@ -311,7 +315,7 @@ export default function ProfielPage() {
                             fontWeight: 500,
                           }}
                         >
-                          {t}
+                          {topic}
                         </span>
                       ))}
                     </div>
@@ -320,7 +324,7 @@ export default function ProfielPage() {
               </div>
             ) : (
               <div style={{ color: "#bf7a99", marginTop: 12, fontSize: 13 }}>
-                Nog geen quiz data beschikbaar.
+                {t("profiel_quiz_empty")}
               </div>
             )}
           </div>
@@ -328,20 +332,20 @@ export default function ProfielPage() {
           {/* ── Quiz history ── */}
           {last10.length > 0 && (
             <div className="card">
-              <div style={sectionTitle}>Recente quiz sessies</div>
+              <div style={sectionTitle}>{t("profiel_history_title")}</div>
               <div style={{ marginTop: 14, overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ color: "#bf7a99" }}>
-                      <th style={th}>Datum</th>
-                      <th style={th}>Score</th>
-                      <th style={th}>Onderwerpen</th>
+                      <th style={th}>{t("profiel_history_date")}</th>
+                      <th style={th}>{t("profiel_history_score")}</th>
+                      <th style={th}>{t("profiel_history_topics")}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {last10.map((s, i) => (
                       <tr key={s.id ?? i} style={{ borderTop: "1px solid rgba(233,30,99,0.1)" }}>
-                        <td style={td}>{new Date(s.date).toLocaleDateString("nl-NL")}</td>
+                        <td style={td}>{new Date(s.date).toLocaleDateString(dateLocale)}</td>
                         <td style={td}>
                           <span
                             style={{
@@ -366,20 +370,20 @@ export default function ProfielPage() {
 
           {/* ── Paper trading summary ── */}
           <div className="card">
-            <div style={sectionTitle}>Paper trading — alle assets</div>
+            <div style={sectionTitle}>{t("profiel_paper_title")}</div>
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginTop: 14 }}>
               <Stat
-                label="Totaal P&L"
-                value={`€${totalPnl.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                label={t("profiel_paper_pnl")}
+                value={`€${totalPnl.toLocaleString(dateLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 color={totalPnl >= 0 ? "#86efac" : "#fca5a5"}
               />
-              <Stat label="Winrate" value={closedTrades.length > 0 ? `${winRate}%` : "—"} />
-              <Stat label="Trades" value={String(closedTrades.length)} />
-              <Stat label="Actieve assets" value={String(activeAssets)} />
+              <Stat label={t("profiel_paper_winrate")} value={closedTrades.length > 0 ? `${winRate}%` : "—"} />
+              <Stat label={t("profiel_paper_trades")} value={String(closedTrades.length)} />
+              <Stat label={t("profiel_paper_active")} value={String(activeAssets)} />
               {totalCash > 0 && (
                 <Stat
-                  label="Totaal cash"
-                  value={`€${totalCash.toLocaleString("nl-NL", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
+                  label={t("profiel_paper_cash")}
+                  value={`€${totalCash.toLocaleString(dateLocale, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
                 />
               )}
             </div>
@@ -387,15 +391,15 @@ export default function ProfielPage() {
 
           {/* ── Instellingen samenvatting ── */}
           <div className="card">
-            <div style={sectionTitle}>Instellingen</div>
+            <div style={sectionTitle}>{t("profiel_settings_title")}</div>
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginTop: 14 }}>
-              <Stat label="Trading modus" value={settings?.tradingMode ?? "—"} />
-              <Stat label="Risiconiveau" value={settings?.riskLevel ?? "—"} />
+              <Stat label={t("profiel_settings_mode")} value={settings?.tradingMode ?? "—"} />
+              <Stat label={t("profiel_settings_risk")} value={settings?.riskLevel ?? "—"} />
               <Stat
-                label="Startkapitaal"
+                label={t("profiel_settings_capital")}
                 value={
                   settings?.startCapital != null
-                    ? `$${settings.startCapital.toLocaleString("nl-NL")}`
+                    ? `$${settings.startCapital.toLocaleString(dateLocale)}`
                     : "—"
                 }
               />

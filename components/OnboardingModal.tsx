@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const STORAGE_KEY = "btcmentor-onboarded";
 
 export default function OnboardingModal() {
+  const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [startCapital, setStartCapital] = useState<number | null>(null);
@@ -58,19 +60,17 @@ export default function OnboardingModal() {
       <div style={styles.card}>
         {/* Skip button */}
         <button style={styles.skipBtn} onClick={handleSkip}>
-          Overslaan
+          {t("onboarding_modal_skip")}
         </button>
 
         {/* Steps */}
         {step === 0 && (
           <div style={styles.stepContent}>
             <div style={styles.emoji}>📊</div>
-            <h2 style={styles.title}>Welkom bij Bitcoin Mentor 🚀</h2>
-            <h3 style={styles.stepTitle}>Wie zijn we?</h3>
+            <h2 style={styles.title}>{t("onboarding_modal_step0_title")}</h2>
+            <h3 style={styles.stepTitle}>{t("onboarding_modal_step0_who")}</h3>
             <p style={styles.text}>
-              Bitcoin Mentor is een leerplatform voor Bitcoin en crypto trading. Of je nu
-              beginner bent of al ervaring hebt — hier leer je de markt begrijpen en oefen
-              je met paper trading zonder risico.
+              {t("onboarding_modal_step0_text")}
             </p>
           </div>
         )}
@@ -78,27 +78,24 @@ export default function OnboardingModal() {
         {step === 1 && (
           <div style={styles.stepContent}>
             <div style={styles.emoji}>🎓</div>
-            <h3 style={styles.stepTitle}>Hoe werkt het?</h3>
+            <h3 style={styles.stepTitle}>{t("onboarding_modal_step1_title")}</h3>
             <ul style={styles.list}>
               <li style={styles.listItem}>
                 <span style={styles.bullet}>📝</span>
                 <span>
-                  <strong>Quiz om te leren</strong> — Test je kennis met dagelijkse quizzen
-                  over Bitcoin en crypto.
+                  <strong>{t("onboarding_modal_step1_quiz")}</strong> — {t("onboarding_modal_step1_quiz_desc")}
                 </span>
               </li>
               <li style={styles.listItem}>
                 <span style={styles.bullet}>📈</span>
                 <span>
-                  <strong>Paper trading om te oefenen</strong> — Handel met virtueel geld en
-                  oefen je strategie zonder risico.
+                  <strong>{t("onboarding_modal_step1_paper")}</strong> — {t("onboarding_modal_step1_paper_desc")}
                 </span>
               </li>
               <li style={styles.listItem}>
                 <span style={styles.bullet}>🤖</span>
                 <span>
-                  <strong>AI Mentor Marcus voor vragen</strong> — Stel vragen aan onze AI
-                  mentor die je stap voor stap uitlegt.
+                  <strong>{t("onboarding_modal_step1_ai")}</strong> — {t("onboarding_modal_step1_ai_desc")}
                 </span>
               </li>
             </ul>
@@ -108,19 +105,17 @@ export default function OnboardingModal() {
         {step === 2 && (
           <div style={styles.stepContent}>
             <div style={styles.emoji}>💰</div>
-            <h3 style={styles.stepTitle}>Jouw startkapitaal</h3>
+            <h3 style={styles.stepTitle}>{t("onboarding_modal_step2_title")}</h3>
             <div style={styles.capitalBox}>
-              <span style={styles.capitalLabel}>Jouw paper trading budget</span>
+              <span style={styles.capitalLabel}>{t("onboarding_modal_step2_label")}</span>
               <span style={styles.capitalValue}>
                 {startCapital != null
                   ? `$${startCapital.toLocaleString("nl-NL")}`
-                  : "Laden..."}
+                  : t("onboarding_modal_step2_loading")}
               </span>
             </div>
             <p style={styles.text}>
-              Dit is je virtuele startkapitaal voor paper trading. Je handelt met dit bedrag
-              alsof het echt geld is, maar zonder enig financieel risico. Zo leer je de
-              markt kennen voordat je echt instapt.
+              {t("onboarding_modal_step2_text")}
             </p>
           </div>
         )}
@@ -128,16 +123,16 @@ export default function OnboardingModal() {
         {step === 3 && (
           <div style={styles.stepContent}>
             <div style={styles.emoji}>🎉</div>
-            <h3 style={styles.stepTitle}>Klaar om te beginnen!</h3>
+            <h3 style={styles.stepTitle}>{t("onboarding_modal_step3_title")}</h3>
             <p style={styles.text}>
-              Kies hoe je wilt starten. Je kunt altijd wisselen via het menu.
+              {t("onboarding_modal_step3_text")}
             </p>
             <div style={styles.ctaRow}>
               <button style={styles.ctaPrimary} onClick={() => goTo("/leren")}>
-                Start leren →
+                {t("onboarding_modal_step3_learn")}
               </button>
               <button style={styles.ctaSecondary} onClick={() => goTo("/trade")}>
-                Start traden →
+                {t("onboarding_modal_step3_trade")}
               </button>
             </div>
           </div>
@@ -163,15 +158,15 @@ export default function OnboardingModal() {
             onClick={handleBack}
             disabled={step === 0}
           >
-            ← Terug
+            {t("onboarding_modal_back")}
           </button>
           {step < 3 ? (
             <button style={styles.navBtnPrimary} onClick={handleNext}>
-              Volgende →
+              {t("onboarding_modal_next")}
             </button>
           ) : (
             <button style={styles.navBtn} onClick={close}>
-              Sluiten
+              {t("onboarding_modal_close")}
             </button>
           )}
         </div>
