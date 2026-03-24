@@ -556,7 +556,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {liveMode ? (
               <span style={{ color: "#22c55e" }}>● Live {isBinance ? "WebSocket" : "10s"}</span>
             ) : (
-              <span style={{ color: "#f59e0b" }}>○ Verbinden…</span>
+              <span style={{ color: "#f59e0b" }}>{t("status_connecting")}</span>
             )}
             {lastTickLabel && <>&nbsp;· {lastTickLabel}</>}
           </div>
@@ -573,7 +573,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </div>
             )}
           </div>
-          <span className="terminal-soft-badge">Analyse: {lastRefresh || "bij laden"}</span>
+          <span className="terminal-soft-badge">{lastRefresh ? `${t("status_analysis_prefix")} ${lastRefresh}` : t("status_loading_analysis")}</span>
           {!notifAllowed && "Notification" in (typeof window !== "undefined" ? window : {}) && (
             <button
               className="terminal-btn terminal-btn-muted"

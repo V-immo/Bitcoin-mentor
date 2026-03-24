@@ -200,7 +200,7 @@ export default function SettingsPanel() {
 
         {bitvavoConnected === true && (
           <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>
-            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✓ Bitvavo gekoppeld</div>
+            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{t("settings_bitvavo_connected")}</div>
             {bitvavoBalance && bitvavoBalance.length > 0 ? (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {bitvavoBalance.map((b) => (
@@ -210,7 +210,7 @@ export default function SettingsPanel() {
                 ))}
               </div>
             ) : (
-              <div style={{ color: "#86efac", fontSize: 13 }}>Geen saldo gevonden (alle posities zijn 0)</div>
+              <div style={{ color: "#86efac", fontSize: 13 }}>{t("settings_bitvavo_no_balance")}</div>
             )}
           </div>
         )}
@@ -222,7 +222,7 @@ export default function SettingsPanel() {
               type="text"
               value={bitvavoKey}
               onChange={e => setBitvavoKey(e.target.value)}
-              placeholder={bitvavoConnected ? "••••••••••••••••" : "Voer je Bitvavo API key in"}
+              placeholder={bitvavoConnected ? "••••••••••••••••" : t("settings_bitvavo_key_placeholder")}
               style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
             />
           </div>
@@ -232,7 +232,7 @@ export default function SettingsPanel() {
               type="password"
               value={bitvavoSecret}
               onChange={e => setBitvavoSecret(e.target.value)}
-              placeholder={bitvavoConnected ? "••••••••••••••••" : "Voer je Bitvavo API secret in"}
+              placeholder={bitvavoConnected ? "••••••••••••••••" : t("settings_bitvavo_secret_placeholder")}
               style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
             />
           </div>
@@ -263,13 +263,13 @@ export default function SettingsPanel() {
                   setBitvavoKey(""); setBitvavoSecret("");
                 } else {
                   setBitvavoConnected(false);
-                  alert(data.error ?? "Verbinding mislukt — controleer je API keys.");
+                  alert(data.error ?? t("settings_bitvavo_error"));
                 }
                 setBitvavoSaving(false);
                 setBitvavoChecking(false);
               }}
             >
-              {bitvavoSaving ? (bitvavoChecking ? "Testen…" : "Opslaan…") : bitvavoSaved ? "✓ Gekoppeld!" : "Opslaan & testen"}
+              {bitvavoSaving ? (bitvavoChecking ? t("settings_bitvavo_testing") : t("settings_bitvavo_saving")) : bitvavoSaved ? t("settings_bitvavo_connected_btn") : t("settings_bitvavo_save_test")}
             </button>
             {bitvavoConnected && (
               <button
@@ -285,7 +285,7 @@ export default function SettingsPanel() {
                   setBitvavoChecking(false);
                 }}
               >
-                {bitvavoChecking ? "Laden…" : "↻ Saldo vernieuwen"}
+                {bitvavoChecking ? t("settings_bitvavo_loading") : t("settings_bitvavo_refresh")}
               </button>
             )}
           </div>
@@ -294,11 +294,11 @@ export default function SettingsPanel() {
 
       {/* Wachtwoord wijzigen */}
       <section className="settings-card">
-        <div className="settings-card-title">🔒 Wachtwoord wijzigen</div>
-        <div className="settings-card-desc">Kies een sterk wachtwoord van minimaal 8 tekens.</div>
+        <div className="settings-card-title">{t("settings_title_password")}</div>
+        <div className="settings-card-desc">{t("settings_desc_password")}</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Huidig wachtwoord</label>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("settings_pw_current")}</label>
             <input
               type="password"
               value={pwCurrent}
@@ -310,7 +310,7 @@ export default function SettingsPanel() {
             />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Nieuw wachtwoord</label>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("settings_pw_new")}</label>
             <input
               type="password"
               value={pwNew}
@@ -322,7 +322,7 @@ export default function SettingsPanel() {
             />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bevestig nieuw wachtwoord</label>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("settings_pw_confirm")}</label>
             <input
               type="password"
               value={pwConfirm}
@@ -348,11 +348,11 @@ export default function SettingsPanel() {
             disabled={pwSaving || !pwCurrent || !pwNew || !pwConfirm}
             onClick={async () => {
               if (pwNew !== pwConfirm) {
-                setPwMsg({ ok: false, text: "Nieuwe wachtwoorden komen niet overeen." });
+                setPwMsg({ ok: false, text: t("settings_pw_mismatch") });
                 return;
               }
               if (pwNew.length < 8) {
-                setPwMsg({ ok: false, text: "Wachtwoord moet minimaal 8 tekens zijn." });
+                setPwMsg({ ok: false, text: t("settings_pw_too_short") });
                 return;
               }
               setPwSaving(true);
@@ -364,16 +364,16 @@ export default function SettingsPanel() {
               });
               const data = await res.json();
               if (res.ok) {
-                setPwMsg({ ok: true, text: "✓ Wachtwoord succesvol gewijzigd!" });
+                setPwMsg({ ok: true, text: t("settings_pw_success") });
                 setPwCurrent(""); setPwNew(""); setPwConfirm("");
               } else {
-                setPwMsg({ ok: false, text: data.error ?? "Fout bij wijzigen." });
+                setPwMsg({ ok: false, text: data.error ?? t("settings_pw_error") });
               }
               setPwSaving(false);
             }}
             style={{ alignSelf: "flex-start" }}
           >
-            {pwSaving ? "Opslaan…" : "Wachtwoord wijzigen"}
+            {pwSaving ? t("settings_pw_saving") : t("settings_pw_btn")}
           </button>
         </div>
       </section>
@@ -381,14 +381,14 @@ export default function SettingsPanel() {
       {/* Push notificaties */}
       {push.supported && (
         <section className="settings-card">
-          <div className="settings-card-title">🔔 Push notificaties</div>
+          <div className="settings-card-title">{t("settings_title_push")}</div>
           <div className="settings-card-desc">
-            Ontvang een melding op je telefoon of computer als het signaal verandert naar &quot;Kopen overwegen&quot;.
+            {t("settings_desc_push")}
           </div>
           {push.subscribed ? (
             <div>
               <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
-                ✓ Notificaties ingeschakeld
+                {t("settings_push_enabled")}
               </div>
               <button
                 className="admin-btn"
@@ -396,7 +396,7 @@ export default function SettingsPanel() {
                 disabled={push.loading}
                 style={{ fontSize: 13 }}
               >
-                {push.loading ? "Bezig…" : "Uitschakelen"}
+                {push.loading ? t("settings_push_busy") : t("settings_push_disable")}
               </button>
             </div>
           ) : (
@@ -405,7 +405,7 @@ export default function SettingsPanel() {
               onClick={push.subscribe}
               disabled={push.loading}
             >
-              {push.loading ? "Bezig…" : "🔔 Notificaties inschakelen"}
+              {push.loading ? t("settings_push_busy") : t("settings_push_enable")}
             </button>
           )}
         </section>

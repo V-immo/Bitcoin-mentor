@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type NewsItem = {
   title: string;
@@ -9,18 +10,18 @@ type NewsItem = {
   published: number;
 };
 
-function timeAgo(ts: number): string {
-  const diff = Math.floor((Date.now() - ts) / 1000);
-  if (diff < 60) return "zojuist";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m geleden`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}u geleden`;
-  return `${Math.floor(diff / 86400)}d geleden`;
-}
-
 export default function NewsPanel({ asset }: { asset: string }) {
+  const { t } = useLanguage();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [lastAsset, setLastAsset] = useState("");
+
+  function timeAgo(ts: number): string {
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return t("time_just_now");
+    if (diff < 3600) return `${Math.floor(diff / 60)}${t("time_min_ago")}`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}${t("time_hour_ago")}`;
+    return `${Math.floor(diff / 86400)}${t("time_day_ago")}`;
+  }
 
   async function load(sym: string) {
     setLoading(true);
@@ -29,7 +30,6 @@ export default function NewsPanel({ asset }: { asset: string }) {
       if (res.ok) setNews(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
-    setLastAsset(sym);
   }
 
   useEffect(() => {
@@ -39,23 +39,23 @@ export default function NewsPanel({ asset }: { asset: string }) {
   return (
     <section className="terminal-side-card news-panel">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div className="terminal-label">Nieuws</div>
+        <div className="terminal-label">{t("news_label")}</div>
         <button
           className="terminal-btn terminal-btn-muted"
           onClick={() => load(asset)}
           disabled={loading}
           style={{ fontSize: 11, height: 24, padding: "0 8px" }}
         >
-          {loading ? "⟳" : "↻ Vernieuwen"}
+          {loading ? "⟳" : t("news_refresh")}
         </button>
       </div>
 
       {loading && news.length === 0 && (
-        <div className="news-loading">Nieuws ophalen…</div>
+        <div className="news-loading">{t("news_loading")}</div>
       )}
 
       {!loading && news.length === 0 && (
-        <div className="news-empty">Geen nieuws gevonden voor {asset.replace("USDT", "")}.</div>
+        <div className="news-empty">{t("news_empty")} {asset.replace("USDT", "")}.</div>
       )}
 
       <div className="news-list">
