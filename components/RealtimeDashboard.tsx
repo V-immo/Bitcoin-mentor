@@ -97,7 +97,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "analyse" | "chat" | "nieuws" | "checklist" | "leaderboard";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -134,7 +134,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string }[] = [
     { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖" },
     { key: "paper",       label: t("nav_paper_trading"), icon: "💰" },
-    { key: "analyse",     label: t("nav_analysis"),      icon: "📊" },
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
@@ -722,9 +721,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </>
             )}
             {bottomTab === "chat" && (
-              <MentorChat key={asset} marketContext={marketContext} asset={asset} />
-            )}
-            {bottomTab === "analyse" && (
               <>
                 {signalReady && (
                   <AITradeCoach
@@ -748,33 +744,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     lastTickLabel={lastTickLabel} tickKey={Math.round(chartPrice)}
                   />
                 )}
-                <TerminalMentorPanel
-                  status={signal.status} action={signal.action} currentPrice={chartPrice}
-                  entryZoneLow={signal.entryZoneLow} entryZoneHigh={signal.entryZoneHigh}
-                  stopLoss={signal.stopLoss} resistanceZoneLow={signal.resistanceZoneLow}
-                  resistanceZoneHigh={signal.resistanceZoneHigh} score={signal.score}
-                  setupGrade={signal.setupGrade} riskRewardEstimate={signal.riskRewardEstimate}
-                  trend4h={signal.trend4h} trend1h={signal.trend1h} rsi4h={signal.rsi4h}
-                  blockers={signal.blockers} warnings={signal.warnings}
-                  lastTickLabel={lastTickLabel}
-                />
-                <div className="terminal-data-grid" style={{ marginTop: 12 }}>
-                  {[
-                    [t("label_trend_1h"), nlTrend(signal.trend1h, lang)], [t("label_trend_4h"), nlTrend(signal.trend4h, lang)],
-                    [t("label_trend_1d"), nlTrend(signal.trend1d, lang)],
-                    [t("label_rsi_1h"), signal.rsi1h.toFixed(1)], [t("label_rsi_4h"), signal.rsi4h.toFixed(1)],
-                    [t("label_rsi_1d"), signal.rsi1d.toFixed(1)],
-                    [t("label_score"), `${signal.score}/100`], [t("label_grade"), signal.setupGrade],
-                    [t("label_rr"), String(signal.riskRewardEstimate)],
-                    [t("label_upside"), `${signal.distanceToResistancePct.toFixed(1)}%`],
-                    ...(isBinance ? [[t("label_funding"), fundingRate], [t("label_oi"), openInterest]] : []),
-                  ].map(([label, value]) => (
-                    <div key={label} className="terminal-data-box">
-                      <span className="terminal-data-label">{label}</span>
-                      <span className="terminal-data-value">{value}</span>
-                    </div>
-                  ))}
-                </div>
+                <MentorChat key={asset} marketContext={marketContext} asset={asset} />
               </>
             )}
             {bottomTab === "checklist" && (
