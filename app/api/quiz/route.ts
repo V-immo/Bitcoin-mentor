@@ -251,7 +251,7 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
 
   const response = await client.messages.create({
     model: "claude-haiku-4-5",
-    max_tokens: 1200,
+    max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
   });
 

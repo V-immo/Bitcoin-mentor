@@ -77,7 +77,7 @@ export async function getFinnhubCandles(
   const base = isForex ? "forex/candle" : "stock/candle";
   const url = `${FINNHUB_BASE}/${base}?symbol=${encodeURIComponent(finnhubSymbol)}&resolution=${resolution}&from=${from}&to=${to}&token=${apiKey}`;
 
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(5000) });
   if (!res.ok) throw new Error(`Finnhub fout ${finnhubSymbol}: ${res.status}`);
 
   const data = await res.json();
@@ -123,7 +123,7 @@ export async function getFinnhubQuote(finnhubSymbol: string): Promise<FinnhubQuo
     const from = to - 3600;
     const res = await fetch(
       `${FINNHUB_BASE}/forex/candle?symbol=${encodeURIComponent(finnhubSymbol)}&resolution=1&from=${from}&to=${to}&token=${apiKey}`,
-      { cache: "no-store" }
+      { cache: "no-store", signal: AbortSignal.timeout(5000) }
     );
     if (res.ok) {
       const data = await res.json();
@@ -136,7 +136,7 @@ export async function getFinnhubQuote(finnhubSymbol: string): Promise<FinnhubQuo
   } else {
     const res = await fetch(
       `${FINNHUB_BASE}/quote?symbol=${encodeURIComponent(finnhubSymbol)}&token=${apiKey}`,
-      { cache: "no-store" }
+      { cache: "no-store", signal: AbortSignal.timeout(5000) }
     );
     if (res.ok) {
       const data = await res.json();
