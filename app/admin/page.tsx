@@ -25,7 +25,7 @@ const TYPE_LABEL: Record<string, string> = { login: "Login", quiz: "Quiz", trade
 
 function fmtActivity(d: string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("nl-NL", {
+  return new Date(d).toLocaleString("en-GB", {
     day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
   });
 }
@@ -48,28 +48,28 @@ export default function AdminOverviewPage() {
       .finally(() => setActivityLoading(false));
   }, []);
 
-  if (loading) return <div className="admin-loading">Statistieken laden…</div>;
-  if (!stats) return <div className="admin-loading">Fout bij laden stats.</div>;
+  if (loading) return <div className="admin-loading">Loading statistics…</div>;
+  if (!stats) return <div className="admin-loading">Error loading stats.</div>;
 
   const tiles = [
-    { label: "Gebruikers", value: stats.totalUsers, icon: "👥", sub: `+ ${stats.totalAdmins} admins` },
-    { label: "Actief vandaag", value: stats.activeToday, icon: "🟢", sub: "last_login = vandaag" },
-    { label: "Paper trades", value: stats.totalTrades, icon: "📈", sub: "platform breed" },
+    { label: "Users", value: stats.totalUsers, icon: "👥", sub: `+ ${stats.totalAdmins} admins` },
+    { label: "Active today", value: stats.activeToday, icon: "🟢", sub: "logged in today" },
+    { label: "Paper trades", value: stats.totalTrades, icon: "📈", sub: "platform-wide" },
     {
-      label: "Totale P&L",
-      value: `€ ${stats.totalPnl.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}`,
+      label: "Total P&L",
+      value: `€ ${stats.totalPnl.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
       icon: stats.totalPnl >= 0 ? "💚" : "🔴",
       sub: "paper trading",
     },
-    { label: "Quiz vandaag", value: stats.quizToday, icon: "🧠", sub: "completies" },
-    { label: "Gem. level", value: stats.avgLevel, icon: "⭐", sub: "quiz niveau" },
+    { label: "Quiz today", value: stats.quizToday, icon: "🧠", sub: "completions" },
+    { label: "Avg. level", value: stats.avgLevel, icon: "⭐", sub: "quiz level" },
   ];
 
   return (
     <div>
       <div className="admin-page-header">
         <h1 className="admin-page-title">Dashboard</h1>
-        <span className="admin-page-sub">Platform statistieken</span>
+        <span className="admin-page-sub">Platform statistics</span>
       </div>
 
       <div className="admin-stats-grid">
@@ -85,23 +85,22 @@ export default function AdminOverviewPage() {
 
       <div className="admin-quick-links">
         <Link href="/admin/users" className="admin-quick-btn">
-          👥 Bekijk alle gebruikers →
+          👥 View all users →
         </Link>
         <Link href="/admin/capital" className="admin-quick-btn">
-          💰 Kapitaal toewijzen →
+          💰 Assign capital →
         </Link>
       </div>
 
-      {/* Recente activiteit */}
       <div className="admin-card" style={{ marginTop: 24 }}>
         <div className="admin-card-title" style={{ marginBottom: 12 }}>
-          Recente activiteit
+          Recent activity
         </div>
 
         {activityLoading ? (
-          <div className="admin-loading" style={{ padding: "12px 0" }}>Activiteit laden…</div>
+          <div className="admin-loading" style={{ padding: "12px 0" }}>Loading activity…</div>
         ) : activity.length === 0 ? (
-          <div className="admin-empty-inline">Nog geen activiteit geregistreerd.</div>
+          <div className="admin-empty-inline">No activity recorded yet.</div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {activity.map((ev, i) => (

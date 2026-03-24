@@ -61,6 +61,42 @@ export const LEVEL_TOPICS: Record<number, string[]> = {
   ],
 };
 
+export const LEVEL_TOPICS_EN: Record<number, string[]> = {
+  1: [
+    "RSI basics", "what is a stop-loss", "what is a buy zone", "bull vs bear market", "why risk management matters",
+    "what are candlesticks", "what is a trend", "difference between buying and selling", "what is an exchange",
+    "what is market capitalization", "why does price move", "what is liquidity", "how does paper trading work",
+    "what is a portfolio", "what is diversification",
+  ],
+  2: [
+    "identifying trends", "support and resistance", "calculating position size", "R/R ratio", "timeframes",
+    "higher highs and higher lows", "recognizing breakouts", "fake breakout", "what is a pullback",
+    "moving averages explained", "RSI divergence", "when to wait vs buy", "how to set a stop-loss",
+    "what is a swing trade", "how to calculate profit percentage",
+  ],
+  3: [
+    "MA crossovers", "market structure", "volume analysis", "swing vs day trading", "recognizing FOMO",
+    "multi-timeframe confirmation", "what is an order block", "bearish vs bullish divergence",
+    "how Fibonacci retracement works", "correction vs trend reversal", "recognizing consolidation",
+    "trailing stop-loss", "what is a 1:3 risk/reward", "psychology of loss takers",
+    "how to read the order book",
+  ],
+  4: [
+    "multi-timeframe analysis", "buy zone vs market price", "macro influence on crypto", "halving cycle", "institutional behavior",
+    "how funding rates work", "open interest interpretation", "BTC dominance as indicator",
+    "on-chain data basics", "the importance of market cycles", "narrative-driven markets",
+    "liquidity sweeps", "trading around macro events", "BTC and S&P 500 correlation",
+    "DCA strategy for advanced traders",
+  ],
+  5: [
+    "advanced entry timing", "correlations between assets", "funding rates", "news trading", "psychology of loss",
+    "smart money concepts", "supply and demand zones", "reading large players",
+    "order flow analysis", "working with a trading journal", "evaluating your trades",
+    "consistency vs win rate", "position management during a trade", "scaling in and out",
+    "building a personal trading system",
+  ],
+};
+
 // Zorg dat quiz_pool en quiz_shown bestaan (auto-migrate)
 function ensureQuizTables() {
   const db = getDb();
@@ -68,6 +104,7 @@ function ensureQuizTables() {
     CREATE TABLE IF NOT EXISTS quiz_pool (
       id            INTEGER PRIMARY KEY AUTOINCREMENT,
       level         INTEGER NOT NULL,
+      lang          TEXT    NOT NULL DEFAULT 'nl',
       topic         TEXT    NOT NULL,
       question_json TEXT    NOT NULL,
       created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -82,8 +119,11 @@ function ensureQuizTables() {
       UNIQUE(user_id, question_id)
     );
     CREATE INDEX IF NOT EXISTS idx_quiz_pool_level ON quiz_pool(level);
+    CREATE INDEX IF NOT EXISTS idx_quiz_pool_lang ON quiz_pool(level, lang);
     CREATE INDEX IF NOT EXISTS idx_quiz_shown_user ON quiz_shown(user_id, question_id);
   `);
+  // Add lang column to existing table if missing (migration)
+  try { db.exec(`ALTER TABLE quiz_pool ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'`); } catch { /* already exists */ }
 }
 
 function pickRandomTopics(topics: string[], count: number): string[] {
@@ -139,11 +179,45 @@ export async function generateAndSaveQuestions(
   level: number,
   topics: string[],
   marketSnapshot: string,
-  count: number
+  count: number,
+  lang: "nl" | "en" = "nl"
 ): Promise<QuizQuestion[]> {
-  const dateStr = new Date().toLocaleDateString("nl-BE", { weekday: "long", day: "numeric", month: "long" });
+  const locale = lang === "en" ? "en-US" : "nl-BE";
+  const dateStr = new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 
-  const prompt = `Je bent een trading-quiz generator voor een lerende trader op niveau ${level}/5.
+  const prompt = lang === "en"
+    ? `You are a trading quiz generator for a learning trader at level ${level}/5.
+Today's date: ${dateStr}
+
+CURRENT MARKET DATA (use this in your questions!):
+${marketSnapshot}
+
+TOPICS for this session (${level}/5) — choose from these, vary each time:
+${topics.join(", ")}
+
+Generate exactly ${count} UNIQUE quiz questions. The questions must:
+1. NEVER be the same as a previous session — use the date as a seed for variation
+2. Be realistic — use the current market data above in at least 2 questions
+3. Match level ${level} (${level <= 2 ? "simple and fundamental" : level <= 3 ? "intermediate and practical" : "advanced and analytical"})
+4. Be educational — the explanation teaches the trader something real
+5. Be varied — mix of concepts, calculations and real scenarios
+
+Return as JSON array (only the array, no extra text):
+[
+  {
+    "id": "1",
+    "topic": "topic",
+    "question": "The question (may include current market context)",
+    "context": "optional extra context or scenario (1 sentence)",
+    "options": ["A. option1", "B. option2", "C. option3", "D. option4"],
+    "correct": "A",
+    "explanation": "Explanation of 2-3 sentences why this is correct and what you learn from it.",
+    "difficulty": ${level}
+  }
+]
+
+Make sure exactly one answer is correct and the other 3 are plausible but wrong.`
+    : `Je bent een trading-quiz generator voor een lerende trader op niveau ${level}/5.
 Datum van vandaag: ${dateStr}
 
 ACTUELE MARKTDATA (gebruik dit in je vragen!):
@@ -189,11 +263,11 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
   // Sla op in pool
   const db = getDb();
   const insert = db.prepare(
-    "INSERT INTO quiz_pool (level, topic, question_json) VALUES (?, ?, ?)"
+    "INSERT INTO quiz_pool (level, lang, topic, question_json) VALUES (?, ?, ?, ?)"
   );
   const insertMany = db.transaction((qs: QuizQuestion[]) => {
     for (const q of qs) {
-      insert.run(level, q.topic, JSON.stringify(q));
+      insert.run(level, lang, q.topic, JSON.stringify(q));
     }
   });
   insertMany(questions);
@@ -214,6 +288,8 @@ export async function POST(request: NextRequest) {
   let level: number = body.level ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
   const todayTopic: string = body.todayTopic ?? "";
+  const lang: "nl" | "en" = body.lang === "en" ? "en" : "nl";
+  const topics = lang === "en" ? LEVEL_TOPICS_EN : LEVEL_TOPICS;
 
   if (userId) {
     try {
@@ -245,14 +321,14 @@ export async function POST(request: NextRequest) {
       // Haal ongeziene vragen op (niet getoond in de laatste 30 dagen)
       const unseenRows = db.prepare(`
         SELECT id, topic, question_json FROM quiz_pool
-        WHERE level = ?
+        WHERE level = ? AND lang = ?
           AND id NOT IN (
             SELECT question_id FROM quiz_shown
             WHERE user_id = ? AND shown_at > datetime('now', '-30 days')
           )
         ORDER BY RANDOM()
         LIMIT ?
-      `).all(level, userId, questionCount) as { id: number; topic: string; question_json: string }[];
+      `).all(level, lang, userId, questionCount) as { id: number; topic: string; question_json: string }[];
 
       if (unseenRows.length >= questionCount) {
         // Markeer als getoond
@@ -275,19 +351,19 @@ export async function POST(request: NextRequest) {
         // Trigger async background refill als pool bijna leeg raakt (<20 ongezien)
         const remaining = db.prepare(`
           SELECT COUNT(*) as n FROM quiz_pool
-          WHERE level = ?
+          WHERE level = ? AND lang = ?
             AND id NOT IN (
               SELECT question_id FROM quiz_shown
               WHERE user_id = ? AND shown_at > datetime('now', '-30 days')
             )
-        `).get(level, userId) as { n: number };
+        `).get(level, lang, userId) as { n: number };
 
         if (remaining.n < 20) {
-          const allTopics = LEVEL_TOPICS[level] ?? LEVEL_TOPICS[1];
+          const allTopics = topics[level] ?? topics[1];
           const refillTopics = pickRandomTopics(allTopics, questionCount);
           // Async refill — wacht niet op resultaat
           getMarketSnapshot().then(snap =>
-            generateAndSaveQuestions(level, refillTopics, snap, questionCount)
+            generateAndSaveQuestions(level, refillTopics, snap, questionCount, lang)
           ).catch(() => {});
         }
 
@@ -305,7 +381,7 @@ export async function POST(request: NextRequest) {
 
   // === LIVE GENERATIE (pool leeg of niet ingelogd) ===
   const marketSnapshot = await getMarketSnapshot();
-  const allTopics = LEVEL_TOPICS[level] ?? LEVEL_TOPICS[1];
+  const allTopics = topics[level] ?? topics[1];
   const randomTopics = pickRandomTopics(allTopics, Math.min(questionCount, allTopics.length));
   const focusTopics = weakTopics.length > 0
     ? [...new Set([...weakTopics.slice(0, 2), ...randomTopics])].slice(0, questionCount)
@@ -314,7 +390,7 @@ export async function POST(request: NextRequest) {
   if (todayTopic) focusTopics.unshift(todayTopic);
 
   try {
-    const questions = await generateAndSaveQuestions(level, focusTopics, marketSnapshot, questionCount);
+    const questions = await generateAndSaveQuestions(level, focusTopics, marketSnapshot, questionCount, lang);
 
     // Markeer als getoond voor ingelogde gebruiker
     if (userId) {

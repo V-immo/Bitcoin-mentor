@@ -97,7 +97,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "analyse" | "chat" | "nieuws" | "checklist" | "leaderboard";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -134,7 +134,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string }[] = [
     { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖" },
     { key: "paper",       label: t("nav_paper_trading"), icon: "💰" },
-    { key: "analyse",     label: t("nav_analysis"),      icon: "📊" },
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
@@ -468,7 +467,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     if (aboveBuyZone) return {
       headline: t("advice_too_high_title"),
       verdict: t("advice_too_high_verdict"),
-      bestAction: `Wacht tot $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
+      bestAction: `${t("advice_too_high_action_prefix")} $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
       biggestMistake: t("advice_too_high_mistake"),
       lesson: t("advice_too_high_lesson"),
       marketTone: t("advice_too_high_tone"),
@@ -564,8 +563,17 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         <div className="terminal-topbar-right">
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <span className={`terminal-status-badge ${statusTone}`}>{signal.status}</span>
-              <span className="terminal-soft-badge">{signal.action}</span>
+              <span className={`terminal-status-badge ${statusTone}`}>
+                {signal.status === "Goed moment" ? t("status_good_moment")
+                  : signal.status === "Nog even wachten" ? t("status_wait")
+                  : t("status_no_buy")}
+              </span>
+              <span className="terminal-soft-badge">
+                {signal.action === "Niet kopen" ? t("action_no_buy")
+                  : signal.action === "Kleine positie mogelijk" ? t("action_small_buy")
+                  : signal.action === "Wacht op betere prijs" ? t("action_wait_price")
+                  : signal.action}
+              </span>
             </div>
             {signalReady && signal.shortWhy && (
               <div style={{ fontSize: 11, color: "var(--text-secondary)", maxWidth: 280, textAlign: "right", lineHeight: 1.4 }}>
@@ -713,9 +721,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </>
             )}
             {bottomTab === "chat" && (
-              <MentorChat key={asset} marketContext={marketContext} asset={asset} />
-            )}
-            {bottomTab === "analyse" && (
               <>
                 {signalReady && (
                   <AITradeCoach
@@ -739,40 +744,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     lastTickLabel={lastTickLabel} tickKey={Math.round(chartPrice)}
                   />
                 )}
-                <TerminalMentorPanel
-                  status={signal.status} action={signal.action} currentPrice={chartPrice}
-                  entryZoneLow={signal.entryZoneLow} entryZoneHigh={signal.entryZoneHigh}
-                  stopLoss={signal.stopLoss} resistanceZoneLow={signal.resistanceZoneLow}
-                  resistanceZoneHigh={signal.resistanceZoneHigh} score={signal.score}
-                  setupGrade={signal.setupGrade} riskRewardEstimate={signal.riskRewardEstimate}
-                  trend4h={signal.trend4h} trend1h={signal.trend1h} rsi4h={signal.rsi4h}
-                  blockers={signal.blockers} warnings={signal.warnings}
-                  lastTickLabel={lastTickLabel}
-                />
-                <div className="terminal-data-grid" style={{ marginTop: 12 }}>
-                  {[
-                    [t("label_trend_1h"), nlTrend(signal.trend1h, lang)], [t("label_trend_4h"), nlTrend(signal.trend4h, lang)],
-                    [t("label_trend_1d"), nlTrend(signal.trend1d, lang)],
-                    [t("label_rsi_1h"), signal.rsi1h.toFixed(1)], [t("label_rsi_4h"), signal.rsi4h.toFixed(1)],
-                    [t("label_rsi_1d"), signal.rsi1d.toFixed(1)],
-                    [t("label_score"), `${signal.score}/100`], [t("label_grade"), signal.setupGrade],
-                    [t("label_rr"), String(signal.riskRewardEstimate)],
-                    [t("label_upside"), `${signal.distanceToResistancePct.toFixed(1)}%`],
-                    ...(isBinance ? [[t("label_funding"), fundingRate], [t("label_oi"), openInterest]] : []),
-                  ].map(([label, value]) => (
-                    <div key={label} className="terminal-data-box">
-                      <span className="terminal-data-label">{label}</span>
-                      <span className="terminal-data-value">{value}</span>
-                    </div>
-                  ))}
-                </div>
+                <MentorChat key={asset} marketContext={marketContext} asset={asset} />
               </>
             )}
             {bottomTab === "checklist" && (
               <>
                 {!signalReady ? (
                   <div className="terminal-side-card" style={{ color: "var(--text-secondary)", fontSize: 13, textAlign: "center", padding: 24 }}>
-                    ⟳ Analyse laden voor {assetDef?.ticker ?? asset}…
+                    {t("checklist_loading")} {assetDef?.ticker ?? asset}…
                   </div>
                 ) : (
                   <EntryChecklist

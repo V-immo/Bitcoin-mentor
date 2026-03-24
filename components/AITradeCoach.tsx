@@ -161,12 +161,20 @@ export default function AITradeCoach({
       <div className="mentor-summary-row">
         <div className="mentor-summary-box">
           <span className="mentor-summary-label">{t("coach_status")}</span>
-          <span className="mentor-summary-value">{status}</span>
+          <span className="mentor-summary-value">
+            {status === "Goed moment" ? t("status_good_moment")
+              : status === "Nog even wachten" ? t("status_wait")
+              : t("status_no_buy")}
+          </span>
         </div>
 
         <div className="mentor-summary-box">
           <span className="mentor-summary-label">{t("coach_action")}</span>
-          <span className="mentor-summary-value">{action}</span>
+          <span className="mentor-summary-value">
+            {action === "Kleine koop mogelijk" ? t("action_small_buy")
+              : action === "Wacht op betere prijs" ? t("action_wait_price")
+              : t("action_no_buy")}
+          </span>
         </div>
 
         <div className="mentor-summary-box">

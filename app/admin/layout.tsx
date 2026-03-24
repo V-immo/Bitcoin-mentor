@@ -1,17 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const NAV = [
-  { href: "/admin",         label: "📊 Overzicht",    exact: true },
-  { href: "/admin/users",   label: "👥 Gebruikers",   exact: false },
-  { href: "/admin/capital", label: "💰 Kapitaal",     exact: false },
+  { href: "/admin",         label: "📊 Overview",    exact: true },
+  { href: "/admin/users",   label: "👥 Users",        exact: false },
+  { href: "/admin/capital", label: "💰 Capital",      exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    const role = (session?.user as { role?: string })?.role;
+    if (!session || role !== "admin") {
+      router.replace("/");
+    }
+  }, [session, status, router]);
+
+  if (status === "loading") return null;
+  const role = (session?.user as { role?: string })?.role;
+  if (!session || role !== "admin") return null;
 
   return (
     <div className="admin-shell">
@@ -38,7 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
         <div style={{ marginTop: "auto", padding: "0 0 8px" }}>
           <Link href="/" className="admin-nav-link admin-back">
-            ← Terug naar app
+            ← Back to app
           </Link>
           <button
             onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
@@ -48,7 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               cursor: "pointer", textAlign: "left", color: "var(--red)",
             }}
           >
-            🚪 Uitloggen
+            🚪 Sign out
           </button>
         </div>
       </aside>

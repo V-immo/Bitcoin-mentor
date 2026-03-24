@@ -112,7 +112,9 @@ export default function AssetScanner() {
                 </div>
               </div>
               <div className={`scanner-card-signal scanner-signal-${r.color}`}>
-                {r.signal}
+                {r.signal === "Goed moment" ? t("status_good_moment")
+                  : r.signal === "Wachten" ? t("status_wait")
+                  : t("status_no_buy")}
               </div>
             </div>
 

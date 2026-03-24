@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LoginPage() {
@@ -81,6 +82,12 @@ export default function LoginPage() {
             {loading ? t("login_loading") : t("login_btn")}
           </button>
         </form>
+        <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "var(--text-secondary)" }}>
+          {t("login_no_account")}{" "}
+          <Link href="/auth/register" style={{ color: "var(--primary)", textDecoration: "none" }}>
+            {t("login_register_link")}
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Candle } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
   candles: Candle[];
@@ -147,6 +148,7 @@ export default function TradingChart({
   height = 380,
   compact = false,
 }: Props) {
+  const { t } = useLanguage();
   const [showBB, setShowBB] = useState(false);
   const [showMACD, setShowMACD] = useState(false);
   const [chartInitKey, setChartInitKey] = useState(0);
@@ -480,8 +482,8 @@ export default function TradingChart({
           <div className="market-chart-chip" style={{ color: "#e91e63" }}>── MA50</div>
           {showBB && <div className="market-chart-chip" style={{ color: "#3b82f6" }}>── BB(20)</div>}
           {showMACD && <div className="market-chart-chip" style={{ color: "#3b82f6" }}>── MACD(12,26,9)</div>}
-          <div className="market-chart-chip">Sleep ← → om terug te kijken</div>
-          <div className="market-chart-chip">Scroll = zoom</div>
+          <div className="market-chart-chip">{t("chart_drag_hint")}</div>
+          <div className="market-chart-chip">{t("chart_scroll_hint")}</div>
         </div>
       )}
 
@@ -527,34 +529,34 @@ export default function TradingChart({
         <div className="market-chart-legend">
           <div className="market-chart-legend-item">
             <span className="market-chart-legend-dot" style={{ background: "#26c57c" }} />
-            <span><strong>Koopzone</strong> — logisch instapgebied</span>
+            <span>{t("chart_buy_zone_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
             <span className="market-chart-legend-dot" style={{ background: "#ef4444" }} />
-            <span><strong>Stop-loss</strong> — maximaal verlies begrenzen</span>
+            <span>{t("chart_stoploss_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
             <span className="market-chart-legend-dot" style={{ background: "#6b7280" }} />
-            <span><strong>Resistance</strong> — winstdoel / weerstand</span>
+            <span>{t("chart_resistance_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
             <span className="market-chart-legend-dot" style={{ background: "#f59e0b" }} />
-            <span><strong>MA20</strong> — korte trend</span>
+            <span>{t("chart_ma20_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
             <span className="market-chart-legend-dot" style={{ background: "#e91e63" }} />
-            <span><strong>MA50</strong> — middellange trend</span>
+            <span>{t("chart_ma50_desc")}</span>
           </div>
           {showBB && (
             <div className="market-chart-legend-item">
               <span className="market-chart-legend-dot" style={{ background: "#3b82f6" }} />
-              <span><strong>BB(20)</strong> — Bollinger Bands</span>
+              <span>{t("chart_bb_desc")}</span>
             </div>
           )}
           {showMACD && (
             <div className="market-chart-legend-item">
               <span className="market-chart-legend-dot" style={{ background: "#3b82f6" }} />
-              <span><strong>MACD</strong> — trend momentum</span>
+              <span>{t("chart_macd_desc")}</span>
             </div>
           )}
         </div>
@@ -562,8 +564,8 @@ export default function TradingChart({
 
       {!compact && isFast && (
         <div className="market-chart-context-strip">
-          <div className="market-chart-context-box">Koopzone: ${entryZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })} – ${entryZoneHigh.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
-          <div className="market-chart-context-box">Stop: ${stopLoss.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
+          <div className="market-chart-context-box">{t("chart_buy_zone_label")}: ${entryZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })} – ${entryZoneHigh.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
+          <div className="market-chart-context-box">{t("chart_stop_label")}: ${stopLoss.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
           <div className="market-chart-context-box">Resistance: ${resistanceZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
         </div>
       )}

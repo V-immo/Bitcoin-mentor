@@ -17,7 +17,7 @@ type VideoResource = {
 type NewsSource = {
   name: string;
   url: string;
-  description: string;
+  descKey: string;
   icon: string;
   category: "crypto" | "stocks" | "macro" | "education";
 };
@@ -210,62 +210,14 @@ const TRENDING_VIDEOS: VideoResource[] = [
 ];
 
 const NEWS_SOURCES: NewsSource[] = [
-  {
-    name: "CoinDesk",
-    url: "https://www.coindesk.com",
-    description: "Toonaangevend crypto nieuws, analyses en marktdata",
-    icon: "📰",
-    category: "crypto",
-  },
-  {
-    name: "The Block",
-    url: "https://www.theblock.co",
-    description: "Diepgaand crypto onderzoek en nieuws voor gevorderden",
-    icon: "🔗",
-    category: "crypto",
-  },
-  {
-    name: "Cointelegraph",
-    url: "https://cointelegraph.com",
-    description: "Dagelijks crypto nieuws, prijsanalyses en features",
-    icon: "📡",
-    category: "crypto",
-  },
-  {
-    name: "TradingView Ideas",
-    url: "https://www.tradingview.com/ideas/",
-    description: "Chart analyses van duizenden traders wereldwijd",
-    icon: "📊",
-    category: "education",
-  },
-  {
-    name: "Investopedia",
-    url: "https://www.investopedia.com",
-    description: "Educatief platform: definitie van elk trading begrip",
-    icon: "📚",
-    category: "education",
-  },
-  {
-    name: "Bloomberg Crypto",
-    url: "https://www.bloomberg.com/crypto",
-    description: "Professioneel financieel nieuws voor crypto & markten",
-    icon: "🏦",
-    category: "macro",
-  },
-  {
-    name: "Glassnode Insights",
-    url: "https://insights.glassnode.com",
-    description: "On-chain data analyses — Bitcoin network metrics",
-    icon: "🔭",
-    category: "crypto",
-  },
-  {
-    name: "MacroAxis",
-    url: "https://www.macroaxis.com",
-    description: "Macro-economische data en correlaties met crypto",
-    icon: "🌍",
-    category: "macro",
-  },
+  { name: "CoinDesk",         url: "https://www.coindesk.com",            descKey: "news_desc_coindesk",     icon: "📰", category: "crypto" },
+  { name: "The Block",        url: "https://www.theblock.co",             descKey: "news_desc_theblock",     icon: "🔗", category: "crypto" },
+  { name: "Cointelegraph",    url: "https://cointelegraph.com",           descKey: "news_desc_cointelegraph",icon: "📡", category: "crypto" },
+  { name: "TradingView Ideas",url: "https://www.tradingview.com/ideas/",  descKey: "news_desc_tradingview",  icon: "📊", category: "education" },
+  { name: "Investopedia",     url: "https://www.investopedia.com",        descKey: "news_desc_investopedia", icon: "📚", category: "education" },
+  { name: "Bloomberg Crypto", url: "https://www.bloomberg.com/crypto",    descKey: "news_desc_bloomberg",    icon: "🏦", category: "macro" },
+  { name: "Glassnode Insights",url: "https://insights.glassnode.com",     descKey: "news_desc_glassnode",    icon: "🔭", category: "crypto" },
+  { name: "MacroAxis",        url: "https://www.macroaxis.com",           descKey: "news_desc_macroaxis",    icon: "🌍", category: "macro" },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -468,7 +420,7 @@ export default function LearningResources() {
                   </span>
                 </div>
               </div>
-              <div className="resources-news-desc">{s.description}</div>
+              <div className="resources-news-desc">{t(s.descKey)}</div>
               <div className="resources-news-arrow">→</div>
             </a>
           ))}

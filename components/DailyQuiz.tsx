@@ -55,7 +55,7 @@ const DEFAULT_HISTORY: QuizHistory = {
 };
 
 export default function DailyQuiz() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [history, setHistory] = useState<QuizHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [phase, setPhase] = useState<Phase>("home");
@@ -131,6 +131,7 @@ export default function DailyQuiz() {
         body: JSON.stringify({
           level: history.level,
           weakTopics: history.weakTopics.slice(0, 3),
+          lang,
         }),
       });
       const data = await res.json();

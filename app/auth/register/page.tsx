@@ -4,9 +4,11 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.password !== form.confirm) {
-      setError("Wachtwoorden komen niet overeen");
+      setError(t("register_error_mismatch"));
       return;
     }
     setLoading(true);
@@ -33,12 +35,11 @@ export default function RegisterPage() {
 
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error || "Registratie mislukt");
+      setError(data.error || t("register_error_failed"));
       setLoading(false);
       return;
     }
 
-    // Auto-login na registratie
     const login = await signIn("credentials", {
       username: form.username,
       password: form.password,
@@ -64,20 +65,20 @@ export default function RegisterPage() {
           <span className="login-logo-name">Bitcoin Mentor</span>
         </div>
 
-        <div className="login-title">Account aanmaken</div>
+        <div className="login-title">{t("register_title")}</div>
         <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 13, marginBottom: 20, marginTop: -8 }}>
-          Gratis starten. Geen creditcard nodig.
+          {t("register_subtitle")}
         </p>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="login-field">
-            <label className="login-label">Gebruikersnaam</label>
+            <label className="login-label">{t("register_username")}</label>
             <input
               className="login-input"
               type="text"
               value={form.username}
               onChange={(e) => set("username", e.target.value)}
-              placeholder="jouw gebruikersnaam"
+              placeholder={t("register_username_placeholder")}
               autoComplete="username"
               disabled={loading}
               minLength={3}
@@ -86,20 +87,23 @@ export default function RegisterPage() {
           </div>
 
           <div className="login-field">
-            <label className="login-label">E-mailadres</label>
+            <label className="login-label">{t("register_email")}</label>
             <input
               className="login-input"
               type="email"
               value={form.email}
               onChange={(e) => set("email", e.target.value)}
-              placeholder="jou@email.com"
+              placeholder={t("register_email_placeholder")}
               autoComplete="email"
               disabled={loading}
             />
           </div>
 
           <div className="login-field">
-            <label className="login-label">Wachtwoord <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(min. 8 tekens)</span></label>
+            <label className="login-label">
+              {t("register_password")}{" "}
+              <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>({t("register_password_hint")})</span>
+            </label>
             <input
               className="login-input"
               type="password"
@@ -112,7 +116,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="login-field">
-            <label className="login-label">Wachtwoord bevestigen</label>
+            <label className="login-label">{t("register_confirm")}</label>
             <input
               className="login-input"
               type="password"
@@ -131,14 +135,14 @@ export default function RegisterPage() {
             className="login-btn"
             disabled={loading || !valid}
           >
-            {loading ? "Account aanmaken…" : "Account aanmaken →"}
+            {loading ? t("register_loading") : t("register_btn")}
           </button>
         </form>
 
         <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "var(--text-secondary)" }}>
-          Al een account?{" "}
+          {t("register_has_account")}{" "}
           <Link href="/auth/login" style={{ color: "var(--primary)", textDecoration: "none" }}>
-            Inloggen →
+            {t("register_login_link")}
           </Link>
         </div>
       </div>

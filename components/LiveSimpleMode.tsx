@@ -70,9 +70,15 @@ export default function LiveSimpleMode({
 
         <div className="warm-status-badge-row">
           <div className={`warm-status-badge ${getColorClass(status)}`}>
-            {status}
+            {status === "Goed moment" ? t("status_good_moment")
+              : status === "Nog even wachten" ? t("status_wait")
+              : t("status_no_buy")}
           </div>
-          <div className="warm-action-chip">{action}</div>
+          <div className="warm-action-chip">
+            {action === "Kleine koop mogelijk" ? t("action_small_buy")
+              : action === "Wacht op betere prijs" ? t("action_wait_price")
+              : t("action_no_buy")}
+          </div>
         </div>
 
         <div className="live-status-row">

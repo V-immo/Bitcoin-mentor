@@ -13,7 +13,7 @@ const translations = {
 
     // === NAVIGATIE ===
     nav_scanner: "← Scanner",
-    nav_marcus_ai: "Marcus AI",
+    nav_marcus_ai: "Mentor Marcus",
     nav_paper_trading: "Paper Trading",
     nav_analysis: "Analyse",
     nav_checklist: "Checklist",
@@ -62,6 +62,14 @@ const translations = {
     status_analysis_prefix: "Analyse:",
     status_notifications_on: "🔔 Meldingen aan",
     status_notifications_active: "🔔 Meldingen actief",
+    status_good_moment: "Goed moment",
+    status_wait: "Nog even wachten",
+    status_no_buy: "Vandaag niet kopen",
+    action_no_buy: "Niet kopen",
+    action_small_buy: "Kleine koop mogelijk",
+    action_wait_price: "Wacht op betere prijs",
+    advice_too_high_action_prefix: "Wacht tot de prijs terugkomt naar",
+    mentor_zone_label: "Zone",
 
     // === LABELS ===
     label_trend_1h: "Trend 1H",
@@ -187,6 +195,38 @@ const translations = {
     settings_push_disable: "Uitschakelen",
     settings_push_enable: "🔔 Notificaties inschakelen",
     settings_push_busy: "Bezig…",
+
+    // === CHART ===
+    chart_drag_hint: "Sleep ← → om terug te kijken",
+    chart_scroll_hint: "Scroll = zoom",
+    chart_buy_zone_desc: "Koopzone — logisch instapgebied",
+    chart_stoploss_desc: "Stop-loss — maximaal verlies begrenzen",
+    chart_resistance_desc: "Resistance — winstdoel / weerstand",
+    chart_ma20_desc: "MA20 — korte trend",
+    chart_ma50_desc: "MA50 — middellange trend",
+    chart_bb_desc: "BB(20) — Bollinger Bands",
+    chart_macd_desc: "MACD — trend momentum",
+    chart_buy_zone_label: "Koopzone",
+    chart_stop_label: "Stop",
+
+    // === REGISTER ===
+    register_title: "Account aanmaken",
+    register_subtitle: "Gratis starten. Geen creditcard nodig.",
+    register_username: "Gebruikersnaam",
+    register_username_placeholder: "jouw gebruikersnaam",
+    register_email: "E-mailadres",
+    register_email_placeholder: "jou@email.com",
+    register_password: "Wachtwoord",
+    register_password_hint: "min. 8 tekens",
+    register_confirm: "Wachtwoord bevestigen",
+    register_btn: "Account aanmaken →",
+    register_loading: "Account aanmaken…",
+    register_error_mismatch: "Wachtwoorden komen niet overeen",
+    register_error_failed: "Registratie mislukt",
+    register_has_account: "Al een account?",
+    register_login_link: "Inloggen →",
+    login_no_account: "Nog geen account?",
+    login_register_link: "Aanmaken →",
 
     // === LOGIN ===
     login_title: "Inloggen",
@@ -347,6 +387,7 @@ const translations = {
     trade_error_retry: "Opnieuw proberen",
     trade_loading_text: "Analyse laden…",
     trade_loading_market: "marktdata ophalen",
+    checklist_loading: "⟳ Analyse laden voor",
     trade_intro_title: "Hoe werkt het handelsscherm? 📈",
     trade_intro_chart: "Grafiek",
     trade_intro_chart_desc: "Live koersgrafiek. Wissel tijdsframe (1u, 4u, dagelijks). Zet Bollinger Bands of MACD aan voor extra analyse.",
@@ -647,6 +688,14 @@ const translations = {
     resources_cat_stocks: "Aandelen",
     resources_cat_macro: "Macro",
     resources_cat_education: "Educatie",
+    news_desc_coindesk: "Toonaangevend crypto nieuws, analyses en marktdata",
+    news_desc_theblock: "Diepgaand crypto onderzoek en nieuws voor gevorderden",
+    news_desc_cointelegraph: "Dagelijks crypto nieuws, prijsanalyses en features",
+    news_desc_tradingview: "Chart analyses van duizenden traders wereldwijd",
+    news_desc_investopedia: "Educatief platform: definitie van elk trading begrip",
+    news_desc_bloomberg: "Professioneel financieel nieuws voor crypto & markten",
+    news_desc_glassnode: "On-chain data analyses — Bitcoin network metrics",
+    news_desc_macroaxis: "Macro-economische data en correlaties met crypto",
 
     // === LIVE SIMPLE MODE ===
     live_bitcoin_now: "Bitcoin nu",
@@ -827,7 +876,7 @@ const translations = {
 
     // === NAVIGATIE ===
     nav_scanner: "← Scanner",
-    nav_marcus_ai: "Marcus AI",
+    nav_marcus_ai: "Mentor Marcus",
     nav_paper_trading: "Paper Trading",
     nav_analysis: "Analysis",
     nav_checklist: "Checklist",
@@ -876,6 +925,14 @@ const translations = {
     status_analysis_prefix: "Analysis:",
     status_notifications_on: "🔔 Alerts on",
     status_notifications_active: "🔔 Alerts active",
+    status_good_moment: "Good moment",
+    status_wait: "Wait a bit",
+    status_no_buy: "Don't buy today",
+    action_no_buy: "Don't buy",
+    action_small_buy: "Small buy possible",
+    action_wait_price: "Wait for better price",
+    advice_too_high_action_prefix: "Wait until price returns to",
+    mentor_zone_label: "Zone",
 
     // === LABELS ===
     label_trend_1h: "Trend 1H",
@@ -1001,6 +1058,38 @@ const translations = {
     settings_push_disable: "Disable",
     settings_push_enable: "🔔 Enable notifications",
     settings_push_busy: "Busy…",
+
+    // === CHART ===
+    chart_drag_hint: "Drag ← → to look back",
+    chart_scroll_hint: "Scroll = zoom",
+    chart_buy_zone_desc: "Buy zone — logical entry area",
+    chart_stoploss_desc: "Stop-loss — limit maximum loss",
+    chart_resistance_desc: "Resistance — profit target / resistance",
+    chart_ma20_desc: "MA20 — short-term trend",
+    chart_ma50_desc: "MA50 — medium-term trend",
+    chart_bb_desc: "BB(20) — Bollinger Bands",
+    chart_macd_desc: "MACD — trend momentum",
+    chart_buy_zone_label: "Buy zone",
+    chart_stop_label: "Stop",
+
+    // === REGISTER ===
+    register_title: "Create account",
+    register_subtitle: "Free to start. No credit card needed.",
+    register_username: "Username",
+    register_username_placeholder: "your username",
+    register_email: "Email address",
+    register_email_placeholder: "you@email.com",
+    register_password: "Password",
+    register_password_hint: "min. 8 characters",
+    register_confirm: "Confirm password",
+    register_btn: "Create account →",
+    register_loading: "Creating account…",
+    register_error_mismatch: "Passwords do not match",
+    register_error_failed: "Registration failed",
+    register_has_account: "Already have an account?",
+    register_login_link: "Sign in →",
+    login_no_account: "No account yet?",
+    login_register_link: "Create one →",
 
     // === LOGIN ===
     login_title: "Sign in",
@@ -1161,6 +1250,7 @@ const translations = {
     trade_error_retry: "Try again",
     trade_loading_text: "Loading analysis…",
     trade_loading_market: "fetching market data",
+    checklist_loading: "⟳ Loading analysis for",
     trade_intro_title: "How does the trading screen work? 📈",
     trade_intro_chart: "Chart",
     trade_intro_chart_desc: "Live price chart. Switch timeframe (1h, 4h, daily). Turn on Bollinger Bands or MACD for extra analysis.",
@@ -1461,6 +1551,14 @@ const translations = {
     resources_cat_stocks: "Stocks",
     resources_cat_macro: "Macro",
     resources_cat_education: "Education",
+    news_desc_coindesk: "Leading crypto news, analysis and market data",
+    news_desc_theblock: "In-depth crypto research and news for advanced users",
+    news_desc_cointelegraph: "Daily crypto news, price analysis and features",
+    news_desc_tradingview: "Chart analysis from thousands of traders worldwide",
+    news_desc_investopedia: "Educational platform: definitions for every trading term",
+    news_desc_bloomberg: "Professional financial news for crypto & markets",
+    news_desc_glassnode: "On-chain data analysis — Bitcoin network metrics",
+    news_desc_macroaxis: "Macro-economic data and correlations with crypto",
 
     // === LIVE SIMPLE MODE ===
     live_bitcoin_now: "Bitcoin now",

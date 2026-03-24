@@ -96,14 +96,18 @@ export default function TerminalMentorPanel({
         shortList = [
             `4H: ${trend4h}`,
             `1H: ${trend1h}`,
-            `${t("mentor_in_zone_item").replace("In koopzone.", "").replace("In buy zone.", "").trim()} ${fmt(entryZoneLow)} – ${fmt(entryZoneHigh)}`,
+            `${t("mentor_zone_label")}: ${fmt(entryZoneLow)} – ${fmt(entryZoneHigh)}`,
         ];
     }
+
+    const translatedAction = action === "Kleine koop mogelijk" ? t("action_small_buy")
+        : action === "Wacht op betere prijs" ? t("action_wait_price")
+        : t("action_no_buy");
 
     const extra =
         warnings.length > 0
             ? warnings[0]
-            : `${t("mentor_extra_prefix")} ${score}/100 • ${t("mentor_extra_grade")} ${setupGrade} • ${t("mentor_extra_action")} ${action}`;
+            : `${t("mentor_extra_prefix")} ${score}/100 • ${t("mentor_extra_grade")} ${setupGrade} • ${t("mentor_extra_action")} ${translatedAction}`;
 
     return (
         <section className="terminal-side-card">
@@ -116,11 +120,15 @@ export default function TerminalMentorPanel({
             <div className="terminal-side-mini-grid">
                 <div className="terminal-mini-box">
                     <span className="terminal-mini-label">{t("mentor_status_label")}</span>
-                    <span className="terminal-mini-value">{status}</span>
+                    <span className="terminal-mini-value">
+                        {status === "Goed moment" ? t("status_good_moment")
+                            : status === "Nog even wachten" ? t("status_wait")
+                            : t("status_no_buy")}
+                    </span>
                 </div>
                 <div className="terminal-mini-box">
                     <span className="terminal-mini-label">{t("mentor_action_label")}</span>
-                    <span className="terminal-mini-value">{action}</span>
+                    <span className="terminal-mini-value">{translatedAction}</span>
                 </div>
                 <div className="terminal-mini-box">
                     <span className="terminal-mini-label">{t("mentor_score_label")}</span>
