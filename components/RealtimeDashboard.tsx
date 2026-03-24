@@ -468,7 +468,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     if (aboveBuyZone) return {
       headline: t("advice_too_high_title"),
       verdict: t("advice_too_high_verdict"),
-      bestAction: `Wacht tot $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
+      bestAction: `${t("advice_too_high_action_prefix")} $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
       biggestMistake: t("advice_too_high_mistake"),
       lesson: t("advice_too_high_lesson"),
       marketTone: t("advice_too_high_tone"),

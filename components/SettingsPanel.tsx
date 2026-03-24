@@ -178,7 +178,7 @@ export default function SettingsPanel() {
             <div className="settings-option-title">{t("lang_nl")}</div>
           </button>
           <button
-            className={`settings-option${settings.aiLanguage === "en" ? " active" : ""}`}
+            className={`settings-option${lang === "en" ? " active" : ""}`}
             onClick={() => saveLanguage("en")}
           >
             <div className="settings-option-title">{t("lang_en")}</div>

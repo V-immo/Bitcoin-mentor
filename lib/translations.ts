@@ -62,6 +62,14 @@ const translations = {
     status_analysis_prefix: "Analyse:",
     status_notifications_on: "🔔 Meldingen aan",
     status_notifications_active: "🔔 Meldingen actief",
+    status_good_moment: "Goed moment",
+    status_wait: "Nog even wachten",
+    status_no_buy: "Vandaag niet kopen",
+    action_no_buy: "Niet kopen",
+    action_small_buy: "Kleine koop mogelijk",
+    action_wait_price: "Wacht op betere prijs",
+    advice_too_high_action_prefix: "Wacht tot de prijs terugkomt naar",
+    mentor_zone_label: "Zone",
 
     // === LABELS ===
     label_trend_1h: "Trend 1H",
@@ -876,6 +884,14 @@ const translations = {
     status_analysis_prefix: "Analysis:",
     status_notifications_on: "🔔 Alerts on",
     status_notifications_active: "🔔 Alerts active",
+    status_good_moment: "Good moment",
+    status_wait: "Wait a bit",
+    status_no_buy: "Don't buy today",
+    action_no_buy: "Don't buy",
+    action_small_buy: "Small buy possible",
+    action_wait_price: "Wait for better price",
+    advice_too_high_action_prefix: "Wait until price returns to",
+    mentor_zone_label: "Zone",
 
     // === LABELS ===
     label_trend_1h: "Trend 1H",
