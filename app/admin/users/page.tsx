@@ -22,7 +22,7 @@ type User = {
 function fmt(dateStr: string | null) {
   if (!dateStr) return "—";
   const d = new Date(dateStr);
-  return d.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
 export default function AdminUsersPage() {
@@ -54,7 +54,7 @@ export default function AdminUsersPage() {
     const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setDeleteError(data.error ?? "Verwijderen mislukt");
+      setDeleteError(data.error ?? "Delete failed");
       return;
     }
     setConfirmDelete(null);
@@ -69,7 +69,7 @@ export default function AdminUsersPage() {
       body: JSON.stringify(newUser),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) { setCreateError(data.error ?? "Aanmaken mislukt"); return; }
+    if (!res.ok) { setCreateError(data.error ?? "Failed to create user"); return; }
     setCreating(false);
     setNewUser({ username: "", email: "", password: "", role: "user", startCapital: 10000 });
     load(true);
@@ -81,69 +81,67 @@ export default function AdminUsersPage() {
       u.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <div className="admin-loading">Gebruikers laden…</div>;
+  if (loading) return <div className="admin-loading">Loading users…</div>;
 
   return (
     <div>
       <div className="admin-page-header">
         <h1 className="admin-page-title">
-          Gebruikers
-          {refreshing && <span style={{ fontSize: 13, fontWeight: 400, marginLeft: 10, opacity: 0.5 }}>verversen…</span>}
+          Users
+          {refreshing && <span style={{ fontSize: 13, fontWeight: 400, marginLeft: 10, opacity: 0.5 }}>refreshing…</span>}
         </h1>
         <div className="admin-header-actions">
           <input
             className="admin-search"
-            placeholder="Zoek op naam of e-mail…"
+            placeholder="Search by name or email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <button className="admin-btn admin-btn-primary" onClick={() => setCreating(true)}>
-            + Nieuwe gebruiker
+            + New user
           </button>
         </div>
       </div>
 
-      {/* Delete bevestiging modal */}
       {confirmDelete && (
         <div className="admin-modal-backdrop" onClick={() => { setConfirmDelete(null); setDeleteError(""); }}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="admin-modal-title">Gebruiker verwijderen</div>
+            <div className="admin-modal-title">Delete user</div>
             <p style={{ margin: "8px 0 16px" }}>
-              Weet je zeker dat je <strong>{confirmDelete.name}</strong> wilt verwijderen? Dit kan niet ongedaan worden.
+              Are you sure you want to delete <strong>{confirmDelete.name}</strong>? This cannot be undone.
             </p>
             {deleteError && <div className="admin-error" style={{ marginBottom: 12 }}>{deleteError}</div>}
             <div className="admin-modal-actions">
-              <button className="admin-btn" onClick={() => { setConfirmDelete(null); setDeleteError(""); }}>Annuleren</button>
-              <button className="admin-btn admin-btn-danger" onClick={() => deleteUser(confirmDelete.id)}>Verwijderen</button>
+              <button className="admin-btn" onClick={() => { setConfirmDelete(null); setDeleteError(""); }}>Cancel</button>
+              <button className="admin-btn admin-btn-danger" onClick={() => deleteUser(confirmDelete.id)}>Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Create modal */}
       {creating && (
         <div className="admin-modal-backdrop" onClick={() => setCreating(false)}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="admin-modal-title">Nieuwe gebruiker aanmaken</div>
+            <div className="admin-modal-title">Create new user</div>
             <div className="admin-form-grid">
-              <label>Gebruikersnaam</label>
+              <label>Username</label>
               <input className="admin-input" value={newUser.username} onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} />
-              <label>E-mail <span style={{opacity:0.4, fontWeight:400}}>(optioneel)</span></label>
-              <input className="admin-input" type="email" placeholder="optioneel" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-              <label>Wachtwoord</label>
+              <label>Email <span style={{opacity:0.4, fontWeight:400}}>(optional)</span></label>
+              <input className="admin-input" type="email" placeholder="optional" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+              <label>Password</label>
               <input className="admin-input" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-              <label>Rol</label>
+              <label>Role</label>
               <select className="admin-input" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
                 <option value="user">user</option>
                 <option value="admin">admin</option>
               </select>
-              <label>Startkapitaal (€)</label>
+              <label>Starting capital (€)</label>
               <input className="admin-input" type="number" value={newUser.startCapital} onChange={(e) => setNewUser({ ...newUser, startCapital: +e.target.value })} />
             </div>
             {createError && <div className="admin-error">{createError}</div>}
             <div className="admin-modal-actions">
-              <button className="admin-btn" onClick={() => setCreating(false)}>Annuleren</button>
-              <button className="admin-btn admin-btn-primary" onClick={createUser}>Aanmaken</button>
+              <button className="admin-btn" onClick={() => setCreating(false)}>Cancel</button>
+              <button className="admin-btn admin-btn-primary" onClick={createUser}>Create</button>
             </div>
           </div>
         </div>
@@ -153,14 +151,14 @@ export default function AdminUsersPage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Gebruiker</th>
-              <th>Rol</th>
-              <th>Geregistreerd</th>
-              <th>Laatste login</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Registered</th>
+              <th>Last login</th>
               <th>Quiz</th>
               <th>Trades</th>
               <th>P&amp;L</th>
-              <th>Kapitaal</th>
+              <th>Capital</th>
               <th></th>
             </tr>
           </thead>
@@ -189,7 +187,7 @@ export default function AdminUsersPage() {
                 <td className={u.totalPnl >= 0 ? "admin-green" : "admin-red"}>
                   € {u.totalPnl.toFixed(2)}
                 </td>
-                <td>€ {u.start_capital.toLocaleString("nl-NL")}</td>
+                <td>€ {u.start_capital.toLocaleString("en-US")}</td>
                 <td>
                   <div className="admin-row-actions">
                     <Link href={`/admin/users/${u.id}`} className="admin-btn admin-btn-sm">
@@ -207,7 +205,7 @@ export default function AdminUsersPage() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={9} className="admin-empty">Geen gebruikers gevonden.</td>
+                <td colSpan={9} className="admin-empty">No users found.</td>
               </tr>
             )}
           </tbody>

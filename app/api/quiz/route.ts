@@ -104,6 +104,7 @@ function ensureQuizTables() {
     CREATE TABLE IF NOT EXISTS quiz_pool (
       id            INTEGER PRIMARY KEY AUTOINCREMENT,
       level         INTEGER NOT NULL,
+      lang          TEXT    NOT NULL DEFAULT 'nl',
       topic         TEXT    NOT NULL,
       question_json TEXT    NOT NULL,
       created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -118,8 +119,11 @@ function ensureQuizTables() {
       UNIQUE(user_id, question_id)
     );
     CREATE INDEX IF NOT EXISTS idx_quiz_pool_level ON quiz_pool(level);
+    CREATE INDEX IF NOT EXISTS idx_quiz_pool_lang ON quiz_pool(level, lang);
     CREATE INDEX IF NOT EXISTS idx_quiz_shown_user ON quiz_shown(user_id, question_id);
   `);
+  // Add lang column to existing table if missing (migration)
+  try { db.exec(`ALTER TABLE quiz_pool ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'`); } catch { /* already exists */ }
 }
 
 function pickRandomTopics(topics: string[], count: number): string[] {
@@ -259,11 +263,11 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
   // Sla op in pool
   const db = getDb();
   const insert = db.prepare(
-    "INSERT INTO quiz_pool (level, topic, question_json) VALUES (?, ?, ?)"
+    "INSERT INTO quiz_pool (level, lang, topic, question_json) VALUES (?, ?, ?, ?)"
   );
   const insertMany = db.transaction((qs: QuizQuestion[]) => {
     for (const q of qs) {
-      insert.run(level, q.topic, JSON.stringify(q));
+      insert.run(level, lang, q.topic, JSON.stringify(q));
     }
   });
   insertMany(questions);
@@ -317,14 +321,14 @@ export async function POST(request: NextRequest) {
       // Haal ongeziene vragen op (niet getoond in de laatste 30 dagen)
       const unseenRows = db.prepare(`
         SELECT id, topic, question_json FROM quiz_pool
-        WHERE level = ?
+        WHERE level = ? AND lang = ?
           AND id NOT IN (
             SELECT question_id FROM quiz_shown
             WHERE user_id = ? AND shown_at > datetime('now', '-30 days')
           )
         ORDER BY RANDOM()
         LIMIT ?
-      `).all(level, userId, questionCount) as { id: number; topic: string; question_json: string }[];
+      `).all(level, lang, userId, questionCount) as { id: number; topic: string; question_json: string }[];
 
       if (unseenRows.length >= questionCount) {
         // Markeer als getoond
@@ -347,12 +351,12 @@ export async function POST(request: NextRequest) {
         // Trigger async background refill als pool bijna leeg raakt (<20 ongezien)
         const remaining = db.prepare(`
           SELECT COUNT(*) as n FROM quiz_pool
-          WHERE level = ?
+          WHERE level = ? AND lang = ?
             AND id NOT IN (
               SELECT question_id FROM quiz_shown
               WHERE user_id = ? AND shown_at > datetime('now', '-30 days')
             )
-        `).get(level, userId) as { n: number };
+        `).get(level, lang, userId) as { n: number };
 
         if (remaining.n < 20) {
           const allTopics = topics[level] ?? topics[1];
