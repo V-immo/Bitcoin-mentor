@@ -14,6 +14,7 @@ type PaperTrade = {
     asset?: string;
     pnl?: number;
     note?: string;
+    orderType?: "market" | "limit";
 };
 
 type PaperState = {
@@ -45,6 +46,8 @@ type Props = {
     asset: string;
     autoExecuteAmount?: number | null;
 };
+
+type OrderType = "market" | "limit";
 
 function eur(value: number) {
     return value.toLocaleString("nl-BE", {
@@ -101,6 +104,11 @@ export default function TerminalPaperPanel({
     const { t } = useLanguage();
     const [loaded, setLoaded] = useState(false);
     const [buyAmount, setBuyAmount] = useState("1000");
+    const [orderType, setOrderType] = useState<OrderType>("market");
+    const [limitPrice, setLimitPrice] = useState("");
+    const [pendingLimitOrder, setPendingLimitOrder] = useState<{ amount: number; price: number } | null>(null);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [confirmAction, setConfirmAction] = useState<"buy" | "sell" | null>(null);
     const [pendingNoteId, setPendingNoteId] = useState<string | null>(null);
     const [noteInput, setNoteInput] = useState("");
     const [zoneWarning, setZoneWarning] = useState(false);
@@ -172,7 +180,7 @@ export default function TerminalPaperPanel({
                     id: crypto.randomUUID(), side: "buy",
                     amountEur: amount, price: currentPrice,
                     btcAmount: btcAmt, time: nowLabel(),
-                    timestamp: Date.now(), asset,
+                    timestamp: Date.now(), asset, orderType: "market",
                 }, ...prev.trades],
             };
         });
@@ -181,11 +189,22 @@ export default function TerminalPaperPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [autoExecuteAmount]);
 
+    // Controleer of pending limit order uitgevoerd moet worden
+    useEffect(() => {
+        if (!pendingLimitOrder || currentPrice <= 0) return;
+        if (currentPrice <= pendingLimitOrder.price) {
+            executeBuy(pendingLimitOrder.amount, pendingLimitOrder.price, "limit");
+            setPendingLimitOrder(null);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPrice, pendingLimitOrder]);
+
     const openValue = state.openBtc * currentPrice;
     const unrealized = state.openBtc > 0 ? (currentPrice - state.avgEntry) * state.openBtc : 0;
     const totalBalance = state.cash + openValue;
     const totalPnl = totalBalance - state.startCapital;
     const totalPnlPct = state.startCapital > 0 ? (totalPnl / state.startCapital) * 100 : 0;
+    const breakEvenPrice = state.openBtc > 0 ? state.avgEntry : null;
 
     const winCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) > 0).length;
     const lossCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) <= 0).length;
@@ -223,18 +242,12 @@ export default function TerminalPaperPanel({
         const capital = state.startCapital;
         setState({ startCapital: capital, cash: capital, openBtc: 0, avgEntry: 0, realizedPnl: 0, trades: [] });
         setBuyAmount(String(Math.round(capital / 10)));
+        setPendingLimitOrder(null);
         setConfirmReset(false);
     }
 
-    function openBuy(force = false) {
-        const amount = Number(buyAmount);
-        if (!Number.isFinite(amount) || amount <= 0) return;
-        if (amount > state.cash) return;
-        if (currentPrice <= 0) return; // prijs nog niet geladen
-        const inZone = entryZoneHigh > 0 && currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
-        if (!inZone && !force) { setZoneWarning(true); return; }
-        setZoneWarning(false);
-        const btcAmount = amount / currentPrice;
+    function executeBuy(amount: number, execPrice: number, type: OrderType = "market") {
+        const btcAmount = amount / execPrice;
         const totalCostBefore = state.openBtc * state.avgEntry;
         const totalCostAfter = totalCostBefore + amount;
         const totalBtcAfter = state.openBtc + btcAmount;
@@ -246,16 +259,53 @@ export default function TerminalPaperPanel({
             avgEntry: newAvg,
             trades: [{
                 id: crypto.randomUUID(), side: "buy",
-                amountEur: amount, price: currentPrice,
+                amountEur: amount, price: execPrice,
                 btcAmount, time: nowLabel(),
-                timestamp: Date.now(), asset,
+                timestamp: Date.now(), asset, orderType: type,
             }, ...prev.trades],
         }));
     }
 
-    function closeTrade() {
-        if (state.openBtc <= 0) return;
-        if (currentPrice <= 0) return; // prijs nog niet geladen
+    function requestBuy(force = false) {
+        const amount = Number(buyAmount);
+        if (!Number.isFinite(amount) || amount <= 0 || amount > state.cash || currentPrice <= 0) return;
+
+        if (orderType === "limit") {
+            const lp = Number(limitPrice);
+            if (!Number.isFinite(lp) || lp <= 0) return;
+            if (currentPrice <= lp) {
+                // Prijs al op of onder limiet → direct uitvoeren
+                setConfirmAction("buy");
+                setShowConfirm(true);
+            } else {
+                // Sla op als pending limit order
+                setPendingLimitOrder({ amount, price: lp });
+            }
+            return;
+        }
+
+        const inZone = entryZoneHigh > 0 && currentPrice >= entryZoneLow && currentPrice <= entryZoneHigh;
+        if (!inZone && !force) { setZoneWarning(true); return; }
+        setZoneWarning(false);
+        setConfirmAction("buy");
+        setShowConfirm(true);
+    }
+
+    function confirmOrder() {
+        setShowConfirm(false);
+        const amount = Number(buyAmount);
+        if (confirmAction === "buy") {
+            const execPrice = orderType === "limit" ? Number(limitPrice) : currentPrice;
+            executeBuy(amount, execPrice, orderType);
+            setZoneWarning(false);
+        } else if (confirmAction === "sell") {
+            executeClose();
+        }
+        setConfirmAction(null);
+    }
+
+    function executeClose() {
+        if (state.openBtc <= 0 || currentPrice <= 0) return;
         const valueNow = state.openBtc * currentPrice;
         const pnl = (currentPrice - state.avgEntry) * state.openBtc;
         const newId = crypto.randomUUID();
@@ -274,6 +324,12 @@ export default function TerminalPaperPanel({
         }));
         setPendingNoteId(newId);
         setNoteInput("");
+    }
+
+    function requestSell() {
+        if (state.openBtc <= 0 || currentPrice <= 0) return;
+        setConfirmAction("sell");
+        setShowConfirm(true);
     }
 
     function saveNote() {
@@ -307,6 +363,11 @@ export default function TerminalPaperPanel({
     const goalPct = goal && state.startCapital > 0
         ? Math.min(100, ((totalBalance - state.startCapital) / (goal - state.startCapital)) * 100)
         : null;
+
+    const confirmExecPrice = orderType === "limit" ? Number(limitPrice) : currentPrice;
+    const confirmBtcAmt = Number(buyAmount) > 0 && confirmExecPrice > 0
+        ? (Number(buyAmount) / confirmExecPrice)
+        : 0;
 
     return (
         <section className="terminal-side-card">
@@ -371,13 +432,43 @@ export default function TerminalPaperPanel({
                 </div>
             </div>
 
-            {/* Open positie info */}
+            {/* Open positie info + break-even */}
             {state.openBtc > 0 && (
                 <div className="paper-position-strip">
-                    <span>{t("paper_position_open")} {state.avgEntry > 0 ? `$${Math.round(state.avgEntry).toLocaleString("en-US")}` : "—"}</span>
-                    <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                        {unrealized >= 0 ? "▲" : "▼"} {eur(unrealized)}
-                    </span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span>{t("paper_position_open")} ${Math.round(state.avgEntry).toLocaleString("en-US")}</span>
+                        <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                            {unrealized >= 0 ? "▲" : "▼"} {eur(unrealized)}
+                        </span>
+                    </div>
+                    {breakEvenPrice && (
+                        <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 3 }}>
+                            {t("paper_break_even_hint")} <strong>${Math.round(breakEvenPrice).toLocaleString("en-US")}</strong>
+                            {stopLoss > 0 && (
+                                <span style={{ marginLeft: 8, color: "#ef4444" }}>
+                                    · SL: ${Math.round(stopLoss).toLocaleString("en-US")}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Pending limit order melding */}
+            {pendingLimitOrder && (
+                <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "#f59e0b55" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 12 }}>
+                            {t("paper_limit_pending")} ${Math.round(pendingLimitOrder.price).toLocaleString("en-US")}
+                            <span style={{ color: "var(--text-secondary)", marginLeft: 6 }}>({eur(pendingLimitOrder.amount)})</span>
+                        </span>
+                        <button
+                            onClick={() => setPendingLimitOrder(null)}
+                            style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 12 }}
+                        >
+                            {t("paper_limit_cancel")} ✕
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -478,6 +569,56 @@ export default function TerminalPaperPanel({
                 </div>
             </div>
 
+            {/* Order type toggle */}
+            <div style={{ marginBottom: 10 }}>
+                <div className="terminal-mini-label" style={{ marginBottom: 6 }}>{t("paper_order_type_label")}</div>
+                <div style={{ display: "flex", gap: 6 }}>
+                    <button
+                        className={`terminal-btn${orderType === "market" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                        style={{ flex: 1, fontSize: 12 }}
+                        onClick={() => setOrderType("market")}
+                    >
+                        {t("paper_order_market")}
+                    </button>
+                    <button
+                        className={`terminal-btn${orderType === "limit" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                        style={{ flex: 1, fontSize: 12 }}
+                        onClick={() => setOrderType("limit")}
+                    >
+                        {t("paper_order_limit")}
+                    </button>
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>
+                    {orderType === "market" ? t("paper_order_market_desc") : t("paper_order_limit_desc")}
+                </div>
+            </div>
+
+            {/* Limietprijs input (alleen bij limit order) */}
+            {orderType === "limit" && (
+                <div style={{ marginBottom: 10 }}>
+                    <label className="terminal-mini-label" style={{ display: "block", marginBottom: 4 }}>
+                        {t("paper_limit_price_label")}
+                    </label>
+                    <input
+                        className="terminal-terminal-input"
+                        type="number"
+                        value={limitPrice}
+                        onChange={(e) => setLimitPrice(e.target.value)}
+                        placeholder={t("paper_limit_price_placeholder")}
+                    />
+                    {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
+                        <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
+                            {t("paper_limit_above_market")}
+                        </div>
+                    )}
+                    {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) <= currentPrice && (
+                        <div style={{ fontSize: 11, color: "#26c57c", marginTop: 4 }}>
+                            ✓ ${Math.round(Number(limitPrice)).toLocaleString("en-US")} ≤ ${Math.round(currentPrice).toLocaleString("en-US")} — direct uitvoerbaar
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Koop sectie */}
             <div className="paper-buy-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -523,15 +664,21 @@ export default function TerminalPaperPanel({
                     <>
                         <button
                             className="terminal-btn terminal-btn-primary"
-                            onClick={() => openBuy()}
+                            onClick={() => requestBuy()}
                             style={{ flex: 2, fontSize: 14, fontWeight: 700 }}
-                            disabled={Number(buyAmount) > state.cash || Number(buyAmount) <= 0 || currentPrice <= 0}
+                            disabled={
+                                Number(buyAmount) > state.cash ||
+                                Number(buyAmount) <= 0 ||
+                                currentPrice <= 0 ||
+                                (orderType === "limit" && (!Number(limitPrice) || Number(limitPrice) <= 0)) ||
+                                !!pendingLimitOrder
+                            }
                         >
-                            {currentPrice <= 0 ? t("loading") : t("paper_btn_buy")}
+                            {currentPrice <= 0 ? t("loading") : orderType === "limit" ? `${t("paper_order_limit")} →` : t("paper_btn_buy")}
                         </button>
                         <button
                             className="terminal-btn"
-                            onClick={closeTrade}
+                            onClick={requestSell}
                             style={{ flex: 2, fontSize: 14, fontWeight: 700, borderColor: "#ef444455", color: state.openBtc > 0 ? "#ef4444" : undefined }}
                             disabled={state.openBtc <= 0 || currentPrice <= 0}
                         >
@@ -555,7 +702,7 @@ export default function TerminalPaperPanel({
                 <span>{t("paper_btn_hints_sell")} <strong>{t("paper_btn_hints_sell_label")}</strong> {t("paper_btn_hints_sell_desc")}</span>
             </div>
 
-            {/* Zone waarschuwing — inline boven de knoppen, blokkeert niks */}
+            {/* Zone waarschuwing */}
             {zoneWarning && (
                 <div className="terminal-zone-warning" style={{ marginBottom: 8 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -566,9 +713,102 @@ export default function TerminalPaperPanel({
                         {t("paper_zone_warning_body_prefix")} <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
                         {" "}{t("paper_zone_warning_body_suffix")}
                     </div>
-                    <button className="terminal-btn terminal-btn-danger" style={{ width: "100%", marginTop: 6 }} onClick={() => { setZoneWarning(false); openBuy(true); }}>
+                    <button className="terminal-btn terminal-btn-danger" style={{ width: "100%", marginTop: 6 }} onClick={() => { setZoneWarning(false); requestBuy(true); }}>
                         {t("paper_zone_buy_anyway")}
                     </button>
+                </div>
+            )}
+
+            {/* Bevestigingsdialoog */}
+            {showConfirm && confirmAction && (
+                <div style={{
+                    position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
+                    display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999,
+                }}>
+                    <div style={{
+                        background: "var(--bg-card, #1a1f2e)", border: "1px solid var(--border, #2a3040)",
+                        borderRadius: 12, padding: 24, width: "min(380px, 90vw)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+                    }}>
+                        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>
+                            {t("paper_confirm_title")}
+                        </div>
+
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                            <tbody>
+                                <tr>
+                                    <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_type")}</td>
+                                    <td style={{ textAlign: "right", fontWeight: 600 }}>
+                                        {confirmAction === "buy"
+                                            ? (orderType === "limit" ? "🔵 Limit BUY" : "🟢 Market BUY")
+                                            : "🔴 Market SELL"}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_asset")}</td>
+                                    <td style={{ textAlign: "right", fontWeight: 600 }}>{asset}</td>
+                                </tr>
+                                {confirmAction === "buy" && (
+                                    <>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_amount")}</td>
+                                            <td style={{ textAlign: "right", fontWeight: 600 }}>{eur(Number(buyAmount))}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_price")}</td>
+                                            <td style={{ textAlign: "right", fontWeight: 600 }}>
+                                                ${Math.round(confirmExecPrice).toLocaleString("en-US")}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_asset_amount")}</td>
+                                            <td style={{ textAlign: "right", fontWeight: 600 }}>
+                                                {confirmBtcAmt.toFixed(6)} {asset.replace("USDT", "")}
+                                            </td>
+                                        </tr>
+                                    </>
+                                )}
+                                {confirmAction === "sell" && state.openBtc > 0 && (
+                                    <>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_asset_amount")}</td>
+                                            <td style={{ textAlign: "right", fontWeight: 600 }}>
+                                                {state.openBtc.toFixed(6)} {asset.replace("USDT", "")}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_price")}</td>
+                                            <td style={{ textAlign: "right", fontWeight: 600 }}>
+                                                ${Math.round(currentPrice).toLocaleString("en-US")}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>P/L</td>
+                                            <td style={{ textAlign: "right", fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                                                {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
+                                            </td>
+                                        </tr>
+                                    </>
+                                )}
+                            </tbody>
+                        </table>
+
+                        <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
+                            <button
+                                className="terminal-btn terminal-btn-muted"
+                                style={{ flex: 1 }}
+                                onClick={() => { setShowConfirm(false); setConfirmAction(null); }}
+                            >
+                                {t("paper_confirm_cancel")}
+                            </button>
+                            <button
+                                className={`terminal-btn ${confirmAction === "sell" ? "terminal-btn-danger" : "terminal-btn-primary"}`}
+                                style={{ flex: 2, fontWeight: 700 }}
+                                onClick={confirmOrder}
+                            >
+                                {t("paper_confirm_execute")}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -664,6 +904,9 @@ export default function TerminalPaperPanel({
                             <strong style={{ color: trade.side === "buy" ? "#26c57c" : "#ef4444" }}>
                                 {trade.side === "buy" ? t("paper_history_buy") : t("paper_history_sell")}
                             </strong>
+                            {trade.orderType === "limit" && (
+                                <span style={{ fontSize: 10, color: "#8b95ad", marginLeft: 4 }}>LIMIT</span>
+                            )}
                             {" "}&bull;{" "}{trade.time} &bull; {eur(trade.amountEur)}
                             {" "}&bull; {t("paper_history_price")} ${trade.price.toFixed(0)}
                             {typeof trade.pnl === "number" && (
