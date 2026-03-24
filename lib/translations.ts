@@ -13,7 +13,7 @@ const translations = {
 
     // === NAVIGATIE ===
     nav_scanner: "← Scanner",
-    nav_marcus_ai: "Mentor",
+    nav_marcus_ai: "Mentor Marcus",
     nav_paper_trading: "Paper Trading",
     nav_analysis: "Analyse",
     nav_checklist: "Checklist",
@@ -876,7 +876,7 @@ const translations = {
 
     // === NAVIGATIE ===
     nav_scanner: "← Scanner",
-    nav_marcus_ai: "Mentor",
+    nav_marcus_ai: "Mentor Marcus",
     nav_paper_trading: "Paper Trading",
     nav_analysis: "Analysis",
     nav_checklist: "Checklist",
