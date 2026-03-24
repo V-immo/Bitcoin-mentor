@@ -564,8 +564,17 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         <div className="terminal-topbar-right">
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <span className={`terminal-status-badge ${statusTone}`}>{signal.status}</span>
-              <span className="terminal-soft-badge">{signal.action}</span>
+              <span className={`terminal-status-badge ${statusTone}`}>
+                {signal.status === "Goed moment" ? t("status_good_moment")
+                  : signal.status === "Nog even wachten" ? t("status_wait")
+                  : t("status_no_buy")}
+              </span>
+              <span className="terminal-soft-badge">
+                {signal.action === "Niet kopen" ? t("action_no_buy")
+                  : signal.action === "Kleine positie mogelijk" ? t("action_small_buy")
+                  : signal.action === "Wacht op betere prijs" ? t("action_wait_price")
+                  : signal.action}
+              </span>
             </div>
             {signalReady && signal.shortWhy && (
               <div style={{ fontSize: 11, color: "var(--text-secondary)", maxWidth: 280, textAlign: "right", lineHeight: 1.4 }}>
@@ -772,7 +781,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               <>
                 {!signalReady ? (
                   <div className="terminal-side-card" style={{ color: "var(--text-secondary)", fontSize: 13, textAlign: "center", padding: 24 }}>
-                    ⟳ Analyse laden voor {assetDef?.ticker ?? asset}…
+                    {t("checklist_loading")} {assetDef?.ticker ?? asset}…
                   </div>
                 ) : (
                   <EntryChecklist

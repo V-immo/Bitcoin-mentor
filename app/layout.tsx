@@ -7,7 +7,7 @@ import LanguagePicker from "@/components/LanguagePicker";
 
 export const metadata: Metadata = {
   title: "Bitcoin Mentor",
-  description: "Leer traden met een AI partner",
+  description: "Learn to trade with an AI partner",
 };
 
 export default function RootLayout({
