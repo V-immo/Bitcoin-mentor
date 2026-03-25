@@ -7,6 +7,7 @@ import {
   detectResistance,
   detectStructure,
   detectSupport,
+  filterClosedCandles,
   getCandles,
   volumeStrength,
 } from "./market";
@@ -69,24 +70,30 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
 
   const { price, candles1h, candles4h, candles1d } = await fetchAllCandles(symbol);
 
-  const tf1h = analyzeTimeframe("1h", candles1h);
-  const tf4h = analyzeTimeframe("4h", candles4h);
-  const tf1d = analyzeTimeframe("1d", candles1d);
+  // Gebruik alleen GESLOTEN candles voor analyse — Binance stuurt de huidige
+  // (nog niet gesloten) candle altijd als laatste, wat MA's en RSI vertekenelt.
+  const closed1h = filterClosedCandles(candles1h);
+  const closed4h = filterClosedCandles(candles4h);
+  const closed1d = filterClosedCandles(candles1d);
 
-  const structure4h = detectStructure(candles4h, 30);
-  const structure1d = detectStructure(candles1d, 30);
+  const tf1h = analyzeTimeframe("1h", closed1h);
+  const tf4h = analyzeTimeframe("4h", closed4h);
+  const tf1d = analyzeTimeframe("1d", closed1d);
 
-  const rsi1h = calculateRsi(candles1h, 14);
-  const rsi4h = calculateRsi(candles4h, 14);
-  const rsi1d = calculateRsi(candles1d, 14);
+  const structure4h = detectStructure(closed4h, 30);
+  const structure1d = detectStructure(closed1d, 30);
 
-  const support = detectSupport(candles4h, 50);
-  const resistance = detectResistance(candles4h, 50);
+  const rsi1h = calculateRsi(closed1h, 14);
+  const rsi4h = calculateRsi(closed4h, 14);
+  const rsi1d = calculateRsi(closed1d, 14);
 
-  const supportZone = buildSupportZone(candles4h, 50);
-  const resistanceZone = buildResistanceZone(candles4h, 50);
+  const support = detectSupport(closed4h, 50);
+  const resistance = detectResistance(closed4h, 50);
 
-  const volume = volumeStrength(candles1h);
+  const supportZone = buildSupportZone(closed4h, 50);
+  const resistanceZone = buildResistanceZone(closed4h, 50);
+
+  const volume = volumeStrength(closed1h);
 
   const entryZoneLow = supportZone.low * 1.002;
   const entryZoneHigh = supportZone.high * 1.01;

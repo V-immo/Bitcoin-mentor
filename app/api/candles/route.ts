@@ -3,12 +3,25 @@ import { getCandles } from "@/lib/market";
 import { getYahooCandles } from "@/lib/yahoo";
 import { isFinnhubAsset } from "@/lib/assets";
 
-// Cache-TTL per interval (seconden)
-const CACHE_TTL: Record<string, number> = {
-  "1m": 15, "5m": 30, "15m": 60, "1h": 120, "4h": 300, "1d": 600, "1W": 1800,
+// Periodeduur per interval in milliseconden
+const PERIOD_MS: Record<string, number> = {
+  "1m": 60_000, "5m": 300_000, "15m": 900_000,
+  "1h": 3_600_000, "4h": 14_400_000, "1d": 86_400_000, "1W": 604_800_000,
 };
 
-// HTTP Cache-Control per interval
+/**
+ * Bereken TTL (seconden) tot het einde van de huidige candle-periode.
+ * Zo vervalt de cache precies als de candle sluit — niet eerder, niet later.
+ * Minimaal 5s buffer om race-conditions te vermijden.
+ */
+function ttlUntilNextClose(interval: string): number {
+  const periodMs = PERIOD_MS[interval];
+  if (!periodMs) return 120;
+  const msUntilClose = periodMs - (Date.now() % periodMs);
+  return Math.max(5, Math.floor(msUntilClose / 1000));
+}
+
+// HTTP Cache-Control per interval (iets korter dan server-TTL)
 const BROWSER_CACHE: Record<string, number> = {
   "1m": 10, "5m": 20, "15m": 45, "1h": 90, "4h": 240, "1d": 540, "1W": 1700,
 };
@@ -41,7 +54,7 @@ export async function GET(request: NextRequest) {
   const symbol = request.nextUrl.searchParams.get("symbol") ?? "BTCUSDT";
   const interval = request.nextUrl.searchParams.get("interval") ?? "1d";
   const cacheKey = `${symbol}_${interval}`;
-  const ttl = CACHE_TTL[interval] ?? 120;
+  const ttl = ttlUntilNextClose(interval);
   const browserTtl = BROWSER_CACHE[interval] ?? 90;
 
   // Servercache hit

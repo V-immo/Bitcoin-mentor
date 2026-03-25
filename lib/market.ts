@@ -22,6 +22,12 @@ type BinanceKlineRow = [
   string
 ];
 
+/** Verwijder de huidige (nog niet gesloten) candle — Binance stuurt die altijd als laatste. */
+export function filterClosedCandles(candles: Candle[]): Candle[] {
+  const now = Date.now();
+  return candles.filter((c) => c.closeTime < now);
+}
+
 export async function getCandles(
   interval: "1m" | "1h" | "4h" | "1d" | "5m" | "15m",
   limit = 500,
