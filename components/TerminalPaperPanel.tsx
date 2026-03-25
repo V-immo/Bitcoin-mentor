@@ -15,6 +15,7 @@ type PaperTrade = {
     pnl?: number;
     note?: string;
     orderType?: "market" | "limit";
+    closePct?: number;
 };
 
 type PaperState = {
@@ -24,12 +25,16 @@ type PaperState = {
     avgEntry: number;
     realizedPnl: number;
     trades: PaperTrade[];
+    activeSL?: number;
+    activeTP?: number;
 };
 
 type ApiPosition = {
     openBtc: number;
     avgEntry: number;
     realizedPnl: number;
+    activeSL?: number;
+    activeTP?: number;
 } | null;
 
 type Props = {
@@ -63,7 +68,13 @@ function nowLabel() {
 
 function stateToApiPayload(state: PaperState) {
     const position: ApiPosition = state.openBtc > 0
-        ? { openBtc: state.openBtc, avgEntry: state.avgEntry, realizedPnl: state.realizedPnl }
+        ? {
+            openBtc: state.openBtc,
+            avgEntry: state.avgEntry,
+            realizedPnl: state.realizedPnl,
+            activeSL: state.activeSL,
+            activeTP: state.activeTP,
+        }
         : null;
     return {
         startingBalance: state.startCapital,
@@ -87,7 +98,41 @@ function apiResponseToState(data: {
         avgEntry: pos?.avgEntry ?? 0,
         realizedPnl: pos?.realizedPnl ?? 0,
         trades: data.history ?? [],
+        activeSL: pos?.activeSL,
+        activeTP: pos?.activeTP,
     };
+}
+
+// Equity sparkline from trade history
+function buildSparkline(trades: PaperTrade[], startCapital: number, currentBalance: number): { x: number; y: number }[] {
+    const sells = trades
+        .filter(t => t.side === "sell" && typeof t.timestamp === "number")
+        .slice()
+        .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0));
+
+    if (sells.length === 0) return [];
+
+    let runningPnl = 0;
+    const points: { x: number; y: number }[] = [{ x: 0, y: startCapital }];
+
+    for (const trade of sells) {
+        runningPnl += trade.pnl ?? 0;
+        points.push({ x: trade.timestamp ?? 0, y: startCapital + runningPnl });
+    }
+    points.push({ x: Date.now(), y: currentBalance });
+
+    // Normalize to 0-100 for SVG
+    const minV = Math.min(...points.map(p => p.y));
+    const maxV = Math.max(...points.map(p => p.y));
+    const rangeV = maxV - minV || 1;
+    const minT = points[0].x;
+    const maxT = points[points.length - 1].x || minT + 1;
+    const rangeT = maxT - minT || 1;
+
+    return points.map(p => ({
+        x: ((p.x - minT) / rangeT) * 100,
+        y: 100 - ((p.y - minV) / rangeV) * 100,
+    }));
 }
 
 export default function TerminalPaperPanel({
@@ -103,12 +148,17 @@ export default function TerminalPaperPanel({
 }: Props) {
     const { t } = useLanguage();
     const [loaded, setLoaded] = useState(false);
+    const [activeSide, setActiveSide] = useState<"buy" | "sell">("buy");
     const [buyAmount, setBuyAmount] = useState("1000");
+    const [sellPct, setSellPct] = useState(100);
     const [orderType, setOrderType] = useState<OrderType>("market");
     const [limitPrice, setLimitPrice] = useState("");
+    const [slInput, setSlInput] = useState("");
+    const [tpInput, setTpInput] = useState("");
     const [pendingLimitOrder, setPendingLimitOrder] = useState<{ amount: number; price: number } | null>(null);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [confirmAction, setConfirmAction] = useState<"buy" | "sell" | null>(null);
+    const [confirmAction, setConfirmAction] = useState<"buy" | "sell" | "partial" | null>(null);
+    const [confirmPct, setConfirmPct] = useState(100);
     const [pendingNoteId, setPendingNoteId] = useState<string | null>(null);
     const [noteInput, setNoteInput] = useState("");
     const [zoneWarning, setZoneWarning] = useState(false);
@@ -116,6 +166,8 @@ export default function TerminalPaperPanel({
     const [goal, setGoal] = useState<number | null>(null);
     const [goalInput, setGoalInput] = useState("");
     const [showGoalInput, setShowGoalInput] = useState(false);
+    const [notification, setNotification] = useState<{ msg: string; type: "success" | "warning" | "danger" } | null>(null);
+    const [confirmReset, setConfirmReset] = useState(false);
     const [state, setState] = useState<PaperState>({
         startCapital: 10000,
         cash: 10000,
@@ -124,9 +176,16 @@ export default function TerminalPaperPanel({
         realizedPnl: 0,
         trades: [],
     });
-    const [confirmReset, setConfirmReset] = useState(false);
 
     const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const notifTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const slTpLockRef = useRef(false);
+
+    function showNotif(msg: string, type: "success" | "warning" | "danger") {
+        setNotification({ msg, type });
+        if (notifTimer.current) clearTimeout(notifTimer.current);
+        notifTimer.current = setTimeout(() => setNotification(null), 3200);
+    }
 
     const saveToApi = useCallback(
         (s: PaperState) => {
@@ -162,6 +221,7 @@ export default function TerminalPaperPanel({
         saveToApi(state);
     }, [state, loaded, saveToApi]);
 
+    // Auto-execute from mentor
     useEffect(() => {
         if (!autoExecuteAmount || autoExecuteAmount <= 0 || !loaded) return;
         const amount = autoExecuteAmount;
@@ -189,7 +249,7 @@ export default function TerminalPaperPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [autoExecuteAmount]);
 
-    // Controleer of pending limit order uitgevoerd moet worden
+    // Pending limit order check
     useEffect(() => {
         if (!pendingLimitOrder || currentPrice <= 0) return;
         if (currentPrice <= pendingLimitOrder.price) {
@@ -199,28 +259,46 @@ export default function TerminalPaperPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPrice, pendingLimitOrder]);
 
+    // SL/TP watcher
+    useEffect(() => {
+        if (!loaded || currentPrice <= 0 || state.openBtc <= 0) return;
+        if (slTpLockRef.current) return;
+
+        if (state.activeSL && currentPrice <= state.activeSL) {
+            slTpLockRef.current = true;
+            executeAutoClose("sl");
+        } else if (state.activeTP && currentPrice >= state.activeTP) {
+            slTpLockRef.current = true;
+            executeAutoClose("tp");
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPrice]);
+
+    // Derived values
     const openValue = state.openBtc * currentPrice;
     const unrealized = state.openBtc > 0 ? (currentPrice - state.avgEntry) * state.openBtc : 0;
     const totalBalance = state.cash + openValue;
     const totalPnl = totalBalance - state.startCapital;
     const totalPnlPct = state.startCapital > 0 ? (totalPnl / state.startCapital) * 100 : 0;
-    const breakEvenPrice = state.openBtc > 0 ? state.avgEntry : null;
+    const roiPct = state.openBtc > 0 && state.avgEntry > 0
+        ? ((currentPrice - state.avgEntry) / state.avgEntry) * 100
+        : 0;
 
-    const winCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) > 0).length;
-    const lossCount = state.trades.filter(trade => trade.side === "sell" && (trade.pnl || 0) <= 0).length;
+    const winCount = state.trades.filter(t => t.side === "sell" && (t.pnl || 0) > 0).length;
+    const lossCount = state.trades.filter(t => t.side === "sell" && (t.pnl || 0) <= 0).length;
     const closedCount = winCount + lossCount;
     const winrate = closedCount > 0 ? (winCount / closedCount) * 100 : 0;
 
     const { avgWin, avgLoss, currentStreak, streakType } = useMemo(() => {
-        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
-        const wins = sells.filter(trade => (trade.pnl || 0) > 0);
-        const losses = sells.filter(trade => (trade.pnl || 0) <= 0);
-        const avgWin = wins.length > 0 ? wins.reduce((s, trade) => s + (trade.pnl || 0), 0) / wins.length : 0;
-        const avgLoss = losses.length > 0 ? losses.reduce((s, trade) => s + (trade.pnl || 0), 0) / losses.length : 0;
+        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
+        const wins = sells.filter(t => (t.pnl || 0) > 0);
+        const losses = sells.filter(t => (t.pnl || 0) <= 0);
+        const avgWin = wins.length > 0 ? wins.reduce((s, t) => s + (t.pnl || 0), 0) / wins.length : 0;
+        const avgLoss = losses.length > 0 ? losses.reduce((s, t) => s + (t.pnl || 0), 0) / losses.length : 0;
         let currentStreak = 0;
         let streakType: "win" | "loss" | null = null;
-        for (const trade of sells) {
-            const isWin = (trade.pnl || 0) > 0;
+        for (const t of sells) {
+            const isWin = (t.pnl || 0) > 0;
             if (streakType === null) { streakType = isWin ? "win" : "loss"; currentStreak = 1; }
             else if ((streakType === "win") === isWin) currentStreak++;
             else break;
@@ -229,14 +307,47 @@ export default function TerminalPaperPanel({
     }, [state.trades]);
 
     const bestTrade = useMemo(() => {
-        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
+        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
         return sells.length === 0 ? null : sells.reduce((a, b) => ((a.pnl || 0) > (b.pnl || 0) ? a : b));
     }, [state.trades]);
 
     const worstTrade = useMemo(() => {
-        const sells = state.trades.filter(trade => trade.side === "sell" && typeof trade.pnl === "number");
+        const sells = state.trades.filter(t => t.side === "sell" && typeof t.pnl === "number");
         return sells.length === 0 ? null : sells.reduce((a, b) => ((a.pnl || 0) < (b.pnl || 0) ? a : b));
     }, [state.trades]);
+
+    const sparkPoints = useMemo(
+        () => buildSparkline(state.trades, state.startCapital, totalBalance),
+        [state.trades, state.startCapital, totalBalance]
+    );
+    const sparkPath = sparkPoints.length > 1
+        ? sparkPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")
+        : null;
+    const sparkColor = totalPnl >= 0 ? "#26c57c" : "#ef4444";
+
+    const goalPct = goal && state.startCapital > 0
+        ? Math.min(100, ((totalBalance - state.startCapital) / (goal - state.startCapital)) * 100)
+        : null;
+
+    // Quick buy amounts
+    const quickAmounts = [
+        Math.round(state.startCapital * 0.05),
+        Math.round(state.startCapital * 0.10),
+        Math.round(state.startCapital * 0.25),
+        Math.round(state.cash),
+    ];
+    const quickLabels = ["5%", "10%", "25%", "Max"];
+
+    // Order preview
+    const buyAmtNum = Number(buyAmount);
+    const execPrice = orderType === "limit" ? Number(limitPrice) : currentPrice;
+    const previewBtc = buyAmtNum > 0 && execPrice > 0 ? buyAmtNum / execPrice : 0;
+    const assetTicker = asset.replace("USDT", "").replace("EUR", "");
+
+    // Sell preview
+    const sellBtc = state.openBtc * (sellPct / 100);
+    const sellValue = sellBtc * currentPrice;
+    const sellPnl = (currentPrice - state.avgEntry) * sellBtc;
 
     function resetAccount() {
         const capital = state.startCapital;
@@ -244,26 +355,93 @@ export default function TerminalPaperPanel({
         setBuyAmount(String(Math.round(capital / 10)));
         setPendingLimitOrder(null);
         setConfirmReset(false);
+        slTpLockRef.current = false;
+        setSlInput("");
+        setTpInput("");
     }
 
-    function executeBuy(amount: number, execPrice: number, type: OrderType = "market") {
-        const btcAmount = amount / execPrice;
-        const totalCostBefore = state.openBtc * state.avgEntry;
-        const totalCostAfter = totalCostBefore + amount;
-        const totalBtcAfter = state.openBtc + btcAmount;
-        const newAvg = totalBtcAfter > 0 ? totalCostAfter / totalBtcAfter : 0;
+    function executeBuy(amount: number, execP: number, type: OrderType = "market") {
+        const btcAmount = amount / execP;
+        const sl = Number(slInput) > 0 ? Number(slInput) : undefined;
+        const tp = Number(tpInput) > 0 ? Number(tpInput) : undefined;
+        setState((prev) => {
+            const totalCostBefore = prev.openBtc * prev.avgEntry;
+            const totalCostAfter = totalCostBefore + amount;
+            const totalBtcAfter = prev.openBtc + btcAmount;
+            const newAvg = totalBtcAfter > 0 ? totalCostAfter / totalBtcAfter : 0;
+            return {
+                ...prev,
+                cash: prev.cash - amount,
+                openBtc: prev.openBtc + btcAmount,
+                avgEntry: newAvg,
+                activeSL: sl ?? prev.activeSL,
+                activeTP: tp ?? prev.activeTP,
+                trades: [{
+                    id: crypto.randomUUID(), side: "buy",
+                    amountEur: amount, price: execP,
+                    btcAmount, time: nowLabel(),
+                    timestamp: Date.now(), asset, orderType: type,
+                }, ...prev.trades],
+            };
+        });
+        slTpLockRef.current = false;
+    }
+
+    function executePartialClose(pct: number) {
+        if (state.openBtc <= 0 || currentPrice <= 0) return;
+        const closeBtc = state.openBtc * pct;
+        const closeValue = closeBtc * currentPrice;
+        const pnl = (currentPrice - state.avgEntry) * closeBtc;
+        const newId = crypto.randomUUID();
+        const isFull = pct >= 1 || (state.openBtc - closeBtc) < 0.000001;
         setState((prev) => ({
             ...prev,
-            cash: prev.cash - amount,
-            openBtc: prev.openBtc + btcAmount,
-            avgEntry: newAvg,
+            cash: prev.cash + closeValue,
+            openBtc: isFull ? 0 : prev.openBtc - closeBtc,
+            avgEntry: isFull ? 0 : prev.avgEntry,
+            activeSL: isFull ? undefined : prev.activeSL,
+            activeTP: isFull ? undefined : prev.activeTP,
+            realizedPnl: prev.realizedPnl + pnl,
             trades: [{
-                id: crypto.randomUUID(), side: "buy",
-                amountEur: amount, price: execPrice,
-                btcAmount, time: nowLabel(),
-                timestamp: Date.now(), asset, orderType: type,
+                id: newId, side: "sell",
+                amountEur: closeValue, price: currentPrice,
+                btcAmount: closeBtc, pnl,
+                time: nowLabel(), timestamp: Date.now(), asset,
+                closePct: pct < 1 ? pct : undefined,
             }, ...prev.trades],
         }));
+        if (isFull) {
+            setPendingNoteId(newId);
+            setNoteInput("");
+        }
+    }
+
+    function executeAutoClose(reason: "sl" | "tp") {
+        if (state.openBtc <= 0 || currentPrice <= 0) return;
+        const valueNow = state.openBtc * currentPrice;
+        const pnl = (currentPrice - state.avgEntry) * state.openBtc;
+        const newId = crypto.randomUUID();
+        const noteText = reason === "sl" ? "🛑 Stop Loss triggered" : "🎯 Take Profit triggered";
+        setState((prev) => ({
+            ...prev,
+            cash: prev.cash + valueNow,
+            openBtc: 0,
+            avgEntry: 0,
+            activeSL: undefined,
+            activeTP: undefined,
+            realizedPnl: prev.realizedPnl + pnl,
+            trades: [{
+                id: newId, side: "sell",
+                amountEur: valueNow, price: currentPrice,
+                btcAmount: prev.openBtc, pnl,
+                time: nowLabel(), timestamp: Date.now(), asset,
+                note: noteText,
+            }, ...prev.trades],
+        }));
+        showNotif(
+            reason === "sl" ? t("paper_sltp_triggered_sl") : t("paper_sltp_triggered_tp"),
+            reason === "sl" ? "danger" : "success"
+        );
     }
 
     function requestBuy(force = false) {
@@ -274,11 +452,9 @@ export default function TerminalPaperPanel({
             const lp = Number(limitPrice);
             if (!Number.isFinite(lp) || lp <= 0) return;
             if (currentPrice <= lp) {
-                // Prijs al op of onder limiet → direct uitvoeren
                 setConfirmAction("buy");
                 setShowConfirm(true);
             } else {
-                // Sla op als pending limit order
                 setPendingLimitOrder({ amount, price: lp });
             }
             return;
@@ -291,65 +467,37 @@ export default function TerminalPaperPanel({
         setShowConfirm(true);
     }
 
+    function requestPartialClose(pct: number) {
+        if (state.openBtc <= 0 || currentPrice <= 0) return;
+        setConfirmPct(pct);
+        setConfirmAction(pct >= 1 ? "sell" : "partial");
+        setShowConfirm(true);
+    }
+
     function confirmOrder() {
         setShowConfirm(false);
         const amount = Number(buyAmount);
         if (confirmAction === "buy") {
-            const execPrice = orderType === "limit" ? Number(limitPrice) : currentPrice;
-            executeBuy(amount, execPrice, orderType);
+            const ep = orderType === "limit" ? Number(limitPrice) : currentPrice;
+            executeBuy(amount, ep, orderType);
             setZoneWarning(false);
         } else if (confirmAction === "sell") {
-            executeClose();
+            executePartialClose(1);
+        } else if (confirmAction === "partial") {
+            executePartialClose(confirmPct);
         }
         setConfirmAction(null);
-    }
-
-    function executeClose() {
-        if (state.openBtc <= 0 || currentPrice <= 0) return;
-        const valueNow = state.openBtc * currentPrice;
-        const pnl = (currentPrice - state.avgEntry) * state.openBtc;
-        const newId = crypto.randomUUID();
-        setState((prev) => ({
-            ...prev,
-            cash: prev.cash + valueNow,
-            openBtc: 0,
-            avgEntry: 0,
-            realizedPnl: prev.realizedPnl + pnl,
-            trades: [{
-                id: newId, side: "sell",
-                amountEur: valueNow, price: currentPrice,
-                btcAmount: prev.openBtc, pnl,
-                time: nowLabel(), timestamp: Date.now(), asset,
-            }, ...prev.trades],
-        }));
-        setPendingNoteId(newId);
-        setNoteInput("");
-    }
-
-    function requestSell() {
-        if (state.openBtc <= 0 || currentPrice <= 0) return;
-        setConfirmAction("sell");
-        setShowConfirm(true);
     }
 
     function saveNote() {
         if (!pendingNoteId || !noteInput.trim()) { setPendingNoteId(null); return; }
         setState((prev) => ({
             ...prev,
-            trades: prev.trades.map(trade => trade.id === pendingNoteId ? { ...trade, note: noteInput.trim() } : trade),
+            trades: prev.trades.map(t => t.id === pendingNoteId ? { ...t, note: noteInput.trim() } : t),
         }));
         setPendingNoteId(null);
         setNoteInput("");
     }
-
-    // Quick amounts
-    const quickAmounts = [
-        Math.round(state.startCapital * 0.05),
-        Math.round(state.startCapital * 0.10),
-        Math.round(state.startCapital * 0.25),
-        Math.round(state.cash),
-    ];
-    const quickLabels = ["5%", "10%", "25%", "Max"];
 
     if (!loaded) {
         return (
@@ -360,34 +508,69 @@ export default function TerminalPaperPanel({
         );
     }
 
-    const goalPct = goal && state.startCapital > 0
-        ? Math.min(100, ((totalBalance - state.startCapital) / (goal - state.startCapital)) * 100)
-        : null;
-
     const confirmExecPrice = orderType === "limit" ? Number(limitPrice) : currentPrice;
     const confirmBtcAmt = Number(buyAmount) > 0 && confirmExecPrice > 0
         ? (Number(buyAmount) / confirmExecPrice)
         : 0;
 
     return (
-        <section className="terminal-side-card">
+        <section className="terminal-side-card" style={{ position: "relative" }}>
 
-            {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <div>
-                    <div className="terminal-label">{t("paper_label")}</div>
-                    <div className="terminal-side-title" style={{ marginTop: 2 }}>{t("paper_subtitle")}</div>
+            {/* Notification toast */}
+            {notification && (
+                <div className={`paper-notification paper-notification-${notification.type}`}>
+                    {notification.msg}
                 </div>
-                <button
-                    className="terminal-btn terminal-btn-muted"
-                    onClick={() => setShowHelp(v => !v)}
-                    style={{ fontSize: 11, padding: "3px 10px" }}
-                >
-                    {showHelp ? t("paper_help_toggle_hide") : t("paper_help_toggle_show")}
-                </button>
+            )}
+
+            {/* === HEADER === */}
+            <div className="paper-header">
+                <div style={{ flex: 1 }}>
+                    <div className="terminal-label">{t("paper_label")}</div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+                        <span className="paper-balance-display" style={{ color: totalPnl >= 0 ? "#26c57c" : "#ef4444" }}>
+                            {eur(totalBalance)}
+                        </span>
+                        <span className={`paper-pnl-badge ${totalPnl >= 0 ? "pos" : "neg"}`}>
+                            {totalPnl >= 0 ? "+" : ""}{eur(totalPnl)} ({totalPnlPct >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%)
+                        </span>
+                    </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {sparkPath && (
+                        <svg className="paper-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+                            <path d={sparkPath} fill="none" stroke={sparkColor} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                        </svg>
+                    )}
+                    <button
+                        className="terminal-btn terminal-btn-muted"
+                        onClick={() => setShowHelp(v => !v)}
+                        style={{ fontSize: 11, padding: "3px 8px" }}
+                    >
+                        {showHelp ? "✕" : "?"}
+                    </button>
+                </div>
             </div>
 
-            {/* Uitleg */}
+            {/* === STATS BAR === */}
+            <div className="paper-stat-bar">
+                <div className="paper-stat-bar-item">
+                    <div className="paper-stat-bar-label">{t("paper_stat_cash")}</div>
+                    <div className="paper-stat-bar-value">{eur(state.cash)}</div>
+                </div>
+                <div className="paper-stat-bar-item">
+                    <div className="paper-stat-bar-label">{t("paper_stat_position")}</div>
+                    <div className="paper-stat-bar-value">{state.openBtc > 0 ? eur(openValue) : "—"}</div>
+                </div>
+                <div className="paper-stat-bar-item">
+                    <div className="paper-stat-bar-label">{t("paper_stat_unrealized")}</div>
+                    <div className="paper-stat-bar-value" style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                        {state.openBtc > 0 ? (unrealized >= 0 ? "+" : "") + eur(unrealized) : "—"}
+                    </div>
+                </div>
+            </div>
+
+            {/* === HELP === */}
             {showHelp && (
                 <div className="paper-help-box">
                     <div className="paper-help-title">{t("paper_help_title")}</div>
@@ -399,62 +582,92 @@ export default function TerminalPaperPanel({
                         <li><strong>{t("paper_help_zone")}</strong> — {t("paper_help_zone_desc")}</li>
                         <li><strong>{t("paper_help_pl")}</strong> — {t("paper_help_pl_desc")}</li>
                     </ul>
-                    <div className="paper-help-title" style={{ marginTop: 10 }}>{t("paper_help_goal_title")}</div>
-                    <p>{t("paper_help_goal_text")} <em>{t("paper_help_goal_quote")}</em>. {t("paper_help_goal_desc")}</p>
-                    <p style={{ marginTop: 4, color: "var(--text-secondary)", fontSize: 12 }}>{t("paper_help_goal_tip")}</p>
                 </div>
             )}
 
-            {/* Balans samenvatting */}
-            <div className="terminal-paper-stats">
-                <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">{t("paper_stat_cash")}</span>
-                    <span className="terminal-mini-value">{eur(state.cash)}</span>
-                </div>
-                <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">{t("paper_stat_position")}</span>
-                    <span className="terminal-mini-value">{state.openBtc > 0 ? eur(openValue) : "—"}</span>
-                </div>
-                <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">{t("paper_stat_unrealized")}</span>
-                    <span className="terminal-mini-value" style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                        {state.openBtc > 0 ? eur(unrealized) : "—"}
-                    </span>
-                </div>
-                <div className="terminal-mini-box">
-                    <span className="terminal-mini-label">{t("paper_stat_total")}</span>
-                    <span className="terminal-mini-value" style={{ color: totalPnl >= 0 ? "#26c57c" : "#ef4444" }}>
-                        {eur(totalBalance)}
-                        <span style={{ fontSize: 11, marginLeft: 4, opacity: 0.7 }}>
-                            ({totalPnlPct >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%)
-                        </span>
-                    </span>
-                </div>
-            </div>
-
-            {/* Open positie info + break-even */}
+            {/* === OPEN POSITION CARD === */}
             {state.openBtc > 0 && (
-                <div className="paper-position-strip">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span>{t("paper_position_open")} ${Math.round(state.avgEntry).toLocaleString("en-US")}</span>
-                        <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                            {unrealized >= 0 ? "▲" : "▼"} {eur(unrealized)}
+                <div className="paper-position-card">
+                    <div className="paper-position-header">
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span className="paper-position-badge">LONG</span>
+                            <span style={{ fontWeight: 700, fontSize: 14 }}>{assetTicker}</span>
+                            <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                                {state.openBtc.toFixed(6)}
+                            </span>
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                            {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
                         </span>
                     </div>
-                    {breakEvenPrice && (
-                        <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 3 }}>
-                            {t("paper_break_even_hint")} <strong>${Math.round(breakEvenPrice).toLocaleString("en-US")}</strong>
-                            {stopLoss > 0 && (
-                                <span style={{ marginLeft: 8, color: "#ef4444" }}>
-                                    · SL: ${Math.round(stopLoss).toLocaleString("en-US")}
-                                </span>
-                            )}
+
+                    <div className="paper-position-metrics">
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_entry")}</div>
+                            <div className="paper-position-metric-value">
+                                ${Math.round(state.avgEntry).toLocaleString("en-US")}
+                            </div>
                         </div>
-                    )}
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_current")}</div>
+                            <div className="paper-position-metric-value">
+                                ${Math.round(currentPrice).toLocaleString("en-US")}
+                            </div>
+                        </div>
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_roi")}</div>
+                            <div className="paper-position-metric-value" style={{ color: roiPct >= 0 ? "#26c57c" : "#ef4444" }}>
+                                {roiPct >= 0 ? "+" : ""}{roiPct.toFixed(2)}%
+                            </div>
+                        </div>
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_size")}</div>
+                            <div className="paper-position-metric-value">{eur(openValue)}</div>
+                        </div>
+                    </div>
+
+                    {/* SL/TP status pills */}
+                    <div className="paper-sltp-row">
+                        <div className={`paper-sltp-pill${state.activeSL ? " sl-active" : ""}`}>
+                            <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 10 }}>SL</span>
+                            <span>
+                                {state.activeSL
+                                    ? `$${Math.round(state.activeSL).toLocaleString("en-US")}`
+                                    : t("paper_sl_not_set")}
+                            </span>
+                        </div>
+                        <div className={`paper-sltp-pill${state.activeTP ? " tp-active" : ""}`}>
+                            <span style={{ color: "#26c57c", fontWeight: 700, fontSize: 10 }}>TP</span>
+                            <span>
+                                {state.activeTP
+                                    ? `$${Math.round(state.activeTP).toLocaleString("en-US")}`
+                                    : t("paper_tp_not_set")}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Partial close buttons */}
+                    <div className="paper-close-btns">
+                        {[25, 50, 75].map(pct => (
+                            <button
+                                key={pct}
+                                className="paper-close-btn"
+                                onClick={() => requestPartialClose(pct / 100)}
+                            >
+                                {pct}%
+                            </button>
+                        ))}
+                        <button
+                            className="paper-close-btn full"
+                            onClick={() => requestPartialClose(1)}
+                        >
+                            {t("paper_close_all")}
+                        </button>
+                    </div>
                 </div>
             )}
 
-            {/* Pending limit order melding */}
+            {/* === PENDING LIMIT ORDER === */}
             {pendingLimitOrder && (
                 <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "#f59e0b55" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -472,7 +685,7 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* Doel tracker */}
+            {/* === GOAL TRACKER === */}
             {goal !== null ? (
                 <div className="paper-goal-strip">
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
@@ -515,14 +728,301 @@ export default function TerminalPaperPanel({
             ) : (
                 <button
                     className="terminal-btn terminal-btn-muted"
-                    style={{ fontSize: 12, width: "100%", marginBottom: 8 }}
+                    style={{ fontSize: 11, width: "100%", marginBottom: 8 }}
                     onClick={() => setShowGoalInput(true)}
                 >
                     {t("paper_goal_set_btn")}
                 </button>
             )}
 
-            {/* Trade plan */}
+            {/* === ORDER PANEL === */}
+            <div className="paper-order-panel">
+
+                {/* Buy / Sell tabs */}
+                <div className="paper-side-tabs">
+                    <button
+                        className={`paper-side-tab buy${activeSide === "buy" ? " active" : ""}`}
+                        onClick={() => setActiveSide("buy")}
+                    >
+                        {t("paper_tab_buy")}
+                    </button>
+                    <button
+                        className={`paper-side-tab sell${activeSide === "sell" ? " active" : ""}`}
+                        onClick={() => setActiveSide("sell")}
+                    >
+                        {t("paper_tab_sell")}
+                    </button>
+                </div>
+
+                {/* === BUY PANEL === */}
+                {activeSide === "buy" && (
+                    <>
+                        {/* Order type */}
+                        <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+                            <button
+                                className={`terminal-btn${orderType === "market" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                                style={{ flex: 1, fontSize: 12 }}
+                                onClick={() => setOrderType("market")}
+                            >
+                                {t("paper_order_market")}
+                            </button>
+                            <button
+                                className={`terminal-btn${orderType === "limit" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                                style={{ flex: 1, fontSize: 12 }}
+                                onClick={() => setOrderType("limit")}
+                            >
+                                {t("paper_order_limit")}
+                            </button>
+                        </div>
+
+                        {/* Limit price */}
+                        {orderType === "limit" && (
+                            <div style={{ marginBottom: 10 }}>
+                                <label className="terminal-mini-label" style={{ display: "block", marginBottom: 4 }}>
+                                    {t("paper_limit_price_label")}
+                                </label>
+                                <input
+                                    className="terminal-terminal-input"
+                                    type="number"
+                                    value={limitPrice}
+                                    onChange={(e) => setLimitPrice(e.target.value)}
+                                    placeholder={t("paper_limit_price_placeholder")}
+                                />
+                                {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
+                                    <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
+                                        {t("paper_limit_above_market")}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Amount */}
+                        <div style={{ marginBottom: 10 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                <label className="terminal-mini-label">{t("paper_buy_label")}</label>
+                                <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+                                    {t("paper_buy_available")} {eur(state.cash)}
+                                </span>
+                            </div>
+                            <div className="paper-quick-amounts">
+                                {quickAmounts.map((amt, i) => (
+                                    <button
+                                        key={i}
+                                        className={`paper-quick-btn${Number(buyAmount) === amt ? " active" : ""}`}
+                                        onClick={() => setBuyAmount(String(amt))}
+                                    >
+                                        {quickLabels[i]}<br />
+                                        <span style={{ fontSize: 10, opacity: 0.7 }}>{eur(amt)}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <input
+                                className="terminal-terminal-input"
+                                value={buyAmount}
+                                onChange={(e) => setBuyAmount(e.target.value)}
+                                inputMode="decimal"
+                                placeholder={t("paper_buy_placeholder")}
+                                style={{ marginTop: 6 }}
+                            />
+                        </div>
+
+                        {/* SL / TP inputs */}
+                        <div className="paper-sltp-inputs">
+                            <div className="paper-sltp-input-wrap sl">
+                                <label>{t("paper_sl_label")}</label>
+                                <input
+                                    className="terminal-terminal-input"
+                                    type="number"
+                                    value={slInput}
+                                    onChange={e => setSlInput(e.target.value)}
+                                    placeholder={stopLoss > 0 ? `${Math.round(stopLoss)}` : "$ optioneel"}
+                                />
+                            </div>
+                            <div className="paper-sltp-input-wrap tp">
+                                <label>{t("paper_tp_label")}</label>
+                                <input
+                                    className="terminal-terminal-input"
+                                    type="number"
+                                    value={tpInput}
+                                    onChange={e => setTpInput(e.target.value)}
+                                    placeholder={resistanceZoneLow > 0 ? `${Math.round(resistanceZoneLow)}` : "$ optioneel"}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Order preview */}
+                        {previewBtc > 0 && (
+                            <div className="paper-order-preview">
+                                <span style={{ fontWeight: 600, color: "var(--text)" }}>
+                                    {eur(buyAmtNum)}
+                                </span>
+                                {" → "}
+                                <span style={{ fontWeight: 700, color: "#26c57c" }}>
+                                    {previewBtc.toFixed(6)} {assetTicker}
+                                </span>
+                                {" @ "}
+                                <span>${Math.round(execPrice > 0 ? execPrice : currentPrice).toLocaleString("en-US")}</span>
+                                {Number(slInput) > 0 && (
+                                    <span style={{ color: "#ef4444", marginLeft: 6 }}>
+                                        · SL ${Math.round(Number(slInput)).toLocaleString("en-US")}
+                                    </span>
+                                )}
+                                {Number(tpInput) > 0 && (
+                                    <span style={{ color: "#26c57c", marginLeft: 6 }}>
+                                        · TP ${Math.round(Number(tpInput)).toLocaleString("en-US")}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Zone warning */}
+                        {zoneWarning && (
+                            <div className="terminal-zone-warning" style={{ marginBottom: 8 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                    <div className="terminal-zone-warning-title">{t("paper_zone_warning_title")}</div>
+                                    <button onClick={() => setZoneWarning(false)} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>✕</button>
+                                </div>
+                                <div className="terminal-zone-warning-body">
+                                    {t("paper_zone_warning_body_prefix")} <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
+                                    {" "}{t("paper_zone_warning_body_suffix")}
+                                </div>
+                                <button className="terminal-btn terminal-btn-danger" style={{ width: "100%", marginTop: 6 }} onClick={() => { setZoneWarning(false); requestBuy(true); }}>
+                                    {t("paper_zone_buy_anyway")}
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Buy button */}
+                        <button
+                            className="paper-action-buy"
+                            onClick={() => requestBuy()}
+                            disabled={
+                                buyAmtNum > state.cash ||
+                                buyAmtNum <= 0 ||
+                                currentPrice <= 0 ||
+                                (orderType === "limit" && (!Number(limitPrice) || Number(limitPrice) <= 0)) ||
+                                !!pendingLimitOrder
+                            }
+                        >
+                            {currentPrice <= 0
+                                ? t("loading")
+                                : orderType === "limit"
+                                    ? `Limit ${t("paper_tab_buy")} ${assetTicker} →`
+                                    : `${t("paper_tab_buy")} ${assetTicker} →`}
+                        </button>
+                    </>
+                )}
+
+                {/* === SELL / CLOSE PANEL === */}
+                {activeSide === "sell" && (
+                    <>
+                        {state.openBtc <= 0 ? (
+                            <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text-secondary)" }}>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>📭</div>
+                                <div style={{ fontWeight: 600 }}>{t("paper_no_position")}</div>
+                                <div style={{ fontSize: 12, marginTop: 4 }}>{t("paper_no_position_hint")}</div>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Sell percentage selector */}
+                                <div style={{ marginBottom: 12 }}>
+                                    <div className="terminal-mini-label" style={{ marginBottom: 6 }}>
+                                        {t("paper_sell_amount_label")}
+                                    </div>
+                                    <div className="paper-close-btns" style={{ marginBottom: 8 }}>
+                                        {[25, 50, 75, 100].map(pct => (
+                                            <button
+                                                key={pct}
+                                                className={`paper-close-btn${sellPct === pct ? " full" : ""}${pct === 100 ? " full" : ""}`}
+                                                onClick={() => setSellPct(pct)}
+                                                style={sellPct === pct ? { borderColor: "#ef4444", background: "rgba(239,68,68,0.18)" } : {}}
+                                            >
+                                                {pct}%
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Sell preview */}
+                                    <div className="paper-order-preview">
+                                        <span style={{ fontWeight: 600, color: "var(--text)" }}>
+                                            {sellBtc.toFixed(6)} {assetTicker}
+                                        </span>
+                                        {" → "}
+                                        <span style={{ fontWeight: 700, color: "#ef4444" }}>
+                                            {eur(sellValue)}
+                                        </span>
+                                        {" · P&L: "}
+                                        <span style={{ fontWeight: 700, color: sellPnl >= 0 ? "#26c57c" : "#ef4444" }}>
+                                            {sellPnl >= 0 ? "+" : ""}{eur(sellPnl)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* SL/TP update for open position */}
+                                <div className="paper-sltp-inputs" style={{ marginBottom: 10 }}>
+                                    <div className="paper-sltp-input-wrap sl">
+                                        <label>{t("paper_sl_label")}</label>
+                                        <input
+                                            className="terminal-terminal-input"
+                                            type="number"
+                                            value={state.activeSL ? String(state.activeSL) : ""}
+                                            onChange={e => {
+                                                const v = Number(e.target.value);
+                                                setState(prev => ({ ...prev, activeSL: v > 0 ? v : undefined }));
+                                            }}
+                                            placeholder={t("paper_sl_not_set")}
+                                        />
+                                    </div>
+                                    <div className="paper-sltp-input-wrap tp">
+                                        <label>{t("paper_tp_label")}</label>
+                                        <input
+                                            className="terminal-terminal-input"
+                                            type="number"
+                                            value={state.activeTP ? String(state.activeTP) : ""}
+                                            onChange={e => {
+                                                const v = Number(e.target.value);
+                                                setState(prev => ({ ...prev, activeTP: v > 0 ? v : undefined }));
+                                            }}
+                                            placeholder={t("paper_tp_not_set")}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Sell button */}
+                                <button
+                                    className="paper-action-sell"
+                                    onClick={() => requestPartialClose(sellPct / 100)}
+                                >
+                                    {sellPct === 100
+                                        ? `${t("paper_btn_sell")} (100%)`
+                                        : `${t("paper_close_partial_title")} ${sellPct}% → ${eur(sellValue)}`}
+                                </button>
+                            </>
+                        )}
+                    </>
+                )}
+
+                {/* Reset button */}
+                <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
+                    {confirmReset ? (
+                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <span style={{ fontSize: 11, color: "#ef4444" }}>{t("paper_confirm_reset")}</span>
+                            <button className="terminal-btn terminal-btn-danger" style={{ fontSize: 11 }} onClick={resetAccount}>{t("paper_reset_confirm_btn")}</button>
+                            <button className="terminal-btn terminal-btn-muted" style={{ fontSize: 11 }} onClick={() => setConfirmReset(false)}>✕</button>
+                        </div>
+                    ) : (
+                        <button
+                            className="terminal-btn terminal-btn-muted"
+                            onClick={() => setConfirmReset(true)}
+                            style={{ fontSize: 11, padding: "3px 10px" }}
+                        >
+                            ↺ {t("paper_reset_confirm_btn")}
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* === TRADE PLAN === */}
             <div className="paper-tradeplan">
                 <div className="paper-tradeplan-title">{t("paper_tradeplan_title")}</div>
                 <div className="paper-tradeplan-grid">
@@ -545,9 +1045,6 @@ export default function TerminalPaperPanel({
                             <span className="paper-tradeplan-label">{t("paper_tradeplan_stop")}</span>
                             <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
                                 ${Math.round(stopLoss).toLocaleString("en-US")}
-                                <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 6 }}>
-                                    ({currentPrice > 0 ? ((currentPrice - stopLoss) / currentPrice * 100).toFixed(1) : "—"}{t("paper_tradeplan_stop_below")}
-                                </span>
                             </span>
                         </div>
                     )}
@@ -555,171 +1052,10 @@ export default function TerminalPaperPanel({
                         <span className="paper-tradeplan-label">{t("paper_tradeplan_rr")}</span>
                         <span className="paper-tradeplan-value">{riskRewardEstimate}</span>
                     </div>
-                    {Number(buyAmount) > 0 && stopLoss > 0 && currentPrice > 0 && (
-                        <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">{t("paper_tradeplan_maxloss")}</span>
-                            <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
-                                {eur(Number(buyAmount) * (currentPrice - stopLoss) / currentPrice)}
-                            </span>
-                        </div>
-                    )}
-                </div>
-                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6, lineHeight: 1.5 }}>
-                    {t("paper_tradeplan_hint_prefix")} <strong>{t("paper_tradeplan_stoploss")}</strong> {t("paper_tradeplan_hint_middle")} <strong>{t("paper_tradeplan_takeprofit")}</strong> {t("paper_tradeplan_hint_suffix")}
                 </div>
             </div>
 
-            {/* Order type toggle */}
-            <div style={{ marginBottom: 10 }}>
-                <div className="terminal-mini-label" style={{ marginBottom: 6 }}>{t("paper_order_type_label")}</div>
-                <div style={{ display: "flex", gap: 6 }}>
-                    <button
-                        className={`terminal-btn${orderType === "market" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
-                        style={{ flex: 1, fontSize: 12 }}
-                        onClick={() => setOrderType("market")}
-                    >
-                        {t("paper_order_market")}
-                    </button>
-                    <button
-                        className={`terminal-btn${orderType === "limit" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
-                        style={{ flex: 1, fontSize: 12 }}
-                        onClick={() => setOrderType("limit")}
-                    >
-                        {t("paper_order_limit")}
-                    </button>
-                </div>
-                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>
-                    {orderType === "market" ? t("paper_order_market_desc") : t("paper_order_limit_desc")}
-                </div>
-            </div>
-
-            {/* Limietprijs input (alleen bij limit order) */}
-            {orderType === "limit" && (
-                <div style={{ marginBottom: 10 }}>
-                    <label className="terminal-mini-label" style={{ display: "block", marginBottom: 4 }}>
-                        {t("paper_limit_price_label")}
-                    </label>
-                    <input
-                        className="terminal-terminal-input"
-                        type="number"
-                        value={limitPrice}
-                        onChange={(e) => setLimitPrice(e.target.value)}
-                        placeholder={t("paper_limit_price_placeholder")}
-                    />
-                    {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
-                        <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
-                            {t("paper_limit_above_market")}
-                        </div>
-                    )}
-                    {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) <= currentPrice && (
-                        <div style={{ fontSize: 11, color: "#26c57c", marginTop: 4 }}>
-                            ✓ ${Math.round(Number(limitPrice)).toLocaleString("en-US")} ≤ ${Math.round(currentPrice).toLocaleString("en-US")} — direct uitvoerbaar
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Koop sectie */}
-            <div className="paper-buy-section">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                    <label className="terminal-mini-label">{t("paper_buy_label")}</label>
-                    <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-                        {t("paper_buy_available")} {eur(state.cash)}
-                    </span>
-                </div>
-
-                {/* Quick amount knoppen */}
-                <div className="paper-quick-amounts">
-                    {quickAmounts.map((amt, i) => (
-                        <button
-                            key={i}
-                            className={`paper-quick-btn${Number(buyAmount) === amt ? " active" : ""}`}
-                            onClick={() => setBuyAmount(String(amt))}
-                        >
-                            {quickLabels[i]}<br />
-                            <span style={{ fontSize: 11, opacity: 0.7 }}>{eur(amt)}</span>
-                        </button>
-                    ))}
-                </div>
-
-                <input
-                    className="terminal-terminal-input"
-                    value={buyAmount}
-                    onChange={(e) => setBuyAmount(e.target.value)}
-                    inputMode="decimal"
-                    placeholder={t("paper_buy_placeholder")}
-                    style={{ marginTop: 8 }}
-                />
-            </div>
-
-            {/* Actie knoppen */}
-            <div className="terminal-paper-actions" style={{ marginTop: 10 }}>
-                {confirmReset ? (
-                    <>
-                        <span style={{ fontSize: 12, color: "#ef4444", alignSelf: "center" }}>{t("paper_confirm_reset")}</span>
-                        <button className="terminal-btn terminal-btn-danger" onClick={resetAccount}>{t("paper_reset_confirm_btn")}</button>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setConfirmReset(false)}>{t("paper_reset_cancel")}</button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            className="terminal-btn terminal-btn-primary"
-                            onClick={() => requestBuy()}
-                            style={{ flex: 2, fontSize: 14, fontWeight: 700 }}
-                            disabled={
-                                Number(buyAmount) > state.cash ||
-                                Number(buyAmount) <= 0 ||
-                                currentPrice <= 0 ||
-                                (orderType === "limit" && (!Number(limitPrice) || Number(limitPrice) <= 0)) ||
-                                !!pendingLimitOrder
-                            }
-                        >
-                            {currentPrice <= 0 ? t("loading") : orderType === "limit" ? `${t("paper_order_limit")} →` : t("paper_btn_buy")}
-                        </button>
-                        <button
-                            className="terminal-btn"
-                            onClick={requestSell}
-                            style={{ flex: 2, fontSize: 14, fontWeight: 700, borderColor: "#ef444455", color: state.openBtc > 0 ? "#ef4444" : undefined }}
-                            disabled={state.openBtc <= 0 || currentPrice <= 0}
-                        >
-                            {t("paper_btn_sell")}
-                        </button>
-                        <button
-                            className="terminal-btn terminal-btn-muted"
-                            onClick={() => setConfirmReset(true)}
-                            style={{ fontSize: 11 }}
-                            title={t("paper_reset_confirm_btn")}
-                        >
-                            ↺
-                        </button>
-                    </>
-                )}
-            </div>
-
-            {/* Uitleg knoppen */}
-            <div className="paper-btn-hints">
-                <span>{t("paper_btn_hints_buy")} <strong>{t("paper_btn_hints_buy_label")}</strong> {t("paper_btn_hints_buy_desc")}</span>
-                <span>{t("paper_btn_hints_sell")} <strong>{t("paper_btn_hints_sell_label")}</strong> {t("paper_btn_hints_sell_desc")}</span>
-            </div>
-
-            {/* Zone waarschuwing */}
-            {zoneWarning && (
-                <div className="terminal-zone-warning" style={{ marginBottom: 8 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                        <div className="terminal-zone-warning-title">{t("paper_zone_warning_title")}</div>
-                        <button onClick={() => setZoneWarning(false)} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>✕</button>
-                    </div>
-                    <div className="terminal-zone-warning-body">
-                        {t("paper_zone_warning_body_prefix")} <strong>${Math.round(entryZoneLow).toLocaleString("en-US")}–${Math.round(entryZoneHigh).toLocaleString("en-US")}</strong>.
-                        {" "}{t("paper_zone_warning_body_suffix")}
-                    </div>
-                    <button className="terminal-btn terminal-btn-danger" style={{ width: "100%", marginTop: 6 }} onClick={() => { setZoneWarning(false); requestBuy(true); }}>
-                        {t("paper_zone_buy_anyway")}
-                    </button>
-                </div>
-            )}
-
-            {/* Bevestigingsdialoog */}
+            {/* === CONFIRMATION DIALOG === */}
             {showConfirm && confirmAction && (
                 <div style={{
                     position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
@@ -732,7 +1068,6 @@ export default function TerminalPaperPanel({
                         <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>
                             {t("paper_confirm_title")}
                         </div>
-
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                             <tbody>
                                 <tr>
@@ -740,7 +1075,9 @@ export default function TerminalPaperPanel({
                                     <td style={{ textAlign: "right", fontWeight: 600 }}>
                                         {confirmAction === "buy"
                                             ? (orderType === "limit" ? "🔵 Limit BUY" : "🟢 Market BUY")
-                                            : "🔴 Market SELL"}
+                                            : confirmAction === "partial"
+                                                ? `🔴 Partial SELL (${Math.round(confirmPct * 100)}%)`
+                                                : "🔴 Market SELL"}
                                     </td>
                                 </tr>
                                 <tr>
@@ -762,17 +1099,33 @@ export default function TerminalPaperPanel({
                                         <tr>
                                             <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_asset_amount")}</td>
                                             <td style={{ textAlign: "right", fontWeight: 600 }}>
-                                                {confirmBtcAmt.toFixed(6)} {asset.replace("USDT", "")}
+                                                {confirmBtcAmt.toFixed(6)} {assetTicker}
                                             </td>
                                         </tr>
+                                        {Number(slInput) > 0 && (
+                                            <tr>
+                                                <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>Stop Loss</td>
+                                                <td style={{ textAlign: "right", fontWeight: 600, color: "#ef4444" }}>
+                                                    ${Math.round(Number(slInput)).toLocaleString("en-US")}
+                                                </td>
+                                            </tr>
+                                        )}
+                                        {Number(tpInput) > 0 && (
+                                            <tr>
+                                                <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>Take Profit</td>
+                                                <td style={{ textAlign: "right", fontWeight: 600, color: "#26c57c" }}>
+                                                    ${Math.round(Number(tpInput)).toLocaleString("en-US")}
+                                                </td>
+                                            </tr>
+                                        )}
                                     </>
                                 )}
-                                {confirmAction === "sell" && state.openBtc > 0 && (
+                                {(confirmAction === "sell" || confirmAction === "partial") && state.openBtc > 0 && (
                                     <>
                                         <tr>
                                             <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_asset_amount")}</td>
                                             <td style={{ textAlign: "right", fontWeight: 600 }}>
-                                                {state.openBtc.toFixed(6)} {asset.replace("USDT", "")}
+                                                {(state.openBtc * confirmPct).toFixed(6)} {assetTicker}
                                             </td>
                                         </tr>
                                         <tr>
@@ -783,15 +1136,14 @@ export default function TerminalPaperPanel({
                                         </tr>
                                         <tr>
                                             <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>P/L</td>
-                                            <td style={{ textAlign: "right", fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                                                {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
+                                            <td style={{ textAlign: "right", fontWeight: 700, color: unrealized * confirmPct >= 0 ? "#26c57c" : "#ef4444" }}>
+                                                {(unrealized * confirmPct) >= 0 ? "+" : ""}{eur(unrealized * confirmPct)}
                                             </td>
                                         </tr>
                                     </>
                                 )}
                             </tbody>
                         </table>
-
                         <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
                             <button
                                 className="terminal-btn terminal-btn-muted"
@@ -801,7 +1153,7 @@ export default function TerminalPaperPanel({
                                 {t("paper_confirm_cancel")}
                             </button>
                             <button
-                                className={`terminal-btn ${confirmAction === "sell" ? "terminal-btn-danger" : "terminal-btn-primary"}`}
+                                className={`terminal-btn ${confirmAction === "sell" || confirmAction === "partial" ? "terminal-btn-danger" : "terminal-btn-primary"}`}
                                 style={{ flex: 2, fontWeight: 700 }}
                                 onClick={confirmOrder}
                             >
@@ -812,7 +1164,7 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* Dagboek prompt na verkoop */}
+            {/* === JOURNAL === */}
             {pendingNoteId && (
                 <div className="terminal-journal-prompt">
                     <div className="terminal-mini-label" style={{ marginBottom: 6 }}>
@@ -836,7 +1188,7 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* Stats */}
+            {/* === STATS === */}
             {closedCount > 0 && (
                 <div className="terminal-progress-grid" style={{ marginTop: 12 }}>
                     <div className="terminal-progress-box">
@@ -884,39 +1236,78 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* Trade geschiedenis */}
-            <details className="terminal-history">
+            {/* === TRADE HISTORY === */}
+            <details className="terminal-history" style={{ marginTop: 12 }}>
                 <summary>
                     {t("paper_history_title")}
-                    {state.trades.length > 0 && <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>({state.trades.length} {t("paper_history_trades_suffix")}</span>}
+                    {state.trades.length > 0 && (
+                        <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>
+                            ({state.trades.length} {t("paper_history_trades_suffix")}
+                        </span>
+                    )}
                 </summary>
-                <div style={{ fontSize: 12, color: "var(--text-secondary)", padding: "6px 0", marginBottom: 4 }}>
-                    {t("paper_history_desc")}
-                </div>
-                <div className="terminal-history-list">
-                    {state.trades.length === 0 && (
-                        <div className="terminal-history-item" style={{ color: "var(--text-secondary)" }}>
+                <div className="paper-history-scroll">
+                    {state.trades.length === 0 ? (
+                        <div style={{ color: "var(--text-secondary)", fontSize: 12, padding: "8px 0" }}>
                             {t("paper_history_empty")}
                         </div>
+                    ) : (
+                        <table className="paper-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Tijd</th>
+                                    <th>Side</th>
+                                    <th style={{ textAlign: "right" }}>Prijs</th>
+                                    <th style={{ textAlign: "right" }}>Bedrag</th>
+                                    <th style={{ textAlign: "right" }}>P&L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {state.trades.map((trade) => (
+                                    <>
+                                        <tr key={trade.id}>
+                                            <td style={{ color: "var(--text-secondary)" }}>{trade.time}</td>
+                                            <td>
+                                                <span style={{
+                                                    color: trade.side === "buy" ? "#26c57c" : "#ef4444",
+                                                    fontWeight: 700,
+                                                    fontSize: 11,
+                                                }}>
+                                                    {trade.side === "buy" ? "BUY" : "SELL"}
+                                                </span>
+                                                {trade.orderType === "limit" && (
+                                                    <span style={{ fontSize: 9, color: "#8b95ad", marginLeft: 3 }}>LMT</span>
+                                                )}
+                                                {trade.closePct && (
+                                                    <span style={{ fontSize: 9, color: "#8b95ad", marginLeft: 3 }}>
+                                                        {Math.round(trade.closePct * 100)}%
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td style={{ textAlign: "right" }}>
+                                                ${trade.price.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                                            </td>
+                                            <td style={{ textAlign: "right" }}>{eur(trade.amountEur)}</td>
+                                            <td style={{ textAlign: "right" }}>
+                                                {typeof trade.pnl === "number" ? (
+                                                    <span style={{ color: trade.pnl >= 0 ? "#26c57c" : "#ef4444", fontWeight: 700 }}>
+                                                        {trade.pnl >= 0 ? "+" : ""}{eur(trade.pnl)}
+                                                    </span>
+                                                ) : "—"}
+                                            </td>
+                                        </tr>
+                                        {trade.note && (
+                                            <tr key={`${trade.id}-note`}>
+                                                <td colSpan={5} style={{ paddingTop: 0 }}>
+                                                    <div className="terminal-journal-note">📓 {trade.note}</div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </>
+                                ))}
+                            </tbody>
+                        </table>
                     )}
-                    {state.trades.map((trade) => (
-                        <div key={trade.id} className="terminal-history-item">
-                            <strong style={{ color: trade.side === "buy" ? "#26c57c" : "#ef4444" }}>
-                                {trade.side === "buy" ? t("paper_history_buy") : t("paper_history_sell")}
-                            </strong>
-                            {trade.orderType === "limit" && (
-                                <span style={{ fontSize: 10, color: "#8b95ad", marginLeft: 4 }}>LIMIT</span>
-                            )}
-                            {" "}&bull;{" "}{trade.time} &bull; {eur(trade.amountEur)}
-                            {" "}&bull; {t("paper_history_price")} ${trade.price.toFixed(0)}
-                            {typeof trade.pnl === "number" && (
-                                <span style={{ color: trade.pnl >= 0 ? "#26c57c" : "#ef4444", marginLeft: 4 }}>
-                                    &bull; {trade.pnl >= 0 ? "+" : ""}{eur(trade.pnl)}
-                                </span>
-                            )}
-                            {trade.note && <div className="terminal-journal-note">📓 {trade.note}</div>}
-                        </div>
-                    ))}
                 </div>
             </details>
         </section>

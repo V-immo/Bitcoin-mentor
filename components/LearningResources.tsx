@@ -17,7 +17,7 @@ type VideoResource = {
 type NewsSource = {
   name: string;
   url: string;
-  descKey: string;
+  descKey: import("@/lib/translations").TranslationKey;
   icon: string;
   category: "crypto" | "stocks" | "macro" | "education";
 };

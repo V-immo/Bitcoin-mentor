@@ -570,7 +570,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </span>
               <span className="terminal-soft-badge">
                 {signal.action === "Niet kopen" ? t("action_no_buy")
-                  : signal.action === "Kleine positie mogelijk" ? t("action_small_buy")
+                  : signal.action === "Kleine koop mogelijk" ? t("action_small_buy")
                   : signal.action === "Wacht op betere prijs" ? t("action_wait_price")
                   : signal.action}
               </span>
