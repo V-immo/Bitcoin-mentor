@@ -82,7 +82,12 @@ export default function LoginPage() {
             {loading ? t("login_loading") : t("login_btn")}
           </button>
         </form>
-        <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "var(--text-secondary)" }}>
+        <div style={{ textAlign: "center", marginTop: 12, fontSize: 13 }}>
+          <Link href="/auth/forgot-password" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>
+            {t("login_forgot_password")}
+          </Link>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 10, fontSize: 13, color: "var(--text-secondary)" }}>
           {t("login_no_account")}{" "}
           <Link href="/auth/register" style={{ color: "var(--primary)", textDecoration: "none" }}>
             {t("login_register_link")}

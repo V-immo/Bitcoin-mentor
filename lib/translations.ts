@@ -230,6 +230,30 @@ const translations = {
     register_login_link: "Inloggen →",
     login_no_account: "Nog geen account?",
     login_register_link: "Aanmaken →",
+    login_forgot_password: "Wachtwoord vergeten?",
+
+    // === FORGOT / RESET PASSWORD ===
+    forgot_title: "Wachtwoord vergeten",
+    forgot_subtitle: "Voer je e-mailadres in en we sturen je een reset-link.",
+    forgot_email_label: "E-mailadres",
+    forgot_email_placeholder: "jouw@email.com",
+    forgot_btn: "Reset-link versturen →",
+    forgot_loading: "Bezig…",
+    forgot_error_failed: "Er is iets misgegaan. Probeer het opnieuw.",
+    forgot_sent_msg: "Als dit e-mailadres bekend is, ontvang je een reset-link in je inbox.",
+    forgot_sent_hint: "Controleer ook je spam-map. De link is 1 uur geldig.",
+    forgot_back_login: "Terug naar inloggen",
+
+    reset_title: "Nieuw wachtwoord instellen",
+    reset_subtitle: "Kies een nieuw wachtwoord voor je account.",
+    reset_password_label: "Nieuw wachtwoord",
+    reset_confirm_label: "Bevestig wachtwoord",
+    reset_btn: "Wachtwoord opslaan →",
+    reset_loading: "Bezig…",
+    reset_error_failed: "Reset mislukt. Probeer een nieuwe link aan te vragen.",
+    reset_success_msg: "Wachtwoord succesvol gewijzigd!",
+    reset_redirect_hint: "Je wordt automatisch doorgestuurd naar de inlogpagina.",
+    reset_to_login: "Naar inloggen →",
 
     // === LOGIN ===
     login_title: "Inloggen",
@@ -1125,6 +1149,30 @@ const translations = {
     register_login_link: "Sign in →",
     login_no_account: "No account yet?",
     login_register_link: "Create one →",
+    login_forgot_password: "Forgot password?",
+
+    // === FORGOT / RESET PASSWORD ===
+    forgot_title: "Forgot password",
+    forgot_subtitle: "Enter your email address and we'll send you a reset link.",
+    forgot_email_label: "Email address",
+    forgot_email_placeholder: "your@email.com",
+    forgot_btn: "Send reset link →",
+    forgot_loading: "Loading…",
+    forgot_error_failed: "Something went wrong. Please try again.",
+    forgot_sent_msg: "If this email address is registered, you'll receive a reset link in your inbox.",
+    forgot_sent_hint: "Check your spam folder too. The link is valid for 1 hour.",
+    forgot_back_login: "Back to sign in",
+
+    reset_title: "Set new password",
+    reset_subtitle: "Choose a new password for your account.",
+    reset_password_label: "New password",
+    reset_confirm_label: "Confirm password",
+    reset_btn: "Save password →",
+    reset_loading: "Loading…",
+    reset_error_failed: "Reset failed. Try requesting a new link.",
+    reset_success_msg: "Password changed successfully!",
+    reset_redirect_hint: "You will be redirected to the sign in page automatically.",
+    reset_to_login: "Go to sign in →",
 
     // === LOGIN ===
     login_title: "Sign in",
