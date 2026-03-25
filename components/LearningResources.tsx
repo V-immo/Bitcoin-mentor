@@ -4,14 +4,15 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 type VideoResource = {
-  id: string;       // YouTube video ID
-  title: string;
+  id: string;
+  titleNL: string;
+  titleEN: string;
   channel: string;
   duration: string;
   topic: string;
-  level: number;    // 1-5
+  level: number;
   tags: string[];
-  views?: string;   // e.g. "2.3M views"
+  views?: string;
 };
 
 type NewsSource = {
@@ -23,10 +24,11 @@ type NewsSource = {
 };
 
 const VIDEOS: VideoResource[] = [
-  // Level 1 — Basics
+  // Level 1 — Absolute beginner
   {
     id: "Xn7KWR9EOGQ",
-    title: "RSI Indicator Explained",
+    titleNL: "RSI Indicator Uitgelegd",
+    titleEN: "RSI Indicator Explained",
     channel: "Rayner Teo",
     duration: "12:23",
     topic: "RSI",
@@ -35,189 +37,207 @@ const VIDEOS: VideoResource[] = [
   },
   {
     id: "KdJ0PiLkE9M",
-    title: "What is a Stop Loss? (Beginner Guide)",
+    titleNL: "Wat is een Stop Loss? (Beginnersgids)",
+    titleEN: "What is a Stop Loss? (Beginner Guide)",
     channel: "Investopedia",
     duration: "4:55",
-    topic: "risk management",
+    topic: "stop-loss",
     level: 1,
-    tags: ["stop-loss", "risk management", "beginner"],
+    tags: ["stop-loss", "risicobeheer", "beginner"],
   },
   {
     id: "BO3hgIScPbI",
-    title: "Bull vs Bear Market Explained",
+    titleNL: "Bull vs Bear Markt Uitgelegd",
+    titleEN: "Bull vs Bear Market Explained",
     channel: "Investopedia",
     duration: "3:17",
-    topic: "market structure",
+    topic: "marktstructuur",
     level: 1,
-    tags: ["bull", "bear", "market", "beginner"],
+    tags: ["bull", "bear", "markt", "beginner"],
   },
   {
     id: "fAEntRLMNDs",
-    title: "Candlestick Charts for Beginners",
+    titleNL: "Candlestick Grafieken voor Beginners",
+    titleEN: "Candlestick Charts for Beginners",
     channel: "Rayner Teo",
     duration: "17:16",
     topic: "candlesticks",
     level: 1,
-    tags: ["candlesticks", "charts", "beginner"],
+    tags: ["candlesticks", "grafieken", "beginner"],
   },
-  // Level 2 — Intermediate
+  // Level 2 — Basis trading
   {
     id: "kDrNBH2QQJM",
-    title: "Support & Resistance Explained",
+    titleNL: "Support & Resistance Uitgelegd",
+    titleEN: "Support & Resistance Explained",
     channel: "Rayner Teo",
     duration: "19:08",
     topic: "support & resistance",
     level: 2,
-    tags: ["support", "resistance", "technical analysis"],
+    tags: ["support", "resistance", "technische analyse"],
   },
   {
     id: "1J0rBNlpBqA",
-    title: "Position Sizing & Risk Management",
+    titleNL: "Positiegrootte & Risicobeheer",
+    titleEN: "Position Sizing & Risk Management",
     channel: "Rayner Teo",
     duration: "13:41",
-    topic: "position sizing",
+    topic: "positiegrootte",
     level: 2,
-    tags: ["position sizing", "risk management", "R/R"],
+    tags: ["positiegrootte", "risicobeheer", "R/R"],
   },
   {
     id: "zjMkFz7BKJA",
-    title: "Multiple Timeframe Analysis (Complete Guide)",
+    titleNL: "Multi-Timeframe Analyse (Complete Gids)",
+    titleEN: "Multiple Timeframe Analysis (Complete Guide)",
     channel: "Rayner Teo",
     duration: "18:45",
     topic: "timeframes",
     level: 2,
-    tags: ["timeframes", "4H", "daily", "multi-timeframe"],
+    tags: ["timeframes", "4H", "dagelijks"],
   },
-  // Level 3 — Advanced
+  // Level 3 — Gevorderd
   {
     id: "wO1PEYZxqOo",
-    title: "Moving Average Strategies That Actually Work",
+    titleNL: "Moving Average Strategieën die Werken",
+    titleEN: "Moving Average Strategies That Actually Work",
     channel: "Rayner Teo",
     duration: "22:14",
     topic: "moving averages",
     level: 3,
-    tags: ["MA", "moving average", "crossover", "strategy"],
+    tags: ["MA", "moving average", "crossover"],
   },
   {
     id: "0Tq9-eq_suA",
-    title: "Volume Analysis — The Key to Better Trades",
+    titleNL: "Volume Analyse — De Sleutel tot Betere Trades",
+    titleEN: "Volume Analysis — The Key to Better Trades",
     channel: "SMB Capital",
     duration: "14:31",
-    topic: "volume analysis",
+    topic: "volume analyse",
     level: 3,
-    tags: ["volume", "analysis", "advanced"],
+    tags: ["volume", "analyse", "gevorderd"],
   },
   {
     id: "CaVMNWlBhxU",
-    title: "Trading Psychology: How to Overcome FOMO",
+    titleNL: "Trading Psychologie: FOMO Overwinnen",
+    titleEN: "Trading Psychology: How to Overcome FOMO",
     channel: "Rayner Teo",
     duration: "11:48",
-    topic: "psychology",
+    topic: "psychologie",
     level: 3,
-    tags: ["psychology", "FOMO", "emotions"],
+    tags: ["psychologie", "FOMO", "emoties"],
   },
   // Level 4-5 — Expert
   {
     id: "zWKIkBlFpKQ",
-    title: "Bitcoin Halving Explained (And Why It Matters)",
+    titleNL: "Bitcoin Halving Uitgelegd (En Waarom Het Belangrijk Is)",
+    titleEN: "Bitcoin Halving Explained (And Why It Matters)",
     channel: "Coin Bureau",
     duration: "16:55",
-    topic: "halving cycle",
+    topic: "halving cyclus",
     level: 4,
-    tags: ["halving", "cycle", "Bitcoin", "macro"],
+    tags: ["halving", "cyclus", "Bitcoin", "macro"],
   },
   {
     id: "h-Nz3_k6jyI",
-    title: "Crypto Funding Rates Explained",
+    titleNL: "Crypto Funding Rates Uitgelegd",
+    titleEN: "Crypto Funding Rates Explained",
     channel: "Coin Bureau",
     duration: "10:43",
     topic: "funding rates",
     level: 5,
-    tags: ["funding rates", "futures", "advanced"],
+    tags: ["funding rates", "futures", "gevorderd"],
   },
   {
     id: "74M9VoXzBf4",
-    title: "Smart Money Concepts (SMC) Full Explanation",
+    titleNL: "Smart Money Concepten (SMC) Volledige Uitleg",
+    titleEN: "Smart Money Concepts (SMC) Full Explanation",
     channel: "Inner Circle Trader",
     duration: "25:12",
     topic: "smart money",
     level: 4,
-    tags: ["smart money", "institutional", "advanced"],
+    tags: ["smart money", "institutioneel", "gevorderd"],
   },
 ];
 
 const TRENDING_VIDEOS: VideoResource[] = [
   {
     id: "dFGZzMHJgSI",
-    title: "Price Action Trading: How to Read Charts Like a Pro",
+    titleNL: "Price Action Trading: Grafieken Lezen als een Pro",
+    titleEN: "Price Action Trading: How to Read Charts Like a Pro",
     channel: "Rayner Teo",
     duration: "20:14",
     topic: "price action",
     level: 2,
-    tags: ["price action", "charts", "setup"],
-    views: "4.1M views",
+    tags: ["price action", "grafieken", "setup"],
+    views: "4.1M",
   },
   {
     id: "WCwMT6H1KRY",
-    title: "How to Trade Breakouts (Complete Guide)",
+    titleNL: "Hoe Breakouts Te Traden (Complete Gids)",
+    titleEN: "How to Trade Breakouts (Complete Guide)",
     channel: "Rayner Teo",
     duration: "19:22",
     topic: "breakouts",
     level: 2,
-    tags: ["breakout", "strategy", "entry"],
-    views: "3.2M views",
+    tags: ["breakout", "strategie", "entry"],
+    views: "3.2M",
   },
   {
     id: "GmOzih6I1zs",
-    title: "Technical Analysis Masterclass — Bitcoin",
+    titleNL: "Technische Analyse Masterclass — Bitcoin",
+    titleEN: "Technical Analysis Masterclass — Bitcoin",
     channel: "Coin Bureau",
     duration: "21:38",
-    topic: "Bitcoin analysis",
+    topic: "Bitcoin analyse",
     level: 3,
-    tags: ["Bitcoin", "technical analysis", "BTC"],
-    views: "2.7M views",
+    tags: ["Bitcoin", "technische analyse", "BTC"],
+    views: "2.7M",
   },
   {
     id: "1J0rBNlkBqA",
-    title: "Risk Management: The #1 Reason Traders Fail",
+    titleNL: "Risicobeheer: De #1 Reden Waarom Traders Falen",
+    titleEN: "Risk Management: The #1 Reason Traders Fail",
     channel: "Rayner Teo",
     duration: "14:28",
-    topic: "risk management",
+    topic: "risicobeheer",
     level: 1,
-    tags: ["risk", "position sizing", "stops"],
-    views: "2.4M views",
+    tags: ["risico", "positiegrootte", "stops"],
+    views: "2.4M",
   },
   {
     id: "vcMNpksnGSI",
-    title: "Crypto Trading for Absolute Beginners",
+    titleNL: "Crypto Trading voor Absolute Beginners",
+    titleEN: "Crypto Trading for Absolute Beginners",
     channel: "Andrei Jikh",
     duration: "17:05",
     topic: "crypto basics",
     level: 1,
-    tags: ["crypto", "beginner", "basics"],
-    views: "2.1M views",
+    tags: ["crypto", "beginner", "basis"],
+    views: "2.1M",
   },
   {
     id: "7s5ILbr3HNg",
-    title: "Moving Averages: Simple But Powerful Strategy",
+    titleNL: "Moving Averages: Simpele Maar Krachtige Strategie",
+    titleEN: "Moving Averages: Simple But Powerful Strategy",
     channel: "Trading Rush",
     duration: "13:47",
     topic: "moving averages",
     level: 2,
-    tags: ["MA", "strategy", "trend"],
-    views: "1.8M views",
+    tags: ["MA", "strategie", "trend"],
+    views: "1.8M",
   },
 ];
 
 const NEWS_SOURCES: NewsSource[] = [
-  { name: "CoinDesk",         url: "https://www.coindesk.com",            descKey: "news_desc_coindesk",     icon: "📰", category: "crypto" },
-  { name: "The Block",        url: "https://www.theblock.co",             descKey: "news_desc_theblock",     icon: "🔗", category: "crypto" },
-  { name: "Cointelegraph",    url: "https://cointelegraph.com",           descKey: "news_desc_cointelegraph",icon: "📡", category: "crypto" },
-  { name: "TradingView Ideas",url: "https://www.tradingview.com/ideas/",  descKey: "news_desc_tradingview",  icon: "📊", category: "education" },
-  { name: "Investopedia",     url: "https://www.investopedia.com",        descKey: "news_desc_investopedia", icon: "📚", category: "education" },
-  { name: "Bloomberg Crypto", url: "https://www.bloomberg.com/crypto",    descKey: "news_desc_bloomberg",    icon: "🏦", category: "macro" },
-  { name: "Glassnode Insights",url: "https://insights.glassnode.com",     descKey: "news_desc_glassnode",    icon: "🔭", category: "crypto" },
-  { name: "MacroAxis",        url: "https://www.macroaxis.com",           descKey: "news_desc_macroaxis",    icon: "🌍", category: "macro" },
+  { name: "CoinDesk",          url: "https://www.coindesk.com",           descKey: "news_desc_coindesk",      icon: "📰", category: "crypto" },
+  { name: "The Block",         url: "https://www.theblock.co",            descKey: "news_desc_theblock",      icon: "🔗", category: "crypto" },
+  { name: "Cointelegraph",     url: "https://cointelegraph.com",          descKey: "news_desc_cointelegraph", icon: "📡", category: "crypto" },
+  { name: "TradingView Ideas", url: "https://www.tradingview.com/ideas/", descKey: "news_desc_tradingview",   icon: "📊", category: "education" },
+  { name: "Investopedia",      url: "https://www.investopedia.com",       descKey: "news_desc_investopedia",  icon: "📚", category: "education" },
+  { name: "Bloomberg Crypto",  url: "https://www.bloomberg.com/crypto",   descKey: "news_desc_bloomberg",     icon: "🏦", category: "macro" },
+  { name: "Glassnode Insights",url: "https://insights.glassnode.com",     descKey: "news_desc_glassnode",     icon: "🔭", category: "crypto" },
+  { name: "MacroAxis",         url: "https://www.macroaxis.com",          descKey: "news_desc_macroaxis",     icon: "🌍", category: "macro" },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -227,58 +247,36 @@ const CATEGORY_COLORS: Record<string, string> = {
   education: "#a78bfa",
 };
 
-function VideoCard({ v, playing, onPlay, watchYoutubeLabel }: {
+function VideoCard({ v, watchYoutubeLabel, lang }: {
   v: VideoResource;
-  playing: boolean;
-  onPlay: () => void;
   watchYoutubeLabel: string;
+  lang: string;
 }) {
   const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
+  const title = lang === "en" ? v.titleEN : v.titleNL;
 
   return (
-    <div className="resources-video-card">
-      {playing ? (
-        <div className="resources-embed-wrap">
-          <iframe
-            className="resources-embed"
-            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`}
-            title={v.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-          <a
-            href={ytUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="resources-yt-below-btn"
-          >
-            ▶ {watchYoutubeLabel}
-          </a>
-        </div>
-      ) : (
-        <div className="resources-thumbnail" onClick={onPlay} style={{ cursor: "pointer" }}>
-          <img
-            src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
-            alt={v.title}
-            className="resources-thumb-img"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-          />
-          <div className="resources-play-btn" aria-label={`Play ${v.title}`}>▶</div>
-          <div className="resources-duration">{v.duration}</div>
-          {v.views && <div className="resources-views">{v.views}</div>}
-          <a
-            href={ytUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="resources-yt-direct"
-            onClick={(e) => e.stopPropagation()}
-          >
-            YouTube ↗
-          </a>
-        </div>
-      )}
+    <a
+      href={ytUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="resources-video-card resources-video-link"
+    >
+      <div className="resources-thumbnail">
+        <img
+          src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
+          alt={title}
+          className="resources-thumb-img"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+        <div className="resources-play-btn">▶</div>
+        <div className="resources-duration">{v.duration}</div>
+        {v.views && <div className="resources-views">{v.views}</div>}
+      </div>
       <div className="resources-video-info">
-        <div className="resources-video-title">{v.title}</div>
+        <div className="resources-video-title">{title}</div>
         <div className="resources-video-meta">
           <span className="resources-video-channel">{v.channel}</span>
           <span
@@ -293,15 +291,17 @@ function VideoCard({ v, playing, onPlay, watchYoutubeLabel }: {
             <span key={tag} className="resources-tag">{tag}</span>
           ))}
         </div>
+        <div className="resources-yt-open-btn">
+          ▶ {watchYoutubeLabel}
+        </div>
       </div>
-    </div>
+    </a>
   );
 }
 
 export default function LearningResources() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [activeLevel, setActiveLevel] = useState<number | null>(null);
-  const [playingId, setPlayingId] = useState<string | null>(null);
 
   const filteredVideos = activeLevel
     ? VIDEOS.filter((v) => v.level === activeLevel)
@@ -327,8 +327,7 @@ export default function LearningResources() {
             <VideoCard
               key={v.id}
               v={v}
-              playing={playingId === v.id}
-              onPlay={() => setPlayingId(v.id)}
+              lang={lang}
               watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}
@@ -365,8 +364,7 @@ export default function LearningResources() {
             <VideoCard
               key={v.id}
               v={v}
-              playing={playingId === v.id}
-              onPlay={() => setPlayingId(v.id)}
+              lang={lang}
               watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}

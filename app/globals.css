@@ -3003,6 +3003,32 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .resources-yt-below-btn:hover {
   background: #c2185b;
 }
+.resources-video-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+}
+.resources-video-link:hover .resources-thumb-img {
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+.resources-yt-open-btn {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e91e63;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.resources-video-link:hover .resources-yt-open-btn {
+  background: #c2185b;
+}
 
 /* Embed geblokkeerd — grote YouTube fallback */
 .resources-embed-blocked {

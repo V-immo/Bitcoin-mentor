@@ -27,73 +27,119 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export const LEVEL_TOPICS: Record<number, string[]> = {
   1: [
-    "RSI basics", "wat is een stop-loss", "wat is een koopzone", "bull vs bear markt", "waarom risk management",
-    "wat zijn candlesticks", "wat is een trend", "verschil kopen en verkopen", "wat is een exchange",
-    "wat is marktkapitalisatie", "waarom beweegt de prijs", "wat is liquiditeit", "hoe werkt paper trading",
-    "wat is een portfolio", "wat is diversificatie",
+    // Absolute beginner — geen jargon, echte basisvragen
+    "wat is Bitcoin eigenlijk", "hoe werkt een cryptocurrency", "wat is een wallet",
+    "hoe koop je voor het eerst Bitcoin", "wat is een exchange zoals Bitvavo of Coinbase",
+    "wat betekent de prijs van Bitcoin", "wat is een percentage — als iets 10% stijgt",
+    "verschil tussen winst en verlies bij kopen en verkopen", "wat is een marktwaarde (market cap)",
+    "waarom stijgt en daalt de prijs van crypto", "wat is het verschil tussen Bitcoin en altcoins",
+    "wat is een portfolio — meerdere munten bezitten", "wat betekent 'de markt is groen of rood'",
+    "wat is een handelsplatform", "wat is een transactie op de blockchain",
+    "wat is het verschil tussen opslaan op exchange vs eigen wallet",
+    "wat is de blockchain in simpele woorden", "wat is een bull markt (prijzen stijgen)",
+    "wat is een bear markt (prijzen dalen)", "wat betekent diversificatie voor een beginner",
   ],
   2: [
-    "trend herkennen", "support en resistance", "positiegrootte berekenen", "R/R verhouding", "timeframes",
-    "hogere highs en hogere lows", "breakout herkennen", "fake breakout", "wat is een pullback",
-    "moving averages uitleg", "RSI divergentie", "wanneer wachten vs kopen", "hoe stel je stop-loss in",
-    "wat is een swing trade", "hoe bereken je winst percentage",
+    // Basis trading begrippen — eerste stappen
+    "wat is een candlestick grafiek en hoe lees je die", "wat betekent groen en rood in een grafiek",
+    "wat is een stop-loss en waarom heb je die nodig", "wat is een take profit",
+    "wat is een trend — stijgend, dalend of zijwaarts", "wat is een bull vs bear markt aan de hand van grafiek",
+    "wat is volume in trading", "wat is een order — koop of verkooporder plaatsen",
+    "wat is het verschil tussen marktprijs en limitorder", "hoe bereken je winst of verlies in procenten",
+    "wat is een timeframe — verschil 1 minuut vs dagelijks", "wat is FOMO bij trading",
+    "hoe werkt paper trading als oefening", "wat is het risico van alles inzetten op één munt",
+    "waarom is risicobeheer belangrijker dan winnen",
   ],
   3: [
-    "MA crossovers", "marktstructuur", "volume analyse", "swing vs day trading", "FOMO herkennen",
-    "multi-timeframe bevestiging", "wat is een orderblok", "bearish vs bullish divergentie",
-    "hoe werkt Fibonacci retracement", "correctie vs trend ommekeer", "consolidatie herkennen",
-    "trailing stop-loss", "wat is een risk/reward van 1:3", "psychologie van verliesnemers",
-    "hoe lees je de orderbook",
+    // Technische analyse basis
+    "support en resistance herkennen op een grafiek", "hogere highs en hogere lows — wat betekent dat",
+    "wat is een breakout", "wat is een pullback na een stijging",
+    "RSI uitgelegd in eenvoudige woorden — oversold en overbought",
+    "moving average uitleg — wat is een gemiddelde lijn op de grafiek",
+    "positiegrootte berekenen — hoeveel risico per trade", "R/R verhouding — wat is een goede risk/reward",
+    "wanneer wacht je en wanneer koop je", "hoe stel je een stop-loss slim in",
+    "wat is een swing trade vs een daghandel", "hoe bereken je je winst percentage nauwkeurig",
+    "fake breakout herkennen", "wat is consolidatie op een grafiek", "hoe werkt DCA (periodiek bijkopen)",
   ],
   4: [
-    "multi-timeframe analyse", "koopzone vs marktprijs", "macro invloed op crypto", "halving cyclus", "institutioneel gedrag",
-    "hoe werken funding rates", "open interest interpretatie", "BTC dominantie als indicator",
-    "on-chain data basics", "het belang van marktcyclussen", "narratief gedreven markten",
-    "liquiditeit sweeps", "hoe handel je rond macro events", "correlatie BTC en S&P 500",
-    "DCA strategie voor gevorderden",
+    "MA crossovers — golden cross en death cross", "multi-timeframe analyse",
+    "marktstructuur lezen", "volume analyse — bevestiging van bewegingen",
+    "bearish vs bullish RSI divergentie", "hoe werkt Fibonacci retracement",
+    "correctie vs echte trend ommekeer", "trailing stop-loss instellen",
+    "macro invloed op crypto — rente, inflatie", "halving cyclus van Bitcoin",
+    "BTC dominantie als marktindicator", "on-chain data basics",
+    "hoe handel je rond grote nieuws events", "correlatie BTC en S&P 500",
+    "liquiditeit sweeps herkennen",
   ],
   5: [
-    "geavanceerde entry timing", "correlaties tussen assets", "funding rates", "news trading", "psychologie bij verlies",
-    "smart money concepten", "supply and demand zones", "hoe lees je grote spelers af",
-    "orderflow analyse", "hoe werk je met een trading journal", "hoe evalueer je je trades",
-    "consistentie vs winratio", "positiebeheer tijdens een trade", "hoe schaal je in en uit",
-    "het bouwen van een persoonlijk trading systeem",
+    "smart money concepten en orderblokken", "supply and demand zones",
+    "funding rates en open interest", "institutioneel gedrag lezen",
+    "orderflow analyse", "geavanceerde entry timing",
+    "positiebeheer tijdens een lopende trade", "schalen in en uit een positie",
+    "hoe bouw je een persoonlijk trading systeem", "trading journal bijhouden en evalueren",
+    "consistentie vs winratio — wat telt meer", "psychologie bij een verliesreeks",
+    "narratief gedreven markten herkennen", "news trading strategie",
+    "correlaties tussen assets uitlezen",
   ],
 };
 
 export const LEVEL_TOPICS_EN: Record<number, string[]> = {
   1: [
-    "RSI basics", "what is a stop-loss", "what is a buy zone", "bull vs bear market", "why risk management matters",
-    "what are candlesticks", "what is a trend", "difference between buying and selling", "what is an exchange",
-    "what is market capitalization", "why does price move", "what is liquidity", "how does paper trading work",
-    "what is a portfolio", "what is diversification",
+    // Absolute beginner — no jargon, real basics
+    "what is Bitcoin in simple words", "how does a cryptocurrency work",
+    "what is a crypto wallet", "how to buy Bitcoin for the first time",
+    "what is a crypto exchange like Coinbase or Binance",
+    "what does the price of Bitcoin mean", "what is a percentage — if something goes up 10%",
+    "difference between profit and loss when buying and selling",
+    "what is market capitalization", "why does the crypto price go up and down",
+    "difference between Bitcoin and altcoins", "what is a portfolio",
+    "what does green and red mean in the market", "what is a trading platform",
+    "what is a blockchain transaction in simple words",
+    "difference between keeping crypto on exchange vs own wallet",
+    "what is the blockchain explained simply", "what is a bull market",
+    "what is a bear market", "what is diversification for a beginner",
   ],
   2: [
-    "identifying trends", "support and resistance", "calculating position size", "R/R ratio", "timeframes",
-    "higher highs and higher lows", "recognizing breakouts", "fake breakout", "what is a pullback",
-    "moving averages explained", "RSI divergence", "when to wait vs buy", "how to set a stop-loss",
-    "what is a swing trade", "how to calculate profit percentage",
+    // Basic trading concepts — first steps
+    "what is a candlestick chart and how do you read it", "what do green and red candles mean",
+    "what is a stop-loss and why do you need one", "what is a take profit",
+    "what is a trend — uptrend, downtrend or sideways", "what is a bull vs bear market on a chart",
+    "what is volume in trading", "what is an order — placing a buy or sell order",
+    "difference between market order and limit order", "how to calculate profit or loss in percentage",
+    "what is a timeframe — difference 1 minute vs daily", "what is FOMO in trading",
+    "how does paper trading work as practice", "why is it risky to put everything in one coin",
+    "why risk management matters more than winning",
   ],
   3: [
-    "MA crossovers", "market structure", "volume analysis", "swing vs day trading", "recognizing FOMO",
-    "multi-timeframe confirmation", "what is an order block", "bearish vs bullish divergence",
-    "how Fibonacci retracement works", "correction vs trend reversal", "recognizing consolidation",
-    "trailing stop-loss", "what is a 1:3 risk/reward", "psychology of loss takers",
-    "how to read the order book",
+    // Technical analysis basics
+    "recognizing support and resistance on a chart", "higher highs and higher lows — what does that mean",
+    "what is a breakout", "what is a pullback after a rise",
+    "RSI explained simply — oversold and overbought",
+    "moving average explained — what is the average line on a chart",
+    "calculating position size — how much risk per trade", "R/R ratio — what is a good risk/reward",
+    "when to wait and when to buy", "how to set a smart stop-loss",
+    "what is a swing trade vs day trade", "how to accurately calculate your profit percentage",
+    "recognizing a fake breakout", "what is consolidation on a chart", "how DCA works",
   ],
   4: [
-    "multi-timeframe analysis", "buy zone vs market price", "macro influence on crypto", "halving cycle", "institutional behavior",
-    "how funding rates work", "open interest interpretation", "BTC dominance as indicator",
-    "on-chain data basics", "the importance of market cycles", "narrative-driven markets",
-    "liquidity sweeps", "trading around macro events", "BTC and S&P 500 correlation",
-    "DCA strategy for advanced traders",
+    "MA crossovers — golden cross and death cross", "multi-timeframe analysis",
+    "reading market structure", "volume analysis — confirming price moves",
+    "bearish vs bullish RSI divergence", "how Fibonacci retracement works",
+    "correction vs real trend reversal", "trailing stop-loss setup",
+    "macro influence on crypto — interest rates, inflation", "Bitcoin halving cycle",
+    "BTC dominance as market indicator", "on-chain data basics",
+    "trading around major news events", "BTC and S&P 500 correlation",
+    "recognizing liquidity sweeps",
   ],
   5: [
-    "advanced entry timing", "correlations between assets", "funding rates", "news trading", "psychology of loss",
-    "smart money concepts", "supply and demand zones", "reading large players",
-    "order flow analysis", "working with a trading journal", "evaluating your trades",
-    "consistency vs win rate", "position management during a trade", "scaling in and out",
-    "building a personal trading system",
+    "smart money concepts and order blocks", "supply and demand zones",
+    "funding rates and open interest", "reading institutional behavior",
+    "order flow analysis", "advanced entry timing",
+    "position management during an open trade", "scaling in and out of a position",
+    "building a personal trading system", "keeping and evaluating a trading journal",
+    "consistency vs win rate — what matters more", "psychology during a losing streak",
+    "recognizing narrative-driven markets", "news trading strategy",
+    "reading correlations between assets",
   ],
 };
 
@@ -185,64 +231,79 @@ export async function generateAndSaveQuestions(
   const locale = lang === "en" ? "en-US" : "nl-BE";
   const dateStr = new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 
+  const levelDesc = {
+    en: ["", "absolute beginner (no trading knowledge at all)", "beginner (knows the basics)", "intermediate", "advanced", "expert"],
+    nl: ["", "absolute beginner (geen enkele tradingkennis)", "beginner (kent de basis)", "gemiddeld", "gevorderd", "expert"],
+  };
+
   const prompt = lang === "en"
-    ? `You are a trading quiz generator for a learning trader at level ${level}/5.
+    ? `You are a trading quiz generator for a beginner trader at level ${level}/5 (${levelDesc.en[level]}).
 Today's date: ${dateStr}
 
-CURRENT MARKET DATA (use this in your questions!):
+${level <= 2 ? `IMPORTANT: This is level ${level} — absolute beginner questions only.
+- No jargon like RSI, MACD, 4H, Fibonacci, funding rates, etc.
+- Use everyday language a 15-year-old could understand
+- Focus on concepts: what is Bitcoin, how does price work, what is buying/selling, what is a wallet
+- ${level === 1 ? "Do NOT use current market data in questions — keep it conceptual and simple" : "Only use market data for very simple percentage examples"}
+` : `CURRENT MARKET DATA (use this in your questions):
 ${marketSnapshot}
-
-TOPICS for this session (${level}/5) — choose from these, vary each time:
+`}
+TOPICS for this session (level ${level}/5) — choose from these:
 ${topics.join(", ")}
 
-Generate exactly ${count} UNIQUE quiz questions. The questions must:
-1. NEVER be the same as a previous session — use the date as a seed for variation
-2. Be realistic — use the current market data above in at least 2 questions
-3. Match level ${level} (${level <= 2 ? "simple and fundamental" : level <= 3 ? "intermediate and practical" : "advanced and analytical"})
-4. Be educational — the explanation teaches the trader something real
-5. Be varied — mix of concepts, calculations and real scenarios
+Generate exactly ${count} UNIQUE quiz questions. Rules:
+1. Match the difficulty exactly — level ${level} = ${levelDesc.en[level]}
+2. NEVER repeat questions from previous sessions — use date ${dateStr} as variation seed
+3. Educational — the explanation genuinely teaches something useful
+4. Varied — mix of concepts, simple examples and real scenarios
+${level <= 2 ? "5. NO technical indicators, NO chart patterns, NO jargon in level 1-2 questions" : "5. Include market data context in at least 2 questions"}
 
-Return as JSON array (only the array, no extra text):
+Return ONLY a JSON array (no extra text):
 [
   {
     "id": "1",
     "topic": "topic",
-    "question": "The question (may include current market context)",
-    "context": "optional extra context or scenario (1 sentence)",
+    "question": "The question",
+    "context": "optional: 1 sentence of extra context or scenario",
     "options": ["A. option1", "B. option2", "C. option3", "D. option4"],
     "correct": "A",
-    "explanation": "Explanation of 2-3 sentences why this is correct and what you learn from it.",
+    "explanation": "2-3 sentences explaining why this is correct and what the learner takes away.",
     "difficulty": ${level}
   }
 ]
 
-Make sure exactly one answer is correct and the other 3 are plausible but wrong.`
-    : `Je bent een trading-quiz generator voor een lerende trader op niveau ${level}/5.
+Exactly one answer must be correct. The other 3 must be plausible but wrong.`
+    : `Je bent een trading-quiz generator voor een lerende trader op niveau ${level}/5 (${levelDesc.nl[level]}).
 Datum van vandaag: ${dateStr}
 
-ACTUELE MARKTDATA (gebruik dit in je vragen!):
+${level <= 2 ? `BELANGRIJK: Dit is niveau ${level} — alleen echte beginnersvragen.
+- Geen jargon zoals RSI, MACD, 4H, Fibonacci, funding rates, etc.
+- Gebruik gewone taal die iemand zonder enige kennis begrijpt
+- Focus op: wat is Bitcoin, hoe werkt de prijs, wat is kopen/verkopen, wat is een wallet
+- ${level === 1 ? "Gebruik de marktdata NIET in vragen — houd het conceptueel en simpel" : "Gebruik marktdata alleen voor heel simpele percentage voorbeelden"}
+` : `ACTUELE MARKTDATA (gebruik dit in je vragen):
 ${marketSnapshot}
-
-ONDERWERPEN voor deze sessie (${level}/5) — kies hieruit, varieer elke keer anders:
+`}
+ONDERWERPEN voor deze sessie (niveau ${level}/5) — kies hieruit:
 ${topics.join(", ")}
 
-Genereer precies ${count} UNIEKE quizvragen. De vragen moeten:
-1. NOOIT dezelfde vragen zijn als een vorige sessie — gebruik de datum als seed voor variatie
-2. Realistisch zijn — gebruik de actuele marktdata hierboven in minstens 2 vragen
-3. Aansluiten bij niveau ${level} (${level <= 2 ? "eenvoudig en fundamenteel" : level <= 3 ? "gemiddeld en praktisch" : "geavanceerd en analytisch"})
-4. Educatief zijn — de uitleg leert de trader iets echts
-5. Gevarieerd zijn — mix van concepten, berekeningen en echte scenario's
+Genereer precies ${count} UNIEKE quizvragen. Regels:
+1. Pas de moeilijkheid exact aan — niveau ${level} = ${levelDesc.nl[level]}
+2. NOOIT dezelfde vragen herhalen — gebruik datum ${dateStr} als variatie-seed
+3. Educatief — de uitleg leert iets echts en nuttigs
+4. Gevarieerd — mix van concepten, eenvoudige voorbeelden en echte scenario's
+${level <= 2 ? "5. GEEN technische indicatoren, GEEN grafiekpatronen, GEEN jargon in niveau 1-2 vragen" : "5. Verwerk marktdata context in minstens 2 vragen"}
 
-Geef terug als JSON array (alleen de array, geen extra tekst):
+Geef ALLEEN een JSON array terug (geen extra tekst):
 [
   {
     "id": "1",
     "topic": "onderwerp",
-    "question": "De vraag (mag context van actuele markt bevatten)",
-    "context": "optionele extra context of scenario (1 zin)",
+    "question": "De vraag",
+    "context": "optioneel: 1 zin extra context of scenario",
     "options": ["A. optie1", "B. optie2", "C. optie3", "D. optie4"],
     "correct": "A",
-    "explanation": "Uitleg van 2-3 zinnen waarom dit correct is en wat je hiervan leert.",
+    "explanation": "2-3 zinnen waarom dit correct is en wat de leerder meeneemt.",
     "difficulty": ${level}
   }
 ]
