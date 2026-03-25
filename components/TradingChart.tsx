@@ -477,7 +477,7 @@ export default function TradingChart({
     <div className="market-chart-shell">
       {!compact && (
         <div className="market-chart-topbar">
-          <div className="market-chart-chip">{isFast ? "⚡ Live chart" : "📊 Analyse chart"}</div>
+          <div className="market-chart-chip">{isFast ? t("chart_live_label") : t("chart_analysis_label")}</div>
           <div className="market-chart-chip" style={{ color: "#f59e0b" }}>── MA20</div>
           <div className="market-chart-chip" style={{ color: "#e91e63" }}>── MA50</div>
           {showBB && <div className="market-chart-chip" style={{ color: "#3b82f6" }}>── BB(20)</div>}
@@ -566,7 +566,7 @@ export default function TradingChart({
         <div className="market-chart-context-strip">
           <div className="market-chart-context-box">{t("chart_buy_zone_label")}: ${entryZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })} – ${entryZoneHigh.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
           <div className="market-chart-context-box">{t("chart_stop_label")}: ${stopLoss.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
-          <div className="market-chart-context-box">Resistance: ${resistanceZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
+          <div className="market-chart-context-box">{t("chart_resistance_label")}: ${resistanceZoneLow.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
         </div>
       )}
 

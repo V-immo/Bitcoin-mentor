@@ -21,7 +21,7 @@ Laatste update: 2026-03-24
 | 4 | **Quiz: vragen cachen in DB** (snelheid) | ⭐⭐⭐⭐ | ✅ |
 | 5 | **Quiz: geen dubbele vragen** (rotatie per gebruiker) | ⭐⭐⭐⭐ | ✅ |
 | 6 | **Videos fallback UX** (auto-detect, grote YouTube knop) | ⭐⭐⭐ | ✅ |
-| 7 | **Taal: chart labels + Marcus consistent** EN/NL | ⭐⭐⭐ | ⬜ |
+| 7 | **Taal: chart labels + Marcus consistent** EN/NL | ⭐⭐⭐ | ✅ |
 | 8 | **"Laatste update" timestamp in UI** | ⭐⭐ | ⬜ |
 | 9 | **Zelf registreren / wachtwoord reset via e-mail** | ⭐⭐⭐ | ⬜ |
 | 10 | **PWA / installeerbaar als app op telefoon** | ⭐⭐ | ⬜ |

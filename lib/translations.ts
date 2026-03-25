@@ -208,6 +208,9 @@ const translations = {
     chart_macd_desc: "MACD — trend momentum",
     chart_buy_zone_label: "Koopzone",
     chart_stop_label: "Stop",
+    chart_resistance_label: "Resistance",
+    chart_live_label: "⚡ Live chart",
+    chart_analysis_label: "📊 Analyse chart",
 
     // === REGISTER ===
     register_title: "Account aanmaken",
@@ -1100,6 +1103,9 @@ const translations = {
     chart_macd_desc: "MACD — trend momentum",
     chart_buy_zone_label: "Buy zone",
     chart_stop_label: "Stop",
+    chart_resistance_label: "Resistance",
+    chart_live_label: "⚡ Live chart",
+    chart_analysis_label: "📊 Analysis chart",
 
     // === REGISTER ===
     register_title: "Create account",

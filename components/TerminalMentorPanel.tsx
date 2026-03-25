@@ -87,8 +87,8 @@ export default function TerminalMentorPanel({
         mainLine = t("mentor_above_zone_main");
         shortList = [
             t("mentor_above_zone_item"),
-            `Resistance: ${fmt(resistanceZoneLow)} – ${fmt(resistanceZoneHigh)}`,
-            `Stop-loss: ${fmt(stopLoss)}`,
+            `${t("chart_resistance_label")}: ${fmt(resistanceZoneLow)} – ${fmt(resistanceZoneHigh)}`,
+            `${t("chart_stop_label")}: ${fmt(stopLoss)}`,
         ];
     } else {
         title = t("mentor_watch_title");
