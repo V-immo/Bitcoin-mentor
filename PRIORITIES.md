@@ -18,9 +18,9 @@ Laatste update: 2026-03-24
 | 1 | **Paper trading UX zoals echt platform** — buy/sell tabs, SL/TP automatisering, gedeeltelijk sluiten, equity sparkline | ⭐⭐⭐⭐⭐ | ✅ |
 | 2 | **4H candles direct van Binance** (juiste timing) | ⭐⭐⭐⭐⭐ | ✅ |
 | 3 | **WebSocket live prijs** (1-2s refresh) | ⭐⭐⭐⭐ | ✅ |
-| 4 | **Quiz: vragen cachen in DB** (snelheid) | ⭐⭐⭐⭐ | ⬜ |
-| 5 | **Quiz: geen dubbele vragen** (rotatie per gebruiker) | ⭐⭐⭐⭐ | ⬜ |
-| 6 | **Videos fallback UX** (auto-detect, grote YouTube knop) | ⭐⭐⭐ | ⬜ |
+| 4 | **Quiz: vragen cachen in DB** (snelheid) | ⭐⭐⭐⭐ | ✅ |
+| 5 | **Quiz: geen dubbele vragen** (rotatie per gebruiker) | ⭐⭐⭐⭐ | ✅ |
+| 6 | **Videos fallback UX** (auto-detect, grote YouTube knop) | ⭐⭐⭐ | ✅ |
 | 7 | **Taal: chart labels + Marcus consistent** EN/NL | ⭐⭐⭐ | ⬜ |
 | 8 | **"Laatste update" timestamp in UI** | ⭐⭐ | ⬜ |
 | 9 | **Zelf registreren / wachtwoord reset via e-mail** | ⭐⭐⭐ | ⬜ |

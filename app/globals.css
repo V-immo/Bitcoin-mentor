@@ -2986,6 +2986,45 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: block;
 }
 
+/* Embed geblokkeerd — grote YouTube fallback */
+.resources-embed-blocked {
+  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 6px 6px 0 0;
+}
+.resources-blocked-icon {
+  font-size: 40px;
+  color: rgba(255,255,255,0.2);
+}
+.resources-blocked-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 16px;
+}
+.resources-yt-big-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e91e63;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+}
+.resources-yt-big-btn:hover {
+  background: #c2185b;
+  transform: scale(1.04);
+}
+
 .resources-video-info {
   padding: 12px 14px;
   display: flex;
