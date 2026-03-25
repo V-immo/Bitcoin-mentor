@@ -238,29 +238,48 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     return () => clearInterval(iv);
   }, [asset, isBinance]);
 
-  // Price WebSocket — Binance (live, ticker met 24h change)
+  // Price WebSocket — Binance met auto-reconnect (exponential backoff)
   useEffect(() => {
     priceWsRef.current?.close();
     if (!isBinance) { setPriceWsState("offline"); return; }
-    setPriceWsState("connecting");
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@ticker`);
-    priceWsRef.current = ws;
-    ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        const price = parseFloat(data.c);
-        const chg = parseFloat(data.P); // 24h percent change
-        if (Number.isFinite(price) && price > 0) {
-          setLivePrice(price);
-          if (Number.isFinite(chg)) setChange24h(chg);
-          setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
-          setPriceWsState("live");
-        }
-      } catch { /* ignore */ }
+    let destroyed = false;
+    let backoffMs = 1000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function connect() {
+      if (destroyed) return;
+      setPriceWsState("connecting");
+      const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@ticker`);
+      priceWsRef.current = ws;
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          const price = parseFloat(data.c);
+          const chg = parseFloat(data.P); // 24h percent change
+          if (Number.isFinite(price) && price > 0) {
+            setLivePrice(price);
+            if (Number.isFinite(chg)) setChange24h(chg);
+            setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
+            setPriceWsState("live");
+            backoffMs = 1000; // reset bij succes
+          }
+        } catch { /* ignore */ }
+      };
+      ws.onerror = () => setPriceWsState("error");
+      ws.onclose = () => {
+        if (destroyed) return;
+        setPriceWsState("offline");
+        timer = setTimeout(connect, backoffMs);
+        backoffMs = Math.min(backoffMs * 2, 30_000);
+      };
+    }
+
+    connect();
+    return () => {
+      destroyed = true;
+      if (timer) clearTimeout(timer);
+      priceWsRef.current?.close();
     };
-    ws.onerror = () => setPriceWsState("error");
-    ws.onclose = () => setPriceWsState("offline");
-    return () => ws.close();
   }, [asset, isBinance]);
 
   // Finnhub: WebSocket voor realtime prijs + REST fallback
@@ -322,39 +341,58 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, isBinance]);
 
-  // Kline WebSocket — live candles (Binance)
+  // Kline WebSocket — live candles (Binance) met auto-reconnect
   const wsInterval: Interval = activeInterval === "multi" ? (isBinance ? "4h" : "1h") : activeInterval;
   useEffect(() => {
     klineWsRef.current?.close();
     if (!isBinance) { setKlineWsState("offline"); return; }
-    setKlineWsState("connecting");
-    const ws = new WebSocket(
-      `wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@kline_${wsInterval}`
-    );
-    klineWsRef.current = ws;
-    ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        const k = data.k;
-        if (!k) return;
-        const candle: Candle = {
-          openTime: k.t, open: parseFloat(k.o), high: parseFloat(k.h),
-          low: parseFloat(k.l), close: parseFloat(k.c), volume: parseFloat(k.v), closeTime: k.T,
-        };
-        setCandleMap((prev) => {
-          const current = prev[wsInterval] || [];
-          const last = current[current.length - 1];
-          if (last && last.openTime === candle.openTime) {
-            return { ...prev, [wsInterval]: [...current.slice(0, -1), candle] };
-          }
-          return { ...prev, [wsInterval]: [...current, candle].slice(-500) };
-        });
-        setKlineWsState("live");
-      } catch { /* ignore */ }
+    let destroyed = false;
+    let backoffMs = 1000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function connect() {
+      if (destroyed) return;
+      setKlineWsState("connecting");
+      const ws = new WebSocket(
+        `wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@kline_${wsInterval}`
+      );
+      klineWsRef.current = ws;
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          const k = data.k;
+          if (!k) return;
+          const candle: Candle = {
+            openTime: k.t, open: parseFloat(k.o), high: parseFloat(k.h),
+            low: parseFloat(k.l), close: parseFloat(k.c), volume: parseFloat(k.v), closeTime: k.T,
+          };
+          setCandleMap((prev) => {
+            const current = prev[wsInterval] || [];
+            const last = current[current.length - 1];
+            if (last && last.openTime === candle.openTime) {
+              return { ...prev, [wsInterval]: [...current.slice(0, -1), candle] };
+            }
+            return { ...prev, [wsInterval]: [...current, candle].slice(-500) };
+          });
+          setKlineWsState("live");
+          backoffMs = 1000; // reset bij succes
+        } catch { /* ignore */ }
+      };
+      ws.onerror = () => setKlineWsState("error");
+      ws.onclose = () => {
+        if (destroyed) return;
+        setKlineWsState("offline");
+        timer = setTimeout(connect, backoffMs);
+        backoffMs = Math.min(backoffMs * 2, 30_000);
+      };
+    }
+
+    connect();
+    return () => {
+      destroyed = true;
+      if (timer) clearTimeout(timer);
+      klineWsRef.current?.close();
     };
-    ws.onerror = () => setKlineWsState("error");
-    ws.onclose = () => setKlineWsState("offline");
-    return () => ws.close();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, wsInterval, isBinance]);
 
