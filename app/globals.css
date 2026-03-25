@@ -26,7 +26,7 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -2984,6 +2984,24 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   aspect-ratio: 16/9;
   border: none;
   display: block;
+}
+.resources-yt-below-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 0;
+  background: #e91e63;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 6px 6px;
+  transition: background 0.15s;
+}
+.resources-yt-below-btn:hover {
+  background: #c2185b;
 }
 
 /* Embed geblokkeerd — grote YouTube fallback */

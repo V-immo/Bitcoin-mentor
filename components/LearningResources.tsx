@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 type VideoResource = {
@@ -227,76 +227,34 @@ const CATEGORY_COLORS: Record<string, string> = {
   education: "#a78bfa",
 };
 
-function VideoCard({ v, playing, onPlay, watchYoutubeLabel, notWorkingLabel }: {
+function VideoCard({ v, playing, onPlay, watchYoutubeLabel }: {
   v: VideoResource;
   playing: boolean;
   onPlay: () => void;
   watchYoutubeLabel: string;
-  notWorkingLabel: string;
 }) {
-  const [embedFailed, setEmbedFailed] = useState(false);
-  const failTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
-
-  // Auto-detect geblokkeerde embed via YouTube postMessage
-  // Als na 5s geen bericht van YouTube iframe, dan is de embed geblokkeerd
-  useEffect(() => {
-    if (!playing) { setEmbedFailed(false); return; }
-    failTimerRef.current = setTimeout(() => setEmbedFailed(true), 5000);
-
-    function handleMessage(e: MessageEvent) {
-      if (typeof e.origin === "string" && e.origin.includes("youtube")) {
-        if (failTimerRef.current) clearTimeout(failTimerRef.current);
-        setEmbedFailed(false);
-      }
-    }
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-      if (failTimerRef.current) clearTimeout(failTimerRef.current);
-    };
-  }, [playing]);
 
   return (
     <div className="resources-video-card">
       {playing ? (
-        embedFailed ? (
-          // Embed geblokkeerd — grote YouTube knop
-          <div className="resources-embed-blocked">
-            <div className="resources-blocked-icon">▶</div>
-            <div className="resources-blocked-msg">{notWorkingLabel}</div>
-            <a
-              href={ytUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="resources-yt-big-btn"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                background: "#e91e63",
-                color: "#fff",
-                fontSize: "15px",
-                fontWeight: 600,
-                padding: "10px 24px",
-                borderRadius: "8px",
-                textDecoration: "none",
-              }}
-            >
-              ▶ {watchYoutubeLabel}
-            </a>
-          </div>
-        ) : (
-          <div className="resources-embed-wrap">
-            <iframe
-              className="resources-embed"
-              src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&enablejsapi=1`}
-              title={v.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )
+        <div className="resources-embed-wrap">
+          <iframe
+            className="resources-embed"
+            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`}
+            title={v.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+          <a
+            href={ytUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resources-yt-below-btn"
+          >
+            ▶ {watchYoutubeLabel}
+          </a>
+        </div>
       ) : (
         <div className="resources-thumbnail" onClick={onPlay} style={{ cursor: "pointer" }}>
           <img
@@ -371,7 +329,6 @@ export default function LearningResources() {
               v={v}
               playing={playingId === v.id}
               onPlay={() => setPlayingId(v.id)}
-              notWorkingLabel={t("resources_video_not_working")}
               watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}
@@ -410,7 +367,6 @@ export default function LearningResources() {
               v={v}
               playing={playingId === v.id}
               onPlay={() => setPlayingId(v.id)}
-              notWorkingLabel={t("resources_video_not_working")}
               watchYoutubeLabel={t("resources_watch_youtube")}
             />
           ))}
