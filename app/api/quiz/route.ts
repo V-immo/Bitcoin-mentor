@@ -370,7 +370,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "API key ontbreekt" }, { status: 500 });
   }
 
-  const questionCount = level <= 1 ? 10 : level <= 2 ? 12 : level <= 3 ? 14 : 15;
+  const questionCount = 20;
 
   // Zorg dat tabellen bestaan
   ensureQuizTables();
