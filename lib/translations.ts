@@ -268,13 +268,13 @@ const translations = {
     // Onboarding stap 1 – Marcus intro
     onboarding_marcus_title: "Hoi, ik ben Marcus 👋",
     onboarding_marcus_subtitle: "Jouw persoonlijke trading coach",
-    onboarding_marcus_body1: "Mijn missie: jou in 3 maanden zelfstandig laten traden — stap voor stap, zonder bullshit.",
+    onboarding_marcus_body1: "Mijn missie: jou elke dag een betere trader maken — stap voor stap, zonder bullshit.",
     onboarding_marcus_body2: "Ik analyseer de markt voor je, geef je dagelijkse opdrachten en leg alles uit op jouw niveau. Je hoeft niks te weten om te beginnen.",
     onboarding_marcus_cta: "Klinkt goed →",
 
     // Onboarding stap 2 – Leerpad
     onboarding_path_title: "Jouw leerpad",
-    onboarding_path_subtitle: "Van beginner naar zelfstandig trader",
+    onboarding_path_subtitle: "Elke dag een stap verder als trader",
     onboarding_path_step1: "Dagelijkse quiz",
     onboarding_path_step1_desc: "Korte vragen die je kennis opbouwen — van 'wat is Bitcoin' tot technische analyse",
     onboarding_path_step2: "Marcus coacht je",
@@ -1224,13 +1224,13 @@ const translations = {
     // Onboarding step 1 – Marcus intro
     onboarding_marcus_title: "Hey, I'm Marcus 👋",
     onboarding_marcus_subtitle: "Your personal trading coach",
-    onboarding_marcus_body1: "My mission: help you trade independently within 3 months — step by step, no BS.",
+    onboarding_marcus_body1: "My mission: make you a better trader every day — step by step, no BS.",
     onboarding_marcus_body2: "I analyze the market for you, give you daily assignments and explain everything at your level. You don't need to know anything to start.",
     onboarding_marcus_cta: "Sounds good →",
 
     // Onboarding step 2 – Learning path
     onboarding_path_title: "Your learning path",
-    onboarding_path_subtitle: "From beginner to independent trader",
+    onboarding_path_subtitle: "One step better every day",
     onboarding_path_step1: "Daily quiz",
     onboarding_path_step1_desc: "Short questions that build your knowledge — from 'what is Bitcoin' to technical analysis",
     onboarding_path_step2: "Marcus coaches you",

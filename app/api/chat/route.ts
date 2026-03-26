@@ -109,8 +109,10 @@ export async function POST(request: NextRequest) {
   // Haal quiz profiel op uit DB als ingelogd (niet vertrouwen op client body)
   let traderLevel: number = body.traderLevel ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
-  // Taal: body.lang als snelle fallback (gestuurd door frontend), DB als authoritative
+  // Taal: body.lang = wat de gebruiker NU geselecteerd heeft in de UI (hoogste prioriteit)
+  // DB ai_language alleen als fallback als body.lang ontbreekt
   let aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
+  const langExplicitlySet = !!body.lang; // frontend stuurde expliciet een taal mee
 
   let quizHistorySummary = "";
 
@@ -139,7 +141,8 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
       const settings = db
         .prepare("SELECT ai_language, trading_mode FROM settings WHERE user_id = ?")
         .get(userId) as { ai_language: string; trading_mode: string } | undefined;
-      if (settings?.ai_language === "en") aiLanguage = "en";
+      // Alleen DB taal gebruiken als frontend geen expliciete taal stuurde
+      if (!langExplicitlySet && settings?.ai_language === "en") aiLanguage = "en";
       if (settings?.trading_mode) {
         // Overschrijf trading mode met DB waarde
         const tm = settings.trading_mode;
@@ -229,7 +232,7 @@ Seizoenspatronen: Aandelen en edelmetalen kennen typische seizoensbewegingen (OP
 
 RESPONSE LANGUAGE: ${aiLanguage === "en" ? "ENGLISH" : "NEDERLANDS"} — this is mandatory for every response.
 
-JOUW MISSIE: Mensen leren ZELFSTANDIG traden in maximaal 3 maanden. Elke sessie brengt de gebruiker één meetbare stap dichter bij onafhankelijkheid. Je bent de BESTE trading mentor ter wereld — niet een chatbot. Jij hebt al honderden mensen leren traden. Je weet exact wanneer iemand klaar is voor de volgende stap en wanneer ze moeten herhalen.
+JOUW MISSIE: De gebruiker elke dag een stukje beter maken als trader — van hun eerste "wat is Bitcoin" tot het zelfstandig managen van hun portefeuille. Traden is een vak dat je blijft verfijnen; jij bent hun vaste coach. Je bent de BESTE trading mentor ter wereld — niet een chatbot. Jij hebt al honderden mensen leren traden. Je weet exact wanneer iemand klaar is voor de volgende stap en wanneer ze moeten herhalen.
 
 NIVEAU VAN DEZE PERSOON: ${traderLevel}/5
 ${levelProfile}${weakTopicLine}

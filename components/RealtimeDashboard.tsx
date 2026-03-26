@@ -759,31 +759,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </>
             )}
             {bottomTab === "chat" && (
-              <>
-                {signalReady && (
-                  <AITradeCoach
-                    status={signal.status} action={signal.action} currentPrice={chartPrice}
-                    entryZoneLow={signal.entryZoneLow} entryZoneHigh={signal.entryZoneHigh}
-                    stopLoss={signal.stopLoss} resistanceZoneLow={signal.resistanceZoneLow}
-                    resistanceZoneHigh={signal.resistanceZoneHigh}
-                    riskRewardEstimate={signal.riskRewardEstimate} score={signal.score}
-                    setupGrade={signal.setupGrade} blockers={signal.blockers} warnings={signal.warnings}
-                    trend4h={signal.trend4h} trend1h={signal.trend1h} structure4h={signal.structure4h}
-                    rsi4h={signal.rsi4h} liveMode={liveMode} lastTickLabel={lastTickLabel}
-                  />
-                )}
-                {signalReady && (
-                  <LiveSimpleMode
-                    currentPrice={chartPrice} entryZoneLow={signal.entryZoneLow}
-                    entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
-                    resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
-                    status={signal.status} action={signal.action}
-                    livePriceConnected={liveMode} liveCandleConnected={liveMode}
-                    lastTickLabel={lastTickLabel} tickKey={Math.round(chartPrice)}
-                  />
-                )}
-                <MentorChat key={asset} marketContext={marketContext} asset={asset} />
-              </>
+              <MentorChat key={asset} marketContext={marketContext} asset={asset} />
             )}
             {bottomTab === "checklist" && (
               <>
