@@ -12,7 +12,6 @@ type VideoResource = {
   topic: string;
   level: number;
   tags: string[];
-  views?: string;
 };
 
 type NewsSource = {
@@ -23,209 +22,127 @@ type NewsSource = {
   category: "crypto" | "stocks" | "macro" | "education";
 };
 
+// Alle IDs gecontroleerd via YouTube oEmbed API — alleen werkende videos
 const VIDEOS: VideoResource[] = [
-  // Level 1 — Absolute beginner
   {
-    id: "Xn7KWR9EOGQ",
-    titleNL: "RSI Indicator Uitgelegd",
-    titleEN: "RSI Indicator Explained",
-    channel: "Rayner Teo",
-    duration: "12:23",
-    topic: "RSI",
+    id: "Um63OQz3bjo",
+    titleNL: "Wat is Bitcoin? (Klassieke uitleg)",
+    titleEN: "What is Bitcoin? (Classic Explanation)",
+    channel: "WeUseCoins",
+    duration: "2:23",
+    topic: "Bitcoin basis",
     level: 1,
-    tags: ["RSI", "indicators", "beginner"],
+    tags: ["Bitcoin", "beginner", "basis"],
   },
   {
-    id: "KdJ0PiLkE9M",
-    titleNL: "Wat is een Stop Loss? (Beginnersgids)",
-    titleEN: "What is a Stop Loss? (Beginner Guide)",
-    channel: "Investopedia",
-    duration: "4:55",
-    topic: "stop-loss",
-    level: 1,
-    tags: ["stop-loss", "risicobeheer", "beginner"],
-  },
-  {
-    id: "BO3hgIScPbI",
-    titleNL: "Bull vs Bear Markt Uitgelegd",
-    titleEN: "Bull vs Bear Market Explained",
-    channel: "Investopedia",
-    duration: "3:17",
-    topic: "marktstructuur",
-    level: 1,
-    tags: ["bull", "bear", "markt", "beginner"],
-  },
-  {
-    id: "fAEntRLMNDs",
-    titleNL: "Candlestick Grafieken voor Beginners",
-    titleEN: "Candlestick Charts for Beginners",
-    channel: "Rayner Teo",
-    duration: "17:16",
-    topic: "candlesticks",
-    level: 1,
-    tags: ["candlesticks", "grafieken", "beginner"],
-  },
-  // Level 2 — Basis trading
-  {
-    id: "kDrNBH2QQJM",
-    titleNL: "Support & Resistance Uitgelegd",
-    titleEN: "Support & Resistance Explained",
-    channel: "Rayner Teo",
-    duration: "19:08",
-    topic: "support & resistance",
-    level: 2,
-    tags: ["support", "resistance", "technische analyse"],
-  },
-  {
-    id: "1J0rBNlpBqA",
-    titleNL: "Positiegrootte & Risicobeheer",
-    titleEN: "Position Sizing & Risk Management",
-    channel: "Rayner Teo",
-    duration: "13:41",
-    topic: "positiegrootte",
-    level: 2,
-    tags: ["positiegrootte", "risicobeheer", "R/R"],
-  },
-  {
-    id: "zjMkFz7BKJA",
-    titleNL: "Multi-Timeframe Analyse (Complete Gids)",
-    titleEN: "Multiple Timeframe Analysis (Complete Guide)",
-    channel: "Rayner Teo",
-    duration: "18:45",
-    topic: "timeframes",
-    level: 2,
-    tags: ["timeframes", "4H", "dagelijks"],
-  },
-  // Level 3 — Gevorderd
-  {
-    id: "wO1PEYZxqOo",
-    titleNL: "Moving Average Strategieën die Werken",
-    titleEN: "Moving Average Strategies That Actually Work",
-    channel: "Rayner Teo",
-    duration: "22:14",
-    topic: "moving averages",
-    level: 3,
-    tags: ["MA", "moving average", "crossover"],
-  },
-  {
-    id: "0Tq9-eq_suA",
-    titleNL: "Volume Analyse — De Sleutel tot Betere Trades",
-    titleEN: "Volume Analysis — The Key to Better Trades",
-    channel: "SMB Capital",
-    duration: "14:31",
-    topic: "volume analyse",
-    level: 3,
-    tags: ["volume", "analyse", "gevorderd"],
-  },
-  {
-    id: "CaVMNWlBhxU",
-    titleNL: "Trading Psychologie: FOMO Overwinnen",
-    titleEN: "Trading Psychology: How to Overcome FOMO",
-    channel: "Rayner Teo",
-    duration: "11:48",
-    topic: "psychologie",
-    level: 3,
-    tags: ["psychologie", "FOMO", "emoties"],
-  },
-  // Level 4-5 — Expert
-  {
-    id: "zWKIkBlFpKQ",
-    titleNL: "Bitcoin Halving Uitgelegd (En Waarom Het Belangrijk Is)",
-    titleEN: "Bitcoin Halving Explained (And Why It Matters)",
-    channel: "Coin Bureau",
-    duration: "16:55",
-    topic: "halving cyclus",
-    level: 4,
-    tags: ["halving", "cyclus", "Bitcoin", "macro"],
-  },
-  {
-    id: "h-Nz3_k6jyI",
-    titleNL: "Crypto Funding Rates Uitgelegd",
-    titleEN: "Crypto Funding Rates Explained",
-    channel: "Coin Bureau",
-    duration: "10:43",
-    topic: "funding rates",
-    level: 5,
-    tags: ["funding rates", "futures", "gevorderd"],
-  },
-  {
-    id: "74M9VoXzBf4",
-    titleNL: "Smart Money Concepten (SMC) Volledige Uitleg",
-    titleEN: "Smart Money Concepts (SMC) Full Explanation",
-    channel: "Inner Circle Trader",
-    duration: "25:12",
-    topic: "smart money",
-    level: 4,
-    tags: ["smart money", "institutioneel", "gevorderd"],
-  },
-];
-
-const TRENDING_VIDEOS: VideoResource[] = [
-  {
-    id: "dFGZzMHJgSI",
-    titleNL: "Price Action Trading: Grafieken Lezen als een Pro",
-    titleEN: "Price Action Trading: How to Read Charts Like a Pro",
-    channel: "Rayner Teo",
-    duration: "20:14",
-    topic: "price action",
-    level: 2,
-    tags: ["price action", "grafieken", "setup"],
-    views: "4.1M",
-  },
-  {
-    id: "WCwMT6H1KRY",
-    titleNL: "Hoe Breakouts Te Traden (Complete Gids)",
-    titleEN: "How to Trade Breakouts (Complete Guide)",
-    channel: "Rayner Teo",
-    duration: "19:22",
-    topic: "breakouts",
-    level: 2,
-    tags: ["breakout", "strategie", "entry"],
-    views: "3.2M",
-  },
-  {
-    id: "GmOzih6I1zs",
-    titleNL: "Technische Analyse Masterclass — Bitcoin",
-    titleEN: "Technical Analysis Masterclass — Bitcoin",
-    channel: "Coin Bureau",
-    duration: "21:38",
-    topic: "Bitcoin analyse",
-    level: 3,
-    tags: ["Bitcoin", "technische analyse", "BTC"],
-    views: "2.7M",
-  },
-  {
-    id: "1J0rBNlkBqA",
-    titleNL: "Risicobeheer: De #1 Reden Waarom Traders Falen",
-    titleEN: "Risk Management: The #1 Reason Traders Fail",
-    channel: "Rayner Teo",
-    duration: "14:28",
-    topic: "risicobeheer",
-    level: 1,
-    tags: ["risico", "positiegrootte", "stops"],
-    views: "2.4M",
-  },
-  {
-    id: "vcMNpksnGSI",
-    titleNL: "Crypto Trading voor Absolute Beginners",
-    titleEN: "Crypto Trading for Absolute Beginners",
-    channel: "Andrei Jikh",
-    duration: "17:05",
+    id: "rYQgy8QDEBI",
+    titleNL: "Hoe Cryptocurrency ECHT werkt",
+    titleEN: "How Cryptocurrency ACTUALLY Works",
+    channel: "Mrwhosetheboss",
+    duration: "13:12",
     topic: "crypto basics",
     level: 1,
-    tags: ["crypto", "beginner", "basis"],
-    views: "2.1M",
+    tags: ["crypto", "blockchain", "beginner"],
   },
   {
-    id: "7s5ILbr3HNg",
-    titleNL: "Moving Averages: Simpele Maar Krachtige Strategie",
-    titleEN: "Moving Averages: Simple But Powerful Strategy",
-    channel: "Trading Rush",
-    duration: "13:47",
-    topic: "moving averages",
+    id: "SSo_EIwHSd4",
+    titleNL: "Hoe werkt een blockchain? (Simpel uitgelegd)",
+    titleEN: "How Does a Blockchain Work? (Simply Explained)",
+    channel: "Simply Explained",
+    duration: "6:00",
+    topic: "blockchain",
+    level: 1,
+    tags: ["blockchain", "beginner", "uitleg"],
+  },
+  {
+    id: "hYip_Vuv8J0",
+    titleNL: "Blockchain Expert legt uit op 5 niveaus",
+    titleEN: "Blockchain Expert Explains in 5 Levels",
+    channel: "WIRED",
+    duration: "18:30",
+    topic: "blockchain niveaus",
+    level: 1,
+    tags: ["blockchain", "beginner", "expert"],
+  },
+  {
+    id: "bBC-nXj3Ng4",
+    titleNL: "Maar hoe werkt Bitcoin eigenlijk?",
+    titleEN: "But How Does Bitcoin Actually Work?",
+    channel: "3Blue1Brown",
+    duration: "26:21",
+    topic: "Bitcoin technisch",
     level: 2,
-    tags: ["MA", "strategie", "trend"],
-    views: "1.8M",
+    tags: ["Bitcoin", "technisch", "cryptografie"],
+  },
+  {
+    id: "LYi8LCOda1Y",
+    titleNL: "Beleggen 101 in 60 seconden",
+    titleEN: "Investing 101 in 60 Seconds",
+    channel: "Trading 212",
+    duration: "0:60",
+    topic: "beleggen basis",
+    level: 1,
+    tags: ["beleggen", "beginner", "snel"],
+  },
+  {
+    id: "_v3MdC0M6N8",
+    titleNL: "De 'Koop de dip' val",
+    titleEN: "The 'Buy the Dip' Trap",
+    channel: "Trading 212",
+    duration: "3:00",
+    topic: "trading psychologie",
+    level: 2,
+    tags: ["psychologie", "FOMO", "dip"],
+  },
+  {
+    id: "Yb6825iv0Vk",
+    titleNL: "Hoe investeren in crypto — volledige beginnersgids",
+    titleEN: "How To Invest In Crypto — Full Beginners Guide",
+    channel: "Brian Jung",
+    duration: "25:00",
+    topic: "crypto investeren",
+    level: 2,
+    tags: ["crypto", "investeren", "gids"],
+  },
+  {
+    id: "eynxyoKgpng",
+    titleNL: "De enige technische analyse video die je ooit nodig hebt",
+    titleEN: "The Only Technical Analysis Video You Will Ever Need",
+    channel: "The Trading Channel",
+    duration: "3:00:00",
+    topic: "technische analyse",
+    level: 3,
+    tags: ["TA", "technisch", "complete cursus"],
+  },
+  {
+    id: "tPQs6eQ4zIU",
+    titleNL: "Stock to Flow — Bitcoin prijs model uitgelegd",
+    titleEN: "Stock to Flow — Bitcoin Price Model Explained",
+    channel: "Whiteboard Crypto",
+    duration: "12:00",
+    topic: "Bitcoin waardering",
+    level: 4,
+    tags: ["S2F", "Bitcoin", "macro"],
+  },
+  {
+    id: "vi4cPN_4VPc",
+    titleNL: "BIP39 uitgelegd — seed phrases en private keys",
+    titleEN: "BIP39 Explained — Seed Phrases and Private Keys",
+    channel: "Whiteboard Crypto",
+    duration: "14:00",
+    topic: "wallet beveiliging",
+    level: 2,
+    tags: ["wallet", "seed phrase", "beveiliging"],
+  },
+  {
+    id: "PHe0bXAIuk0",
+    titleNL: "Hoe de economische machine werkt — Ray Dalio",
+    titleEN: "How The Economic Machine Works — Ray Dalio",
+    channel: "Principles by Ray Dalio",
+    duration: "31:00",
+    topic: "macro economie",
+    level: 4,
+    tags: ["macro", "economie", "Dalio"],
   },
 ];
 
@@ -241,59 +158,57 @@ const NEWS_SOURCES: NewsSource[] = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  crypto: "#f59e0b",
-  stocks: "#22c55e",
-  macro: "#60a5fa",
+  crypto:    "#f59e0b",
+  stocks:    "#22c55e",
+  macro:     "#60a5fa",
   education: "#a78bfa",
 };
 
-function VideoCard({ v, watchYoutubeLabel, lang }: {
+const LEVEL_COLORS: Record<number, string> = {
+  1: "#22c55e",
+  2: "#3b82f6",
+  3: "#f59e0b",
+  4: "#f97316",
+  5: "#ef4444",
+};
+
+function VideoCard({ v, watchLabel, lang }: {
   v: VideoResource;
-  watchYoutubeLabel: string;
+  watchLabel: string;
   lang: string;
 }) {
   const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
   const title = lang === "en" ? v.titleEN : v.titleNL;
 
   return (
-    <a
-      href={ytUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="resources-video-card resources-video-link"
-    >
+    <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="resources-video-card resources-video-link">
       <div className="resources-thumbnail">
         <img
           src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
           alt={title}
           className="resources-thumb-img"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
         <div className="resources-play-btn">▶</div>
         <div className="resources-duration">{v.duration}</div>
-        {v.views && <div className="resources-views">{v.views}</div>}
+        <div
+          className="resources-level-badge-thumb"
+          style={{ background: LEVEL_COLORS[v.level] }}
+        >
+          L{v.level}
+        </div>
       </div>
       <div className="resources-video-info">
         <div className="resources-video-title">{title}</div>
         <div className="resources-video-meta">
           <span className="resources-video-channel">{v.channel}</span>
-          <span
-            className="resources-video-level"
-            style={{ background: `rgba(139,92,246,${0.1 + v.level * 0.06})` }}
-          >
-            Level {v.level}
-          </span>
         </div>
         <div className="resources-video-tags">
           {v.tags.slice(0, 3).map((tag) => (
             <span key={tag} className="resources-tag">{tag}</span>
           ))}
         </div>
-        <div className="resources-yt-open-btn">
-          ▶ {watchYoutubeLabel}
-        </div>
+        <div className="resources-yt-open-btn">▶ {watchLabel}</div>
       </div>
     </a>
   );
@@ -308,33 +223,15 @@ export default function LearningResources() {
     : VIDEOS;
 
   const CATEGORY_LABELS: Record<string, string> = {
-    crypto: t("resources_cat_crypto"),
-    stocks: t("resources_cat_stocks"),
-    macro: t("resources_cat_macro"),
+    crypto:    t("resources_cat_crypto"),
+    stocks:    t("resources_cat_stocks"),
+    macro:     t("resources_cat_macro"),
     education: t("resources_cat_education"),
   };
 
   return (
     <div className="resources-wrap">
 
-      {/* Trending section */}
-      <div className="resources-section">
-        <div className="resources-section-title">
-          <span>🔥</span> {t("resources_trending_title")}
-        </div>
-        <div className="resources-videos-grid">
-          {TRENDING_VIDEOS.map((v) => (
-            <VideoCard
-              key={v.id}
-              v={v}
-              lang={lang}
-              watchYoutubeLabel={t("resources_watch_youtube")}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Level-based videos section */}
       <div className="resources-section">
         <div className="resources-section-header">
           <div className="resources-section-title">
@@ -347,11 +244,12 @@ export default function LearningResources() {
             >
               {t("resources_filter_all")}
             </button>
-            {[1, 2, 3, 4, 5].map((l) => (
+            {[1, 2, 3, 4].map((l) => (
               <button
                 key={l}
                 className={`resources-level-btn ${activeLevel === l ? "active" : ""}`}
                 onClick={() => setActiveLevel(l === activeLevel ? null : l)}
+                style={activeLevel === l ? { borderColor: LEVEL_COLORS[l], color: LEVEL_COLORS[l] } : {}}
               >
                 {t("resources_filter_lvl")} {l}
               </button>
@@ -365,13 +263,13 @@ export default function LearningResources() {
               key={v.id}
               v={v}
               lang={lang}
-              watchYoutubeLabel={t("resources_watch_youtube")}
+              watchLabel={t("resources_watch_youtube")}
             />
           ))}
         </div>
       </div>
 
-      {/* News sources section */}
+      {/* Nieuws */}
       <div className="resources-section">
         <div className="resources-section-title">
           <span>🌐</span> {t("resources_news_title")}
@@ -389,10 +287,7 @@ export default function LearningResources() {
                 <span className="resources-news-icon">{s.icon}</span>
                 <div>
                   <div className="resources-news-name">{s.name}</div>
-                  <span
-                    className="resources-news-cat"
-                    style={{ color: CATEGORY_COLORS[s.category] }}
-                  >
+                  <span className="resources-news-cat" style={{ color: CATEGORY_COLORS[s.category] }}>
                     {CATEGORY_LABELS[s.category]}
                   </span>
                 </div>

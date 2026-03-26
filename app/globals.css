@@ -3013,6 +3013,17 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   opacity: 0.85;
   transition: opacity 0.15s;
 }
+.resources-level-badge-thumb {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 2;
+}
 .resources-yt-open-btn {
   margin-top: 8px;
   display: inline-flex;
