@@ -211,6 +211,8 @@ const translations = {
     chart_resistance_label: "Resistance",
     chart_live_label: "⚡ Live chart",
     chart_analysis_label: "📊 Analyse chart",
+    chart_candle_label: "Candle",
+    chart_line_label: "Lijn",
 
     // === REGISTER ===
     register_title: "Account aanmaken",
@@ -812,6 +814,7 @@ const translations = {
 
     // === MENTOR CHAT ===
     chat_label: "Marcus",
+    chat_role_label: "AI Trading Coach",
     chat_clear_btn: "Wis chat",
     chat_clear_title: "Wis gesprek en start opnieuw",
     chat_empty: "Stel een vraag over de markt, je trade of strategie.",
@@ -1167,6 +1170,8 @@ const translations = {
     chart_resistance_label: "Resistance",
     chart_live_label: "⚡ Live chart",
     chart_analysis_label: "📊 Analysis chart",
+    chart_candle_label: "Candle",
+    chart_line_label: "Line",
 
     // === REGISTER ===
     register_title: "Create account",
@@ -1768,6 +1773,7 @@ const translations = {
 
     // === MENTOR CHAT ===
     chat_label: "Marcus",
+    chat_role_label: "AI Trading Coach",
     chat_clear_btn: "Clear chat",
     chat_clear_title: "Clear conversation and start over",
     chat_empty: "Ask a question about the market, your trade or strategy.",

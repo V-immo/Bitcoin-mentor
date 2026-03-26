@@ -243,8 +243,23 @@ export default function MentorChat({ marketContext, asset }: Props) {
 
     return (
         <section className="terminal-side-card terminal-chat-card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div className="terminal-label">{t("chat_label")}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{
+                        width: 36, height: 36, borderRadius: "50%",
+                        background: "linear-gradient(135deg, #7c3aed, #e91e63)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: 18, flexShrink: 0,
+                    }}>🧑‍💼</div>
+                    <div>
+                        <div style={{ fontWeight: 700, fontSize: 15, color: "var(--accent)", letterSpacing: "0.02em" }}>
+                            {t("chat_label")}
+                        </div>
+                        <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 1 }}>
+                            {t("chat_role_label")}
+                        </div>
+                    </div>
+                </div>
                 {messages.length > 0 && (
                     <button
                         className="terminal-btn terminal-btn-muted"
@@ -272,9 +287,14 @@ export default function MentorChat({ marketContext, asset }: Props) {
                                 : "terminal-chat-assistant"
                             }`}
                     >
-                        {msg.role === "assistant"
-                            ? <div dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }} />
-                            : msg.content}
+                        {msg.role === "assistant" ? (
+                            <>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "var(--accent)", marginBottom: 3, opacity: 0.8 }}>
+                                    Marcus
+                                </div>
+                                <div dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }} />
+                            </>
+                        ) : msg.content}
                     </div>
                 ))}
 

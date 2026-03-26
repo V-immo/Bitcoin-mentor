@@ -151,7 +151,10 @@ export default function TradingChart({
   const { t } = useLanguage();
   const [showBB, setShowBB] = useState(false);
   const [showMACD, setShowMACD] = useState(false);
+  const [chartType, setChartType] = useState<"candle" | "line">("candle");
   const [chartInitKey, setChartInitKey] = useState(0);
+  const chartTypeRef = useRef<"candle" | "line">("candle");
+  chartTypeRef.current = chartType;
 
   const mainRef = useRef<HTMLDivElement>(null);
   const rsiRef = useRef<HTMLDivElement>(null);
@@ -186,6 +189,8 @@ export default function TradingChart({
   const macdSignalRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const macdHistRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lineSeriesRef = useRef<any>(null);
 
   const candlesRef = useRef<Candle[]>(candles);
   candlesRef.current = candles;
@@ -234,6 +239,17 @@ export default function TradingChart({
         borderUpColor: "#26c57c", borderDownColor: "#ef4444",
         wickUpColor: "#26c57c", wickDownColor: "#ef4444",
       });
+
+      // Line series (alternative view to candlestick)
+      const lineSeries = chart.addSeries(LineSeries, {
+        color: "#e91e63",
+        lineWidth: 2,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: "",
+        visible: chartTypeRef.current === "line",
+      });
+      lineSeriesRef.current = lineSeries;
 
       const volumeSeries = chart.addSeries(HistogramSeries, {
         priceFormat: { type: "volume" }, priceScaleId: "volume",
@@ -344,7 +360,9 @@ export default function TradingChart({
       const snap = candlesRef.current;
       if (snap.length > 0) {
         candleSeries.setData(snap.map(candleToBar));
-        volumeSeries.setData(snap.map(candleToVol));
+        lineSeries.setData(snap.map(c => ({ time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time, value: c.close })));
+        // In line mode, hide volume bars (they look cluttered without candles)
+        volumeSeries.applyOptions({ visible: chartTypeRef.current === "candle" });
         ma20Series.setData(calcMA(snap, 20));
         ma50Series.setData(calcMA(snap, 50));
         rsiSeries.setData(calcRSI(snap, 14));
@@ -412,6 +430,7 @@ export default function TradingChart({
         macdLineRef.current = null;
         macdSignalRef.current = null;
         macdHistRef.current = null;
+        lineSeriesRef.current = null;
       };
     }
 
@@ -425,6 +444,10 @@ export default function TradingChart({
     if (!seriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
     seriesRef.current.setData(candles.map(candleToBar));
     volumeSeriesRef.current.setData(candles.map(candleToVol));
+    lineSeriesRef.current?.setData(candles.map(c => ({
+      time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time,
+      value: c.close,
+    })));
     ma20Ref.current?.setData(calcMA(candles, 20));
     ma50Ref.current?.setData(calcMA(candles, 50));
     rsiSeriesRef.current?.setData(calcRSI(candles, 14));
@@ -445,6 +468,15 @@ export default function TradingChart({
     rsiChartRef.current?.timeScale().fitContent();
     macdChartRef.current?.timeScale().fitContent();
   }, [candles, showBB, showMACD, chartInitKey]);
+
+  // Toggle candle / line chart type
+  useEffect(() => {
+    if (!seriesRef.current || !lineSeriesRef.current) return;
+    const isCandle = chartType === "candle";
+    seriesRef.current.applyOptions({ visible: isCandle });
+    volumeSeriesRef.current?.applyOptions({ visible: isCandle });
+    lineSeriesRef.current.applyOptions({ visible: !isCandle });
+  }, [chartType]);
 
   // Toggle BB
   useEffect(() => {
@@ -489,7 +521,37 @@ export default function TradingChart({
 
       {/* Indicator toggle buttons */}
       {!compact && (
-        <div style={{ display: "flex", gap: 8, padding: "6px 0 2px 0", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 8, padding: "6px 0 2px 0", flexWrap: "wrap", alignItems: "center" }}>
+          {/* Chart type toggle */}
+          <div style={{
+            display: "flex", borderRadius: 20, overflow: "hidden",
+            border: "1px solid #2a1a28", marginRight: 4,
+          }}>
+            <button
+              onClick={() => setChartType("candle")}
+              style={{
+                padding: "3px 12px", border: "none", cursor: "pointer",
+                fontSize: 12, fontWeight: 600,
+                background: chartType === "candle" ? "#7c3aed" : "#2a1a28",
+                color: chartType === "candle" ? "#fff" : "#bf7a99",
+                transition: "background 0.15s",
+              }}
+            >
+              🕯 {t("chart_candle_label")}
+            </button>
+            <button
+              onClick={() => setChartType("line")}
+              style={{
+                padding: "3px 12px", border: "none", cursor: "pointer",
+                fontSize: 12, fontWeight: 600,
+                background: chartType === "line" ? "#7c3aed" : "#2a1a28",
+                color: chartType === "line" ? "#fff" : "#bf7a99",
+                transition: "background 0.15s",
+              }}
+            >
+              📈 {t("chart_line_label")}
+            </button>
+          </div>
           <button
             onClick={() => setShowBB(v => !v)}
             style={{
