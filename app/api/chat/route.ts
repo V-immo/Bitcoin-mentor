@@ -190,6 +190,38 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
     } catch { /* ignore */ }
   }
 
+  // Haal relevante trading kennis op uit de kennisbank
+  let relevantKnowledge = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      // Bouw zoekterm op basis van user bericht + zwakke punten
+      const lastUserMsg = messages.filter(m => m.role === "user").slice(-1)[0]?.content ?? "";
+      const searchText = (lastUserMsg + " " + weakTopics.join(" ")).toLowerCase();
+
+      // Haal 3 meest relevante lessen op via tag matching
+      const allLessons = db.prepare(
+        "SELECT source, lesson, tags FROM trading_knowledge WHERE level <= ? ORDER BY RANDOM() LIMIT 50"
+      ).all(Math.min(traderLevel + 1, 3)) as { source: string; lesson: string; tags: string }[];
+
+      const scored = allLessons
+        .map(row => {
+          const tags = row.tags.split(",");
+          const score = tags.filter(tag => searchText.includes(tag.trim())).length;
+          return { ...row, score };
+        })
+        .filter(r => r.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      if (scored.length > 0) {
+        relevantKnowledge = scored
+          .map(r => `• ${r.source}: "${r.lesson}"`)
+          .join("\n");
+      }
+    } catch { /* ignore */ }
+  }
+
   // Bepaal of het een crypto of traditioneel asset is op basis van marketContext
   const isCrypto = marketContext.includes("[crypto]");
   const dbTradingMode = body._tradingMode as string | undefined;
@@ -258,6 +290,47 @@ ${openPositionsContext || "Geen open paper trades."}
 
 WAT JIJ AL WEET OVER DEZE GEBRUIKER (jouw persoonlijke notities):
 ${marcusNotes || "Nog geen notities — dit is een nieuwe gebruiker of eerste sessie."}
+
+RELEVANTE KENNISBANK VOOR DEZE VRAAG:
+${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
+
+TRADING DNA — MARCUS DENKT VANUIT DEZE PRINCIPES:
+
+MARK DOUGLAS (Trading in the Zone):
+• Elke trade is onzeker. Over 100 trades is je edge voorspelbaar. Nooit één trade "hopen".
+• Accepteer het risico VOOR de trade — dan heb je geen emotie meer nodig om te managen.
+• Process > uitkomst. Goede trade kan verlies geven. Slechte trade kan winst geven. Beoordeel het proces.
+• De markt weet niet dat jij er bent. Hij is nooit "tegen" je — hij volgt zijn eigen logica.
+
+VAN THARP (Trade Your Way to Financial Freedom):
+• Position sizing bepaalt of je overleeft. Riseer max 1-2% per trade (1R = jouw risicobedrag).
+• Expectancy = (win% × gem. winst) - (verlies% × gem. verlies). Focus op positieve expectancy, niet op winrate.
+• Een systeem met 40% winrate en 3R gemiddelde winst is beter dan 70% winrate met 0.5R winst.
+
+JESSE LIVERMORE (Reminiscences of a Stock Operator):
+• Wacht op het bewijs — koop niet terwijl de prijs daalt. Wacht tot hij bewijst dat hij stijgt.
+• Eerste verlies = kleinste verlies. Nooit een verlies laten groeien in de hoop op herstel.
+• De grote winst zit in het ZITTEN, niet in het kopen en verkopen. Geduld is de echte edge.
+
+ICT / SMART MONEY (crypto-relevant):
+• Prijs zoekt altijd liquiditeit — highs en lows trekken stops aan. Verwacht sweeps voor echte moves.
+• Order blocks: de laatste bearish candle voor een bullishimpuls is vaak support. Omgekeerd voor resistance.
+• Laat marktstructuur spreken: hogere highs + hogere lows = uptrend. Breuk = structuurwijziging.
+
+RICHARD DENNIS + TURTLE TRADING:
+• Trend is je vriend. Trade altijd mee met de grotere timeframe-trend.
+• Definieer de regels voor de trade. Volg ze. Geen uitzonderingen op basis van gevoel.
+
+ED SEYKOTA / PAUL TUDOR JONES:
+• "Cut losses short, let profits run" — dit is de enige universele wet in trading.
+• Jones: speel defensief. Zorg dat je volgende week nog kunt traden. Survival first.
+• Seykota: aan het einde van de rit krijgt iedereen wat hij wil uit de markt. Wil jij winnen?
+
+TOEPASSING DOOR MARCUS:
+• Stel altijd de R-vraag: "Hoeveel 1R ben jij bereid te verliezen op deze trade?"
+• Beoordeel setups op marktstructuur + trend + confluente zone — niet op gevoel
+• Verwijs naar Livermore als iemand te vroeg instapt: "Wacht op het bewijs"
+• Verwijs naar Van Tharp als iemand te groot inzet: "Hoeveel R is dit?"
 
 ANTWOORDLENGTE — KRITISCH:
 - Niveau 1-2: MAX 3 korte zinnen + 1 opdracht. Geen lange uitleg.

@@ -62,5 +62,14 @@ CREATE TABLE IF NOT EXISTS admin_notes (
   created_at TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS trading_knowledge (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  topic   TEXT    NOT NULL,
+  tags    TEXT    NOT NULL,
+  source  TEXT    NOT NULL,
+  lesson  TEXT    NOT NULL,
+  level   INTEGER NOT NULL DEFAULT 1
+);
+
 CREATE INDEX IF NOT EXISTS idx_paper_user      ON paper_trading(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_user_asset ON chat_history(user_id, asset);
