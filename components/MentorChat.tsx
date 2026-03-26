@@ -128,8 +128,18 @@ export default function MentorChat({ marketContext, asset }: Props) {
                     const data = await res.json();
                     const saved: Message[] = data?.messages ?? [];
                     if (!cancelled && saved.length > 0) {
-                        setMessages(saved);
-                        didAutoBriefRef.current = true; // sla auto-briefing over als er al geschiedenis is
+                        // Controleer taal van opgeslagen berichten — wis als verkeerde taal
+                        const currentLang = localStorage.getItem("app_lang") ?? "nl";
+                        const firstAssistant = saved.find(m => m.role === "assistant");
+                        const isEnglish = firstAssistant && /\b(the|and|your|for|this|are|you)\b/i.test(firstAssistant.content.slice(0, 200));
+                        const wrongLang = currentLang === "nl" && isEnglish;
+                        if (wrongLang) {
+                            // Wis oude berichten in verkeerde taal — nieuwe briefing volgt automatisch
+                            await fetch(`/api/me/chat?asset=${encodeURIComponent(asset)}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [] }) });
+                        } else {
+                            setMessages(saved);
+                            didAutoBriefRef.current = true; // sla auto-briefing over als er al geschiedenis is
+                        }
                     }
                 }
             } catch { /* ignore */ }

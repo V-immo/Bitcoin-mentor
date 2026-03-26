@@ -109,10 +109,9 @@ export async function POST(request: NextRequest) {
   // Haal quiz profiel op uit DB als ingelogd (niet vertrouwen op client body)
   let traderLevel: number = body.traderLevel ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
-  // Taal: body.lang = wat de gebruiker NU geselecteerd heeft in de UI (hoogste prioriteit)
-  // DB ai_language alleen als fallback als body.lang ontbreekt
-  let aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
-  const langExplicitlySet = !!body.lang; // frontend stuurde expliciet een taal mee
+  // Taal: ALTIJD body.lang gebruiken — dit is wat de gebruiker NU ziet in de UI
+  // DB ai_language wordt volledig genegeerd (kan verouderd zijn)
+  const aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
 
   let quizHistorySummary = "";
 
@@ -141,8 +140,7 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
       const settings = db
         .prepare("SELECT ai_language, trading_mode FROM settings WHERE user_id = ?")
         .get(userId) as { ai_language: string; trading_mode: string } | undefined;
-      // Alleen DB taal gebruiken als frontend geen expliciete taal stuurde
-      if (!langExplicitlySet && settings?.ai_language === "en") aiLanguage = "en";
+      // ai_language uit DB wordt genegeerd — body.lang is altijd leidend
       if (settings?.trading_mode) {
         // Overschrijf trading mode met DB waarde
         const tm = settings.trading_mode;
