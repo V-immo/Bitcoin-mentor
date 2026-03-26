@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
   const aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
 
   let quizHistorySummary = "";
+  let marcusNotes = "";
 
   if (userId) {
     try {
@@ -138,9 +139,12 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
         }
       }
       const settings = db
-        .prepare("SELECT ai_language, trading_mode FROM settings WHERE user_id = ?")
-        .get(userId) as { ai_language: string; trading_mode: string } | undefined;
+        .prepare("SELECT ai_language, trading_mode, marcus_notes FROM settings WHERE user_id = ?")
+        .get(userId) as { ai_language: string; trading_mode: string; marcus_notes?: string } | undefined;
       // ai_language uit DB wordt genegeerd — body.lang is altijd leidend
+      if (settings?.marcus_notes) {
+        marcusNotes = settings.marcus_notes;
+      }
       if (settings?.trading_mode) {
         // Overschrijf trading mode met DB waarde
         const tm = settings.trading_mode;
@@ -252,6 +256,9 @@ ${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe
 OPEN POSITIES VAN DEZE GEBRUIKER:
 ${openPositionsContext || "Geen open paper trades."}
 
+WAT JIJ AL WEET OVER DEZE GEBRUIKER (jouw persoonlijke notities):
+${marcusNotes || "Nog geen notities — dit is een nieuwe gebruiker of eerste sessie."}
+
 ANTWOORDLENGTE — KRITISCH:
 - Niveau 1-2: MAX 3 korte zinnen + 1 opdracht. Geen lange uitleg.
 - Niveau 3+: MAX 5 zinnen + 1 concrete opdracht. Gebruik bulletpoints alleen als echt nodig.
@@ -294,7 +301,12 @@ VERBODEN:
 ALTIJD:
 - Gebruik echte prijzen uit de marktdata
 - Eindig met opdracht (📌)
-- Wees direct en eerlijk${questionContext ? `
+- Wees direct en eerlijk
+
+GEHEUGEN — OPTIONEEL:
+Als je iets belangijks ontdekt over deze gebruiker (handelspatroon, angst, stijl, mijlpaal), voeg dan ONZICHTBAAR toe aan het einde van je antwoord:
+[MEMO: korte notitie max 100 tekens]
+Gebruik dit MAX 1x per 5 antwoorden. Alleen bij echte nieuwe inzichten.${questionContext ? `
 
 QUIZ CONTEXT:
 ${questionContext}
@@ -327,10 +339,31 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
       messages: anthropicMessages,
     });
 
-    const reply =
+    let reply =
       response.content[0]?.type === "text"
         ? response.content[0].text
         : "Geen antwoord ontvangen.";
+
+    // Extraheer en sla MEMO op als aanwezig
+    const memoMatch = reply.match(/\[MEMO:\s*([^\]]{1,120})\]/i);
+    if (memoMatch && userId) {
+      const newNote = memoMatch[1].trim();
+      reply = reply.replace(memoMatch[0], "").trim();
+      try {
+        const db = getDb();
+        const existing = db
+          .prepare("SELECT marcus_notes FROM settings WHERE user_id = ?")
+          .get(userId) as { marcus_notes?: string } | undefined;
+        const currentNotes = existing?.marcus_notes ?? "";
+        const date = new Date().toISOString().slice(0, 10);
+        const updated = [currentNotes, `[${date}] ${newNote}`]
+          .filter(Boolean)
+          .join("\n")
+          .slice(-1000); // max 1000 tekens bewaren
+        db.prepare("UPDATE settings SET marcus_notes = ? WHERE user_id = ?")
+          .run(updated, userId);
+      } catch { /* ignore */ }
+    }
 
     return Response.json({ reply });
   } catch (err) {

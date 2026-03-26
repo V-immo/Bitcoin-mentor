@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS settings (
   start_capital    REAL    NOT NULL DEFAULT 10000,
   preferred_assets TEXT    NOT NULL DEFAULT '["BTCUSDT","ETHUSDT"]',
   ai_language      TEXT    NOT NULL DEFAULT 'nl',
+  marcus_notes     TEXT    NOT NULL DEFAULT '',
   updated_at       TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
