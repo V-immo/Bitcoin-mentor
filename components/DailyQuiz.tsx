@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { QuizQuestion, QuizResponse } from "@/app/api/quiz/route";
 import QuizChat from "@/components/QuizChat";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_CORRECT = 40;
 const XP_PER_LEVEL = 500;
+const AVG_XP_PER_QUIZ = 200; // ~5 goed op 7 vragen
 
 type QuizHistory = {
   level: number;
@@ -22,14 +23,25 @@ function today(): string {
 }
 
 function XpBar({ xp, level }: { xp: number; level: number }) {
+  const { t } = useLanguage();
   const currentXp = xp % XP_PER_LEVEL;
+  const xpToNext = XP_PER_LEVEL - currentXp;
   const pct = Math.min(100, (currentXp / XP_PER_LEVEL) * 100);
+  const nextLevel = Math.min(5, level + 1);
+  const approxQuizzes = Math.ceil(xpToNext / AVG_XP_PER_QUIZ);
   return (
-    <div className="quiz-xp-wrap">
-      <div className="quiz-xp-bar">
-        <div className="quiz-xp-fill" style={{ width: `${pct}%` }} />
+    <div className="quiz-xp-outer">
+      <div className="quiz-xp-wrap">
+        <div className="quiz-xp-bar">
+          <div className="quiz-xp-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="quiz-xp-label">{currentXp} / {XP_PER_LEVEL} XP</span>
       </div>
-      <span className="quiz-xp-label">{currentXp} / {XP_PER_LEVEL} XP</span>
+      {level < 5 && (
+        <div className="quiz-xp-to-next">
+          {t("quiz_approx_sessions")} ~{approxQuizzes} {t("quiz_approx_sessions2")} {nextLevel}
+        </div>
+      )}
     </div>
   );
 }
@@ -69,6 +81,22 @@ export default function DailyQuiz() {
   const [wrongQuestions, setWrongQuestions] = useState<QuizQuestion[]>([]);
   const [leveledUp, setLeveledUp] = useState(false);
   const [error, setError] = useState("");
+
+  const totalSessionsDone = history?.history?.length ?? 0;
+
+  function openMarcusAssignment() {
+    if (!history) return;
+    const level = history.level;
+    const topics = wrongTopics.length > 0 ? [...new Set(wrongTopics)].join(", ") : null;
+    const promptTemplate = topics
+      ? t("quiz_marcus_assignment_prompt")
+      : t("quiz_marcus_assignment_prompt_ok");
+    const prompt = promptTemplate
+      .replace("{level}", String(level))
+      .replace("{topics}", topics ?? "");
+    localStorage.setItem("btcmentor-marcus-prompt", prompt);
+    window.location.href = "/trade";
+  }
 
   function getLevelLabel(level: number): string {
     return [
@@ -358,6 +386,11 @@ export default function DailyQuiz() {
 
         <XpBar xp={history.xp} level={history.level} />
 
+        <div className="quiz-result-sessions">
+          <span className="quiz-result-sessions-count">{totalSessionsDone}</span>
+          <span className="quiz-result-sessions-label"> {t("quiz_sessions_done")}</span>
+        </div>
+
         {wrongQuestions.length > 0 && (
           <div className="quiz-weak-topics">
             <div className="quiz-weak-label">
@@ -387,6 +420,10 @@ export default function DailyQuiz() {
           </div>
         )}
 
+        <button className="quiz-marcus-btn" onClick={openMarcusAssignment}>
+          {t("quiz_marcus_assignment")}
+        </button>
+
         <button className="quiz-retry-btn" onClick={() => setPhase("home")}>
           {t("quiz_back_btn")}
         </button>
@@ -410,6 +447,11 @@ export default function DailyQuiz() {
             <span className="quiz-level-label">{getLevelLabel(history.level)}</span>
           </div>
           <XpBar xp={history.xp} level={history.level} />
+          {totalSessionsDone > 0 && (
+            <div className="quiz-sessions-done-home">
+              {totalSessionsDone} {t("quiz_sessions_done")}
+            </div>
+          )}
         </div>
         <div className="quiz-streak">
           <span className="quiz-streak-fire">🔥</span>

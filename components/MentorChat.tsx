@@ -145,6 +145,17 @@ export default function MentorChat({ marketContext, asset }: Props) {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    // Quiz → Marcus opdracht: als gebruiker vanuit quiz-resultaat komt, stuur de opgeslagen prompt
+    useEffect(() => {
+        if (!loaded || !marketContext) return;
+        const pending = localStorage.getItem("btcmentor-marcus-prompt");
+        if (!pending) return;
+        localStorage.removeItem("btcmentor-marcus-prompt");
+        didAutoBriefRef.current = true; // skip auto-briefing
+        sendInternal(pending);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loaded, marketContext]);
+
     // Auto-briefing zodra marktdata beschikbaar is — alleen als er nog geen geschiedenis is
     useEffect(() => {
         if (didAutoBriefRef.current || !marketContext || loading || !loaded) return;

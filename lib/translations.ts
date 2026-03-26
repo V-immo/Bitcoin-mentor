@@ -728,6 +728,14 @@ const translations = {
     quiz_level_expert: "Expert",
     quiz_level_master: "Master",
     quiz_streak_label: "streak",
+    quiz_xp_to_next: "XP nodig voor Level",
+    quiz_xp_progress: "Voortgang naar volgend niveau",
+    quiz_sessions_done: "quizzen gedaan",
+    quiz_approx_sessions: "Nog ongeveer",
+    quiz_approx_sessions2: "quiz voor Level",
+    quiz_marcus_assignment: "📌 Vraag Marcus een oefening",
+    quiz_marcus_assignment_prompt: "Ik heb net de quiz gedaan op niveau {level}. Mijn zwakke punten zijn: {topics}. Geef me één concrete praktijkopdracht die ik nu meteen kan doen in de app.",
+    quiz_marcus_assignment_prompt_ok: "Ik heb net de quiz gedaan op niveau {level} en alles goed. Geef me één uitdagendere concrete opdracht om verder te leren.",
     quiz_error_server: "Server fout",
     quiz_error_no_questions: "Geen vragen ontvangen. Probeer het opnieuw.",
     quiz_error_rate_limit: "Je hebt je dagelijkse quizlimiet bereikt (10/dag). Kom morgen terug!",
@@ -774,7 +782,7 @@ const translations = {
     live_last_tick: "Laatste tick:",
 
     // === MENTOR CHAT ===
-    chat_label: "Vraag de mentor",
+    chat_label: "Marcus",
     chat_clear_btn: "Wis chat",
     chat_clear_title: "Wis gesprek en start opnieuw",
     chat_empty: "Stel een vraag over de markt, je trade of strategie.",
@@ -795,7 +803,7 @@ const translations = {
     chat_q_rr: "Hoe werkt R/R?",
 
     // === QUIZ CHAT ===
-    quiz_chat_title: "Vraag het aan Marcus",
+    quiz_chat_title: "Marcus",
     quiz_chat_hint: "Snap je de uitleg niet helemaal? Vraag door.",
     quiz_chat_placeholder: "Stel een vraag over deze uitleg…",
     quiz_chat_no_reply: "Geen antwoord ontvangen.",
@@ -1647,6 +1655,14 @@ const translations = {
     quiz_level_expert: "Expert",
     quiz_level_master: "Master",
     quiz_streak_label: "streak",
+    quiz_xp_to_next: "XP needed for Level",
+    quiz_xp_progress: "Progress to next level",
+    quiz_sessions_done: "quizzes done",
+    quiz_approx_sessions: "About",
+    quiz_approx_sessions2: "more quiz for Level",
+    quiz_marcus_assignment: "📌 Ask Marcus for an exercise",
+    quiz_marcus_assignment_prompt: "I just did the quiz at level {level}. My weak points are: {topics}. Give me one concrete practical assignment I can do right now in the app.",
+    quiz_marcus_assignment_prompt_ok: "I just did the quiz at level {level} and got everything right. Give me one more challenging concrete assignment to keep learning.",
     quiz_error_server: "Server error",
     quiz_error_no_questions: "No questions received. Please try again.",
     quiz_error_rate_limit: "You've reached your daily quiz limit (10/day). Come back tomorrow!",
@@ -1693,7 +1709,7 @@ const translations = {
     live_last_tick: "Last tick:",
 
     // === MENTOR CHAT ===
-    chat_label: "Ask the mentor",
+    chat_label: "Marcus",
     chat_clear_btn: "Clear chat",
     chat_clear_title: "Clear conversation and start over",
     chat_empty: "Ask a question about the market, your trade or strategy.",
@@ -1714,7 +1730,7 @@ const translations = {
     chat_q_rr: "How does R/R work?",
 
     // === QUIZ CHAT ===
-    quiz_chat_title: "Ask Marcus",
+    quiz_chat_title: "Marcus",
     quiz_chat_hint: "Don't fully understand the explanation? Ask follow-up questions.",
     quiz_chat_placeholder: "Ask a question about this explanation…",
     quiz_chat_no_reply: "No reply received.",

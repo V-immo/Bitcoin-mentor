@@ -2210,10 +2210,22 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   color: var(--text);
 }
 
+.quiz-xp-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .quiz-xp-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.quiz-xp-to-next {
+  font-size: 10px;
+  color: var(--text-muted, rgba(255,255,255,0.35));
+  padding-left: 2px;
 }
 
 .quiz-xp-bar {
@@ -2774,6 +2786,46 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .quiz-retry-btn:hover {
   background: rgba(255,255,255,0.05);
   color: var(--text);
+}
+
+/* Marcus assignment button in quiz result */
+.quiz-marcus-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #C2185B, #e91e63);
+  border: none;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.12s;
+  margin-bottom: 10px;
+}
+
+.quiz-marcus-btn:hover {
+  opacity: 0.88;
+}
+
+/* Sessions done counter */
+.quiz-result-sessions {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.quiz-result-sessions-count {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.quiz-sessions-done-home {
+  font-size: 10px;
+  color: var(--text-muted, rgba(255,255,255,0.35));
+  margin-top: 2px;
 }
 
 /* ── Leren tabs ─────────────────────────────────────────── */
