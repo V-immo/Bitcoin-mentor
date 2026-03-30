@@ -9,6 +9,7 @@ const NAV = [
   { href: "/admin",         label: "📊 Overview",    exact: true },
   { href: "/admin/users",   label: "👥 Users",        exact: false },
   { href: "/admin/capital", label: "💰 Capital",      exact: false },
+  { href: "/admin/quiz",    label: "🧠 Quiz Pool",    exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
