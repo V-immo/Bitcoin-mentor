@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RealtimeDashboard from "@/components/RealtimeDashboard";
 import { SCAN_ASSETS } from "@/lib/assets";
 import type { MentorSignal } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function TradePage() {
+function TradePageInner() {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
   const [signal, setSignal] = useState<MentorSignal | null>(null);
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const [showPicker, setShowPicker] = useState(false);
@@ -16,16 +18,20 @@ export default function TradePage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    const paramAsset = searchParams.get("asset");
     const stored = localStorage.getItem("bitcoin-mentor-selected-asset");
     const seenIntro = localStorage.getItem("btcmentor-trade-intro");
 
-    if (!stored) {
-      // Eerste bezoek: toon asset picker
+    // URL param heeft prioriteit (vanuit MarketOverview)
+    const asset = paramAsset ?? stored;
+
+    if (!asset) {
       setShowPicker(true);
     } else {
-      setSelectedAsset(stored);
+      if (paramAsset) localStorage.setItem("bitcoin-mentor-selected-asset", paramAsset);
+      setSelectedAsset(asset);
       if (!seenIntro) setShowIntro(true);
-      loadSignal(stored);
+      loadSignal(asset);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -146,5 +152,13 @@ export default function TradePage() {
       )}
       <RealtimeDashboard initialData={signal} initialAsset={selectedAsset ?? "BTCUSDT"} />
     </>
+  );
+}
+
+export default function TradePage() {
+  return (
+    <Suspense>
+      <TradePageInner />
+    </Suspense>
   );
 }

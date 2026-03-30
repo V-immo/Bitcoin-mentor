@@ -33,6 +33,13 @@ const translations = {
     group_crypto: "Crypto",
     group_stocks: "Aandelen",
     group_commodities: "Grondstoffen",
+    market_overview_title: "Marktoverzicht",
+    market_overview_all: "Alles",
+    market_overview_price: "Prijs",
+    market_overview_change: "24u %",
+    market_overview_trade: "Trade",
+    market_overview_loading: "Prijzen laden…",
+    market_overview_error: "Kon prijzen niet laden",
 
     // === TIMEFRAMES ===
     tf_1m_desc: "Scalpen — ultrasnel",
@@ -1011,6 +1018,13 @@ const translations = {
     group_crypto: "Crypto",
     group_stocks: "Stocks",
     group_commodities: "Commodities",
+    market_overview_title: "Market overview",
+    market_overview_all: "All",
+    market_overview_price: "Price",
+    market_overview_change: "24h %",
+    market_overview_trade: "Trade",
+    market_overview_loading: "Loading prices…",
+    market_overview_error: "Could not load prices",
 
     // === TIMEFRAMES ===
     tf_1m_desc: "Scalp — ultra fast",
