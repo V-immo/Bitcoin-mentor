@@ -2,10 +2,6 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { generateAndSaveQuestions, LEVEL_TOPICS, LEVEL_TOPICS_EN } from "@/app/api/quiz/route";
 
-function isAdmin(session: Awaited<ReturnType<typeof auth>>) {
-  return (session?.user as { role?: string })?.role === "admin";
-}
-
 function pickRandomTopics(topics: string[], count: number): string[] {
   return [...topics].sort(() => Math.random() - 0.5).slice(0, count);
 }
@@ -13,7 +9,7 @@ function pickRandomTopics(topics: string[], count: number): string[] {
 // POST — genereer AI-vragen voor een level en sla op in pool
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!isAdmin(session)) return Response.json({ error: "Geen toegang" }, { status: 403 });
+  if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
 
   const body = await request.json().catch(() => ({}));
   const level: number = parseInt(body.level ?? "1");

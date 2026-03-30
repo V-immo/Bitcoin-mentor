@@ -2,10 +2,6 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 
-function isAdmin(session: Awaited<ReturnType<typeof auth>>) {
-  return (session?.user as { role?: string })?.role === "admin";
-}
-
 type QuizPoolRow = {
   id: number;
   level: number;
@@ -19,7 +15,7 @@ type QuizPoolRow = {
 // GET — lijst vragen met optionele filters
 export async function GET(request: NextRequest) {
   const session = await auth();
-  if (!isAdmin(session)) return Response.json({ error: "Geen toegang" }, { status: 403 });
+  if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
 
   const { searchParams } = request.nextUrl;
   const level = searchParams.get("level");
@@ -53,7 +49,7 @@ export async function GET(request: NextRequest) {
 // POST — handmatig vraag toevoegen
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!isAdmin(session)) return Response.json({ error: "Geen toegang" }, { status: 403 });
+  if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
 
   const body = await request.json().catch(() => ({}));
   const { level, lang, topic, question, context, options, correct, explanation } = body;
@@ -84,7 +80,7 @@ export async function POST(request: NextRequest) {
 // DELETE — verwijder vraag op ID
 export async function DELETE(request: NextRequest) {
   const session = await auth();
-  if (!isAdmin(session)) return Response.json({ error: "Geen toegang" }, { status: 403 });
+  if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
 
   const { searchParams } = request.nextUrl;
   const id = searchParams.get("id");
