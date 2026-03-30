@@ -868,8 +868,8 @@ const translations = {
     quiz_chat_error: "Fout bij verbinden met Marcus.",
 
     // === TRADE PARTNER ===
-    partner_label: "Trading Partner",
-    partner_desc: "Je virtuele tradingpartner analyseert het signaal en vertelt je of het slim is om nu in te stappen — inclusief risico, doel en uitleg. Klik op \"Open deze trade\" om het automatisch in je Paper Trading te zetten.",
+    partner_label: "Marcus",
+    partner_desc: "Marcus analyseert het signaal en vertelt je of het slim is om nu in te stappen — inclusief risico, doel en uitleg. Klik op \"Open deze trade\" om het automatisch in je Paper Trading te zetten.",
     partner_waiting: "Wacht op signaal…",
     partner_loading: "Briefing laden…",
     partner_long: "Ik ga long op",
@@ -1853,8 +1853,8 @@ const translations = {
     quiz_chat_error: "Error connecting to Marcus.",
 
     // === TRADE PARTNER ===
-    partner_label: "Trading Partner",
-    partner_desc: "Your virtual trading partner analyzes the signal and tells you whether it's smart to enter now — including risk, target and explanation. Click \"Open this trade\" to automatically add it to your Paper Trading.",
+    partner_label: "Marcus",
+    partner_desc: "Marcus analyzes the signal and tells you whether it's smart to enter now — including risk, target and explanation. Click \"Open this trade\" to automatically add it to your Paper Trading.",
     partner_waiting: "Waiting for signal…",
     partner_loading: "Loading briefing…",
     partner_long: "Going long on",

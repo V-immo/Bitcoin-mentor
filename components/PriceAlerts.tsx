@@ -110,12 +110,14 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
 
   async function deleteAlert(id: number) {
     try {
-      await fetch("/api/me/alerts", {
+      const res = await fetch("/api/me/alerts", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setAlerts(prev => prev.filter(a => a.id !== id));
+      if (res.ok) {
+        await loadAlerts();
+      }
     } catch {
       // ignore
     }
