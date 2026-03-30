@@ -179,8 +179,73 @@ export default function ProfielPage() {
         </div>
       </div>
 
+      {!loading && (
+        <>
+          {/* ── Voortgang naar zelfstandig traden ── */}
+          <div className="card" style={{ marginBottom: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>🎯 Voortgang naar zelfstandig traden</div>
+              <div style={{ fontSize: 12, color: "var(--primary)", fontWeight: 700 }}>
+                {Math.min(100, Math.round(
+                  ((quiz?.level ?? 1) / 5 * 40) +
+                  (Math.min(closedTrades.length, 20) / 20 * 30) +
+                  (Math.min((quiz?.streak ?? 0), 7) / 7 * 30)
+                ))}%
+              </div>
+            </div>
+            <div style={{ height: 10, background: "var(--surface-2)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{
+                height: "100%",
+                width: `${Math.min(100, Math.round(
+                  ((quiz?.level ?? 1) / 5 * 40) +
+                  (Math.min(closedTrades.length, 20) / 20 * 30) +
+                  (Math.min((quiz?.streak ?? 0), 7) / 7 * 30)
+                ))}%`,
+                background: "linear-gradient(90deg, #e91e63, #ff6090)",
+                borderRadius: 999,
+                transition: "width 0.6s",
+              }} />
+            </div>
+            <div style={{ display: "flex", gap: 16, marginTop: 10, fontSize: 11, color: "var(--text-secondary)", flexWrap: "wrap" }}>
+              <span>📚 Kennis: niveau {quiz?.level ?? 1}/5</span>
+              <span>📊 Trades: {Math.min(closedTrades.length, 20)}/20</span>
+              <span>🔥 Streak: {Math.min(quiz?.streak ?? 0, 7)}/7 dagen</span>
+            </div>
+          </div>
+
+          {/* ── Badges ── */}
+          <div className="card" style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 14 }}>🏅 Badges</div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {[
+                { icon: "🎯", label: "Eerste trade",    earned: closedTrades.length >= 1 },
+                { icon: "📈", label: "10 trades",        earned: closedTrades.length >= 10 },
+                { icon: "💰", label: "Eerste winst",     earned: closedTrades.some(t => (t.pnl ?? 0) > 0) },
+                { icon: "🧠", label: "Level 2",          earned: (quiz?.level ?? 1) >= 2 },
+                { icon: "🔥", label: "7 dagen streak",   earned: (quiz?.streak ?? 0) >= 7 },
+                { icon: "🏆", label: "Winrate 60%+",     earned: closedTrades.length >= 5 && winRate >= 60 },
+                { icon: "⚡", label: "20 trades",        earned: closedTrades.length >= 20 },
+                { icon: "🎓", label: "Level 3",          earned: (quiz?.level ?? 1) >= 3 },
+              ].map(badge => (
+                <div key={badge.label} style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                  padding: "10px 14px", borderRadius: 10,
+                  background: badge.earned ? "rgba(233,30,99,0.1)" : "var(--surface-2)",
+                  border: `1px solid ${badge.earned ? "rgba(233,30,99,0.3)" : "var(--border)"}`,
+                  opacity: badge.earned ? 1 : 0.4,
+                  minWidth: 72,
+                }}>
+                  <span style={{ fontSize: 22 }}>{badge.icon}</span>
+                  <span style={{ fontSize: 10, color: badge.earned ? "var(--text)" : "var(--text-secondary)", textAlign: "center", lineHeight: 1.3 }}>{badge.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       {loading ? (
-        <div style={{ color: "#bf7a99", padding: "24px 0" }}>{t("profiel_loading")}</div>
+        <div style={{ color: "var(--text-secondary)", padding: "24px 0" }}>{t("profiel_loading")}</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
