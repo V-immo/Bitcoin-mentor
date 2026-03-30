@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const LINKS = [
-  { href: "/",             key: "nav_link_scanner",  icon: "⚡" },
+  { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
   { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
   { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
   { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
@@ -43,10 +43,10 @@ export default function Nav() {
   return (
     <>
       <nav className="app-nav">
-        <div className="app-nav-brand">
+        <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
           <span className="app-nav-logo">₿</span>
           <span className="app-nav-name">Bitcoin Mentor</span>
-        </div>
+        </Link>
 
         {/* Desktop links */}
         <div className="app-nav-links desktop-nav-links">

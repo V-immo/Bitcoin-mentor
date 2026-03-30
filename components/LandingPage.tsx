@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function LandingPage() {
+export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }) {
   return (
     <div className="landing-wrap">
 
@@ -10,19 +10,27 @@ export default function LandingPage() {
           <div className="landing-badge">🚀 Gratis starten — geen creditcard nodig</div>
           <h1 className="landing-title">
             Leer traden met<br />
-            <span className="landing-title-accent">je eigen AI-mentor</span>
+            <span className="landing-title-accent">Marcus, jouw mentor</span>
           </h1>
           <p className="landing-subtitle">
-            Marcus begeleidt je stap voor stap van beginner naar zelfstandige trader.
-            Live marktdata, paper trading, dagelijkse coaching — alles op één plek.
+            Marcus kent jouw niveau, jouw trades en jouw fouten.
+            Hij coacht je elke dag — van je eerste trade tot je eigen strategie.
           </p>
           <div className="landing-cta-row">
-            <Link href="/auth/register" className="landing-btn-primary">
-              Begin gratis →
-            </Link>
-            <Link href="/auth/login" className="landing-btn-ghost">
-              Inloggen
-            </Link>
+            {loggedIn ? (
+              <Link href="/dashboard" className="landing-btn-primary">
+                Naar dashboard →
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/register" className="landing-btn-primary">
+                  Begin gratis →
+                </Link>
+                <Link href="/auth/login" className="landing-btn-ghost">
+                  Inloggen
+                </Link>
+              </>
+            )}
           </div>
           <div className="landing-social-proof">
             <span>⭐⭐⭐⭐⭐</span>
@@ -71,10 +79,10 @@ export default function LandingPage() {
       <section className="landing-usps">
         <div className="landing-usp-card">
           <div className="landing-usp-icon">🤖</div>
-          <h3 className="landing-usp-title">Marcus — jouw AI-mentor</h3>
+          <h3 className="landing-usp-title">Marcus — jouw mentor</h3>
           <p className="landing-usp-text">
-            Geen generieke chatbot. Marcus kent jouw niveau, jouw trades en jouw zwakke punten.
-            Hij geeft je elke dag een concrete opdracht.
+            Geen chatbot. Marcus kent jouw niveau, jouw trades en jouw zwakke punten.
+            Hij geeft je elke dag één concrete opdracht — niet meer, niet minder.
           </p>
         </div>
         <div className="landing-usp-card">
@@ -137,9 +145,15 @@ export default function LandingPage() {
       <section className="landing-final-cta">
         <h2>Klaar om te beginnen?</h2>
         <p>Gratis, geen verplichtingen. Marcus staat voor je klaar.</p>
-        <Link href="/auth/register" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
-          Begin gratis →
-        </Link>
+        {loggedIn ? (
+          <Link href="/dashboard" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
+            Naar dashboard →
+          </Link>
+        ) : (
+          <Link href="/auth/register" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
+            Begin gratis →
+          </Link>
+        )}
       </section>
 
     </div>
