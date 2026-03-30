@@ -15,6 +15,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import NewsPanel from "./NewsPanel";
 import Leaderboard from "./Leaderboard";
 import TestnetPanel from "./TestnetPanel";
+import PriceAlerts from "./PriceAlerts";
 import AITradeCoach from "./AITradeCoach";
 import LiveSimpleMode from "./LiveSimpleMode";
 
@@ -98,7 +99,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -139,6 +140,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
     { key: "testnet",     label: "Testnet",              icon: "🔬" },
+    { key: "alerts",      label: "Alerts",               icon: "🔔" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
@@ -784,6 +786,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
             {bottomTab === "leaderboard" && <Leaderboard />}
             {bottomTab === "testnet" && <TestnetPanel currentPrice={chartPrice} asset={asset} />}
+            {bottomTab === "alerts" && <PriceAlerts currentAsset={asset} currentPrice={chartPrice} />}
           </div>
         </div>
 
