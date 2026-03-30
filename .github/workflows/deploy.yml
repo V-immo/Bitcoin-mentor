@@ -27,5 +27,4 @@ jobs:
             node db/migrate-alerts.js || true
             node db/ensure-admin.js || true
             node db/migrate-trading-knowledge.js || true
-            npm run build
-            pm2 restart bitcoin-mentor
+            npm run build && pm2 restart bitcoin-mentor
