@@ -12,6 +12,7 @@ export default auth((req) => {
 
   // Publieke paden — geen login vereist
   const isPublic =
+    pathname === "/" ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/api/auth") ||
     pathname === "/api/alerts/check" ||
