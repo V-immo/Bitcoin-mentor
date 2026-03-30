@@ -19,6 +19,7 @@ const translations = {
     nav_checklist: "Checklist",
     nav_news: "Nieuws",
     nav_ranking: "Ranking",
+    nav_alerts: "Alerts",
     nav_link_scanner: "Scanner",
     nav_link_trade: "Traden",
     nav_link_learn: "Leren",
@@ -195,6 +196,23 @@ const translations = {
     settings_push_disable: "Uitschakelen",
     settings_push_enable: "🔔 Notificaties inschakelen",
     settings_push_busy: "Bezig…",
+
+    // === PRICE ALERTS ===
+    alert_title: "Prijsalerts",
+    alert_subtitle: "E-mail als een asset jouw prijs raakt",
+    alert_asset: "Asset",
+    alert_condition: "Wanneer",
+    alert_below: "onder",
+    alert_above: "boven",
+    alert_target_price: "Prijs",
+    alert_email: "Stuur e-mail naar",
+    alert_add_btn: "Alert instellen",
+    alert_active_title: "Actieve alerts",
+    alert_empty: "Nog geen alerts. Stel er een in hierboven.",
+    alert_saved: "✅ Alert opgeslagen!",
+    alert_save_error: "Opslaan mislukt. Probeer opnieuw.",
+    alert_invalid_price: "Voer een geldige prijs in.",
+    alert_invalid_email: "Voer een geldig e-mailadres in.",
 
     // === CHART ===
     chart_drag_hint: "Sleep ← → om terug te kijken",
@@ -978,6 +996,7 @@ const translations = {
     nav_checklist: "Checklist",
     nav_news: "News",
     nav_ranking: "Ranking",
+    nav_alerts: "Alerts",
     nav_link_scanner: "Scanner",
     nav_link_trade: "Trade",
     nav_link_learn: "Learn",
@@ -1154,6 +1173,23 @@ const translations = {
     settings_push_disable: "Disable",
     settings_push_enable: "🔔 Enable notifications",
     settings_push_busy: "Busy…",
+
+    // === PRICE ALERTS ===
+    alert_title: "Price alerts",
+    alert_subtitle: "Email when an asset hits your price",
+    alert_asset: "Asset",
+    alert_condition: "When",
+    alert_below: "below",
+    alert_above: "above",
+    alert_target_price: "Price",
+    alert_email: "Send email to",
+    alert_add_btn: "Set alert",
+    alert_active_title: "Active alerts",
+    alert_empty: "No alerts yet. Set one above.",
+    alert_saved: "✅ Alert saved!",
+    alert_save_error: "Save failed. Please try again.",
+    alert_invalid_price: "Enter a valid price.",
+    alert_invalid_email: "Enter a valid email address.",
 
     // === CHART ===
     chart_drag_hint: "Drag ← → to look back",

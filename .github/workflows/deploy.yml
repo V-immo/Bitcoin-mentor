@@ -24,6 +24,7 @@ jobs:
             node db/migrate-bitvavo.js || true
             node db/migrate-push.js || true
             node db/migrate-marcus-memory.js || true
+            node db/migrate-alerts.js || true
             node db/ensure-admin.js || true
             node db/migrate-trading-knowledge.js || true
             npm run build

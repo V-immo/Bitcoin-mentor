@@ -1,0 +1,18 @@
+name: Prijsalerts controleren
+
+on:
+  schedule:
+    # Elke 5 minuten controleren
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}   # ook handmatig te starten
+
+jobs:
+  check-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger alert check endpoint
+        run: |
+          curl -sf "https://bitcoinmentor.be/api/alerts/check?secret=${{ secrets.ALERT_CHECK_SECRET }}" \
+            -o /dev/null \
+            -w "Status: %{http_code}\n" \
+            || echo "Alert check mislukt of geen actieve alerts"
