@@ -36,37 +36,14 @@ export default function MarketOverview() {
   async function loadPrices() {
     setError(false);
     try {
-      // Crypto: Binance REST ticker (24h stats)
-      const binanceAssets = SCAN_ASSETS.filter(a => a.source === "binance");
-      const finnhubAssets = SCAN_ASSETS.filter(a => a.source === "finnhub");
-
+      // Gebruik server-side /api/market-scan (voorkomt CORS-problemen met Binance)
+      const res = await fetch("/api/market-scan");
+      if (!res.ok) throw new Error("scan failed");
+      const scan: { symbol: string; price: number; change24h: number }[] = await res.json();
       const map: PriceMap = {};
-
-      // Binance: één call voor alle 24h stats
-      const binanceRes = await fetch(
-        "https://api.binance.com/api/v3/ticker/24hr?symbols=" +
-        encodeURIComponent(JSON.stringify(binanceAssets.map(a => a.symbol)))
-      );
-      if (binanceRes.ok) {
-        const tickers: { symbol: string; lastPrice: string; priceChangePercent: string }[] = await binanceRes.json();
-        for (const t of tickers) {
-          map[t.symbol] = { price: parseFloat(t.lastPrice), change24h: parseFloat(t.priceChangePercent) };
-        }
+      for (const item of scan) {
+        map[item.symbol] = { price: item.price, change24h: item.change24h };
       }
-
-      // Finnhub: parallel calls via onze eigen /api/price route
-      await Promise.all(
-        finnhubAssets.map(async (a) => {
-          try {
-            const r = await fetch(`/api/price?symbol=${encodeURIComponent(a.symbol)}`);
-            if (r.ok) {
-              const d: PriceData = await r.json();
-              map[a.symbol] = d;
-            }
-          } catch { /* skip */ }
-        })
-      );
-
       setPrices(map);
     } catch {
       setError(true);
