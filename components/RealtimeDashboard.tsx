@@ -133,9 +133,9 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "15m" as Interval, label: t("mtf_15m"), hint: t("mtf_hint_entry") },
   ];
   const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
-  const BOTTOM_TABS: { key: BottomTab; label: string; icon: string }[] = [
-    { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖" },
-    { key: "paper",       label: t("nav_paper_trading"), icon: "💰" },
+  const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
+    { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖", mobileOnly: true },
+    { key: "paper",       label: "Handelen",             icon: "📊" },
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
@@ -145,7 +145,15 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
   const [asset, setAsset] = useState<string>(initialAsset);
   const [signal, setSignal] = useState<MentorSignal>(initialData);
-  const [bottomTab, setBottomTab] = useState<BottomTab>("chat");
+  const [bottomTab, setBottomTab] = useState<BottomTab>("paper");
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1200px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
   const [signalAsset, setSignalAsset] = useState<string>(initialAsset);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState("");
@@ -724,7 +732,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
           {/* Bottom tab bar */}
           <div className="bottom-tab-bar">
-            {BOTTOM_TABS.map(tab => (
+            {BOTTOM_TABS.filter(tab => !tab.mobileOnly || !isDesktop).map(tab => (
               <button
                 key={tab.key}
                 className={`bottom-tab-btn${bottomTab === tab.key ? " active" : ""}`}
@@ -740,18 +748,10 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           <div className="bottom-tab-content">
             {bottomTab === "paper" && (
               <>
-                <div className="paper-step-label">
-                  <span className="paper-step-num">{t("step1_label")}</span>
-                  <span className="paper-step-title">{t("step1_title")}</span>
-                </div>
                 <TradePartnerPanel
                   signal={signal} currentPrice={chartPrice} asset={asset}
                   signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
                 />
-                <div className="paper-step-label" style={{ marginTop: 8 }}>
-                  <span className="paper-step-num">{t("step2_label")}</span>
-                  <span className="paper-step-title">{t("step2_title")}</span>
-                </div>
                 <TerminalPaperPanel
                   currentPrice={chartPrice} status={signal.status} action={signal.action}
                   entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
