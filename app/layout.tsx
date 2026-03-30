@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
 import SessionWrapper from "@/components/SessionWrapper";
@@ -12,6 +12,8 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-inter",
+  preload: false,
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -24,6 +26,9 @@ export const metadata: Metadata = {
     title: "BTC Mentor",
   },
   formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#0d0610" },
     { media: "(prefers-color-scheme: light)", color: "#e91e63" },
