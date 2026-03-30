@@ -360,6 +360,30 @@ export default function TerminalPaperPanel({
         setTpInput("");
     }
 
+    function exportCSV() {
+        const header = ["Datum", "Tijd", "Side", "Asset", "Prijs (USD)", "Bedrag (EUR)", "BTC", "P&L (EUR)", "Type", "Notitie"];
+        const rows = state.trades.map(t => [
+            t.time.split(" ")[0] ?? t.time,
+            t.time.split(" ")[1] ?? "",
+            t.side.toUpperCase(),
+            t.asset ?? asset,
+            t.price.toFixed(2),
+            t.amountEur.toFixed(2),
+            t.btcAmount.toFixed(8),
+            typeof t.pnl === "number" ? t.pnl.toFixed(2) : "",
+            t.orderType ?? "market",
+            `"${(t.note ?? "").replace(/"/g, '""')}"`,
+        ]);
+        const csv = [header, ...rows].map(r => r.join(";")).join("\n");
+        const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `bitcoin-mentor-trades-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     function executeBuy(amount: number, execP: number, type: OrderType = "market") {
         const btcAmount = amount / execP;
         const sl = Number(slInput) > 0 ? Number(slInput) : undefined;
@@ -1238,12 +1262,23 @@ export default function TerminalPaperPanel({
 
             {/* === TRADE HISTORY === */}
             <details className="terminal-history" style={{ marginTop: 12 }}>
-                <summary>
-                    {t("paper_history_title")}
+                <summary style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span>
+                        {t("paper_history_title")}
+                        {state.trades.length > 0 && (
+                            <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>
+                                ({state.trades.length} {t("paper_history_trades_suffix")}
+                            </span>
+                        )}
+                    </span>
                     {state.trades.length > 0 && (
-                        <span style={{ marginLeft: 8, fontSize: 11, color: "var(--text-secondary)" }}>
-                            ({state.trades.length} {t("paper_history_trades_suffix")}
-                        </span>
+                        <button
+                            className="terminal-btn terminal-btn-muted"
+                            style={{ fontSize: 11, padding: "2px 8px", marginLeft: 8 }}
+                            onClick={e => { e.preventDefault(); exportCSV(); }}
+                        >
+                            {t("paper_history_export")}
+                        </button>
                     )}
                 </summary>
                 <div className="paper-history-scroll">
