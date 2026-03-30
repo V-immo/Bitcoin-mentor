@@ -109,18 +109,19 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
   }
 
   async function deleteAlert(id: number) {
+    // Optimistisch verwijderen uit UI
+    setAlerts(prev => prev.filter(a => a.id !== id));
     try {
-      const res = await fetch("/api/me/alerts", {
+      await fetch("/api/me/alerts", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      if (res.ok) {
-        await loadAlerts();
-      }
     } catch {
-      // ignore
+      // ignore — UI is al bijgewerkt
     }
+    // Altijd herladen van server
+    await loadAlerts();
   }
 
   const assetDef = SCAN_ASSETS.find(a => a.symbol === formAsset);
