@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const LINKS = [
   { href: "/",             key: "nav_link_scanner",  icon: "⚡" },
@@ -20,6 +21,7 @@ export default function Nav() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -69,6 +71,13 @@ export default function Nav() {
             <span className="app-nav-username">{session.user.name}</span>
             {isAdmin && <span className="app-nav-badge-admin">Admin</span>}
             <button
+              onClick={toggleTheme}
+              title={theme === "dark" ? "Schakel naar licht" : "Schakel naar donker"}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", lineHeight: 1 }}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
+            <button
               className="app-nav-logout"
               onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
             >
@@ -96,6 +105,13 @@ export default function Nav() {
             <div className="nav-mobile-header">
               <span className="app-nav-logo" style={{ fontSize: 24 }}>₿</span>
               <span style={{ fontSize: 17, fontWeight: 700, color: "var(--text)" }}>Bitcoin Mentor</span>
+              <button
+                onClick={toggleTheme}
+                title={theme === "dark" ? "Licht" : "Donker"}
+                style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, padding: "0 4px", lineHeight: 1 }}
+              >
+                {theme === "dark" ? "☀️" : "🌙"}
+              </button>
               <button className="nav-mobile-close" onClick={() => setMenuOpen(false)}>✕</button>
             </div>
 

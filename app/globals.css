@@ -19,6 +19,16 @@
   --radius-pill: 999px;
 }
 
+[data-theme="light"] {
+  --bg: #f7f2f7;
+  --surface: #ffffff;
+  --surface-2: #ede5f0;
+  --text: #1a0f18;
+  --text-secondary: #7a4d6e;
+  --border: rgba(233, 30, 99, 0.18);
+  --border-hover: rgba(233, 30, 99, 0.42);
+}
+
 html,
 body {
   margin: 0;

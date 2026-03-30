@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import LanguagePicker from "@/components/LanguagePicker";
 
 const inter = Inter({
@@ -39,6 +40,9 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <script dangerouslySetInnerHTML={{ __html: `
+          (function(){var t=localStorage.getItem('app_theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');})();
+        `}} />
+        <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
               navigator.serviceWorker.register('/sw.js').catch(function() {});
@@ -48,11 +52,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <SessionWrapper>
-          <LanguageProvider>
-            <LanguagePicker />
-            <Nav />
-            <div className="app-content">{children}</div>
-          </LanguageProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <LanguagePicker />
+              <Nav />
+              <div className="app-content">{children}</div>
+            </LanguageProvider>
+          </ThemeProvider>
         </SessionWrapper>
       </body>
     </html>
