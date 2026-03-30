@@ -28,4 +28,5 @@ jobs:
             node db/ensure-admin.js || true
             node db/migrate-trading-knowledge.js || true
             node db/migrate-testnet.js || true
+            node db/migrate-journal.js || true
             rm -f .next/lock && npm run build && pm2 restart bitcoin-mentor --update-env

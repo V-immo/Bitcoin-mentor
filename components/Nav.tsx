@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
   { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
   { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
+  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
   { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
   { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
   { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
