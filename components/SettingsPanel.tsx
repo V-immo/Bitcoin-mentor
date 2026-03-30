@@ -47,6 +47,14 @@ export default function SettingsPanel() {
   const [bitvavoChecking, setBitvavoChecking] = useState(false);
   const [bitvavoSaving, setBitvavoSaving] = useState(false);
 
+  // Binance Testnet
+  const [testnetKey, setTestnetKey]         = useState("");
+  const [testnetSecret, setTestnetSecret]   = useState("");
+  const [testnetConnected, setTestnetConnected] = useState<boolean | null>(null);
+  const [testnetSaving, setTestnetSaving]   = useState(false);
+  const [testnetSaved, setTestnetSaved]     = useState(false);
+  const [testnetError, setTestnetError]     = useState<string | null>(null);
+
   const push = usePushNotifications();
 
   // Wachtwoord wijzigen
@@ -65,6 +73,12 @@ export default function SettingsPanel() {
       })
       .catch(() => {/* gebruik defaults */})
       .finally(() => setLoading(false));
+
+    // Check Binance Testnet status
+    fetch("/api/testnet/balance")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => setTestnetConnected(!!data?.connected))
+      .catch(() => setTestnetConnected(false));
 
     // Check of Bitvavo al gekoppeld is
     fetch("/api/bitvavo/balance")
@@ -289,6 +303,75 @@ export default function SettingsPanel() {
               </button>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Binance Testnet */}
+      <section className="settings-card">
+        <div className="settings-card-title">🔬 Binance Testnet</div>
+        <div className="settings-card-desc">
+          Oefenen met echte orders op Binance Testnet — gratis nep-geld, geen risico.{" "}
+          <a href="https://testnet.binance.vision" target="_blank" rel="noopener noreferrer" style={{ color: "#e91e63" }}>
+            Haal je keys op bij testnet.binance.vision →
+          </a>
+        </div>
+
+        {testnetConnected && (
+          <div style={{ marginTop: 12, padding: "8px 14px", background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, color: "#86efac", fontSize: 13, fontWeight: 600 }}>
+            ✅ Binance Testnet gekoppeld
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Key</label>
+            <input
+              type="text"
+              value={testnetKey}
+              onChange={e => setTestnetKey(e.target.value)}
+              placeholder={testnetConnected ? "••••••••••••••••" : "Plak je Testnet API Key"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Secret</label>
+            <input
+              type="password"
+              value={testnetSecret}
+              onChange={e => setTestnetSecret(e.target.value)}
+              placeholder={testnetConnected ? "••••••••••••••••" : "Plak je Testnet API Secret"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          {testnetError && (
+            <div style={{ color: "#ef4444", fontSize: 13 }}>❌ {testnetError}</div>
+          )}
+          <button
+            className="terminal-btn terminal-btn-primary"
+            disabled={testnetSaving || !testnetKey || !testnetSecret}
+            style={{ alignSelf: "flex-start" }}
+            onClick={async () => {
+              setTestnetSaving(true); setTestnetError(null);
+              await fetch("/api/me/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ testnetKey, testnetSecret }),
+              });
+              const res = await fetch("/api/testnet/balance");
+              const data = await res.json();
+              if (data?.connected) {
+                setTestnetConnected(true);
+                setTestnetSaved(true);
+                setTestnetKey(""); setTestnetSecret("");
+                setTimeout(() => setTestnetSaved(false), 3000);
+              } else {
+                setTestnetError(data?.error ?? "Verbinding mislukt — controleer je keys");
+              }
+              setTestnetSaving(false);
+            }}
+          >
+            {testnetSaving ? "Testen…" : testnetSaved ? "✅ Gekoppeld!" : "Opslaan & testen"}
+          </button>
         </div>
       </section>
 

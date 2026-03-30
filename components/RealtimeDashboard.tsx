@@ -14,6 +14,7 @@ import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/li
 import { useLanguage } from "@/contexts/LanguageContext";
 import NewsPanel from "./NewsPanel";
 import Leaderboard from "./Leaderboard";
+import TestnetPanel from "./TestnetPanel";
 import AITradeCoach from "./AITradeCoach";
 import LiveSimpleMode from "./LiveSimpleMode";
 
@@ -97,7 +98,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -137,6 +138,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
+    { key: "testnet",     label: "Testnet",              icon: "🔬" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
@@ -781,6 +783,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             )}
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
             {bottomTab === "leaderboard" && <Leaderboard />}
+            {bottomTab === "testnet" && <TestnetPanel currentPrice={chartPrice} asset={asset} />}
           </div>
         </div>
 

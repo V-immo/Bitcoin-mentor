@@ -88,8 +88,23 @@ export async function PUT(request: NextRequest) {
       );
       return Response.json({ ok: true });
     } catch {
-      // Kolommen bestaan nog niet — migratie nog niet uitgevoerd
       return Response.json({ error: "Bitvavo kolommen ontbreken, voer db/migrate-bitvavo.js uit" }, { status: 500 });
+    }
+  }
+
+  // Binance Testnet sleutels opslaan indien meegestuurd
+  if (body.testnetKey !== undefined && body.testnetSecret !== undefined) {
+    try {
+      db.prepare(`
+        UPDATE settings SET
+          binance_testnet_key = ?,
+          binance_testnet_secret = ?,
+          updated_at = datetime('now')
+        WHERE user_id = ?
+      `).run(body.testnetKey ?? "", body.testnetSecret ?? "", userId);
+      return Response.json({ ok: true });
+    } catch {
+      return Response.json({ error: "Testnet kolommen ontbreken, voer db/migrate-testnet.js uit" }, { status: 500 });
     }
   }
 
