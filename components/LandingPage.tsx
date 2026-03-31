@@ -48,7 +48,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
           </div>
           <div className="landing-preview-content">
             <div className="landing-mock-header">
-              <span className="landing-mock-asset">₿ BTC/USDT</span>
+              <span className="landing-mock-asset">BTC/USDT</span>
               <span className="landing-mock-price">$97,420</span>
               <span className="landing-mock-badge green">Goed moment</span>
             </div>

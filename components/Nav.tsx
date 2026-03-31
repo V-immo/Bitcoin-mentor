@@ -45,7 +45,7 @@ export default function Nav() {
     <>
       <nav className="app-nav">
         <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
-          <span className="app-nav-logo">₿</span>
+          <span className="app-nav-logo" style={{ fontFamily: "Arial, sans-serif" }}>₿</span>
           <span className="app-nav-name">Bitcoin Mentor</span>
         </Link>
 
