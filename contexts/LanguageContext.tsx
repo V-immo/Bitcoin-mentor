@@ -20,11 +20,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("nl");
 
   // Laad taal uit localStorage bij mount (client-only)
+  // Standaard altijd Nederlands — gebruiker kan dit wijzigen via Instellingen
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem("app_lang") as Lang | null;
     if (stored === "nl" || stored === "en") {
       setLangState(stored);
+    } else {
+      // Geen voorkeur opgeslagen → forceer Nederlands en sla op
+      localStorage.setItem("app_lang", "nl");
     }
   }, []);
 
