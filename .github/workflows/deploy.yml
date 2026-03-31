@@ -25,14 +25,9 @@ jobs:
             set -e
             cd /var/www/bitcoin-mentor
 
-            # Wacht max 10 min op eventuele lopende build
-            WAITED=0
-            while [ -f /tmp/build.lock ] && [ $WAITED -lt 600 ]; do
-              echo "Wacht op lopende build... ($WAITED s)"
-              sleep 10
-              WAITED=$((WAITED + 10))
-            done
+            # Stap 1: verwijder stale lock + herstel PM2 als die gestopt is
             rm -f /tmp/build.lock
+            pm2 start bitcoin-mentor 2>/dev/null || pm2 restart bitcoin-mentor 2>/dev/null || true
 
             # Code updaten
             git fetch origin main

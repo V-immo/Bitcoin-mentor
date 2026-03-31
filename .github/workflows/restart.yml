@@ -1,0 +1,24 @@
+name: 🚨 Nood herstart PM2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Herstart PM2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 202.71.14.150
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 90s
+          script: |
+            rm -f /tmp/build.lock
+            cd /var/www/bitcoin-mentor
+            pm2 start bitcoin-mentor 2>/dev/null || pm2 restart bitcoin-mentor || true
+            pm2 save
+            pm2 status
+            echo "✅ Herstart klaar"
