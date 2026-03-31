@@ -30,4 +30,7 @@ jobs:
             node db/migrate-testnet.js || true
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
+            while [ -f /tmp/build.lock ]; do echo "Wacht op vorige build..."; sleep 5; done
+            touch /tmp/build.lock
             rm -rf .next && NODE_OPTIONS='--max-old-space-size=1400' npm run build && pm2 restart bitcoin-mentor --update-env
+            rm -f /tmp/build.lock
