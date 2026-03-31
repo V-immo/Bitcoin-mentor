@@ -3087,20 +3087,42 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   z-index: 2;
 }
 .resources-yt-open-btn {
-  margin-top: 8px;
+  margin-top: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: #e91e63;
   color: #fff;
   font-size: 12px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 6px;
   transition: background 0.15s;
+  text-decoration: none;
 }
-.resources-video-link:hover .resources-yt-open-btn {
+.resources-yt-open-btn:hover {
   background: #c2185b;
+}
+.resources-quiz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--card-hover);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.resources-quiz-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* Embed geblokkeerd — grote YouTube fallback */

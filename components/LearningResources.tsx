@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ResourceQuiz from "@/components/ResourceQuiz";
 
 type VideoResource = {
   id: string;
@@ -172,17 +173,19 @@ const LEVEL_COLORS: Record<number, string> = {
   5: "#ef4444",
 };
 
-function VideoCard({ v, watchLabel, lang }: {
+function VideoCard({ v, watchLabel, testLabel, lang, onQuiz }: {
   v: VideoResource;
   watchLabel: string;
+  testLabel: string;
   lang: string;
+  onQuiz: (topic: string, level: number) => void;
 }) {
   const ytUrl = `https://www.youtube.com/watch?v=${v.id}`;
   const title = lang === "en" ? v.titleEN : v.titleNL;
 
   return (
-    <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="resources-video-card resources-video-link">
-      <div className="resources-thumbnail">
+    <div className="resources-video-card">
+      <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="resources-video-link resources-thumbnail">
         <img
           src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
           alt={title}
@@ -197,7 +200,7 @@ function VideoCard({ v, watchLabel, lang }: {
         >
           L{v.level}
         </div>
-      </div>
+      </a>
       <div className="resources-video-info">
         <div className="resources-video-title">{title}</div>
         <div className="resources-video-meta">
@@ -208,15 +211,38 @@ function VideoCard({ v, watchLabel, lang }: {
             <span key={tag} className="resources-tag">{tag}</span>
           ))}
         </div>
-        <div className="resources-yt-open-btn">▶ {watchLabel}</div>
+        <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+          <a
+            href={ytUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resources-yt-open-btn"
+            style={{ flex: 1 }}
+          >
+            ▶ {watchLabel}
+          </a>
+          <button
+            onClick={() => onQuiz(v.topic, v.level)}
+            className="resources-quiz-btn"
+          >
+            🎓 {testLabel}
+          </button>
+        </div>
       </div>
-    </a>
+    </div>
   );
 }
 
 export default function LearningResources() {
   const { t, lang } = useLanguage();
   const [activeLevel, setActiveLevel] = useState<number | null>(null);
+  const [quizTopic, setQuizTopic] = useState<string | null>(null);
+  const [quizLevel, setQuizLevel] = useState<number>(1);
+
+  function openQuiz(topic: string, level: number) {
+    setQuizTopic(topic);
+    setQuizLevel(level);
+  }
 
   const filteredVideos = activeLevel
     ? VIDEOS.filter((v) => v.level === activeLevel)
@@ -230,6 +256,14 @@ export default function LearningResources() {
   };
 
   return (
+    <>
+    {quizTopic && (
+      <ResourceQuiz
+        topic={quizTopic}
+        level={quizLevel}
+        onClose={() => setQuizTopic(null)}
+      />
+    )}
     <div className="resources-wrap">
 
       <div className="resources-section">
@@ -264,6 +298,8 @@ export default function LearningResources() {
               v={v}
               lang={lang}
               watchLabel={t("resources_watch_youtube")}
+              testLabel={t("resources_test_yourself")}
+              onQuiz={openQuiz}
             />
           ))}
         </div>
@@ -299,5 +335,6 @@ export default function LearningResources() {
         </div>
       </div>
     </div>
+    </>
   );
 }

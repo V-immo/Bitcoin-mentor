@@ -370,6 +370,28 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "API key ontbreekt" }, { status: 500 });
   }
 
+  // Quick mode: kleine quiz over één specifiek topic (voor LearningResources)
+  const quick: boolean = body.quick === true;
+  const quickCount: number = quick ? Math.min(Math.max(1, body.count ?? 3), 10) : 20;
+  const todayTopicStr: string = body.todayTopic ?? "";
+
+  if (quick && todayTopicStr) {
+    ensureQuizTables();
+    const marketSnapshot = level <= 2 ? "" : await getMarketSnapshot();
+    try {
+      const questions = await generateAndSaveQuestions(level, [todayTopicStr], marketSnapshot, quickCount, lang);
+      return Response.json({
+        questions,
+        marketSnapshot,
+        generatedAt: new Date().toISOString(),
+        fromCache: false,
+      } satisfies QuizResponse);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Onbekende fout";
+      return Response.json({ error: `Quiz genereren mislukt: ${msg}` }, { status: 500 });
+    }
+  }
+
   const questionCount = 20;
 
   // Zorg dat tabellen bestaan
