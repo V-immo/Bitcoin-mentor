@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const EMOTIONS = [
   { value: 1, label: "😨", desc: "Angstig" },
@@ -50,8 +50,23 @@ export default function AgendaPage() {
   const [emotion, setEmotion] = useState(3);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [marcusAnalysis, setMarcusAnalysis] = useState<string | null>(null);
+  const [marcusLoading, setMarcusLoading] = useState(false);
+  const [marcusStats, setMarcusStats] = useState<{ totalTrades: number; totalWins: number; totalLosses: number; totalPnl: number; tradeDays: number } | null>(null);
+  const marcusFetched = useRef(false);
 
   const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+
+  async function fetchMarcusAnalysis() {
+    setMarcusLoading(true);
+    try {
+      const res = await fetch("/api/me/journal/patterns");
+      const data = await res.json();
+      setMarcusAnalysis(data.analysis ?? null);
+      setMarcusStats(data.stats ?? null);
+    } catch { setMarcusAnalysis("Kon Marcus niet bereiken. Probeer later opnieuw."); }
+    setMarcusLoading(false);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -220,6 +235,64 @@ export default function AgendaPage() {
 
         {/* Rechter kolom */}
         <div style={styles.rightCol}>
+
+          {/* Marcus analyse kaart */}
+          <div style={styles.marcusCard}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 20 }}>🧠</span>
+                <span style={styles.statsTitle}>Marcus analyseert</span>
+              </div>
+              <button
+                onClick={fetchMarcusAnalysis}
+                disabled={marcusLoading}
+                style={{
+                  background: "rgba(233,30,99,0.15)",
+                  border: "1px solid rgba(233,30,99,0.3)",
+                  color: "#e91e63",
+                  borderRadius: 8,
+                  padding: "5px 12px",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: marcusLoading ? "default" : "pointer",
+                  opacity: marcusLoading ? 0.6 : 1,
+                }}
+              >
+                {marcusLoading ? "Analyseren…" : marcusAnalysis ? "↻ Vernieuwen" : "Analyseer"}
+              </button>
+            </div>
+
+            {marcusStats && (
+              <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+                <span style={styles.marcusStat}>{marcusStats.tradeDays} handelsdagen</span>
+                <span style={styles.marcusStat}>{marcusStats.totalTrades} trades</span>
+                <span style={{ ...styles.marcusStat, color: marcusStats.totalPnl >= 0 ? "#22c55e" : "#ef4444" }}>
+                  {marcusStats.totalPnl >= 0 ? "+" : ""}€{marcusStats.totalPnl.toFixed(0)}
+                </span>
+              </div>
+            )}
+
+            {marcusLoading && (
+              <div style={{ color: "#e91e63", fontSize: 13, padding: "12px 0", textAlign: "center" }}>
+                <span style={{ display: "inline-block", animation: "pulse 1.5s ease-in-out infinite" }}>
+                  Marcus bestudeert je patronen…
+                </span>
+              </div>
+            )}
+
+            {!marcusLoading && marcusAnalysis && (
+              <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text-primary, #fce8f0)", whiteSpace: "pre-wrap" }}>
+                {marcusAnalysis}
+              </div>
+            )}
+
+            {!marcusLoading && !marcusAnalysis && (
+              <p style={{ color: "#64748b", fontSize: 13, margin: 0 }}>
+                Klik op &ldquo;Analyseer&rdquo; en Marcus bekijkt je trades, emoties en notities van de laatste 60 dagen.
+              </p>
+            )}
+          </div>
+
           {/* Maandoverzicht */}
           <div style={styles.statsCard}>
             <div style={styles.statsTitle}>📊 {MONTH_NAMES[month]}</div>
@@ -348,6 +421,8 @@ const styles: Record<string, React.CSSProperties> = {
   legendItem: { display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#64748b" },
   legendDot: { width: 10, height: 10, borderRadius: "50%", display: "inline-block" },
   rightCol: { display: "flex", flexDirection: "column", gap: 16 },
+  marcusCard: { background: "linear-gradient(135deg, rgba(233,30,99,0.08) 0%, var(--surface, #1f0d17) 60%)", border: "1px solid rgba(233,30,99,0.3)", borderRadius: 16, padding: 20 },
+  marcusStat: { fontSize: 12, color: "#94a3b8", background: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "2px 8px" },
   statsCard: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
   statsTitle: { fontWeight: 700, fontSize: 15, color: "var(--text-primary, #fce8f0)", marginBottom: 14 },
   statsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 },
