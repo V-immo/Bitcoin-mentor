@@ -24,10 +24,14 @@ export default function ResourceQuiz({
   const [score, setScore] = useState(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
     fetch("/api/quiz", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ quick: true, count: 3, todayTopic: topic, level, lang }),
+      signal: controller.signal,
     })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data) => {
@@ -38,7 +42,10 @@ export default function ResourceQuiz({
           setPhase("error");
         }
       })
-      .catch(() => setPhase("error"));
+      .catch(() => setPhase("error"))
+      .finally(() => clearTimeout(timeout));
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [topic, level, lang]);
 
   function selectAnswer(letter: string) {

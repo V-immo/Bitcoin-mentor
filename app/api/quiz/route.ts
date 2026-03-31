@@ -4,23 +4,35 @@ import { getCandles, calculateRsi } from "@/lib/market";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 
-// Rate limiting: max 10 quiz sessies per dag per user
+// Rate limiting: max 10 dagelijkse quiz sessies per dag per user
 const quizRateMap = new Map<string, { count: number; resetAt: number }>();
 const QUIZ_MAX = 10;
 
-function checkQuizRate(key: string): boolean {
+// Rate limiting: max 30 quick quizzes per dag per user (aparte teller)
+const quickQuizRateMap = new Map<string, { count: number; resetAt: number }>();
+const QUICK_QUIZ_MAX = 30;
+
+function checkRateLimit(map: Map<string, { count: number; resetAt: number }>, key: string, max: number): boolean {
   const now = Date.now();
   const tomorrow = new Date();
   tomorrow.setHours(24, 0, 0, 0);
   const resetAt = tomorrow.getTime();
-  const entry = quizRateMap.get(key);
+  const entry = map.get(key);
   if (!entry || now > entry.resetAt) {
-    quizRateMap.set(key, { count: 1, resetAt });
+    map.set(key, { count: 1, resetAt });
     return true;
   }
-  if (entry.count >= QUIZ_MAX) return false;
+  if (entry.count >= max) return false;
   entry.count++;
   return true;
+}
+
+function checkQuizRate(key: string): boolean {
+  return checkRateLimit(quizRateMap, key, QUIZ_MAX);
+}
+
+function checkQuickQuizRate(key: string): boolean {
+  return checkRateLimit(quickQuizRateMap, key, QUICK_QUIZ_MAX);
 }
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -339,13 +351,23 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
 export async function POST(request: NextRequest) {
   const session = await auth();
   const userId = parseInt((session?.user as { id?: string })?.id ?? "0") || null;
-
   const rateKey = userId ? `user:${userId}` : (request.headers.get("x-forwarded-for") ?? "anon");
-  if (!checkQuizRate(rateKey)) {
-    return Response.json({ error: "RATE_LIMIT" }, { status: 429 });
+
+  // Body eerst lezen zodat we quick-mode kunnen detecteren vóór rate limit check
+  const body = await request.json().catch(() => ({}));
+  const quick: boolean = body.quick === true;
+
+  // Rate limit: quick quizzes hebben eigen teller (30/dag), los van dagelijkse quiz (10/dag)
+  if (quick) {
+    if (!checkQuickQuizRate(rateKey)) {
+      return Response.json({ error: "RATE_LIMIT" }, { status: 429 });
+    }
+  } else {
+    if (!checkQuizRate(rateKey)) {
+      return Response.json({ error: "RATE_LIMIT" }, { status: 429 });
+    }
   }
 
-  const body = await request.json().catch(() => ({}));
   let level: number = body.level ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
   const todayTopic: string = body.todayTopic ?? "";
@@ -371,15 +393,16 @@ export async function POST(request: NextRequest) {
   }
 
   // Quick mode: kleine quiz over één specifiek topic (voor LearningResources)
-  const quick: boolean = body.quick === true;
-  const quickCount: number = quick ? Math.min(Math.max(1, body.count ?? 3), 10) : 20;
-  const todayTopicStr: string = body.todayTopic ?? "";
-
-  if (quick && todayTopicStr) {
+  if (quick) {
+    const quickCount: number = Math.min(Math.max(1, body.count ?? 3), 10);
+    const quickTopic: string = body.todayTopic ?? "";
+    if (!quickTopic) {
+      return Response.json({ error: "Geen topic opgegeven" }, { status: 400 });
+    }
     ensureQuizTables();
     const marketSnapshot = level <= 2 ? "" : await getMarketSnapshot();
     try {
-      const questions = await generateAndSaveQuestions(level, [todayTopicStr], marketSnapshot, quickCount, lang);
+      const questions = await generateAndSaveQuestions(level, [quickTopic], marketSnapshot, quickCount, lang);
       return Response.json({
         questions,
         marketSnapshot,

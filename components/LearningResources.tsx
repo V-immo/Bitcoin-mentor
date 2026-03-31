@@ -173,9 +173,8 @@ const LEVEL_COLORS: Record<number, string> = {
   5: "#ef4444",
 };
 
-function VideoCard({ v, watchLabel, testLabel, lang, onQuiz }: {
+function VideoCard({ v, testLabel, lang, onQuiz }: {
   v: VideoResource;
-  watchLabel: string;
   testLabel: string;
   lang: string;
   onQuiz: (topic: string, level: number) => void;
@@ -211,19 +210,10 @@ function VideoCard({ v, watchLabel, testLabel, lang, onQuiz }: {
             <span key={tag} className="resources-tag">{tag}</span>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
-          <a
-            href={ytUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="resources-yt-open-btn"
-            style={{ flex: 1 }}
-          >
-            ▶ {watchLabel}
-          </a>
+        <div style={{ marginTop: 8 }}>
           <button
             onClick={() => onQuiz(v.topic, v.level)}
-            className="resources-quiz-btn"
+            className="resources-quiz-btn resources-quiz-btn-full"
           >
             🎓 {testLabel}
           </button>
@@ -297,7 +287,6 @@ export default function LearningResources() {
               key={v.id}
               v={v}
               lang={lang}
-              watchLabel={t("resources_watch_youtube")}
               testLabel={t("resources_test_yourself")}
               onQuiz={openQuiz}
             />
