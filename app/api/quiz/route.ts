@@ -515,6 +515,14 @@ export async function POST(request: NextRequest) {
       } catch { /* ignore */ }
     }
 
+    // === BACKGROUND PRE-FILL ===
+    // Genereer direct 20 nieuwe vragen op de achtergrond voor de volgende sessie.
+    // Deze worden NIET als gezien gemarkeerd → volgende keer cache-hit (instant).
+    const bgTopics = pickRandomTopics(allTopics, Math.min(questionCount, allTopics.length));
+    getMarketSnapshot()
+      .then(snap => generateAndSaveQuestions(level, bgTopics, snap, questionCount, lang))
+      .catch(() => {});
+
     return Response.json({
       questions,
       marketSnapshot,
