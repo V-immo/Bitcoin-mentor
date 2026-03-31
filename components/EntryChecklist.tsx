@@ -75,10 +75,10 @@ export default function EntryChecklist({
                 ? t("checklist_trend_daily_side")
                 : t("checklist_trend_daily_down"),
         why: trend1d === "bullish"
-            ? "The major trend is your friend. When it's going up, the market works for you."
+            ? "De grote trend is je vriend. Als hij omhoog gaat, werkt de markt voor jou."
             : trend1d === "neutral"
-                ? "In a sideways market timing is crucial — better to wait for a clear breakout."
-                : "Buying against a falling trend is like swimming upstream. Wait for recovery or choose a different asset.",
+                ? "In een zijwaartse markt is timing cruciaal — beter wachten op een duidelijke uitbraak."
+                : "Kopen tegen een dalende trend is als zwemmen tegen de stroom in. Wacht op herstel of kies een ander asset.",
         priority: trend1d !== "bullish" ? 1 : 4,
     });
 
@@ -92,10 +92,10 @@ export default function EntryChecklist({
                 ? t("checklist_trend_4h_side")
                 : t("checklist_trend_4h_down"),
         why: trend4h === "bullish"
-            ? "The 4H confirms the daily trend. This is the right time to look for an entry."
+            ? "De 4H bevestigt de dagtrend. Dit is het juiste moment om een instap te zoeken."
             : trend4h === "neutral"
-                ? "You could enter too early if the 4H has no direction yet. Wait for a green 4H signal."
-                : "If the 4H is falling while you're buying, you're immediately at a loss. Wait until the 4H turns.",
+                ? "Je kunt te vroeg instappen als de 4H nog geen richting heeft. Wacht op een groen 4H signaal."
+                : "Als de 4H daalt terwijl jij koopt, sta je direct op verlies. Wacht tot de 4H omdraait.",
         priority: trend4h !== "bullish" ? 2 : 5,
     });
 
@@ -106,13 +106,13 @@ export default function EntryChecklist({
         detail: inZone
             ? `$${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 2 })} in zone $${Math.round(entryZoneLow).toLocaleString("en-US")}–$${Math.round(entryZoneHigh).toLocaleString("en-US")} ✓`
             : aboveZone
-                ? `${pct(currentPrice, entryZoneHigh).toFixed(1)}% above zone — too expensive`
-                : `${toZonePct.toFixed(1)}% below zone — wait for price to rise to $${Math.round(entryZoneLow).toLocaleString("en-US")}`,
+                ? `${pct(currentPrice, entryZoneHigh).toFixed(1)}% boven zone — te duur`
+                : `${toZonePct.toFixed(1)}% onder zone — wacht tot prijs stijgt naar $${Math.round(entryZoneLow).toLocaleString("en-US")}`,
         why: inZone
-            ? "You're buying at support — that's exactly the spot where the chance of price rising is highest."
+            ? "Je koopt op support — dat is precies het punt waar de kans het grootst is dat de prijs stijgt."
             : aboveZone
-                ? "You're buying too expensive now. Your stop-loss is too far away and your R/R becomes poor. Wait for a pullback."
-                : "The price hasn't reached the buy zone yet. Patience — wait until that zone is reached for a better position.",
+                ? "Je koopt nu te duur. Je stop-loss is te ver weg en je R/R wordt slecht. Wacht op een pullback."
+                : "De prijs heeft de koopzone nog niet bereikt. Geduld — wacht tot die zone bereikt is voor een betere positie.",
         priority: !inZone ? 1 : 6,
     });
 
@@ -122,15 +122,15 @@ export default function EntryChecklist({
         label: t("checklist_rsi_label"),
         status: rsiStatus,
         detail: rsi4h < 60
-            ? `RSI ${rsi4h.toFixed(1)} — room to rise ✓`
+            ? `RSI ${rsi4h.toFixed(1)} — ruimte om te stijgen ✓`
             : rsi4h < 72
-                ? `RSI ${rsi4h.toFixed(1)} — slightly overheated, reduce position`
-                : `RSI ${rsi4h.toFixed(1)} — overbought, wait for cooldown`,
+                ? `RSI ${rsi4h.toFixed(1)} — licht overkocht, verklein positie`
+                : `RSI ${rsi4h.toFixed(1)} — overbought, wacht op afkoeling`,
         why: rsi4h < 60
-            ? `RSI ${rsi4h.toFixed(1)} indicates there's still enough buying power. No signs of exhaustion.`
+            ? `RSI ${rsi4h.toFixed(1)} geeft aan dat er nog genoeg koopkracht is. Geen tekenen van uitputting.`
             : rsi4h < 72
-                ? `RSI ${rsi4h.toFixed(1)} is slightly overheated. Buying is possible, but build a smaller position for less risk.`
-                : `RSI ${rsi4h.toFixed(1)} means buyers are almost exhausted. A correction is likely — wait.`,
+                ? `RSI ${rsi4h.toFixed(1)} is licht overkocht. Kopen kan, maar bouw een kleinere positie voor minder risico.`
+                : `RSI ${rsi4h.toFixed(1)} betekent dat kopers bijna uitgeput zijn. Een correctie is waarschijnlijk — wacht.`,
         priority: rsi4h >= 72 ? 2 : rsi4h >= 60 ? 4 : 7,
     });
 
@@ -141,15 +141,15 @@ export default function EntryChecklist({
             label: t("checklist_stop_label"),
             status: stopStatus,
             detail: stopPct <= 5
-                ? `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk ✓`
+                ? `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico ✓`
                 : stopPct <= 10
-                    ? `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk, a bit wide`
-                    : `Stop at $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risk, too far`,
+                    ? `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico, iets ruim`
+                    : `Stop op $${Math.round(stopLoss).toLocaleString("en-US")} — ${stopPct.toFixed(1)}% risico, te ver`,
             why: stopPct <= 5
-                ? `With ${stopPct.toFixed(1)}% risk you keep your loss limited if things go wrong.`
+                ? `Met ${stopPct.toFixed(1)}% risico begrens je je verlies als het fout gaat.`
                 : stopPct <= 10
-                    ? `${stopPct.toFixed(1)}% to your stop is acceptable but adjust your position size — trade smaller.`
-                    : `With ${stopPct.toFixed(1)}% risk to your stop you lose too much if the trade goes against you. Find a better entry or don't trade this.`,
+                    ? `${stopPct.toFixed(1)}% naar je stop is acceptabel maar pas je positiegrootte aan — handel kleiner.`
+                    : `Met ${stopPct.toFixed(1)}% risico naar je stop verlies je te veel als de trade tegen je ingaat. Zoek een betere instap of sla deze trade over.`,
             priority: stopPct > 10 ? 2 : stopPct > 5 ? 5 : 7,
         });
     }
@@ -160,17 +160,17 @@ export default function EntryChecklist({
         label: t("checklist_rr_label"),
         status: rrStatus,
         detail: rrVal >= 2
-            ? `R/R 1:${rrVal.toFixed(1)} — excellent ✓`
+            ? `R/R 1:${rrVal.toFixed(1)} — uitstekend ✓`
             : rrVal >= 1.5
-                ? `R/R 1:${rrVal.toFixed(1)} — acceptable`
+                ? `R/R 1:${rrVal.toFixed(1)} — acceptabel`
                 : rrVal > 0
-                    ? `R/R 1:${rrVal.toFixed(1)} — too low`
-                    : `R/R unknown`,
+                    ? `R/R 1:${rrVal.toFixed(1)} — te laag`
+                    : `R/R onbekend`,
         why: rrVal >= 2
-            ? `You can earn ${rrVal.toFixed(1)}x your risk. Even losing 40% of your trades you stay profitable.`
+            ? `Je kunt ${rrVal.toFixed(1)}x je risico verdienen. Zelfs met 40% verliezende trades blijf je winstgevend.`
             : rrVal >= 1.5
-                ? `Minimum acceptable. You need to win more than 40% of your trades to stay profitable.`
-                : `With an R/R below 1.5 you need to win more than 60% of your trades to break even. Structurally losing.`,
+                ? `Minimum acceptabel. Je moet meer dan 40% van je trades winnen om winstgevend te blijven.`
+                : `Met een R/R onder 1.5 moet je meer dan 60% van je trades winnen om quitte te spelen. Structureel verliezend.`,
         priority: rrVal < 1.5 ? 3 : rrVal < 2 ? 5 : 8,
     });
 
@@ -183,10 +183,10 @@ export default function EntryChecklist({
             ? t("checklist_blockers_none")
             : `${blockers.length} blocker${blockers.length > 1 ? "s" : ""}: ${blockers.slice(0, 2).join(", ")}`,
         why: blockers.length === 0
-            ? "No technical red flags. The system sees no direct reason NOT to enter."
+            ? "Geen technische rode vlaggen. Het systeem ziet geen directe reden om NIET in te stappen."
             : blockers.length === 1
-                ? `"${blockers[0]}" is a warning. You can enter but be extra alert.`
-                : `Multiple blockers at the same time means: don't do it. Wait until they're resolved.`,
+                ? `"${blockers[0]}" is een waarschuwing. Je kunt instappen maar wees extra alert.`
+                : `Meerdere blockers tegelijk betekent: doe het niet. Wacht tot ze zijn opgelost.`,
         priority: blockers.length >= 2 ? 1 : blockers.length === 1 ? 4 : 8,
     });
 
