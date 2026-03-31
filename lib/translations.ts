@@ -794,9 +794,10 @@ const translations = {
     quiz_marcus_assignment: "📌 Vraag Marcus een oefening",
     quiz_marcus_assignment_prompt: "Ik heb net de quiz gedaan op niveau {level}. Mijn zwakke punten zijn: {topics}. Geef me één concrete praktijkopdracht die ik nu meteen kan doen in de app.",
     quiz_marcus_assignment_prompt_ok: "Ik heb net de quiz gedaan op niveau {level} en alles goed. Geef me één uitdagendere concrete opdracht om verder te leren.",
-    quiz_error_server: "Server fout",
+    quiz_error_server: "Server fout — probeer het opnieuw.",
     quiz_error_no_questions: "Geen vragen ontvangen. Probeer het opnieuw.",
     quiz_error_rate_limit: "Je hebt je dagelijkse quizlimiet bereikt (10/dag). Kom morgen terug!",
+    quiz_error_timeout: "Quiz duurt te lang. Controleer je verbinding en probeer opnieuw.",
 
     // === LEARNING RESOURCES ===
     resources_trending_title: "🔥 Trending — Meest bekeken",
@@ -1790,9 +1791,10 @@ const translations = {
     quiz_marcus_assignment: "📌 Ask Marcus for an exercise",
     quiz_marcus_assignment_prompt: "I just did the quiz at level {level}. My weak points are: {topics}. Give me one concrete practical assignment I can do right now in the app.",
     quiz_marcus_assignment_prompt_ok: "I just did the quiz at level {level} and got everything right. Give me one more challenging concrete assignment to keep learning.",
-    quiz_error_server: "Server error",
+    quiz_error_server: "Server error — please try again.",
     quiz_error_no_questions: "No questions received. Please try again.",
     quiz_error_rate_limit: "You've reached your daily quiz limit (10/day). Come back tomorrow!",
+    quiz_error_timeout: "Quiz is taking too long. Check your connection and try again.",
 
     // === LEARNING RESOURCES ===
     resources_trending_title: "🔥 Trending — Most watched",

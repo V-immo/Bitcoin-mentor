@@ -152,6 +152,9 @@ export default function DailyQuiz() {
     setRevealed(false);
     setLeveledUp(false);
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000); // 45s max
+
     try {
       const res = await fetch("/api/quiz", {
         method: "POST",
@@ -161,7 +164,9 @@ export default function DailyQuiz() {
           weakTopics: history.weakTopics.slice(0, 3),
           lang,
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const data = await res.json();
       if (res.status === 429 || data.error === "RATE_LIMIT") throw new Error(t("quiz_error_rate_limit"));
       if (!res.ok) throw new Error(data.error || t("quiz_error_server"));
@@ -170,7 +175,9 @@ export default function DailyQuiz() {
       setMarketSnapshot(data.marketSnapshot);
       setPhase("quiz");
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("quiz_error_server"));
+      clearTimeout(timeout);
+      const isTimeout = e instanceof Error && (e.name === "AbortError" || e.message.includes("abort"));
+      setError(isTimeout ? t("quiz_error_timeout") : (e instanceof Error ? e.message : t("quiz_error_server")));
       setPhase("home");
     }
   }

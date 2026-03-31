@@ -326,7 +326,7 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
     model: "claude-haiku-4-5",
     max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
-  });
+  }, { timeout: 30000 });
 
   const text = response.content[0]?.type === "text" ? response.content[0].text : "[]";
   const jsonMatch = text.match(/\[[\s\S]*\]/);
