@@ -54,8 +54,35 @@ export default function AgendaPage() {
   const [marcusLoading, setMarcusLoading] = useState(false);
   const [marcusStats, setMarcusStats] = useState<{ totalTrades: number; totalWins: number; totalLosses: number; totalPnl: number; tradeDays: number } | null>(null);
   const marcusFetched = useRef(false);
+  const [weeklyReview, setWeeklyReview] = useState<string | null>(null);
+  const [weeklyLoading, setWeeklyLoading] = useState(false);
+  const [weeklyIsNew, setWeeklyIsNew] = useState(false);
+  const [weeklyWeekStart, setWeeklyWeekStart] = useState<string | null>(null);
+  const weeklyFetched = useRef(false);
 
   const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+
+  async function fetchWeeklyReview(force = false) {
+    if (weeklyFetched.current && !force) return;
+    weeklyFetched.current = true;
+    setWeeklyLoading(true);
+    try {
+      const res = await fetch("/api/me/journal/weekly-review");
+      const data = await res.json();
+      if (data.review) {
+        setWeeklyReview(data.review);
+        setWeeklyIsNew(data.isNew ?? false);
+        setWeeklyWeekStart(data.weekStart ?? null);
+      }
+    } catch { /* ignore */ }
+    setWeeklyLoading(false);
+  }
+
+  // Auto-load wekelijkse review bij elke bezoek (cached in DB)
+  useEffect(() => {
+    fetchWeeklyReview();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function fetchMarcusAnalysis() {
     setMarcusLoading(true);
@@ -235,6 +262,49 @@ export default function AgendaPage() {
 
         {/* Rechter kolom */}
         <div style={styles.rightCol}>
+
+          {/* Wekelijkse review kaart */}
+          {(weeklyLoading || weeklyReview) && (
+            <div style={{
+              ...styles.marcusCard,
+              border: weeklyIsNew ? "1px solid rgba(233,30,99,0.5)" : "1px solid rgba(233,30,99,0.2)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 20 }}>📋</span>
+                  <div>
+                    <span style={styles.statsTitle}>Wekelijkse review</span>
+                    {weeklyWeekStart && (
+                      <div style={{ fontSize: 11, color: "#64748b", marginTop: 1 }}>
+                        Week van {new Date(weeklyWeekStart + "T12:00:00").toLocaleDateString("nl-NL", { day: "numeric", month: "long" })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  {weeklyIsNew && (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#e91e63", background: "rgba(233,30,99,0.15)", borderRadius: 6, padding: "2px 7px" }}>
+                      NIEUW
+                    </span>
+                  )}
+                  <button
+                    onClick={() => fetchWeeklyReview(true)}
+                    disabled={weeklyLoading}
+                    style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 14, padding: 4 }}
+                    title="Vernieuwen"
+                  >↻</button>
+                </div>
+              </div>
+
+              {weeklyLoading ? (
+                <div style={{ color: "#e91e63", fontSize: 13, padding: "8px 0" }}>Marcus schrijft je review…</div>
+              ) : weeklyReview ? (
+                <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text-primary, #fce8f0)", whiteSpace: "pre-wrap" }}>
+                  {weeklyReview}
+                </div>
+              ) : null}
+            </div>
+          )}
 
           {/* Marcus analyse kaart */}
           <div style={styles.marcusCard}>

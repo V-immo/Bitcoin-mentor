@@ -29,4 +29,5 @@ jobs:
             node db/migrate-trading-knowledge.js || true
             node db/migrate-testnet.js || true
             node db/migrate-journal.js || true
+            node db/migrate-weekly-review.js || true
             rm -rf .next && NODE_OPTIONS='--max-old-space-size=1400' npm run build && pm2 restart bitcoin-mentor --update-env
