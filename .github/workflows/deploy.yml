@@ -54,14 +54,15 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Bouwen met lock — cleanup ook bij fouten
+            # Bouwen terwijl PM2 draait (site blijft online tijdens build)
             touch /tmp/build.lock
             trap 'rm -f /tmp/build.lock' EXIT
 
-            pm2 stop bitcoin-mentor || true
             rm -rf .next
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
-            pm2 start bitcoin-mentor
+
+            # Alleen korte herstart na build (seconden neer, geen minuten)
+            pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
             pm2 save
 
             echo "✅ Deploy klaar"
