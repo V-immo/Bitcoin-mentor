@@ -4,9 +4,15 @@ on:
   push:
     branches: [main]
 
+# Annuleer oudere deploys als er een nieuwe commit komt
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -14,11 +20,28 @@ jobs:
           host: 202.71.14.150
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 14m
           script: |
+            set -e
             cd /var/www/bitcoin-mentor
+
+            # Wacht max 10 min op eventuele lopende build
+            WAITED=0
+            while [ -f /tmp/build.lock ] && [ $WAITED -lt 600 ]; do
+              echo "Wacht op lopende build... ($WAITED s)"
+              sleep 10
+              WAITED=$((WAITED + 10))
+            done
+            rm -f /tmp/build.lock
+
+            # Code updaten
             git fetch origin main
-            git merge --ff-only origin/main || (git stash && git merge --ff-only origin/main && git stash pop)
+            git reset --hard origin/main
+
+            # Dependencies
             npm install --legacy-peer-deps
+
+            # Migraties
             node db/init.js || true
             node db/migrate-goal.js || true
             node db/migrate-bitvavo.js || true
@@ -30,7 +53,15 @@ jobs:
             node db/migrate-testnet.js || true
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
-            while [ -f /tmp/build.lock ]; do echo "Wacht op vorige build..."; sleep 5; done
+
+            # Bouwen met lock — cleanup ook bij fouten
             touch /tmp/build.lock
-            rm -rf .next && NODE_OPTIONS='--max-old-space-size=1400' npm run build && pm2 restart bitcoin-mentor --update-env
-            rm -f /tmp/build.lock
+            trap 'rm -f /tmp/build.lock' EXIT
+
+            pm2 stop bitcoin-mentor || true
+            rm -rf .next
+            NODE_OPTIONS='--max-old-space-size=1400' npm run build
+            pm2 start bitcoin-mentor
+            pm2 save
+
+            echo "✅ Deploy klaar"
