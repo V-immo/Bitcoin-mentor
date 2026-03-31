@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const EMOTIONS = [
+    { value: 1, emoji: "😨", label: "Angstig" },
+    { value: 2, emoji: "😟", label: "Onzeker" },
+    { value: 3, emoji: "😐", label: "Neutraal" },
+    { value: 4, emoji: "😊", label: "Goed" },
+    { value: 5, emoji: "🔥", label: "Top" },
+];
+
 type PaperTrade = {
     id: string;
     side: "buy" | "sell";
@@ -14,6 +22,7 @@ type PaperTrade = {
     asset?: string;
     pnl?: number;
     note?: string;
+    emotion?: number;
     orderType?: "market" | "limit";
     closePct?: number;
 };
@@ -161,6 +170,8 @@ export default function TerminalPaperPanel({
     const [confirmPct, setConfirmPct] = useState(100);
     const [pendingNoteId, setPendingNoteId] = useState<string | null>(null);
     const [noteInput, setNoteInput] = useState("");
+    const [pendingEmotionId, setPendingEmotionId] = useState<string | null>(null);
+    const [pendingEmotionSide, setPendingEmotionSide] = useState<"buy" | "sell">("buy");
     const [zoneWarning, setZoneWarning] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
     const [goal, setGoal] = useState<number | null>(null);
@@ -388,6 +399,7 @@ export default function TerminalPaperPanel({
         const btcAmount = amount / execP;
         const sl = Number(slInput) > 0 ? Number(slInput) : undefined;
         const tp = Number(tpInput) > 0 ? Number(tpInput) : undefined;
+        const newId = crypto.randomUUID();
         setState((prev) => {
             const totalCostBefore = prev.openBtc * prev.avgEntry;
             const totalCostAfter = totalCostBefore + amount;
@@ -401,7 +413,7 @@ export default function TerminalPaperPanel({
                 activeSL: sl ?? prev.activeSL,
                 activeTP: tp ?? prev.activeTP,
                 trades: [{
-                    id: crypto.randomUUID(), side: "buy",
+                    id: newId, side: "buy",
                     amountEur: amount, price: execP,
                     btcAmount, time: nowLabel(),
                     timestamp: Date.now(), asset, orderType: type,
@@ -409,6 +421,8 @@ export default function TerminalPaperPanel({
             };
         });
         slTpLockRef.current = false;
+        setPendingEmotionId(newId);
+        setPendingEmotionSide("buy");
     }
 
     function executePartialClose(pct: number) {
@@ -435,7 +449,8 @@ export default function TerminalPaperPanel({
             }, ...prev.trades],
         }));
         if (isFull) {
-            setPendingNoteId(newId);
+            setPendingEmotionId(newId);
+            setPendingEmotionSide("sell");
             setNoteInput("");
         }
     }
@@ -521,6 +536,25 @@ export default function TerminalPaperPanel({
         }));
         setPendingNoteId(null);
         setNoteInput("");
+    }
+
+    function saveEmotion(id: string, emotion: number) {
+        setState((prev) => ({
+            ...prev,
+            trades: prev.trades.map(t => t.id === id ? { ...t, emotion } : t),
+        }));
+        if (pendingEmotionSide === "sell") {
+            // Na emotie bij sell → toon note prompt
+            setPendingNoteId(id);
+        }
+        setPendingEmotionId(null);
+    }
+
+    function skipEmotion() {
+        if (pendingEmotionSide === "sell" && pendingEmotionId) {
+            setPendingNoteId(pendingEmotionId);
+        }
+        setPendingEmotionId(null);
     }
 
     if (!loaded) {
@@ -1188,6 +1222,47 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
+            {/* === EMOTIE PICKER === */}
+            {pendingEmotionId && (
+                <div className="terminal-journal-prompt">
+                    <div className="terminal-mini-label" style={{ marginBottom: 4 }}>
+                        {pendingEmotionSide === "buy" ? "🧠 Hoe voel je je bij deze aankoop?" : "🧠 Hoe voel je je bij het sluiten?"}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 10 }}>
+                        Emotie-tracking helpt je patronen ontdekken in je tradinggedrag.
+                    </div>
+                    <div style={{ display: "flex", gap: 8, justifyContent: "center", marginBottom: 10 }}>
+                        {EMOTIONS.map(e => (
+                            <button
+                                key={e.value}
+                                title={e.label}
+                                onClick={() => saveEmotion(pendingEmotionId, e.value)}
+                                style={{
+                                    background: "rgba(233,30,99,0.08)",
+                                    border: "1px solid rgba(233,30,99,0.2)",
+                                    borderRadius: 10,
+                                    width: 44, height: 44,
+                                    fontSize: 22, cursor: "pointer",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s",
+                                }}
+                                onMouseEnter={e2 => { e2.currentTarget.style.background = "rgba(233,30,99,0.2)"; e2.currentTarget.style.transform = "scale(1.15)"; }}
+                                onMouseLeave={e2 => { e2.currentTarget.style.background = "rgba(233,30,99,0.08)"; e2.currentTarget.style.transform = "scale(1)"; }}
+                            >
+                                {e.emoji}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        className="terminal-btn terminal-btn-muted"
+                        style={{ width: "100%", fontSize: 11 }}
+                        onClick={skipEmotion}
+                    >
+                        Overslaan
+                    </button>
+                </div>
+            )}
+
             {/* === JOURNAL === */}
             {pendingNoteId && (
                 <div className="terminal-journal-prompt">
@@ -1316,6 +1391,11 @@ export default function TerminalPaperPanel({
                                                 {trade.closePct && (
                                                     <span style={{ fontSize: 9, color: "#8b95ad", marginLeft: 3 }}>
                                                         {Math.round(trade.closePct * 100)}%
+                                                    </span>
+                                                )}
+                                                {trade.emotion && (
+                                                    <span style={{ marginLeft: 4, fontSize: 13 }} title={EMOTIONS.find(e => e.value === trade.emotion)?.label}>
+                                                        {EMOTIONS.find(e => e.value === trade.emotion)?.emoji}
                                                     </span>
                                                 )}
                                             </td>
