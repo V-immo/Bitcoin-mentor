@@ -324,7 +324,7 @@ Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn
 
   const response = await client.messages.create({
     model: "claude-haiku-4-5",
-    max_tokens: 4096,
+    max_tokens: 2048,
     messages: [{ role: "user", content: prompt }],
   }, { timeout: 30000 });
 
@@ -415,7 +415,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const questionCount = 20;
+  const questionCount = 5;
 
   // Zorg dat tabellen bestaan
   ensureQuizTables();

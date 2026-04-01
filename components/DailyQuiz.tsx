@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_CORRECT = 40;
 const XP_PER_LEVEL = 500;
-const AVG_XP_PER_QUIZ = 560; // ~14 goed op 20 vragen
+const AVG_XP_PER_QUIZ = 140; // ~3-4 goed op 5 vragen
 
 type QuizHistory = {
   level: number;

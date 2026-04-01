@@ -745,7 +745,7 @@ const translations = {
 
     // === DAILY QUIZ ===
     quiz_loading: "Laden…",
-    quiz_generating: "Quiz genereren met actuele marktdata…",
+    quiz_generating: "5 vragen genereren…",
     quiz_retry_banner: "🔁 Herhaling — foute vragen in willekeurige volgorde",
     quiz_correct: "✓ Correct!",
     quiz_wrong: "✗ Fout",
@@ -769,7 +769,7 @@ const translations = {
     quiz_done_today: "Quiz vandaag al gedaan!",
     quiz_done_sub: "Kom morgen terug voor een nieuwe quiz.",
     quiz_extra_round: "Nog een oefenronde doen →",
-    quiz_intro_text: "Dagelijkse trading quiz op basis van",
+    quiz_intro_text: "5 vragen per sessie op basis van",
     quiz_intro_market: "actuele marktdata",
     quiz_intro_desc: "Beantwoord vragen, verdien XP en word een betere trader.",
     quiz_start_btn: "Start dagelijkse quiz →",
@@ -1742,7 +1742,7 @@ const translations = {
 
     // === DAILY QUIZ ===
     quiz_loading: "Loading…",
-    quiz_generating: "Generating quiz with current market data…",
+    quiz_generating: "Generating 5 questions…",
     quiz_retry_banner: "🔁 Retry — wrong questions in random order",
     quiz_correct: "✓ Correct!",
     quiz_wrong: "✗ Wrong",
@@ -1766,7 +1766,7 @@ const translations = {
     quiz_done_today: "Quiz already done today!",
     quiz_done_sub: "Come back tomorrow for a new quiz.",
     quiz_extra_round: "Do another practice round →",
-    quiz_intro_text: "Daily trading quiz based on",
+    quiz_intro_text: "5 questions per session based on",
     quiz_intro_market: "current market data",
     quiz_intro_desc: "Answer questions, earn XP and become a better trader.",
     quiz_start_btn: "Start daily quiz →",
