@@ -49,14 +49,14 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Bouwen terwijl PM2 draait (site blijft online tijdens build)
+            # Bouwen terwijl PM2 draait (NIET rm -rf .next — site blijft online!)
+            # Next.js schrijft atomisch naar .next/ en overschrijft bestanden
             touch /tmp/build.lock
             trap 'rm -f /tmp/build.lock' EXIT
 
-            rm -rf .next
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
-            # Alleen korte herstart na build (seconden neer, geen minuten)
+            # Korte herstart na build (seconden neer, niet minuten)
             pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
             pm2 save
 
