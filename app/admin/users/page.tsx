@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 
 type User = {
@@ -19,16 +19,52 @@ type User = {
   totalTrades: number;
 };
 
+type SortKey = "username" | "created_at" | "last_login_at" | "level" | "totalTrades" | "totalPnl";
+type SortDir = "asc" | "desc";
+type ActivityFilter = "all" | "active" | "inactive";
+
 function fmt(dateStr: string | null) {
   if (!dateStr) return "—";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function daysSince(dateStr: string | null): number | null {
+  if (!dateStr) return null;
+  return Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000);
+}
+
+function exportCsv(users: User[]) {
+  const headers = ["ID", "Username", "Email", "Role", "Capital", "Registered", "Last Login", "Level", "XP", "Trades", "P&L"];
+  const rows = users.map((u) => [
+    u.id,
+    u.username,
+    u.email,
+    u.role,
+    u.start_capital,
+    fmt(u.created_at),
+    fmt(u.last_login_at),
+    u.level ?? "",
+    u.xp ?? "",
+    u.totalTrades,
+    u.totalPnl.toFixed(2),
+  ]);
+  const csv = [headers, ...rows].map((r) => r.map(String).map((v) => `"${v.replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `btcmentor-users-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [activityFilter, setActivityFilter] = useState<ActivityFilter>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("created_at");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [creating, setCreating] = useState(false);
   const [newUser, setNewUser] = useState({ username: "", email: "", password: "", role: "user", startCapital: 10000 });
   const [createError, setCreateError] = useState("");
@@ -53,10 +89,7 @@ export default function AdminUsersPage() {
     setDeleteError("");
     const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setDeleteError(data.error ?? "Delete failed");
-      return;
-    }
+    if (!res.ok) { setDeleteError(data.error ?? "Delete failed"); return; }
     setConfirmDelete(null);
     load(true);
   }
@@ -75,13 +108,63 @@ export default function AdminUsersPage() {
     load(true);
   }
 
-  const filtered = users.filter(
-    (u) =>
-      u.username.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  function toggleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
+  const filtered = useMemo(() => {
+    let result = users.filter(
+      (u) =>
+        u.username.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (activityFilter === "active") {
+      result = result.filter((u) => {
+        const d = daysSince(u.last_login_at);
+        return d !== null && d <= 7;
+      });
+    } else if (activityFilter === "inactive") {
+      result = result.filter((u) => {
+        const d = daysSince(u.last_login_at);
+        return d === null || d > 7;
+      });
+    }
+
+    result = [...result].sort((a, b) => {
+      let av: number | string, bv: number | string;
+      switch (sortKey) {
+        case "username":   av = a.username.toLowerCase(); bv = b.username.toLowerCase(); break;
+        case "created_at": av = a.created_at ?? ""; bv = b.created_at ?? ""; break;
+        case "last_login_at": av = a.last_login_at ?? ""; bv = b.last_login_at ?? ""; break;
+        case "level":      av = a.level ?? -1; bv = b.level ?? -1; break;
+        case "totalTrades": av = a.totalTrades; bv = b.totalTrades; break;
+        case "totalPnl":   av = a.totalPnl; bv = b.totalPnl; break;
+        default:           return 0;
+      }
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [users, search, activityFilter, sortKey, sortDir]);
+
+  const inactiveCount = users.filter((u) => { const d = daysSince(u.last_login_at); return d === null || d > 7; }).length;
 
   if (loading) return <div className="admin-loading">Loading users…</div>;
+
+  const SortIcon = ({ k }: { k: SortKey }) => {
+    if (sortKey !== k) return <span style={{ opacity: 0.25, marginLeft: 4 }}>↕</span>;
+    return <span style={{ marginLeft: 4, color: "var(--primary)" }}>{sortDir === "asc" ? "↑" : "↓"}</span>;
+  };
+
+  const thStyle: React.CSSProperties = { cursor: "pointer", userSelect: "none" };
 
   return (
     <div>
@@ -97,10 +180,38 @@ export default function AdminUsersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button className="admin-btn" onClick={() => exportCsv(filtered)} title="Export as CSV">
+            ⬇ CSV
+          </button>
           <button className="admin-btn admin-btn-primary" onClick={() => setCreating(true)}>
             + New user
           </button>
         </div>
+      </div>
+
+      {/* Activity filter tabs */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
+        {(["all", "active", "inactive"] as ActivityFilter[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setActivityFilter(f)}
+            style={{
+              padding: "5px 14px",
+              borderRadius: 99,
+              border: "1px solid",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+              background: activityFilter === f ? "rgba(233,30,99,0.15)" : "transparent",
+              borderColor: activityFilter === f ? "rgba(233,30,99,0.4)" : "var(--border)",
+              color: activityFilter === f ? "var(--primary)" : "var(--text-secondary)",
+            }}
+          >
+            {f === "all" && `All (${users.length})`}
+            {f === "active" && `Active ≤7d`}
+            {f === "inactive" && `Inactive >7d${inactiveCount > 0 ? ` (${inactiveCount})` : ""}`}
+          </button>
+        ))}
       </div>
 
       {confirmDelete && (
@@ -151,58 +262,85 @@ export default function AdminUsersPage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>User</th>
+              <th style={thStyle} onClick={() => toggleSort("username")}>
+                User <SortIcon k="username" />
+              </th>
               <th>Role</th>
-              <th>Registered</th>
-              <th>Last login</th>
-              <th>Quiz</th>
-              <th>Trades</th>
-              <th>P&amp;L</th>
+              <th style={thStyle} onClick={() => toggleSort("created_at")}>
+                Registered <SortIcon k="created_at" />
+              </th>
+              <th style={thStyle} onClick={() => toggleSort("last_login_at")}>
+                Last login <SortIcon k="last_login_at" />
+              </th>
+              <th style={thStyle} onClick={() => toggleSort("level")}>
+                Quiz <SortIcon k="level" />
+              </th>
+              <th style={thStyle} onClick={() => toggleSort("totalTrades")}>
+                Trades <SortIcon k="totalTrades" />
+              </th>
+              <th style={thStyle} onClick={() => toggleSort("totalPnl")}>
+                P&amp;L <SortIcon k="totalPnl" />
+              </th>
               <th>Capital</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <div className="admin-user-cell">
-                    <div className="admin-user-name">{u.username}</div>
-                    <div className="admin-user-email">{u.email}</div>
-                  </div>
-                </td>
-                <td>
-                  <span className={`admin-badge${u.role === "admin" ? " admin-badge-admin" : ""}`}>
-                    {u.role}
-                  </span>
-                </td>
-                <td>{fmt(u.created_at)}</td>
-                <td>{fmt(u.last_login_at)}</td>
-                <td>
-                  {u.level != null ? (
-                    <span>Lv{u.level} · {u.xp} XP</span>
-                  ) : "—"}
-                </td>
-                <td>{u.totalTrades}</td>
-                <td className={u.totalPnl >= 0 ? "admin-green" : "admin-red"}>
-                  € {u.totalPnl.toFixed(2)}
-                </td>
-                <td>€ {u.start_capital.toLocaleString("en-US")}</td>
-                <td>
-                  <div className="admin-row-actions">
-                    <Link href={`/admin/users/${u.id}`} className="admin-btn admin-btn-sm">
-                      Detail
-                    </Link>
-                    <button
-                      className="admin-btn admin-btn-sm admin-btn-danger"
-                      onClick={() => setConfirmDelete({ id: u.id, name: u.username })}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {filtered.map((u) => {
+              const days = daysSince(u.last_login_at);
+              const isInactive = days === null || days > 7;
+              return (
+                <tr key={u.id}>
+                  <td>
+                    <div className="admin-user-cell">
+                      <div className="admin-user-name">{u.username}</div>
+                      <div className="admin-user-email">{u.email}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`admin-badge${u.role === "admin" ? " admin-badge-admin" : ""}`}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td>{fmt(u.created_at)}</td>
+                  <td style={{ color: isInactive ? "var(--text-secondary)" : undefined }}>
+                    {u.last_login_at ? (
+                      <span title={new Date(u.last_login_at).toLocaleString()}>
+                        {days === 0 ? "Today" : days === 1 ? "Yesterday" : days !== null ? `${days}d ago` : "—"}
+                        {isInactive && days !== null && (
+                          <span style={{ marginLeft: 5, fontSize: 10, color: "#f59e0b", verticalAlign: "middle" }}>●</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span style={{ color: "#ef4444", fontSize: 12 }}>Never</span>
+                    )}
+                  </td>
+                  <td>
+                    {u.level != null ? (
+                      <span>Lv{u.level} · {u.xp} XP</span>
+                    ) : "—"}
+                  </td>
+                  <td>{u.totalTrades}</td>
+                  <td className={u.totalPnl >= 0 ? "admin-green" : "admin-red"}>
+                    € {u.totalPnl.toFixed(2)}
+                  </td>
+                  <td>€ {u.start_capital.toLocaleString("en-US")}</td>
+                  <td>
+                    <div className="admin-row-actions">
+                      <Link href={`/admin/users/${u.id}`} className="admin-btn admin-btn-sm">
+                        Detail
+                      </Link>
+                      <button
+                        className="admin-btn admin-btn-sm admin-btn-danger"
+                        onClick={() => setConfirmDelete({ id: u.id, name: u.username })}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={9} className="admin-empty">No users found.</td>

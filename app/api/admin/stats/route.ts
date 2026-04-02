@@ -9,12 +9,19 @@ export async function GET() {
 
   const db = getDb();
   const today = new Date().toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
 
   const totalUsers = (db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'user'").get() as { c: number }).c;
   const totalAdmins = (db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'admin'").get() as { c: number }).c;
   const activeToday = (db
     .prepare("SELECT COUNT(*) as c FROM users WHERE last_login_at >= ?")
     .get(today) as { c: number }).c;
+  const newThisWeek = (db
+    .prepare("SELECT COUNT(*) as c FROM users WHERE role = 'user' AND created_at >= ?")
+    .get(weekAgo) as { c: number }).c;
+  const inactive7d = (db
+    .prepare("SELECT COUNT(*) as c FROM users WHERE role = 'user' AND (last_login_at IS NULL OR last_login_at < ?)")
+    .get(weekAgo) as { c: number }).c;
 
   // Totaal aantal paper trades (history items across all users)
   const paperRows = db.prepare("SELECT history FROM paper_trading").all() as { history: string }[];
@@ -42,6 +49,8 @@ export async function GET() {
     totalUsers,
     totalAdmins,
     activeToday,
+    newThisWeek,
+    inactive7d,
     totalTrades,
     totalPnl: Math.round(totalPnl * 100) / 100,
     quizToday,

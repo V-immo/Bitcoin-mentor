@@ -7,6 +7,8 @@ type Stats = {
   totalUsers: number;
   totalAdmins: number;
   activeToday: number;
+  newThisWeek: number;
+  inactive7d: number;
   totalTrades: number;
   totalPnl: number;
   quizToday: number;
@@ -54,6 +56,8 @@ export default function AdminOverviewPage() {
   const tiles = [
     { label: "Users", value: stats.totalUsers, icon: "👥", sub: `+ ${stats.totalAdmins} admins` },
     { label: "Active today", value: stats.activeToday, icon: "🟢", sub: "logged in today" },
+    { label: "New this week", value: stats.newThisWeek, icon: "✨", sub: "new registrations" },
+    { label: "Inactive >7d", value: stats.inactive7d, icon: "⚠️", sub: "need attention", warn: stats.inactive7d > 0 },
     { label: "Paper trades", value: stats.totalTrades, icon: "📈", sub: "platform-wide" },
     {
       label: "Total P&L",
@@ -74,9 +78,13 @@ export default function AdminOverviewPage() {
 
       <div className="admin-stats-grid">
         {tiles.map((t) => (
-          <div key={t.label} className="admin-stat-card">
+          <div
+            key={t.label}
+            className="admin-stat-card"
+            style={t.warn ? { borderColor: "rgba(245,158,11,0.35)", background: "rgba(245,158,11,0.06)" } : undefined}
+          >
             <div className="admin-stat-icon">{t.icon}</div>
-            <div className="admin-stat-value">{t.value}</div>
+            <div className="admin-stat-value" style={t.warn ? { color: "#f59e0b" } : undefined}>{t.value}</div>
             <div className="admin-stat-label">{t.label}</div>
             <div className="admin-stat-sub">{t.sub}</div>
           </div>
