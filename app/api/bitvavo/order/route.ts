@@ -15,20 +15,24 @@ export async function POST(request: NextRequest) {
   if (!userId) return Response.json({ error: "Niet ingelogd" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
-  const { market, side, amountQuote } = body as {
+  const { market, side, amountQuote, amount } = body as {
     market?: string;
     side?: "buy" | "sell";
-    amountQuote?: number;
+    amountQuote?: number; // EUR bedrag (voor BUY)
+    amount?: number;      // Crypto bedrag (voor SELL)
   };
 
-  if (!market || !side || amountQuote == null) {
-    return Response.json({ error: "market, side en amountQuote zijn verplicht" }, { status: 400 });
+  if (!market || !side) {
+    return Response.json({ error: "market en side zijn verplicht" }, { status: 400 });
   }
   if (side !== "buy" && side !== "sell") {
     return Response.json({ error: "side moet 'buy' of 'sell' zijn" }, { status: 400 });
   }
-  if (amountQuote <= 0) {
-    return Response.json({ error: "amountQuote moet positief zijn" }, { status: 400 });
+  if (side === "buy" && (amountQuote == null || amountQuote <= 0)) {
+    return Response.json({ error: "amountQuote (EUR bedrag) is verplicht voor BUY" }, { status: 400 });
+  }
+  if (side === "sell" && (amount == null || amount <= 0)) {
+    return Response.json({ error: "amount (crypto bedrag) is verplicht voor SELL" }, { status: 400 });
   }
 
   const db = getDb();
@@ -44,12 +48,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const orderBody = {
-      market,
-      side,
-      orderType: "market",
-      amountQuote: String(amountQuote),
-    };
+    const orderBody =
+      side === "buy"
+        ? { market, side, orderType: "market", amountQuote: String(amountQuote) }
+        : { market, side, orderType: "market", amount: String(amount) };
 
     const result = await bitvavRequest(apiKey, apiSecret, "POST", "/order", orderBody);
 

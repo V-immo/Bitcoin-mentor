@@ -18,6 +18,7 @@ import TestnetPanel from "./TestnetPanel";
 import PriceAlerts from "./PriceAlerts";
 import AITradeCoach from "./AITradeCoach";
 import LiveSimpleMode from "./LiveSimpleMode";
+import BitvavoPanel from "./BitvavoPanel";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -99,7 +100,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts" | "bitvavo";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -140,6 +141,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
     { key: "testnet",     label: "Testnet",              icon: "🔬" },
+    { key: "bitvavo",     label: "Live",                 icon: "💶" },
     { key: "alerts",      label: "Alerts",               icon: "🔔" },
   ];
 
@@ -786,6 +788,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
             {bottomTab === "leaderboard" && <Leaderboard />}
             {bottomTab === "testnet" && <TestnetPanel currentPrice={chartPrice} asset={asset} />}
+            {bottomTab === "bitvavo" && <BitvavoPanel currentPrice={chartPrice} asset={asset} />}
             {bottomTab === "alerts" && <PriceAlerts currentAsset={asset} currentPrice={chartPrice} />}
           </div>
         </div>

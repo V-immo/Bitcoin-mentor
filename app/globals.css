@@ -3862,7 +3862,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 /* ── Admin Dashboard ── */
 .admin-shell {
   display: flex;
-  min-height: 100vh;
+  height: calc(100vh - 56px);
+  overflow: hidden;
 }
 .admin-sidebar {
   width: 200px;
@@ -3872,9 +3873,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: flex;
   flex-direction: column;
   padding: 24px 0 16px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  overflow-y: auto;
+  height: 100%;
 }
 .admin-logo {
   font-size: 16px;
@@ -3920,6 +3920,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   flex: 1;
   padding: 28px 32px 48px;
   min-width: 0;
+  overflow-y: auto;
+  height: 100%;
 }
 .admin-loading {
   padding: 48px;
@@ -5515,14 +5517,22 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 @media (max-width: 640px) {
   .admin-shell {
     flex-direction: column;
+    height: auto;
+    overflow: visible;
+    min-height: calc(100vh - 56px);
   }
   .admin-sidebar {
     width: 100%;
     height: auto;
+    overflow-y: visible;
     position: static;
     padding: 12px 0 8px;
     border-right: none;
     border-bottom: 1px solid var(--border);
+  }
+  .admin-main {
+    height: auto;
+    overflow-y: visible;
   }
   .admin-logo {
     padding: 0 16px 10px;
