@@ -1,4 +1,4 @@
-const CACHE_NAME = "btcmentor-v2";
+const CACHE_NAME = "btcmentor-v3";
 const APP_SHELL = ["/", "/trade", "/leren", "/offline"];
 
 // Installeer: cache app shell
