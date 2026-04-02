@@ -4432,6 +4432,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   .card {
     padding: 14px;
   }
+
+  /* iOS Safari: voorkom automatisch inzoomen bij focus op input (triggert bij < 16px) */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: max(16px, 1em) !important;
+  }
 }
 
 /* ── Very small screens — max 480px ── */
@@ -4450,6 +4457,15 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
     width: 100%;
     text-align: center;
   }
+
+  /* Settings opties: nooit 3 kolommen op kleine schermen */
+  .settings-options-3 { grid-template-columns: 1fr 1fr !important; }
+
+  /* Admin form: label boven input */
+  .admin-form-grid { grid-template-columns: 1fr !important; }
+
+  /* Login/onboarding: minder padding op kleine telefoons */
+  .login-card { padding: 28px 20px; }
 }
 
 /* ── Page back button ── */
