@@ -49,24 +49,22 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Zero-downtime build: bouw naar /tmp/next-build, swap daarna atomisch
+            # Zero-downtime build: bouw naar /var/www/bitcoin-mentor-build (zelfde schijf)
             # PM2 raakt .next/ nooit aan tijdens de build → geen crashes
+            BUILD_DIR=/var/www/bitcoin-mentor-build
             touch /tmp/build.lock
-            trap 'rm -f /tmp/build.lock; rm -rf /tmp/next-build' EXIT
+            trap 'rm -f /tmp/build.lock' EXIT
 
-            NEXT_DIST_DIR=/tmp/next-build \
+            rm -rf "$BUILD_DIR"
+            NEXT_DIST_DIR="$BUILD_DIR" \
               NODE_OPTIONS='--max-old-space-size=1400' \
               npm run build
 
-            # Atomische swap (milliseconden down, niet minuten)
-            rm -rf .next.old
-            cp -r .next .next.old 2>/dev/null || true
+            # Swap: nieuwe build in, herstart, schoon op
             rm -rf .next
-            mv /tmp/next-build .next
+            mv "$BUILD_DIR" .next
 
-            # Korte herstart
             pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
             pm2 save
-            rm -rf .next.old
 
             echo "✅ Deploy klaar"
