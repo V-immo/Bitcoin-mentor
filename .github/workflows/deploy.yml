@@ -49,15 +49,24 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Bouwen terwijl PM2 draait (NIET rm -rf .next — site blijft online!)
-            # Next.js schrijft atomisch naar .next/ en overschrijft bestanden
+            # Zero-downtime build: bouw naar /tmp/next-build, swap daarna atomisch
+            # PM2 raakt .next/ nooit aan tijdens de build → geen crashes
             touch /tmp/build.lock
-            trap 'rm -f /tmp/build.lock' EXIT
+            trap 'rm -f /tmp/build.lock; rm -rf /tmp/next-build' EXIT
 
-            NODE_OPTIONS='--max-old-space-size=1400' npm run build
+            NEXT_DIST_DIR=/tmp/next-build \
+              NODE_OPTIONS='--max-old-space-size=1400' \
+              npm run build
 
-            # Korte herstart na build (seconden neer, niet minuten)
+            # Atomische swap (milliseconden down, niet minuten)
+            rm -rf .next.old
+            cp -r .next .next.old 2>/dev/null || true
+            rm -rf .next
+            mv /tmp/next-build .next
+
+            # Korte herstart
             pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
             pm2 save
+            rm -rf .next.old
 
             echo "✅ Deploy klaar"
