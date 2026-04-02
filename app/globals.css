@@ -4468,6 +4468,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   .login-card { padding: 28px 20px; }
 }
 
+/* Extra small (< 360px): alles naar 1 kolom */
+@media (max-width: 360px) {
+  .settings-options-2 { grid-template-columns: 1fr !important; }
+  .settings-options-3 { grid-template-columns: 1fr !important; }
+  .container-page { padding: 16px 12px 40px; }
+}
+
 /* ── Page back button ── */
 .page-back-btn {
   display: inline-flex;
@@ -5488,3 +5495,71 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 }
 .landing-final-cta h2 { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
 .landing-final-cta p { font-size: 16px; color: var(--text-secondary); margin-bottom: 28px; }
+
+
+/* ─────────────────────────────────────────
+   ADMIN LAYOUT — MOBILE & TABLET
+───────────────────────────────────────── */
+
+/* Tablet (≤900px): sidebar smaller */
+@media (max-width: 900px) {
+  .admin-sidebar {
+    width: 160px;
+  }
+  .admin-main {
+    padding: 20px 18px 40px;
+  }
+}
+
+/* Mobile (≤640px): sidebar wordt top-bar */
+@media (max-width: 640px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    padding: 12px 0 8px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .admin-logo {
+    padding: 0 16px 10px;
+    font-size: 14px;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 10px;
+    gap: 4px;
+  }
+  .admin-nav-link {
+    padding: 7px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .admin-back {
+    margin: 0;
+    border-top: none;
+    padding-top: 7px;
+  }
+  .admin-main {
+    padding: 16px 14px 40px;
+  }
+  .admin-page-header {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .admin-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .admin-search {
+    width: 100%;
+    max-width: 100%;
+  }
+}
