@@ -43,18 +43,25 @@ export async function GET() {
   const user = db.prepare("SELECT last_login_at, username FROM users WHERE id = ?")
     .get(userId) as { last_login_at: string | null; username: string } | undefined;
 
-  const paper = db.prepare("SELECT updated_at FROM paper_trading WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1")
-    .get(userId) as { updated_at: string } | undefined;
+  // Haal history JSON op — echte trades, niet alleen "rij bestaat"
+  const paperRow = db.prepare("SELECT history FROM paper_trading WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1")
+    .get(userId) as { history: string } | undefined;
+
+  let lastTradeDate: string | null = null;
+  if (paperRow?.history) {
+    try {
+      const hist = JSON.parse(paperRow.history) as { date?: string; timestamp?: string }[];
+      if (hist.length > 0) {
+        const last = hist[hist.length - 1];
+        lastTradeDate = last.date ?? last.timestamp ?? null;
+      }
+    } catch { /* ignore */ }
+  }
 
   const lastJournal = db.prepare("SELECT MAX(updated_at) as last FROM trade_journal WHERE user_id = ?")
     .get(userId) as { last: string | null } | undefined;
 
-  const lastTrade = db.prepare(`
-    SELECT MAX(updated_at) as last FROM paper_trading WHERE user_id = ?
-  `).get(userId) as { last: string | null } | undefined;
-
-  const daysSinceLogin = daysSince(user?.last_login_at ?? null);
-  const daysSinceTrade = daysSince(lastTrade?.last ?? null);
+  const daysSinceTrade = daysSince(lastTradeDate);
   const daysSinceJournal = daysSince(lastJournal?.last ?? null);
 
   // Geen nudge nodig als actief vandaag
@@ -72,7 +79,7 @@ export async function GET() {
 
   // Bepaal inactiviteitstype — max 14 dagen voor zinvolle tekst
   const inactiveDays = Math.min(14, Math.max(daysSinceTrade, daysSinceJournal));
-  const neverTraded = !lastTrade?.last;
+  const neverTraded = !lastTradeDate;
   const btcSummary = getBtcSummary();
 
   // Genereer nudge met Claude
