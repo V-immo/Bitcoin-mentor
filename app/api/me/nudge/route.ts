@@ -15,8 +15,9 @@ function checkRate(key: string): boolean {
 }
 
 function daysSince(dateStr: string | null): number {
-  if (!dateStr) return 999;
+  if (!dateStr) return 0; // null = nog nooit gedaan, niet "lang geleden"
   const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return 0;
   return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
 }
 
@@ -69,26 +70,30 @@ export async function GET() {
     return Response.json({ nudge: null });
   }
 
-  // Bepaal inactiviteitstype
-  const inactiveDays = Math.max(daysSinceTrade, daysSinceJournal);
+  // Bepaal inactiviteitstype — max 14 dagen voor zinvolle tekst
+  const inactiveDays = Math.min(14, Math.max(daysSinceTrade, daysSinceJournal));
+  const neverTraded = !lastTrade?.last;
   const btcSummary = getBtcSummary();
 
   // Genereer nudge met Claude
   if (!process.env.ANTHROPIC_API_KEY) {
-    // Fallback zonder AI
     const fallbacks = [
-      "Hey, je bent al een paar dagen niet geweest. Markt wacht op niemand — even een blik werpen?",
-      "De markt beweegt. Jij niet. Toeval? Kom terug en check wat er speelt.",
-      "Je agenda is leeg. Zelfs op rustige dagen valt er wat te noteren. 5 minuten is genoeg.",
+      "De markt beweegt terwijl je weg bent — even een blik werpen?",
+      "Kom terug en check wat er speelt. 5 minuten is genoeg.",
+      "Je agenda is leeg. Zelfs op rustige dagen valt er wat te noteren.",
     ];
     return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays });
   }
+
+  const context = neverTraded
+    ? "een nieuwe trader die nog geen paper trade heeft gedaan"
+    : `een trader die ${inactiveDays} ${inactiveDays === 1 ? "dag" : "dagen"} inactief is geweest`;
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const msg = await client.messages.create({
     model: "claude-haiku-4-5",
     max_tokens: 120,
-    system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE proactieve nudge (max 2 zinnen) voor een trader die ${inactiveDays} dagen inactief is geweest. Wees direct, niet veroordelend. Gebruik "je/jij". Geen aanhef, geen afsluiting. Gewoon de boodschap.${btcSummary ? ` Marktcontext: ${btcSummary}` : ""}`,
+    system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE motiverende nudge (max 2 zinnen) voor ${context}. Wees concreet en positief, niet veroordelend. Gebruik "je/jij". Geen aanhef, geen afsluiting. Alleen de boodschap zelf.${btcSummary ? ` Marktcontext: ${btcSummary}` : ""}`,
     messages: [{ role: "user", content: "Geef me een nudge." }],
   });
 
