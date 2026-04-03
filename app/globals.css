@@ -1504,6 +1504,55 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .app-nav-icon { font-size: 14px; }
 .app-nav-label { font-size: 13px; }
 
+/* ── Nav ··· meer dropdown ── */
+.app-nav-more-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+.app-nav-more-btn.open {
+  color: var(--text);
+  background: rgba(255,255,255,0.08);
+}
+.app-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  min-width: 180px;
+  z-index: 200;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.app-nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.app-nav-dropdown-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.app-nav-dropdown-item.active {
+  background: rgba(233,30,99,0.12);
+  color: var(--primary);
+  font-weight: 600;
+}
+
 @media (max-width: 600px) {
   .app-nav-name { display: none; }
   .app-nav-label { display: none; }
@@ -4265,24 +4314,19 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 .asset-bar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 0;
-  padding: 4px 10px;
+  padding: 0 10px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  min-height: 52px;
 }
-.asset-bar::-webkit-scrollbar { display: none; }
 
 .asset-bar-back {
   display: inline-flex;
   align-items: center;
-  height: 28px;
   padding: 0 12px;
   font-size: 12px;
   color: var(--text-secondary);
@@ -4291,37 +4335,52 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   white-space: nowrap;
   transition: color 0.15s;
   flex-shrink: 0;
+  align-self: center;
 }
 .asset-bar-back:hover { color: var(--text); }
 
 .asset-bar-divider {
   width: 1px;
-  height: 24px;
   background: var(--border);
-  margin: 0 8px;
+  margin: 8px 8px;
   flex-shrink: 0;
 }
 
+/* Elke groep = eigen kolom met label + scrollbare knoppenrij */
 .asset-bar-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding-right: 6px;
-  margin-right: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4px 8px 4px 6px;
   border-right: 1px solid var(--border);
+  min-width: 0;
 }
-.asset-bar-group:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+.asset-bar-group:last-child { border-right: none; }
 
 .asset-bar-group-label {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   color: var(--text-secondary);
   opacity: 0.5;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0 6px;
+  letter-spacing: 0.1em;
+  padding: 0 2px 2px;
   flex-shrink: 0;
 }
+
+/* Scrollbare rij met asset-knoppen per groep */
+.asset-bar-group-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233,30,99,0.35) transparent;
+  padding-bottom: 2px;
+}
+.asset-bar-group-row::-webkit-scrollbar { height: 3px; }
+.asset-bar-group-row::-webkit-scrollbar-track { background: transparent; }
+.asset-bar-group-row::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.35); border-radius: 99px; }
 
 .asset-bar-btn {
   display: inline-flex;
@@ -5257,34 +5316,27 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
    MOBILE LAYOUT FIXES
 ───────────────────────────────────────── */
 
-/* Asset bar op mobiel — horizontaal scrollbaar, goed zichtbaar */
+/* Asset bar op mobiel */
 @media (max-width: 768px) {
   .asset-bar {
-    padding: 8px 10px;
-    gap: 6px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    padding: 4px 8px;
+    min-height: 58px;
   }
-  .asset-bar::-webkit-scrollbar { display: none; }
 
   .asset-bar-back {
     flex-shrink: 0;
-    padding: 8px 14px;
-    font-size: 13px;
-    min-height: 40px;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .asset-bar-btn {
-    padding: 6px 10px;
-    min-height: 40px;
+    padding: 0 10px;
     font-size: 12px;
   }
 
+  .asset-bar-btn {
+    padding: 4px 8px;
+    height: 30px;
+    font-size: 11px;
+  }
+
   .asset-bar-group-label {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   /* Topbar op mobiel: compacter */

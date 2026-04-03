@@ -576,17 +576,19 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           return (
             <div key={group.label} className="asset-bar-group">
               <span className="asset-bar-group-label">{group.label}</span>
-              {groupAssets.map((a) => (
-                <button
-                  key={a.symbol}
-                  className={`asset-bar-btn${asset === a.symbol ? " active" : ""}`}
-                  onClick={() => handleAssetChange(a.symbol)}
-                  title={a.name}
-                >
-                  <span className="asset-bar-emoji">{a.emoji}</span>
-                  <span className="asset-bar-ticker">{a.ticker}</span>
-                </button>
-              ))}
+              <div className="asset-bar-group-row">
+                {groupAssets.map((a) => (
+                  <button
+                    key={a.symbol}
+                    className={`asset-bar-btn${asset === a.symbol ? " active" : ""}`}
+                    onClick={() => handleAssetChange(a.symbol)}
+                    title={a.name}
+                  >
+                    <span className="asset-bar-emoji">{a.emoji}</span>
+                    <span className="asset-bar-ticker">{a.ticker}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           );
         })}

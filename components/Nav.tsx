@@ -3,20 +3,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
-const LINKS = [
-  { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
-  { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
-  { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
-  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
-  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+// Primaire links — altijd zichtbaar in desktop nav
+const PRIMARY_LINKS = [
+  { href: "/dashboard", key: "nav_link_scanner",  icon: "⚡" },
+  { href: "/trade",     key: "nav_link_trade",    icon: "📈" },
+  { href: "/leren",     key: "nav_link_learn",    icon: "🎓" },
+  { href: "/agenda",    key: "nav_link_agenda",   icon: "📅" },
+  { href: "/stats",     key: "nav_link_stats",    icon: "📊" },
+] as const;
+
+// Secundaire links — achter "···" dropdown
+const SECONDARY_LINKS = [
   { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
   { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
   { href: "/help",         key: "nav_link_help",     icon: "❓" },
 ] as const;
+
+type AnyLink = { href: string; key: string; icon: string };
 
 export default function Nav() {
   const pathname = usePathname();
@@ -25,21 +32,43 @@ export default function Nav() {
   const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
 
-  // Sluit menu bij navigatie
   useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => { setMoreOpen(false); }, [pathname]);
 
-  // Voorkom scroll van body als menu open is
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
+  // Sluit dropdown bij klik buiten
+  useEffect(() => {
+    if (!moreOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [moreOpen]);
+
   if (pathname.startsWith("/auth/")) return null;
 
-  const allLinks = isAdmin
-    ? [...LINKS, { href: "/admin", key: "Admin" as const, icon: "🛡️" }]
-    : LINKS;
+  const secondaryLinks: AnyLink[] = isAdmin
+    ? [...SECONDARY_LINKS, { href: "/admin", key: "Admin", icon: "🛡️" }]
+    : [...SECONDARY_LINKS];
+
+  const allLinks: AnyLink[] = [...PRIMARY_LINKS, ...secondaryLinks];
+
+  const isSecondaryActive = secondaryLinks.some(
+    l => pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href))
+  );
+
+  const renderLabel = (key: string) =>
+    key.startsWith("nav_") ? t(key as Parameters<typeof t>[0]) : key;
 
   return (
     <>
@@ -49,21 +78,42 @@ export default function Nav() {
           <span className="app-nav-name">Bitcoin Mentor</span>
         </Link>
 
-        {/* Desktop links */}
+        {/* Desktop: primaire links */}
         <div className="app-nav-links desktop-nav-links">
-          {allLinks.map((l) => {
+          {PRIMARY_LINKS.map((l) => {
             const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
             return (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={`app-nav-link${active ? " active" : ""}`}
-              >
+              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
                 <span className="app-nav-icon">{l.icon}</span>
-                <span className="app-nav-label">{l.key.startsWith("nav_") ? t(l.key as Parameters<typeof t>[0]) : l.key}</span>
+                <span className="app-nav-label">{renderLabel(l.key)}</span>
               </Link>
             );
           })}
+
+          {/* Desktop: ··· meer dropdown */}
+          <div ref={moreRef} style={{ position: "relative" }}>
+            <button
+              className={`app-nav-link app-nav-more-btn${isSecondaryActive ? " active" : ""}${moreOpen ? " open" : ""}`}
+              onClick={() => setMoreOpen(v => !v)}
+              title="Meer"
+            >
+              <span className="app-nav-icon">···</span>
+              <span className="app-nav-label">Meer</span>
+            </button>
+            {moreOpen && (
+              <div className="app-nav-dropdown">
+                {secondaryLinks.map((l) => {
+                  const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
+                  return (
+                    <Link key={l.href} href={l.href} className={`app-nav-dropdown-item${active ? " active" : ""}`}>
+                      <span>{l.icon}</span>
+                      <span>{renderLabel(l.key)}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Desktop user */}
@@ -87,12 +137,8 @@ export default function Nav() {
           </div>
         )}
 
-        {/* Mobiel: hamburger knop */}
-        <button
-          className="nav-hamburger"
-          onClick={() => setMenuOpen(v => !v)}
-          aria-label="Menu openen"
-        >
+        {/* Mobiel: hamburger */}
+        <button className="nav-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu openen">
           <span className={`nav-hamburger-icon${menuOpen ? " open" : ""}`}>
             <span /><span /><span />
           </span>
@@ -127,13 +173,9 @@ export default function Nav() {
               {allLinks.map((l) => {
                 const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
                 return (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    className={`nav-mobile-link${active ? " active" : ""}`}
-                  >
+                  <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
                     <span className="nav-mobile-link-icon">{l.icon}</span>
-                    <span>{l.key.startsWith("nav_") ? t(l.key as Parameters<typeof t>[0]) : l.key}</span>
+                    <span>{renderLabel(l.key)}</span>
                   </Link>
                 );
               })}
