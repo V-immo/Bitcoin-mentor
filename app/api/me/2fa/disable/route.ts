@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
-import { authenticator } from "otplib";
+import { verify } from "otplib";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   // Verifieer via TOTP token OF wachtwoord
   let ok = false;
   if (token && user.totp_secret) {
-    ok = authenticator.verify({ token, secret: user.totp_secret });
+    ok = await verify({ token, secret: user.totp_secret, type: "totp" });
   }
   if (!ok && password) {
     ok = await bcrypt.compare(password, user.password_hash);

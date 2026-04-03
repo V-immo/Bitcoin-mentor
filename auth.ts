@@ -44,10 +44,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // 2FA check — als ingeschakeld, verifieer TOTP token
         if (user.totp_enabled && user.totp_secret) {
-          const { authenticator } = await import("otplib");
+          const { verify: totpVerify } = await import("otplib");
           const token = (credentials.totp_token as string | undefined) ?? "";
           if (!token) return null; // Geen token opgegeven
-          const validTotp = authenticator.verify({ token, secret: user.totp_secret });
+          const validTotp = await totpVerify({ token, secret: user.totp_secret, type: "totp" });
           if (!validTotp) return null;
         }
 

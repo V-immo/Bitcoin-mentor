@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
-import { authenticator } from "otplib";
+import { verify } from "otplib";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Genereer eerst een QR code via setup" }, { status: 400 });
   }
 
-  const valid = authenticator.verify({ token, secret: user.totp_secret });
+  const valid = await verify({ token, secret: user.totp_secret, type: "totp" });
   if (!valid) {
     return Response.json({ error: "Ongeldige code — probeer opnieuw" }, { status: 400 });
   }
