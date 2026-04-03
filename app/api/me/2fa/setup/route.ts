@@ -18,7 +18,7 @@ export async function GET() {
   db.prepare("UPDATE users SET totp_secret = ? WHERE id = ?").run(secret, userId);
 
   // Genereer otpauth URI en QR code
-  const otpauth = generateURI({ secret, account: email, issuer: "Bitcoin Mentor" });
+  const otpauth = generateURI({ secret, label: email, issuer: "Bitcoin Mentor" });
   const qrDataUrl = await QRCode.toDataURL(otpauth);
 
   return Response.json({ secret, qrDataUrl });
