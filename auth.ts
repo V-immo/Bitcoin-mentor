@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const { verify: totpVerify } = await import("otplib");
           const token = (credentials.totp_token as string | undefined) ?? "";
           if (!token) return null; // Geen token opgegeven
-          const validTotp = await totpVerify({ token, secret: user.totp_secret, type: "totp" }).catch(() => false);
+          const validTotp = await totpVerify({ token, secret: user.totp_secret }).catch(() => false);
           if (!validTotp) return null;
         }
 

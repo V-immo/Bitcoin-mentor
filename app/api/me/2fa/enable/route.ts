@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Genereer eerst een QR code via setup" }, { status: 400 });
   }
 
-  const valid = await verify({ token, secret: user.totp_secret, type: "totp" }).catch(() => false);
+  const valid = await verify({ token, secret: user.totp_secret }).catch(() => false);
   if (!valid) {
     return Response.json({ error: "Ongeldige code — probeer opnieuw" }, { status: 400 });
   }
