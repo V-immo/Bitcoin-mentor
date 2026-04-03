@@ -1,55 +1,33 @@
-const CACHE_NAME = "btcmentor-v3";
-const APP_SHELL = ["/", "/trade", "/leren", "/offline"];
+const CACHE_NAME = "btcmentor-v4";
 
-// Installeer: cache app shell
+// Installeer: skip waiting zodat nieuwe SW meteen actief wordt
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      cache.addAll(APP_SHELL).catch(() => {})
-    )
-  );
 });
 
-// Activeer: verwijder oude caches
+// Activeer: verwijder ALLE oude caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// Fetch: network-first voor API, cache-first voor statische assets
+// Fetch: alleen push-notificaties ondersteunen, GEEN caching van assets
+// Next.js assets hebben al een content-hash in hun bestandsnaam — die hoef je niet te cachen.
+// Cachen van _next/static/ veroorzaakte witte pagina's na deploys.
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // API calls: altijd live (geen cache)
+  // API calls: altijd live
   if (url.pathname.startsWith("/api/")) return;
 
-  // Navigatie: network-first, fallback naar cache
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() =>
-        caches.match(event.request).then((r) => r || caches.match("/"))
-      )
-    );
-    return;
-  }
+  // _next/static/ assets: altijd live (hebben eigen hash in naam)
+  if (url.pathname.startsWith("/_next/")) return;
 
-  // Statische assets: cache-first
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (response.ok && event.request.method === "GET") {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      }).catch(() => cached || new Response("", { status: 408 }));
-    })
-  );
+  // Al het overige: network-first, geen cache fallback
+  // (offline fallback weglaten voorkomt het serveren van verouderde HTML)
 });
 
 self.addEventListener("push", (event) => {
