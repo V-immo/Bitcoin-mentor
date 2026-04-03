@@ -1504,25 +1504,102 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .app-nav-icon { font-size: 14px; }
 .app-nav-label { font-size: 13px; }
 
-/* ── Admin nav link — apart herkenbaar ── */
-.app-nav-admin-link {
-  border: 1px solid rgba(233,30,99,0.3) !important;
-  color: var(--primary) !important;
-  margin-left: 4px;
+/* ── Account dropdown knop ── */
+.app-nav-account-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
-.app-nav-admin-link:hover {
+
+/* ── Thema toggle knop ── */
+.app-nav-theme-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+/* ── Dropdown menu ── */
+.app-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  min-width: 200px;
+  z-index: 300;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-nav-dd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.app-nav-dd-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.app-nav-dd-item.active {
+  background: rgba(233,30,99,0.1);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.app-nav-dd-admin {
+  color: var(--primary) !important;
+}
+.app-nav-dd-admin:hover {
   background: rgba(233,30,99,0.1) !important;
 }
-.app-nav-admin-link.active {
-  background: rgba(233,30,99,0.15) !important;
-  border-color: var(--primary) !important;
+
+.app-nav-dd-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.app-nav-dd-logout {
+  color: #ef4444 !important;
+}
+.app-nav-dd-logout:hover {
+  background: rgba(239,68,68,0.08) !important;
+  color: #ef4444 !important;
+}
+
+/* ── Mobiel sectie titels ── */
+.nav-mobile-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  padding: 4px 16px 4px;
 }
 
 /* Mobiel admin link */
 .nav-mobile-admin {
   border: 1px solid rgba(233,30,99,0.25) !important;
   color: var(--primary) !important;
-  margin-top: 8px;
 }
 
 @media (max-width: 600px) {

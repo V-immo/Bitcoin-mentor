@@ -3,16 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
-const LINKS = [
+const PRIMARY_LINKS = [
   { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
   { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
   { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
   { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
   { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+] as const;
+
+const ACCOUNT_LINKS = [
   { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
   { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
   { href: "/help",         key: "nav_link_help",     icon: "❓" },
@@ -25,17 +28,29 @@ export default function Nav() {
   const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropOpen, setDropOpen] = useState(false);
+  const dropRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => { setMenuOpen(false); setDropOpen(false); }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+  useEffect(() => {
+    if (!dropOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dropRef.current && !dropRef.current.contains(e.target as Node)) setDropOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [dropOpen]);
 
   if (pathname.startsWith("/auth/")) return null;
 
-  const renderLabel = (key: string) =>
-    key.startsWith("nav_") ? t(key as Parameters<typeof t>[0]) : key;
+  const rl = (key: string) => key.startsWith("nav_") ? t(key as Parameters<typeof t>[0]) : key;
+
+  const accountActive = [...ACCOUNT_LINKS, ...(isAdmin ? [{ href: "/admin" }] : [])]
+    .some(l => pathname === l.href || pathname.startsWith(l.href + "/"));
 
   return (
     <>
@@ -45,45 +60,68 @@ export default function Nav() {
           <span className="app-nav-name">Bitcoin Mentor</span>
         </Link>
 
-        {/* Desktop: alle links — icoon altijd, label alleen bij actief */}
+        {/* Desktop: primaire links */}
         <div className="app-nav-links desktop-nav-links">
-          {LINKS.map((l) => {
+          {PRIMARY_LINKS.map((l) => {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
-              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`} title={renderLabel(l.key)}>
+              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
                 <span className="app-nav-icon">{l.icon}</span>
-                {active && <span className="app-nav-label">{renderLabel(l.key)}</span>}
+                <span className="app-nav-label">{rl(l.key)}</span>
               </Link>
             );
           })}
-          {/* Admin — aparte stijl */}
-          {isAdmin && (
-            <Link href="/admin" className={`app-nav-link app-nav-admin-link${pathname.startsWith("/admin") ? " active" : ""}`} title="Admin">
-              <span className="app-nav-icon">🛡️</span>
-              {pathname.startsWith("/admin") && <span className="app-nav-label">Admin</span>}
-            </Link>
-          )}
-        </div>
 
-        {/* Desktop user */}
-        {session?.user && (
-          <div className="app-nav-user desktop-nav-links">
-            <span className="app-nav-username">{session.user.name}</span>
+          {/* Account dropdown */}
+          <div ref={dropRef} style={{ position: "relative" }}>
             <button
-              onClick={toggleTheme}
-              title={theme === "dark" ? "Schakel naar licht" : "Schakel naar donker"}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", lineHeight: 1 }}
+              className={`app-nav-link app-nav-account-btn${accountActive || dropOpen ? " active" : ""}`}
+              onClick={() => setDropOpen(v => !v)}
             >
-              {theme === "dark" ? "☀️" : "🌙"}
+              <span className="app-nav-icon">👤</span>
+              <span className="app-nav-label">
+                {session?.user?.name ?? "Account"} {dropOpen ? "▴" : "▾"}
+              </span>
             </button>
-            <button
-              className="app-nav-logout"
-              onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
-            >
-              {t("nav_logout")}
-            </button>
+
+            {dropOpen && (
+              <div className="app-nav-dropdown">
+                {ACCOUNT_LINKS.map((l) => {
+                  const active = pathname === l.href || pathname.startsWith(l.href + "/");
+                  return (
+                    <Link key={l.href} href={l.href} className={`app-nav-dd-item${active ? " active" : ""}`}>
+                      <span>{l.icon}</span>
+                      <span>{rl(l.key)}</span>
+                    </Link>
+                  );
+                })}
+                {isAdmin && (
+                  <Link href="/admin" className={`app-nav-dd-item app-nav-dd-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
+                    <span>🛡️</span>
+                    <span>Admin</span>
+                  </Link>
+                )}
+                <div className="app-nav-dd-divider" />
+                <button
+                  className="app-nav-dd-item app-nav-dd-logout"
+                  onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
+                >
+                  <span>🚪</span>
+                  <span>{t("nav_logout")}</span>
+                </button>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Thema toggle */}
+          <button
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Lichtmodus" : "Donkermodus"}
+            className="app-nav-link app-nav-theme-btn"
+          >
+            <span className="app-nav-icon">{theme === "dark" ? "☀️" : "🌙"}</span>
+          </button>
+        </div>
 
         {/* Mobiel: hamburger */}
         <button className="nav-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu openen">
@@ -118,12 +156,24 @@ export default function Nav() {
             )}
 
             <div className="nav-mobile-links">
-              {LINKS.map((l) => {
+              <div className="nav-mobile-section-title">Menu</div>
+              {PRIMARY_LINKS.map((l) => {
                 const active = pathname === l.href || pathname.startsWith(l.href + "/");
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
                     <span className="nav-mobile-link-icon">{l.icon}</span>
-                    <span>{renderLabel(l.key)}</span>
+                    <span>{rl(l.key)}</span>
+                  </Link>
+                );
+              })}
+
+              <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Account</div>
+              {ACCOUNT_LINKS.map((l) => {
+                const active = pathname === l.href || pathname.startsWith(l.href + "/");
+                return (
+                  <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
+                    <span className="nav-mobile-link-icon">{l.icon}</span>
+                    <span>{rl(l.key)}</span>
                   </Link>
                 );
               })}
