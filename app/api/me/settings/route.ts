@@ -61,18 +61,7 @@ export async function PUT(request: NextRequest) {
   // Zorg dat rij bestaat
   getOrCreateSettings(userId);
 
-  // Doel opslaan indien meegestuurd
-  if (typeof body.goal === "number") {
-    try {
-      db.prepare("UPDATE settings SET goal = ?, updated_at = datetime('now') WHERE user_id = ?").run(body.goal, userId);
-      return Response.json({ ok: true });
-    } catch {
-      // Kolom bestaat nog niet — migratie nog niet uitgevoerd
-      return Response.json({ error: "Goal kolom ontbreekt, voer db/migrate-goal.js uit" }, { status: 500 });
-    }
-  }
-
-  // Bitvavo sleutels opslaan indien meegestuurd
+  // Bitvavo sleutels opslaan indien meegestuurd (vóór goal check — goal zit altijd in settings spread)
   if (body.bitvavoApiKey !== undefined && body.bitvavoApiSecret !== undefined) {
     try {
       db.prepare(`
@@ -89,6 +78,16 @@ export async function PUT(request: NextRequest) {
       return Response.json({ ok: true });
     } catch {
       return Response.json({ error: "Bitvavo kolommen ontbreken, voer db/migrate-bitvavo.js uit" }, { status: 500 });
+    }
+  }
+
+  // Doel opslaan indien expliciet meegestuurd (alleen als geen andere keys aanwezig)
+  if (typeof body.goal === "number" && body.bitvavoApiKey === undefined && body.testnetKey === undefined) {
+    try {
+      db.prepare("UPDATE settings SET goal = ?, updated_at = datetime('now') WHERE user_id = ?").run(body.goal, userId);
+      return Response.json({ ok: true });
+    } catch {
+      return Response.json({ error: "Goal kolom ontbreekt, voer db/migrate-goal.js uit" }, { status: 500 });
     }
   }
 
