@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
 
-# Annuleer oudere deploys als er een nieuwe commit komt
 concurrency:
   group: deploy
   cancel-in-progress: false
@@ -25,8 +24,7 @@ jobs:
             set -e
             cd /var/www/bitcoin-mentor
 
-            # Stap 1: verwijder stale lock + herstel PM2 als die gestopt is
-            rm -f /tmp/build.lock
+            # PM2 online houden
             pm2 start bitcoin-mentor 2>/dev/null || pm2 restart bitcoin-mentor 2>/dev/null || true
 
             # Code updaten
@@ -49,21 +47,10 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Zero-downtime build: bouw naar /var/www/bitcoin-mentor-build (zelfde schijf)
-            # PM2 raakt .next/ nooit aan tijdens de build → geen crashes
-            BUILD_DIR=/var/www/bitcoin-mentor-build
-            touch /tmp/build.lock
-            trap 'rm -f /tmp/build.lock' EXIT
+            # Build (pm2 blijft draaien op oude .next tot restart)
+            NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
-            rm -rf "$BUILD_DIR"
-            NEXT_DIST_DIR="$BUILD_DIR" \
-              NODE_OPTIONS='--max-old-space-size=1400' \
-              npm run build
-
-            # Swap: nieuwe build in, herstart, schoon op
-            rm -rf .next
-            mv "$BUILD_DIR" .next
-
+            # Herstart na succesvolle build
             pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
             pm2 save
 
