@@ -43,6 +43,7 @@ jobs:
             node db/migrate-testnet.js || true
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
+            node db/migrate-2fa.js || true
 
             # Stop pm2 — site even offline (~2-3 min bouwtijd)
             pm2 stop bitcoin-mentor || true

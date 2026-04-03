@@ -57,6 +57,20 @@ export default function SettingsPanel() {
 
   const push = usePushNotifications();
 
+  // 2FA
+  const [twoFaEnabled, setTwoFaEnabled] = useState<boolean | null>(null);
+  const [twoFaStep, setTwoFaStep] = useState<"idle" | "setup" | "disable">("idle");
+  const [twoFaQr, setTwoFaQr] = useState<string | null>(null);
+  const [twoFaToken, setTwoFaToken] = useState("");
+  const [twoFaError, setTwoFaError] = useState<string | null>(null);
+  const [twoFaLoading, setTwoFaLoading] = useState(false);
+
+  // Account verwijderen
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   // Wachtwoord wijzigen
   const [pwCurrent, setPwCurrent] = useState("");
   const [pwNew, setPwNew] = useState("");
@@ -79,6 +93,12 @@ export default function SettingsPanel() {
       .then(r => r.ok ? r.json() : null)
       .then(data => setTestnetConnected(!!data?.connected))
       .catch(() => setTestnetConnected(false));
+
+    // Check 2FA status
+    fetch("/api/me/2fa/status")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => setTwoFaEnabled(!!data?.enabled))
+      .catch(() => setTwoFaEnabled(false));
 
     // Check of Bitvavo al gekoppeld is
     fetch("/api/bitvavo/balance")
@@ -459,6 +479,236 @@ export default function SettingsPanel() {
             {pwSaving ? t("settings_pw_saving") : t("settings_pw_btn")}
           </button>
         </div>
+      </section>
+
+      {/* Tweestapsverificatie (2FA) */}
+      <section className="settings-card">
+        <div className="settings-card-title">🔐 Tweestapsverificatie (2FA)</div>
+        <div className="settings-card-desc">
+          Extra beveiliging met een authenticator app (Google Authenticator, Authy, etc.). Verplicht bij live trading met Bitvavo.
+        </div>
+
+        {twoFaEnabled === null ? (
+          <div style={{ marginTop: 12, fontSize: 13, color: "var(--text-secondary)" }}>Laden…</div>
+        ) : twoFaEnabled && twoFaStep === "idle" ? (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, padding: "8px 14px", color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
+              ✅ Tweestapsverificatie is ingeschakeld
+            </div>
+            <button
+              className="admin-btn"
+              style={{ borderColor: "rgba(239,68,68,0.3)", color: "#ef4444" }}
+              onClick={() => { setTwoFaStep("disable"); setTwoFaError(null); setTwoFaToken(""); }}
+            >
+              2FA uitschakelen
+            </button>
+          </div>
+        ) : !twoFaEnabled && twoFaStep === "idle" ? (
+          <button
+            className="admin-btn admin-btn-primary"
+            style={{ marginTop: 12 }}
+            onClick={async () => {
+              setTwoFaLoading(true);
+              setTwoFaError(null);
+              const res = await fetch("/api/me/2fa/setup");
+              const data = await res.json();
+              if (data.qrDataUrl) {
+                setTwoFaQr(data.qrDataUrl);
+                setTwoFaStep("setup");
+              } else {
+                setTwoFaError(data.error ?? "Fout bij setup");
+              }
+              setTwoFaLoading(false);
+            }}
+            disabled={twoFaLoading}
+          >
+            {twoFaLoading ? "Laden…" : "2FA inschakelen"}
+          </button>
+        ) : twoFaStep === "setup" ? (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 10, lineHeight: 1.6 }}>
+              Scan de QR code met je authenticator app en voer daarna de 6-cijferige code in om te bevestigen.
+            </div>
+            {twoFaQr && (
+              <div style={{ textAlign: "center", marginBottom: 14 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={twoFaQr} alt="2FA QR Code" style={{ width: 180, height: 180, borderRadius: 12, background: "#fff", padding: 8 }} />
+              </div>
+            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
+              <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Verificatiecode (6 cijfers)</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={twoFaToken}
+                onChange={e => { setTwoFaToken(e.target.value.replace(/\D/g, "")); setTwoFaError(null); }}
+                placeholder="000000"
+                style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 20, letterSpacing: 8, textAlign: "center" }}
+              />
+            </div>
+            {twoFaError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                className="admin-btn"
+                onClick={() => { setTwoFaStep("idle"); setTwoFaQr(null); setTwoFaToken(""); setTwoFaError(null); }}
+                style={{ flex: 1 }}
+              >
+                Annuleer
+              </button>
+              <button
+                className="admin-btn admin-btn-primary"
+                style={{ flex: 1 }}
+                disabled={twoFaLoading || twoFaToken.length < 6}
+                onClick={async () => {
+                  setTwoFaLoading(true);
+                  setTwoFaError(null);
+                  const res = await fetch("/api/me/2fa/enable", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token: twoFaToken }),
+                  });
+                  const data = await res.json();
+                  if (data.ok) {
+                    setTwoFaEnabled(true);
+                    setTwoFaStep("idle");
+                    setTwoFaQr(null);
+                    setTwoFaToken("");
+                  } else {
+                    setTwoFaError(data.error ?? "Ongeldige code");
+                    setTwoFaToken("");
+                  }
+                  setTwoFaLoading(false);
+                }}
+              >
+                {twoFaLoading ? "Verifiëren…" : "Bevestigen"}
+              </button>
+            </div>
+          </div>
+        ) : twoFaStep === "disable" ? (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 10, lineHeight: 1.6 }}>
+              Voer je huidige authenticatiecode in om 2FA uit te schakelen.
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
+              <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Authenticatiecode of wachtwoord</label>
+              <input
+                type="text"
+                value={twoFaToken}
+                onChange={e => { setTwoFaToken(e.target.value); setTwoFaError(null); }}
+                placeholder="6-cijferige code of wachtwoord"
+                style={{ background: "var(--surface-2)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+              />
+            </div>
+            {twoFaError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                className="admin-btn"
+                onClick={() => { setTwoFaStep("idle"); setTwoFaToken(""); setTwoFaError(null); }}
+                style={{ flex: 1 }}
+              >
+                Annuleer
+              </button>
+              <button
+                className="admin-btn"
+                style={{ flex: 1, background: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444" }}
+                disabled={twoFaLoading || !twoFaToken}
+                onClick={async () => {
+                  setTwoFaLoading(true);
+                  setTwoFaError(null);
+                  // Probeer als TOTP token (6 cijfers) of als wachtwoord
+                  const isToken = /^\d{6}$/.test(twoFaToken);
+                  const res = await fetch("/api/me/2fa/disable", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(isToken ? { token: twoFaToken } : { password: twoFaToken }),
+                  });
+                  const data = await res.json();
+                  if (data.ok) {
+                    setTwoFaEnabled(false);
+                    setTwoFaStep("idle");
+                    setTwoFaToken("");
+                  } else {
+                    setTwoFaError(data.error ?? "Verificatie mislukt");
+                    setTwoFaToken("");
+                  }
+                  setTwoFaLoading(false);
+                }}
+              >
+                {twoFaLoading ? "Bezig…" : "2FA uitschakelen"}
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </section>
+
+      {/* Account verwijderen */}
+      <section className="settings-card" style={{ borderColor: "rgba(239,68,68,0.25)" }}>
+        <div className="settings-card-title" style={{ color: "#ef4444" }}>⚠️ Gevaarzone</div>
+        <div className="settings-card-desc">
+          Permanent je account en alle data verwijderen. Dit kan niet ongedaan worden gemaakt.
+        </div>
+        {!deleteConfirm ? (
+          <button
+            className="admin-btn"
+            style={{ marginTop: 12, borderColor: "rgba(239,68,68,0.4)", color: "#ef4444" }}
+            onClick={() => setDeleteConfirm(true)}
+          >
+            Account verwijderen
+          </button>
+        ) : (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "12px 14px", marginBottom: 12, fontSize: 13, color: "#fca5a5", lineHeight: 1.6 }}>
+              ⚠️ Je staat op het punt je account <strong>permanent te verwijderen</strong>. Alle trades, quiz voortgang, berichten met Marcus en instellingen worden definitief gewist.
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
+              <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bevestig met je wachtwoord</label>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={e => { setDeletePassword(e.target.value); setDeleteError(null); }}
+                placeholder="Jouw wachtwoord"
+                style={{ background: "var(--surface-2)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+              />
+            </div>
+            {deleteError && (
+              <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {deleteError}</div>
+            )}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                className="admin-btn"
+                onClick={() => { setDeleteConfirm(false); setDeletePassword(""); setDeleteError(null); }}
+                style={{ flex: 1 }}
+              >
+                Annuleer
+              </button>
+              <button
+                className="admin-btn"
+                style={{ flex: 1, background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.4)", color: "#ef4444" }}
+                disabled={deleting || !deletePassword}
+                onClick={async () => {
+                  setDeleting(true);
+                  setDeleteError(null);
+                  const res = await fetch("/api/me/delete", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password: deletePassword }),
+                  });
+                  const data = await res.json();
+                  if (res.ok) {
+                    // Uitloggen en doorsturen naar login
+                    window.location.href = "/auth/login?deleted=1";
+                  } else {
+                    setDeleteError(data.error ?? "Verwijderen mislukt");
+                    setDeleting(false);
+                  }
+                }}
+              >
+                {deleting ? "Bezig…" : "Permanent verwijderen"}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Push notificaties */}

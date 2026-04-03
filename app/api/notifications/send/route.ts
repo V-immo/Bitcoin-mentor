@@ -1,16 +1,11 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
-import { getDb } from "@/db/db";
-import webpush from "web-push";
+import { sendPushToUser, sendPushToAll } from "@/lib/push";
 
 export async function POST(request: NextRequest) {
-  const vapidEmail = process.env.VAPID_EMAIL;
-  const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
-  if (!vapidEmail || !vapidPublic || !vapidPrivate) {
+  if (!process.env.VAPID_EMAIL || !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
     return Response.json({ error: "Push notificaties niet geconfigureerd" }, { status: 503 });
   }
-  webpush.setVapidDetails(vapidEmail, vapidPublic, vapidPrivate);
 
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") {
@@ -18,33 +13,17 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const { title = "Bitcoin Mentor", message, userId } = body;
+  const { title = "Bitcoin Mentor", message, userId, url = "/" } = body;
 
   if (!message) return Response.json({ error: "message verplicht" }, { status: 400 });
 
-  const db = getDb();
-  const subs = userId
-    ? db.prepare("SELECT * FROM push_subscriptions WHERE user_id = ?").all(userId)
-    : db.prepare("SELECT * FROM push_subscriptions").all();
+  const payload = { title, body: message, url };
 
-  const payload = JSON.stringify({ title, body: message, icon: "/icon-192.png", badge: "/icon-192.png" });
-
-  let sent = 0;
-  let failed = 0;
-
-  for (const sub of subs as { endpoint: string; p256dh: string; auth: string; id: number }[]) {
-    try {
-      await webpush.sendNotification(
-        { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-        payload,
-      );
-      sent++;
-    } catch {
-      // Verouderde subscription verwijderen
-      db.prepare("DELETE FROM push_subscriptions WHERE id = ?").run(sub.id);
-      failed++;
-    }
+  if (userId) {
+    const sent = await sendPushToUser(parseInt(userId), payload);
+    return Response.json({ ok: true, sent });
   }
 
-  return Response.json({ ok: true, sent, failed });
+  const result = await sendPushToAll(payload);
+  return Response.json({ ok: true, ...result });
 }

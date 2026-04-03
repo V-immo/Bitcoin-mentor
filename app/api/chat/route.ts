@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 import { sharedScanCache } from "@/lib/scan-cache";
+import { bitvavRequest } from "@/lib/bitvavo";
 
 // Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -190,6 +191,52 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
     } catch { /* ignore */ }
   }
 
+  // Haal Bitvavo live saldo op voor Marcus context
+  let bitvavoContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const bvRow = db
+        .prepare("SELECT bitvavo_api_key, bitvavo_api_secret FROM settings WHERE user_id = ?")
+        .get(userId) as { bitvavo_api_key?: string; bitvavo_api_secret?: string } | undefined;
+      const bvKey = bvRow?.bitvavo_api_key ?? "";
+      const bvSecret = bvRow?.bitvavo_api_secret ?? "";
+      if (bvKey && bvSecret) {
+        const [balanceData, openOrdersData] = await Promise.allSettled([
+          bitvavRequest(bvKey, bvSecret, "GET", "/balance"),
+          bitvavRequest(bvKey, bvSecret, "GET", "/ordersOpen"),
+        ]);
+        const balance = balanceData.status === "fulfilled" && Array.isArray(balanceData.value)
+          ? (balanceData.value as { symbol: string; available: string; inOrder: string }[])
+              .filter(b => parseFloat(b.available) > 0.0001 || parseFloat(b.inOrder) > 0.0001)
+          : [];
+        if (balance.length > 0) {
+          const balLines = balance.map(b => {
+            const scanEntry = sharedScanCache.data?.find(s =>
+              s.symbol.startsWith(b.symbol) || b.symbol === "EUR"
+            );
+            const price = scanEntry?.price ?? 0;
+            const euroVal = b.symbol === "EUR"
+              ? `€${parseFloat(b.available).toFixed(2)}`
+              : price > 0
+                ? `€${(parseFloat(b.available) * price).toFixed(2)}`
+                : "";
+            const inOrder = parseFloat(b.inOrder) > 0 ? ` (${b.inOrder} in order)` : "";
+            return `  ${b.symbol}: ${parseFloat(b.available).toFixed(6)}${inOrder}${euroVal ? " ≈ " + euroVal : ""}`;
+          });
+          bitvavoContext = `BITVAVO LIVE PORTFOLIO:\n${balLines.join("\n")}`;
+        }
+        if (openOrdersData.status === "fulfilled" && Array.isArray(openOrdersData.value) && openOrdersData.value.length > 0) {
+          const orders = (openOrdersData.value as { market: string; side: string; orderType: string; amount: string; price?: string; amountQuote?: string }[])
+            .slice(0, 5)
+            .map(o => `  ${o.side.toUpperCase()} ${o.market}: ${o.amount ?? o.amountQuote ?? "?"} @ ${o.price ? "€" + o.price : "marktprijs"}`)
+            .join("\n");
+          bitvavoContext += `\nOPEN BITVAVO ORDERS:\n${orders}`;
+        }
+      }
+    } catch { /* geen Bitvavo data, doorgaan */ }
+  }
+
   // Haal relevante trading kennis op uit de kennisbank
   let relevantKnowledge = "";
   if (userId) {
@@ -301,8 +348,10 @@ ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de 
 LEERVOORTGANG VAN DEZE GEBRUIKER:
 ${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe gebruiker."}
 
-OPEN POSITIES VAN DEZE GEBRUIKER:
+OPEN POSITIES VAN DEZE GEBRUIKER (paper trading):
 ${openPositionsContext || "Geen open paper trades."}
+
+${bitvavoContext || "BITVAVO LIVE PORTFOLIO: Niet gekoppeld of geen saldo."}
 
 WAT JIJ AL WEET OVER DEZE GEBRUIKER (jouw persoonlijke notities):
 ${marcusNotes || "Nog geen notities — dit is een nieuwe gebruiker of eerste sessie."}

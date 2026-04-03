@@ -13,6 +13,7 @@ type OrderResult = {
   amountQuote?: string;
   filledAmount?: string;
   filledAmountQuote?: string;
+  price?: string;
   status?: string;
 };
 
@@ -36,6 +37,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
   const [lastOrder, setLastOrder]   = useState<OrderResult | null>(null);
   const [orderError, setOrderError] = useState<string | null>(null);
   const [confirm, setConfirm]       = useState(false);
+  const [polling, setPolling]       = useState(false);
 
   const market = toBitvavoMarket(asset);
   const ticker = market ? market.split("-")[0] : asset.replace("USDT", "");
@@ -90,6 +92,33 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
     } else {
       setLastOrder(data);
       fetchBalance();
+      // Poll order status tot filled/cancelled (max 8x, elke 1.5s)
+      if (data.orderId && data.status !== "filled" && data.status !== "cancelled") {
+        setPolling(true);
+        let attempts = 0;
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const statusRes = await fetch(
+              `/api/bitvavo/order/status?orderId=${data.orderId}&market=${encodeURIComponent(data.market ?? market ?? "")}`
+            );
+            const statusData = await statusRes.json();
+            if (!statusData.error) {
+              setLastOrder(statusData);
+              if (statusData.status === "filled" || statusData.status === "cancelled" || attempts >= 8) {
+                clearInterval(pollInterval);
+                setPolling(false);
+                fetchBalance();
+              }
+            } else if (attempts >= 8) {
+              clearInterval(pollInterval);
+              setPolling(false);
+            }
+          } catch {
+            if (attempts >= 8) { clearInterval(pollInterval); setPolling(false); }
+          }
+        }, 1500);
+      }
     }
   }
 
@@ -278,11 +307,25 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
         </div>
       )}
 
-      {/* Succesbericht */}
+      {/* Succesbericht + live status */}
       {lastOrder && (
-        <div style={{ background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>
-          <div style={{ color: "#26c57c", fontWeight: 600, marginBottom: 4 }}>✅ Order uitgevoerd!</div>
-          <div style={{ color: "#86efac" }}>
+        <div style={{
+          background: lastOrder.status === "filled"
+            ? "rgba(38,197,124,0.1)"
+            : lastOrder.status === "cancelled"
+              ? "rgba(239,68,68,0.08)"
+              : "rgba(245,158,11,0.08)",
+          border: `1px solid ${lastOrder.status === "filled" ? "rgba(38,197,124,0.25)" : lastOrder.status === "cancelled" ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`,
+          borderRadius: 8, padding: "10px 14px", fontSize: 13
+        }}>
+          <div style={{
+            color: lastOrder.status === "filled" ? "#26c57c" : lastOrder.status === "cancelled" ? "#ef4444" : "#f59e0b",
+            fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", gap: 6
+          }}>
+            {lastOrder.status === "filled" ? "✅ Order uitgevoerd!" : lastOrder.status === "cancelled" ? "❌ Order geannuleerd" : polling ? "⏳ Wacht op uitvoering…" : "🕐 Order geplaatst"}
+            {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "#f59e0b" }}>live update…</span>}
+          </div>
+          <div style={{ color: lastOrder.status === "filled" ? "#86efac" : "#e5d4e7" }}>
             {lastOrder.side?.toUpperCase()} {lastOrder.filledAmount ?? lastOrder.amount ?? "?"} {ticker}
             {lastOrder.filledAmountQuote
               ? ` voor €${parseFloat(lastOrder.filledAmountQuote).toFixed(2)}`
@@ -290,9 +333,12 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
                 ? ` voor €${parseFloat(lastOrder.amountQuote).toFixed(2)}`
                 : ""
             }
+            {lastOrder.price && parseFloat(lastOrder.price) > 0 && (
+              <span style={{ color: "#6b7280", marginLeft: 6 }}>@ €{parseFloat(lastOrder.price).toLocaleString("nl-NL")}</span>
+            )}
           </div>
           <div style={{ color: "#6b7280", fontSize: 11, marginTop: 2 }}>
-            Order {lastOrder.orderId} — {lastOrder.status}
+            Order {lastOrder.orderId?.slice(0, 8)}… — status: <strong style={{ color: "#bf7a99" }}>{lastOrder.status}</strong>
           </div>
         </div>
       )}

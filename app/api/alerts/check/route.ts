@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getDb } from "@/db/db";
 import { sendAlertEmail } from "@/lib/mailer";
 import { SCAN_ASSETS } from "@/lib/assets";
+import webpush from "web-push";
 
 // Beveilig dit endpoint met een geheime token (ALERT_CHECK_SECRET in .env)
 // Wordt aangeroepen door een cron job (GitHub Actions, server crontab, etc.)
@@ -73,6 +74,16 @@ export async function GET(request: NextRequest) {
     })
   );
 
+  // Configureer VAPID als beschikbaar
+  const vapidReady = !!(process.env.VAPID_EMAIL && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY);
+  if (vapidReady) {
+    webpush.setVapidDetails(
+      process.env.VAPID_EMAIL!,
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+      process.env.VAPID_PRIVATE_KEY!,
+    );
+  }
+
   let triggered = 0;
 
   // Controleer elke alert
@@ -93,6 +104,7 @@ export async function GET(request: NextRequest) {
     }
 
     // E-mail sturen
+    let emailOk = false;
     try {
       await sendAlertEmail({
         to: alert.email,
@@ -101,15 +113,45 @@ export async function GET(request: NextRequest) {
         targetPrice: alert.target_price,
         currentPrice,
       });
+      emailOk = true;
+    } catch (err) {
+      console.error(`Alert email mislukt voor alert ${alert.id}:`, err);
+    }
 
+    // Push notificatie sturen naar alle apparaten van deze gebruiker
+    if (vapidReady) {
+      const pushSubs = db.prepare(
+        "SELECT id, endpoint, p256dh, auth FROM push_subscriptions WHERE user_id = ?"
+      ).all(alert.user_id) as { id: number; endpoint: string; p256dh: string; auth: string }[];
+
+      const assetLabel = SCAN_ASSETS.find(a => a.symbol === alert.asset)?.ticker ?? alert.asset;
+      const pushPayload = JSON.stringify({
+        title: `🔔 Prijsalert: ${assetLabel}`,
+        body: `${assetLabel} is ${alert.condition === "above" ? "gestegen boven" : "gedaald onder"} €${alert.target_price.toLocaleString("nl-NL")} — nu €${currentPrice.toLocaleString("nl-NL")}`,
+        icon: "/icon-192.png",
+        badge: "/icon-192.png",
+        url: "/dashboard",
+      });
+
+      for (const sub of pushSubs) {
+        try {
+          await webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+            pushPayload,
+          );
+        } catch {
+          // Verouderde subscription verwijderen
+          db.prepare("DELETE FROM push_subscriptions WHERE id = ?").run(sub.id);
+        }
+      }
+    }
+
+    if (emailOk || vapidReady) {
       // Update last_triggered_at
       db.prepare(
         "UPDATE price_alerts SET last_triggered_at = datetime('now') WHERE id = ?"
       ).run(alert.id);
-
       triggered++;
-    } catch (err) {
-      console.error(`Alert email mislukt voor alert ${alert.id}:`, err);
     }
   }
 

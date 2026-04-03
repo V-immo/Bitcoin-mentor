@@ -9,8 +9,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        username: { label: "Gebruikersnaam", type: "text" },
-        password: { label: "Wachtwoord", type: "password" },
+        username:   { label: "Gebruikersnaam", type: "text" },
+        password:   { label: "Wachtwoord", type: "password" },
+        totp_token: { label: "2FA Code", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
@@ -29,6 +30,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             password_hash: string;
             role: string;
             start_capital: number;
+            totp_enabled?: number;
+            totp_secret?: string;
           } | undefined;
 
         if (!user) return null;
@@ -38,6 +41,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user.password_hash
         );
         if (!ok) return null;
+
+        // 2FA check — als ingeschakeld, verifieer TOTP token
+        if (user.totp_enabled && user.totp_secret) {
+          const { authenticator } = await import("otplib");
+          const token = (credentials.totp_token as string | undefined) ?? "";
+          if (!token) return null; // Geen token opgegeven
+          const validTotp = authenticator.verify({ token, secret: user.totp_secret });
+          if (!validTotp) return null;
+        }
 
         // Laatste login bijwerken
         db.prepare("UPDATE users SET last_login_at = ? WHERE id = ?").run(
