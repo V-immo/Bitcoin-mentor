@@ -1778,12 +1778,15 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: flex;
   gap: 4px;
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233,30,99,0.4) transparent;
   max-width: min(100vw - 280px, 800px);
-  padding-bottom: 2px;
+  padding-bottom: 4px;
 }
 
-.terminal-asset-switcher::-webkit-scrollbar { display: none; }
+.terminal-asset-switcher::-webkit-scrollbar { height: 4px; }
+.terminal-asset-switcher::-webkit-scrollbar-track { background: transparent; }
+.terminal-asset-switcher::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.4); border-radius: 99px; }
 
 .terminal-switch-back {
   text-decoration: none;
@@ -3874,8 +3877,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   flex-direction: column;
   padding: 24px 0 16px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233,30,99,0.3) transparent;
   height: 100%;
 }
+.admin-sidebar::-webkit-scrollbar { width: 4px; }
+.admin-sidebar::-webkit-scrollbar-track { background: transparent; }
+.admin-sidebar::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.3); border-radius: 99px; }
 .admin-logo {
   font-size: 16px;
   font-weight: 700;
@@ -3922,7 +3930,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   min-width: 0;
   overflow-y: auto;
   height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233,30,99,0.25) transparent;
 }
+.admin-main::-webkit-scrollbar { width: 5px; }
+.admin-main::-webkit-scrollbar-track { background: transparent; }
+.admin-main::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.25); border-radius: 99px; }
 .admin-loading {
   padding: 48px;
   text-align: center;
@@ -5125,8 +5138,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   flex-direction: column;
   gap: 0;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233,30,99,0.3) transparent;
   animation: slideInRight 0.2s ease;
 }
+.nav-mobile-drawer::-webkit-scrollbar { width: 4px; }
+.nav-mobile-drawer::-webkit-scrollbar-track { background: transparent; }
+.nav-mobile-drawer::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.3); border-radius: 99px; }
 
 @keyframes slideInRight {
   from { transform: translateX(100%); }
