@@ -24,9 +24,6 @@ jobs:
             set -e
             cd /var/www/bitcoin-mentor
 
-            # PM2 online houden
-            pm2 start bitcoin-mentor 2>/dev/null || pm2 restart bitcoin-mentor 2>/dev/null || true
-
             # Code updaten
             git fetch origin main
             git reset --hard origin/main
@@ -47,11 +44,14 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
 
-            # Build (pm2 blijft draaien op oude .next tot restart)
+            # Stop pm2 — site even offline (~2-3 min bouwtijd)
+            pm2 stop bitcoin-mentor || true
+
+            # Build
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
-            # Herstart na succesvolle build
-            pm2 restart bitcoin-mentor || pm2 start bitcoin-mentor
+            # Start pm2 — site weer online
+            pm2 start bitcoin-mentor || pm2 start ecosystem.config.js
             pm2 save
 
             echo "✅ Deploy klaar"
