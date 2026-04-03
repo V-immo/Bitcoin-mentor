@@ -567,16 +567,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   return (
     <main className="terminal-page">
 
-      {/* ── Asset balk ── */}
-      <div className="asset-bar">
-        <Link href="/" className="asset-bar-back">← Scanner</Link>
-        <div className="asset-bar-divider" />
+      {/* ── Asset balk: elke categorie eigen rij ── */}
+      <div className="asset-bar-wrap">
         {ASSET_GROUPS.map((group) => {
           const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
           return (
-            <div key={group.label} className="asset-bar-group">
-              <span className="asset-bar-group-label">{group.label}</span>
-              <div className="asset-bar-group-row">
+            <div key={group.label} className="asset-bar-row">
+              <span className="asset-bar-row-label">{group.label}</span>
+              <div className="asset-bar-row-scroll">
                 {groupAssets.map((a) => (
                   <button
                     key={a.symbol}

@@ -3,27 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
-// Primaire links — altijd zichtbaar in desktop nav
-const PRIMARY_LINKS = [
-  { href: "/dashboard", key: "nav_link_scanner",  icon: "⚡" },
-  { href: "/trade",     key: "nav_link_trade",    icon: "📈" },
-  { href: "/leren",     key: "nav_link_learn",    icon: "🎓" },
-  { href: "/agenda",    key: "nav_link_agenda",   icon: "📅" },
-  { href: "/stats",     key: "nav_link_stats",    icon: "📊" },
-] as const;
-
-// Secundaire links — achter "···" dropdown
-const SECONDARY_LINKS = [
+const LINKS = [
+  { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
+  { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
+  { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
+  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
+  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
   { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
   { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
   { href: "/help",         key: "nav_link_help",     icon: "❓" },
 ] as const;
-
-type AnyLink = { href: string; key: string; icon: string };
 
 export default function Nav() {
   const pathname = usePathname();
@@ -32,40 +25,14 @@ export default function Nav() {
   const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
-  const moreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
-  useEffect(() => { setMoreOpen(false); }, [pathname]);
-
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  // Sluit dropdown bij klik buiten
-  useEffect(() => {
-    if (!moreOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [moreOpen]);
-
   if (pathname.startsWith("/auth/")) return null;
-
-  const secondaryLinks: AnyLink[] = isAdmin
-    ? [...SECONDARY_LINKS, { href: "/admin", key: "Admin", icon: "🛡️" }]
-    : [...SECONDARY_LINKS];
-
-  const allLinks: AnyLink[] = [...PRIMARY_LINKS, ...secondaryLinks];
-
-  const isSecondaryActive = secondaryLinks.some(
-    l => pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href))
-  );
 
   const renderLabel = (key: string) =>
     key.startsWith("nav_") ? t(key as Parameters<typeof t>[0]) : key;
@@ -78,49 +45,30 @@ export default function Nav() {
           <span className="app-nav-name">Bitcoin Mentor</span>
         </Link>
 
-        {/* Desktop: primaire links */}
+        {/* Desktop: alle links — icoon altijd, label alleen bij actief */}
         <div className="app-nav-links desktop-nav-links">
-          {PRIMARY_LINKS.map((l) => {
+          {LINKS.map((l) => {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
-              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
+              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`} title={renderLabel(l.key)}>
                 <span className="app-nav-icon">{l.icon}</span>
-                <span className="app-nav-label">{renderLabel(l.key)}</span>
+                {active && <span className="app-nav-label">{renderLabel(l.key)}</span>}
               </Link>
             );
           })}
-
-          {/* Desktop: ··· meer dropdown */}
-          <div ref={moreRef} style={{ position: "relative" }}>
-            <button
-              className={`app-nav-link app-nav-more-btn${isSecondaryActive ? " active" : ""}${moreOpen ? " open" : ""}`}
-              onClick={() => setMoreOpen(v => !v)}
-              title="Meer"
-            >
-              <span className="app-nav-icon">···</span>
-              <span className="app-nav-label">Meer</span>
-            </button>
-            {moreOpen && (
-              <div className="app-nav-dropdown">
-                {secondaryLinks.map((l) => {
-                  const active = pathname === l.href || pathname.startsWith(l.href + "/");
-                  return (
-                    <Link key={l.href} href={l.href} className={`app-nav-dropdown-item${active ? " active" : ""}`}>
-                      <span>{l.icon}</span>
-                      <span>{renderLabel(l.key)}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          {/* Admin — aparte stijl */}
+          {isAdmin && (
+            <Link href="/admin" className={`app-nav-link app-nav-admin-link${pathname.startsWith("/admin") ? " active" : ""}`} title="Admin">
+              <span className="app-nav-icon">🛡️</span>
+              {pathname.startsWith("/admin") && <span className="app-nav-label">Admin</span>}
+            </Link>
+          )}
         </div>
 
         {/* Desktop user */}
         {session?.user && (
           <div className="app-nav-user desktop-nav-links">
             <span className="app-nav-username">{session.user.name}</span>
-            {isAdmin && <span className="app-nav-badge-admin">Admin</span>}
             <button
               onClick={toggleTheme}
               title={theme === "dark" ? "Schakel naar licht" : "Schakel naar donker"}
@@ -170,7 +118,7 @@ export default function Nav() {
             )}
 
             <div className="nav-mobile-links">
-              {allLinks.map((l) => {
+              {LINKS.map((l) => {
                 const active = pathname === l.href || pathname.startsWith(l.href + "/");
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
@@ -179,6 +127,12 @@ export default function Nav() {
                   </Link>
                 );
               })}
+              {isAdmin && (
+                <Link href="/admin" className={`nav-mobile-link nav-mobile-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
+                  <span className="nav-mobile-link-icon">🛡️</span>
+                  <span>Admin</span>
+                </Link>
+              )}
             </div>
 
             {session?.user && (

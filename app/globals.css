@@ -1504,53 +1504,25 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .app-nav-icon { font-size: 14px; }
 .app-nav-label { font-size: 13px; }
 
-/* ── Nav ··· meer dropdown ── */
-.app-nav-more-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  letter-spacing: 0.05em;
+/* ── Admin nav link — apart herkenbaar ── */
+.app-nav-admin-link {
+  border: 1px solid rgba(233,30,99,0.3) !important;
+  color: var(--primary) !important;
+  margin-left: 4px;
 }
-.app-nav-more-btn.open {
-  color: var(--text);
-  background: rgba(255,255,255,0.08);
+.app-nav-admin-link:hover {
+  background: rgba(233,30,99,0.1) !important;
 }
-.app-nav-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  min-width: 180px;
-  z-index: 200;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.app-nav-admin-link.active {
+  background: rgba(233,30,99,0.15) !important;
+  border-color: var(--primary) !important;
 }
-.app-nav-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.app-nav-dropdown-item:hover {
-  background: rgba(255,255,255,0.06);
-  color: var(--text);
-}
-.app-nav-dropdown-item.active {
-  background: rgba(233,30,99,0.12);
-  color: var(--primary);
-  font-weight: 600;
+
+/* Mobiel admin link */
+.nav-mobile-admin {
+  border: 1px solid rgba(233,30,99,0.25) !important;
+  color: var(--primary) !important;
+  margin-top: 8px;
 }
 
 @media (max-width: 600px) {
@@ -4309,78 +4281,56 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 }
 
 /* ══════════════════════════════════════════════════════════
-   ASSET BALK — gegroepeerde asset selector bovenaan trade
+   ASSET BALK — 3 rijen: Crypto / Aandelen / Grondstoffen
    ══════════════════════════════════════════════════════════ */
 
-.asset-bar {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  padding: 0 10px;
+.asset-bar-wrap {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 6px;
-  min-height: 52px;
+  overflow: hidden;
 }
 
-.asset-bar-back {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 12px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-radius: 6px;
-  white-space: nowrap;
-  transition: color 0.15s;
-  flex-shrink: 0;
-  align-self: center;
-}
-.asset-bar-back:hover { color: var(--text); }
-
-.asset-bar-divider {
-  width: 1px;
-  background: var(--border);
-  margin: 8px 8px;
-  flex-shrink: 0;
-}
-
-/* Elke groep = eigen kolom met label + scrollbare knoppenrij */
-.asset-bar-group {
+/* Één rij per categorie */
+.asset-bar-row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 4px 8px 4px 6px;
-  border-right: 1px solid var(--border);
-  min-width: 0;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  min-height: 34px;
 }
-.asset-bar-group:last-child { border-right: none; }
+.asset-bar-row:last-child { border-bottom: none; }
 
-.asset-bar-group-label {
-  font-size: 9px;
+/* Label links — vaste breedte */
+.asset-bar-row-label {
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-secondary);
-  opacity: 0.5;
+  opacity: 0.55;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0 2px 2px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  width: 80px;
   flex-shrink: 0;
+  padding: 0 10px 0 12px;
+  border-right: 1px solid var(--border);
 }
 
-/* Scrollbare rij met asset-knoppen per groep */
-.asset-bar-group-row {
+/* Scrollbare knoppen rechts */
+.asset-bar-row-scroll {
   display: flex;
   align-items: center;
   gap: 2px;
+  padding: 4px 8px;
   overflow-x: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(233,30,99,0.35) transparent;
-  padding-bottom: 2px;
+  scrollbar-color: rgba(233,30,99,0.3) transparent;
+  flex: 1;
 }
-.asset-bar-group-row::-webkit-scrollbar { height: 3px; }
-.asset-bar-group-row::-webkit-scrollbar-track { background: transparent; }
-.asset-bar-group-row::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.35); border-radius: 99px; }
+.asset-bar-row-scroll::-webkit-scrollbar { height: 3px; }
+.asset-bar-row-scroll::-webkit-scrollbar-track { background: transparent; }
+.asset-bar-row-scroll::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.3); border-radius: 99px; }
 
 .asset-bar-btn {
   display: inline-flex;
@@ -4455,17 +4405,6 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
     float: none !important;
     min-width: 0;
   }
-
-  .asset-bar {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    gap: 6px;
-    padding-bottom: 4px;
-  }
-  .asset-bar::-webkit-scrollbar { height: 3px; }
-  .asset-bar::-webkit-scrollbar-thumb { background: rgba(233,30,99,0.3); border-radius: 99px; }
 
   .terminal-grid {
     grid-template-columns: 1fr !important;
@@ -5318,25 +5257,16 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 /* Asset bar op mobiel */
 @media (max-width: 768px) {
-  .asset-bar {
-    padding: 4px 8px;
-    min-height: 58px;
-  }
-
-  .asset-bar-back {
-    flex-shrink: 0;
-    padding: 0 10px;
-    font-size: 12px;
+  .asset-bar-row-label {
+    width: 64px;
+    font-size: 9px;
+    padding: 0 6px 0 8px;
   }
 
   .asset-bar-btn {
-    padding: 4px 8px;
-    height: 30px;
+    padding: 3px 7px;
+    height: 26px;
     font-size: 11px;
-  }
-
-  .asset-bar-group-label {
-    font-size: 9px;
   }
 
   /* Topbar op mobiel: compacter */
