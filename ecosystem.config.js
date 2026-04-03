@@ -29,11 +29,11 @@ module.exports = {
     {
       name: "bitcoin-mentor",
       script: "./node_modules/next/dist/bin/next",
-      args: "dev --port 3000",
-      cwd: "C:/Users/devel/bitcoin-mentor",
+      args: "start --port 3000",
+      cwd: "/var/www/bitcoin-mentor",
       interpreter: "node",
       env: {
-        NODE_ENV: "development",
+        NODE_ENV: "production",
         PORT: "3000",
         ...envVars,
       },
