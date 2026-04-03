@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   // Verifieer via TOTP token OF wachtwoord
   let ok = false;
   if (token && user.totp_secret) {
-    ok = await verify({ token, secret: user.totp_secret, type: "totp" });
+    ok = !!(await verify({ token, secret: user.totp_secret, type: "totp" }).catch(() => false));
   }
   if (!ok && password) {
     ok = await bcrypt.compare(password, user.password_hash);
