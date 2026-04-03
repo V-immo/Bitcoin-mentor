@@ -81,7 +81,7 @@ export default function Nav() {
         {/* Desktop: primaire links */}
         <div className="app-nav-links desktop-nav-links">
           {PRIMARY_LINKS.map((l) => {
-            const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
+            const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
               <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
                 <span className="app-nav-icon">{l.icon}</span>
@@ -103,7 +103,7 @@ export default function Nav() {
             {moreOpen && (
               <div className="app-nav-dropdown">
                 {secondaryLinks.map((l) => {
-                  const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
+                  const active = pathname === l.href || pathname.startsWith(l.href + "/");
                   return (
                     <Link key={l.href} href={l.href} className={`app-nav-dropdown-item${active ? " active" : ""}`}>
                       <span>{l.icon}</span>
@@ -171,7 +171,7 @@ export default function Nav() {
 
             <div className="nav-mobile-links">
               {allLinks.map((l) => {
-                const active = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
+                const active = pathname === l.href || pathname.startsWith(l.href + "/");
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
                     <span className="nav-mobile-link-icon">{l.icon}</span>
