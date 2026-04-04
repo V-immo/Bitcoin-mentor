@@ -240,48 +240,30 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         </div>
       </section>
 
-      {/* ── Prijs ── */}
-      <section className="landing-pricing-section">
-        <div className="landing-pricing-box">
-          <div className="landing-pricing-left">
-            <div className="landing-pricing-amount">
-              <span className="landing-pricing-currency">€</span>9,99
-            </div>
-            <div className="landing-pricing-sublabel">{c.pricingLabel}</div>
-          </div>
-          <div className="landing-pricing-divider" />
-          <ul className="landing-pricing-list">
-            <li>{c.p1}</li>
-            <li>{c.p2}</li>
-            <li>{c.p3}</li>
-            <li>{c.p4}</li>
-            <li>{c.p5}</li>
-            <li>{c.p6}</li>
-            <li>{c.p7}</li>
-            <li className="landing-pricing-no">{c.p8}</li>
-            <li className="landing-pricing-no">{c.p9}</li>
+      {/* ── Prijs + CTA ── */}
+      <section className="landing-final-cta">
+        <div className="landing-price-card">
+          <div className="landing-price-card-amount">€9,99<span className="landing-price-card-per">{lang === "nl" ? "/maand" : "/month"}</span></div>
+          <div className="landing-price-card-note">{lang === "nl" ? "🔥 Vroege toegang — straks €24,99/mnd" : "🔥 Early access — will become €24.99/mo"}</div>
+          <ul className="landing-price-card-list">
+            <li>✓ {lang === "nl" ? "Volledige toegang tot Marcus" : "Full access to Marcus"}</li>
+            <li>✓ {lang === "nl" ? "Live marktscanner & grafieken" : "Live market scanner & charts"}</li>
+            <li>✓ {lang === "nl" ? "65+ tradinglessen" : "65+ trading lessons"}</li>
+            <li>✓ {lang === "nl" ? "Prijsalerts & push-notificaties" : "Price alerts & push notifications"}</li>
+            <li>✓ {lang === "nl" ? "Maandelijks opzegbaar" : "Cancel anytime"}</li>
+            <li className="muted">✗ {lang === "nl" ? "Geen creditcard nodig" : "No credit card needed"}</li>
           </ul>
           {!loggedIn && (
-            <Link href="/auth/register" className="landing-btn-primary landing-pricing-cta">
+            <Link href="/auth/register" className="landing-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
               {c.pricingCta}
             </Link>
           )}
+          {loggedIn && (
+            <Link href="/dashboard" className="landing-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
+              {c.ctaDashboard}
+            </Link>
+          )}
         </div>
-      </section>
-
-      {/* ── CTA onderaan ── */}
-      <section className="landing-final-cta">
-        <h2>{c.finalH}</h2>
-        <p>{c.finalSub}</p>
-        {loggedIn ? (
-          <Link href="/dashboard" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
-            {c.ctaDashboard}
-          </Link>
-        ) : (
-          <Link href="/auth/register" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
-            {c.finalCta}
-          </Link>
-        )}
       </section>
 
     </div>

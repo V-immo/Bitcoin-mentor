@@ -5658,15 +5658,55 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .landing-step-arrow { font-size: 20px; color: var(--text-secondary); padding-top: 32px; }
 @media (max-width: 700px) { .landing-step-arrow { display: none; } }
 
-/* Final CTA */
+/* Pricing + Final CTA */
 .landing-final-cta {
-  text-align: center; padding: 64px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 48px 20px 64px;
+  display: flex;
+  justify-content: center;
 }
-.landing-final-cta h2 { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
-.landing-final-cta p { font-size: 16px; color: var(--text-secondary); margin-bottom: 28px; }
+.landing-price-card {
+  background: var(--surface);
+  border: 1px solid rgba(233,30,99,0.35);
+  border-radius: var(--radius);
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.landing-price-card-amount {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.landing-price-card-per {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+.landing-price-card-note {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+}
+.landing-price-card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.landing-price-card-list .muted {
+  color: var(--text-secondary);
+}
 
 
 /* ─────────────────────────────────────────
