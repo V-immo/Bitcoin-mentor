@@ -104,7 +104,7 @@ export default function Nav() {
                 <div className="app-nav-dd-divider" />
                 <button
                   className="app-nav-dd-item app-nav-dd-logout"
-                  onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
+                  onClick={async () => { await signOut({ redirect: false }); window.location.href = "/"; }}
                 >
                   <span>🚪</span>
                   <span>{t("nav_logout")}</span>
@@ -188,7 +188,7 @@ export default function Nav() {
             {session?.user && (
               <button
                 className="nav-mobile-logout"
-                onClick={async () => { await signOut({ redirect: false }); window.location.href = "/auth/login"; }}
+                onClick={async () => { await signOut({ redirect: false }); window.location.href = "/"; }}
               >
                 {t("nav_logout")}
               </button>
