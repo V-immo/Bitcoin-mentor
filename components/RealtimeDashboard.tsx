@@ -13,6 +13,7 @@ import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import NewsPanel from "./NewsPanel";
+import MarcusBriefing from "./MarcusBriefing";
 import Leaderboard from "./Leaderboard";
 import TestnetPanel from "./TestnetPanel";
 import PriceAlerts from "./PriceAlerts";
@@ -731,6 +732,9 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               mode={activeInterval === "1m" || activeInterval === "5m" || activeInterval === "15m" ? "fast" : "analysis"}
             />
           )}
+
+          {/* Marcus dagelijkse briefing */}
+          <MarcusBriefing />
 
           {/* Marcus — altijd zichtbaar onder de chart */}
           <div className="marcus-below-chart">

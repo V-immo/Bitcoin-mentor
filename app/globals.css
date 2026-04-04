@@ -1079,6 +1079,83 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   }
 }
 
+/* ── Marcus Dagelijkse Briefing ── */
+.marcus-briefing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.marcus-briefing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+  gap: 10px;
+}
+.marcus-briefing-header:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.marcus-briefing-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.marcus-briefing-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.marcus-briefing-asset-chip {
+  background: rgba(233,30,99,0.12);
+  color: var(--primary);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.marcus-briefing-toggle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.marcus-briefing-preview {
+  padding: 0 14px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.marcus-briefing-body {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .marcus-briefing-body, .marcus-briefing-preview {
+    font-size: 12px;
+  }
+}
+
 .terminal-chat-empty {
   font-size: 12px;
   color: var(--text-secondary);
