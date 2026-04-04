@@ -103,6 +103,10 @@ async function fetchFuturesData(symbol: string) {
 
 type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts" | "bitvavo" | "briefing";
 
+// Tabs zichtbaar in balk vs. verstopt in "meer" menu
+const PRIMARY_TABS: BottomTab[] = ["paper", "checklist", "briefing", "nieuws"];
+const MORE_TABS: BottomTab[] = ["leaderboard", "testnet", "bitvavo", "alerts"];
+
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
 
@@ -150,6 +154,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [asset, setAsset] = useState<string>(initialAsset);
   const [signal, setSignal] = useState<MentorSignal>(initialData);
   const [bottomTab, setBottomTab] = useState<BottomTab>("paper");
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [signalStripOpen, setSignalStripOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1200px)");
@@ -739,18 +745,76 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             <MentorChat key={asset} marketContext={marketContext} asset={asset} />
           </div>
 
-          {/* Bottom tab bar — paper/checklist/nieuws/etc */}
-          <div className="bottom-tab-bar">
-            {BOTTOM_TABS.filter(tab => tab.key !== "chat").map(tab => (
+          {/* Signaalstrip — altijd zichtbaar boven tabs */}
+          {signalReady && (
+            <div className={`signal-strip${signalStripOpen ? " open" : ""}`} onClick={() => setSignalStripOpen(v => !v)}>
+              <div className="signal-strip-row">
+                <span className={`signal-strip-badge ${signal.action === "KOOP" || signal.action === "BUY" ? "green" : signal.action === "WACHT" || signal.action === "WAIT" ? "yellow" : "red"}`}>
+                  {signal.action}
+                </span>
+                <span className="signal-strip-zone">Zone ${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}</span>
+                <span className="signal-strip-sl">SL ${Math.round(signal.stopLoss).toLocaleString("en-US")}</span>
+                <span className="signal-strip-rr">R:R {signal.riskRewardEstimate}</span>
+                <span className="signal-strip-toggle">{signalStripOpen ? "▲" : "▼"}</span>
+              </div>
+              {signalStripOpen && (
+                <div className="signal-strip-detail" onClick={e => e.stopPropagation()}>
+                  <div className="signal-strip-grid">
+                    <div className="ssd-item"><span className="ssd-label">Entry zone</span><span className="ssd-val">${Math.round(signal.entryZoneLow).toLocaleString("en-US")} – ${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Stop-loss</span><span className="ssd-val ssd-red">${Math.round(signal.stopLoss).toLocaleString("en-US")}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Target</span><span className="ssd-val ssd-green">${Math.round(signal.resistanceZoneLow).toLocaleString("en-US")} – ${Math.round(signal.resistanceZoneHigh).toLocaleString("en-US")}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">R:R ratio</span><span className="ssd-val">{signal.riskRewardEstimate}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Score</span><span className="ssd-val">{signal.score}/100 · {signal.setupGrade}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">RSI 4H / 1D</span><span className="ssd-val">{signal.rsi4h.toFixed(0)} / {signal.rsi1d.toFixed(0)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Trend 4H</span><span className="ssd-val">{nlTrend(signal.trend4h, lang)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Trend 1D</span><span className="ssd-val">{nlTrend(signal.trend1d, lang)}</span></div>
+                    {signal.blockers.length > 0 && (
+                      <div className="ssd-item ssd-full"><span className="ssd-label">⚠ Blockers</span><span className="ssd-val ssd-red">{signal.blockers.join(" · ")}</span></div>
+                    )}
+                  </div>
+                  <button className="signal-strip-trade-btn" onClick={() => { setBottomTab("paper"); setSignalStripOpen(false); }}>
+                    Trade openen →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Bottom tab bar — 4 primaire + ⋯ meer */}
+          <div className="bottom-tab-bar" style={{ position: "relative" }}>
+            {BOTTOM_TABS.filter(tab => PRIMARY_TABS.includes(tab.key)).map(tab => (
               <button
                 key={tab.key}
                 className={`bottom-tab-btn${bottomTab === tab.key ? " active" : ""}`}
-                onClick={() => setBottomTab(tab.key)}
+                onClick={() => { setBottomTab(tab.key); setShowMoreMenu(false); }}
               >
                 <span className="bottom-tab-icon">{tab.icon}</span>
                 <span className="bottom-tab-label">{tab.label}</span>
               </button>
             ))}
+            {/* Meer knop */}
+            <button
+              className={`bottom-tab-btn${MORE_TABS.includes(bottomTab) ? " active" : ""}`}
+              onClick={() => setShowMoreMenu(v => !v)}
+            >
+              <span className="bottom-tab-icon">⋯</span>
+              <span className="bottom-tab-label">Meer</span>
+            </button>
+            {/* Meer dropdown */}
+            {showMoreMenu && (
+              <div className="more-tab-menu">
+                {BOTTOM_TABS.filter(tab => MORE_TABS.includes(tab.key)).map(tab => (
+                  <button
+                    key={tab.key}
+                    className={`more-tab-item${bottomTab === tab.key ? " active" : ""}`}
+                    onClick={() => { setBottomTab(tab.key); setShowMoreMenu(false); }}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Tab content */}

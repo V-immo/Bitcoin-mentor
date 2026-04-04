@@ -1079,6 +1079,103 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   }
 }
 
+/* ── Signaalstrip ── */
+.signal-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.signal-strip.open { border-color: var(--primary); }
+
+.signal-strip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  flex-wrap: wrap;
+}
+.signal-strip-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+.signal-strip-badge.green  { background: rgba(0,200,100,0.15); color: #00c864; }
+.signal-strip-badge.yellow { background: rgba(255,200,0,0.15);  color: #f0b800; }
+.signal-strip-badge.red    { background: rgba(255,60,60,0.15);  color: #ff3c3c; }
+
+.signal-strip-zone, .signal-strip-sl, .signal-strip-rr {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.signal-strip-toggle { margin-left: auto; font-size: 11px; color: var(--text-secondary); }
+
+.signal-strip-detail {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+}
+.signal-strip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.ssd-full { grid-column: 1 / -1; }
+.ssd-item { display: flex; flex-direction: column; gap: 2px; }
+.ssd-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.ssd-val   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.ssd-green { color: #00c864; }
+.ssd-red   { color: #ff3c3c; }
+
+.signal-strip-trade-btn {
+  width: 100%;
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+.signal-strip-trade-btn:hover { opacity: 0.9; }
+
+/* ── Meer tab dropdown ── */
+.more-tab-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 200;
+  min-width: 150px;
+  overflow: hidden;
+}
+.more-tab-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+.more-tab-item:hover  { background: var(--border); }
+.more-tab-item.active { color: var(--primary); font-weight: 600; }
+
 /* ── Marcus Dagelijkse Briefing ── */
 .marcus-briefing-card {
   background: var(--surface);
