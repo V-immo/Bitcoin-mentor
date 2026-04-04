@@ -65,15 +65,9 @@ type Props = {
 // Static Dutch prompts sent to the AI — these stay in Dutch (AI language)
 const QUICK_QUESTION_PROMPTS = [
     { labelKey: "chat_q_today" as const, prompt: "Marcus, wat gaan we vandaag doen? Stel een concrete oefening of taak voor die me dichter bij zelfstandig traden brengt. Kijk naar de markt en kies iets praktisch: een trade opzetten, een patroon analyseren, of een concept oefenen. Wees specifiek en stap voor stap.", isPrimary: true },
-    { labelKey: "chat_q_briefing" as const, prompt: "Geef een volledige briefing" },
     { labelKey: "chat_q_buy" as const, prompt: "Moet ik nu kopen?" },
     { labelKey: "chat_q_trade" as const, prompt: "Zet een trade op met mij — begeleid me stap voor stap: entry, stop-loss, target en hoeveel ik inzet." },
     { labelKey: "chat_q_compare" as const, prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg.", prewarm: true },
-    { labelKey: "chat_q_trade_status" as const, prompt: "Hoe gaat mijn open trade?" },
-    { labelKey: "chat_q_scenarios" as const, prompt: "Geef me 3 scenario's voor dit asset: bullish, bearish en sideways. Wat doe ik in elk scenario?" },
-    { labelKey: "chat_q_stoploss" as const, prompt: "Wat is mijn stop-loss strategie voor dit asset? Leg uit waarom die stop-loss logisch is." },
-    { labelKey: "chat_q_rsi" as const, prompt: "Leg de RSI uit aan de hand van de huidige waarde van dit asset." },
-    { labelKey: "chat_q_rr" as const, prompt: "Hoe werkt risk/reward? Bereken het voor mijn huidige situatie." },
 ];
 
 export default function MentorChat({ marketContext, asset }: Props) {
