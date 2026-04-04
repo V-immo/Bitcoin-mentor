@@ -101,11 +101,10 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts" | "bitvavo" | "briefing";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "briefing";
 
-// Tabs zichtbaar in balk vs. verstopt in "meer" menu
+// Tabs zichtbaar in balk
 const PRIMARY_TABS: BottomTab[] = ["paper", "checklist", "briefing", "nieuws"];
-const MORE_TABS: BottomTab[] = ["leaderboard", "testnet", "bitvavo", "alerts"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -156,6 +155,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [bottomTab, setBottomTab] = useState<BottomTab>("paper");
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [signalStripOpen, setSignalStripOpen] = useState(false);
+  const [assetPickerOpen, setAssetPickerOpen] = useState(false);
+  const [tradeAccordion, setTradeAccordion] = useState<"signal" | "paper" | null>("signal");
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1200px)");
@@ -575,95 +576,84 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   return (
     <main className="terminal-page">
 
-      {/* ── Asset balk: elke categorie eigen rij ── */}
-      <div className="asset-bar-wrap">
-        {ASSET_GROUPS.map((group) => {
-          const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
-          return (
-            <div key={group.label} className="asset-bar-row">
-              <span className="asset-bar-row-label">{group.label}</span>
-              <div className="asset-bar-row-scroll">
-                {groupAssets.map((a) => (
-                  <button
-                    key={a.symbol}
-                    className={`asset-bar-btn${asset === a.symbol ? " active" : ""}`}
-                    onClick={() => handleAssetChange(a.symbol)}
-                    title={a.name}
-                  >
-                    <span className="asset-bar-emoji">{a.emoji}</span>
-                    <span className="asset-bar-ticker">{a.ticker}</span>
-                  </button>
-                ))}
-              </div>
+      {/* ── Asset picker overlay ── */}
+      {assetPickerOpen && (
+        <div className="asset-overlay-backdrop" onClick={() => setAssetPickerOpen(false)}>
+          <div className="asset-overlay-panel" onClick={e => e.stopPropagation()}>
+            <div className="asset-overlay-header">
+              <span>Asset kiezen</span>
+              <button className="asset-overlay-close" onClick={() => setAssetPickerOpen(false)}>✕</button>
             </div>
-          );
-        })}
-      </div>
-
-      {/* ── Prijs balk ── */}
-      <section className="terminal-topbar">
-        <div className="terminal-topbar-left">
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-            <div className="terminal-topbar-price">${fmtPrice(chartPrice, asset)}</div>
-            <div className={`terminal-change-badge${change24h >= 0 ? " pos" : " neg"}`}>
-              {change24h >= 0 ? "▲" : "▼"} {Math.abs(change24h).toFixed(2)}%
-            </div>
-          </div>
-          <div className="terminal-topbar-meta">
-            {assetDef ? `${assetDef.name} · ${assetDef.currency}` : asset}
-            &nbsp;·&nbsp;
-            {liveMode ? (
-              <span style={{ color: "#22c55e" }}>● Live {isBinance ? "WebSocket" : "10s"}</span>
-            ) : (
-              <span style={{ color: "#f59e0b" }}>{t("status_connecting")}</span>
-            )}
-            {lastTickLabel && <>&nbsp;· {lastTickLabel}</>}
+            {ASSET_GROUPS.map((group) => {
+              const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
+              return (
+                <div key={group.label} className="asset-overlay-group">
+                  <div className="asset-overlay-group-label">{group.label}</div>
+                  <div className="asset-overlay-grid">
+                    {groupAssets.map((a) => (
+                      <button
+                        key={a.symbol}
+                        className={`asset-overlay-btn${asset === a.symbol ? " active" : ""}`}
+                        onClick={() => { handleAssetChange(a.symbol); setAssetPickerOpen(false); }}
+                      >
+                        <span className="asset-overlay-emoji">{a.emoji}</span>
+                        <span className="asset-overlay-ticker">{a.ticker}</span>
+                        <span className="asset-overlay-name">{a.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div className="terminal-topbar-right">
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <span className={`terminal-status-badge ${statusTone}`}>
-                {signal.status === "Goed moment" ? t("status_good_moment")
-                  : signal.status === "Nog even wachten" ? t("status_wait")
-                  : t("status_no_buy")}
+      )}
+
+      {/* ── Compacte topbar ── */}
+      <section className="terminal-topbar">
+        {/* Links: asset-knop + prijs */}
+        <div className="terminal-topbar-left">
+          <button className="asset-select-btn" onClick={() => setAssetPickerOpen(true)}>
+            <span>{assetDef?.emoji ?? "💰"}</span>
+            <span className="asset-select-ticker">{assetDef?.ticker ?? asset}</span>
+            <span className="asset-select-caret">▾</span>
+          </button>
+          <div>
+            <div className="terminal-topbar-price">${fmtPrice(chartPrice, asset)}</div>
+            <div className="terminal-topbar-meta">
+              <span className={`terminal-change-badge${change24h >= 0 ? " pos" : " neg"}`}>
+                {change24h >= 0 ? "▲" : "▼"} {Math.abs(change24h).toFixed(2)}%
               </span>
-              <span className="terminal-soft-badge">
-                {signal.action === "Niet kopen" ? t("action_no_buy")
-                  : signal.action === "Kleine koop mogelijk" ? t("action_small_buy")
-                  : signal.action === "Wacht op betere prijs" ? t("action_wait_price")
-                  : signal.action}
-              </span>
+              &nbsp;
+              {liveMode
+                ? <span style={{ color: "#22c55e", fontSize: 11 }}>● Live</span>
+                : <span style={{ color: "#f59e0b", fontSize: 11 }}>⟳</span>
+              }
             </div>
-            {signalReady && signal.shortWhy && (
-              <div style={{ fontSize: 11, color: "var(--text-secondary)", maxWidth: 280, textAlign: "right", lineHeight: 1.4 }}>
-                {signal.shortWhy}
-              </div>
-            )}
           </div>
-          <span className="terminal-soft-badge">{lastRefresh ? `${t("status_analysis_prefix")} ${lastRefresh}` : t("status_loading_analysis")}</span>
+        </div>
+
+        {/* Rechts: status badge + refresh icoon */}
+        <div className="terminal-topbar-right">
+          <span className={`terminal-status-badge ${statusTone}`}>
+            {signal.status === "Goed moment" ? t("status_good_moment")
+              : signal.status === "Nog even wachten" ? t("status_wait")
+              : t("status_no_buy")}
+          </span>
           {!notifAllowed && "Notification" in (typeof window !== "undefined" ? window : {}) && (
             <button
-              className="terminal-btn terminal-btn-muted"
+              className="topbar-icon-btn"
               onClick={requestNotifPermission}
-              title="Ontvang een melding als de prijs de koopzone raakt"
-              style={{ height: 30, fontSize: 12, padding: "0 12px" }}
-            >
-              {t("status_notifications_on")}
-            </button>
-          )}
-          {notifAllowed && (
-            <span className="terminal-soft-badge" title="Browser meldingen actief" style={{ fontSize: 11 }}>
-              {t("status_notifications_active")}
-            </span>
+              title="Meldingen inschakelen"
+            >🔔</button>
           )}
           <button
-            className="terminal-btn terminal-btn-muted"
+            className="topbar-icon-btn"
             onClick={() => refreshSignal()}
             disabled={refreshing}
-            style={{ height: 30, fontSize: 12, padding: "0 12px" }}
+            title={lastRefresh ? `${t("status_analysis_prefix")} ${lastRefresh}` : t("status_loading_analysis")}
           >
-            {refreshing ? t("loading") : t("refresh")}
+            {refreshing ? "⟳" : "↻"}
           </button>
         </div>
       </section>
@@ -794,25 +784,27 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             ))}
             {/* Meer knop */}
             <button
-              className={`bottom-tab-btn${MORE_TABS.includes(bottomTab) ? " active" : ""}`}
+              className={`bottom-tab-btn${showMoreMenu ? " active" : ""}`}
               onClick={() => setShowMoreMenu(v => !v)}
             >
               <span className="bottom-tab-icon">⋯</span>
               <span className="bottom-tab-label">Meer</span>
             </button>
-            {/* Meer dropdown */}
+            {/* Meer dropdown — externe links */}
             {showMoreMenu && (
               <div className="more-tab-menu">
-                {BOTTOM_TABS.filter(tab => MORE_TABS.includes(tab.key)).map(tab => (
-                  <button
-                    key={tab.key}
-                    className={`more-tab-item${bottomTab === tab.key ? " active" : ""}`}
-                    onClick={() => { setBottomTab(tab.key); setShowMoreMenu(false); }}
-                  >
-                    <span>{tab.icon}</span>
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
+                <Link href="/leaderboard" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
+                  <span>🏆</span><span>Ranking</span>
+                </Link>
+                <Link href="/testnet" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
+                  <span>🔬</span><span>Testnet</span>
+                </Link>
+                <Link href="/live" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
+                  <span>💶</span><span>Live Trading</span>
+                </Link>
+                <Link href="/instellingen#alerts" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
+                  <span>🔔</span><span>Alerts</span>
+                </Link>
               </div>
             )}
           </div>
@@ -820,20 +812,48 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           {/* Tab content */}
           <div className="bottom-tab-content">
             {bottomTab === "paper" && (
-              <>
-                <TradePartnerPanel
-                  signal={signal} currentPrice={chartPrice} asset={asset}
-                  signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
-                />
-                <TerminalPaperPanel
-                  currentPrice={chartPrice} status={signal.status} action={signal.action}
-                  entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
-                  entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
-                  resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
-                  riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
-                  autoExecuteAmount={autoExecuteAmount}
-                />
-              </>
+              <div className="trade-accordion">
+                {/* Sectie 1: Marcus Signaal */}
+                <div className="accordion-section">
+                  <button
+                    className={`accordion-header${tradeAccordion === "signal" ? " open" : ""}`}
+                    onClick={() => setTradeAccordion(v => v === "signal" ? null : "signal")}
+                  >
+                    <span>📊 Marcus Signaal</span>
+                    <span className="accordion-caret">{tradeAccordion === "signal" ? "▲" : "▼"}</span>
+                  </button>
+                  {tradeAccordion === "signal" && (
+                    <div className="accordion-body">
+                      <TradePartnerPanel
+                        signal={signal} currentPrice={chartPrice} asset={asset}
+                        signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
+                      />
+                    </div>
+                  )}
+                </div>
+                {/* Sectie 2: Paper Trade */}
+                <div className="accordion-section">
+                  <button
+                    className={`accordion-header${tradeAccordion === "paper" ? " open" : ""}`}
+                    onClick={() => setTradeAccordion(v => v === "paper" ? null : "paper")}
+                  >
+                    <span>📝 Paper Trade</span>
+                    <span className="accordion-caret">{tradeAccordion === "paper" ? "▲" : "▼"}</span>
+                  </button>
+                  {tradeAccordion === "paper" && (
+                    <div className="accordion-body">
+                      <TerminalPaperPanel
+                        currentPrice={chartPrice} status={signal.status} action={signal.action}
+                        entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
+                        entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
+                        resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
+                        riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
+                        autoExecuteAmount={autoExecuteAmount}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
             {bottomTab === "checklist" && (
               <>
@@ -850,15 +870,16 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     riskRewardEstimate={signal.riskRewardEstimate}
                   />
                 )}
-                <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
+                <details className="accordion-details">
+                  <summary className="accordion-details-summary">🧮 Risico calculator</summary>
+                  <div className="accordion-details-body">
+                    <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
+                  </div>
+                </details>
               </>
             )}
             {bottomTab === "briefing" && <MarcusBriefing />}
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
-            {bottomTab === "leaderboard" && <Leaderboard />}
-            {bottomTab === "testnet" && <TestnetPanel currentPrice={chartPrice} asset={asset} />}
-            {bottomTab === "bitvavo" && <BitvavoPanel currentPrice={chartPrice} asset={asset} />}
-            {bottomTab === "alerts" && <PriceAlerts currentAsset={asset} currentPrice={chartPrice} />}
           </div>
         </div>
       </section>

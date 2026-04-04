@@ -1079,6 +1079,168 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   }
 }
 
+/* ── Asset select knop (topbar) ── */
+.asset-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: border-color 0.15s;
+  white-space: nowrap;
+}
+.asset-select-btn:hover { border-color: var(--primary); }
+.asset-select-ticker { font-weight: 700; }
+.asset-select-caret  { font-size: 10px; color: var(--text-secondary); }
+
+/* ── Topbar refresh / notif icoon knop ── */
+.topbar-icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.topbar-icon-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.topbar-icon-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Asset overlay (picker) ── */
+.asset-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+}
+@media (min-width: 640px) {
+  .asset-overlay-backdrop { align-items: center; justify-content: center; }
+}
+.asset-overlay-panel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px 12px 0 0;
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0 0 24px;
+}
+@media (min-width: 640px) {
+  .asset-overlay-panel {
+    border-radius: 12px;
+    max-width: 480px;
+    max-height: 80vh;
+  }
+}
+.asset-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 12px;
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+.asset-overlay-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.asset-overlay-group { padding: 12px 16px 4px; }
+.asset-overlay-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.asset-overlay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+.asset-overlay-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.asset-overlay-btn:hover { border-color: var(--primary); }
+.asset-overlay-btn.active { border-color: var(--primary); background: rgba(247,147,26,0.08); }
+.asset-overlay-emoji { font-size: 20px; }
+.asset-overlay-ticker { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.asset-overlay-name  { font-size: 10px; color: var(--text-secondary); }
+
+/* ── Trade accordion ── */
+.trade-accordion { display: flex; flex-direction: column; gap: 0; }
+.accordion-section { border-bottom: 1px solid var(--border); }
+.accordion-section:last-child { border-bottom: none; }
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--surface);
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+.accordion-header:hover { background: var(--border); }
+.accordion-header.open { color: var(--primary); }
+.accordion-caret { font-size: 11px; color: var(--text-secondary); }
+.accordion-body { padding: 0; }
+
+/* ── Details/summary accordion (RisicoCalculator) ── */
+.accordion-details {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.accordion-details-summary {
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.accordion-details-summary:hover { color: var(--text-primary); }
+.accordion-details-body { padding: 0 8px 8px; }
+
 /* ── Signaalstrip ── */
 .signal-strip {
   background: var(--surface);
