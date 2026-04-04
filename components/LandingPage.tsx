@@ -106,9 +106,9 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       {!loggedIn && (
         <header className="landing-top-bar">
           <div className="landing-top-bar-inner">
-            <Link href="/" className="landing-top-logo" style={{ textDecoration: "none" }}>
-              <span style={{ color: "var(--primary)", fontWeight: 800 }}>₿</span>
-              <span>Bitcoin Mentor</span>
+            <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
+              <span className="app-nav-logo" style={{ fontFamily: "Arial, sans-serif" }}>₿</span>
+              <span className="app-nav-name">Bitcoin Mentor</span>
             </Link>
             <div className="landing-top-right">
               <div className="landing-lang-toggle">

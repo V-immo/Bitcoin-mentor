@@ -1460,7 +1460,7 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 .app-nav-logo {
   font-size: 22px;
-  color: #f59e0b;
+  color: var(--primary);
 }
 
 .app-nav-name {
