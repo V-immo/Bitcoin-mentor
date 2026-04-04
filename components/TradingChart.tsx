@@ -195,6 +195,9 @@ export default function TradingChart({
   const candlesRef = useRef<Candle[]>(candles);
   candlesRef.current = candles;
 
+  // Track of gebruiker handmatig heeft gezoomd — dan geen auto-fitContent meer
+  const userZoomedRef = useRef(false);
+
   const showBBRef = useRef(showBB);
   showBBRef.current = showBB;
   const showMACDRef = useRef(showMACD);
@@ -397,6 +400,11 @@ export default function TradingChart({
         lineStyle: LineStyle.Solid, axisLabelVisible: true, title: "",
       });
 
+      // Detecteer handmatige zoom — daarna geen auto-fitContent meer
+      chart.timeScale().subscribeVisibleLogicalRangeChange(() => {
+        userZoomedRef.current = true;
+      });
+
       // Signal dat de chart klaar is — triggert de candle update effect opnieuw
       setChartInitKey(k => k + 1);
 
@@ -464,9 +472,12 @@ export default function TradingChart({
       macdHistRef.current.setData(showMACD ? macdData.histogram : []);
     }
 
-    chartRef.current?.timeScale().fitContent();
-    rsiChartRef.current?.timeScale().fitContent();
-    macdChartRef.current?.timeScale().fitContent();
+    // Alleen auto-fit als gebruiker nog niet handmatig heeft gezoomd
+    if (!userZoomedRef.current) {
+      chartRef.current?.timeScale().fitContent();
+      rsiChartRef.current?.timeScale().fitContent();
+      macdChartRef.current?.timeScale().fitContent();
+    }
   }, [candles, showBB, showMACD, chartInitKey]);
 
   // Toggle candle / line chart type
@@ -662,6 +673,7 @@ export default function TradingChart({
         >−</button>
         <button
           onClick={() => {
+            userZoomedRef.current = false;
             chartRef.current?.timeScale().fitContent();
             rsiChartRef.current?.timeScale().fitContent();
             macdChartRef.current?.timeScale().fitContent();
