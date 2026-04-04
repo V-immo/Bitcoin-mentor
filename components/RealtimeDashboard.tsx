@@ -732,9 +732,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             />
           )}
 
-          {/* Bottom tab bar */}
+          {/* Marcus — altijd zichtbaar onder de chart */}
+          <div className="marcus-below-chart">
+            <MentorChat key={asset} marketContext={marketContext} asset={asset} />
+          </div>
+
+          {/* Bottom tab bar — paper/checklist/nieuws/etc */}
           <div className="bottom-tab-bar">
-            {BOTTOM_TABS.filter(tab => !tab.mobileOnly || !isDesktop).map(tab => (
+            {BOTTOM_TABS.filter(tab => tab.key !== "chat").map(tab => (
               <button
                 key={tab.key}
                 className={`bottom-tab-btn${bottomTab === tab.key ? " active" : ""}`}
@@ -764,9 +769,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 />
               </>
             )}
-            {bottomTab === "chat" && (
-              <MentorChat key={asset} marketContext={marketContext} asset={asset} />
-            )}
             {bottomTab === "checklist" && (
               <>
                 {!signalReady ? (
@@ -791,11 +793,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "bitvavo" && <BitvavoPanel currentPrice={chartPrice} asset={asset} />}
             {bottomTab === "alerts" && <PriceAlerts currentAsset={asset} currentPrice={chartPrice} />}
           </div>
-        </div>
-
-        {/* Desktop rechter kolom — sticky chat only */}
-        <div className="terminal-side-col desktop-only">
-          <MentorChat key={`side-${asset}`} marketContext={marketContext} asset={asset} />
         </div>
       </section>
 

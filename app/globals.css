@@ -170,7 +170,7 @@ body {
   color: #fca5a5;
 }
 
-/* ── Main grid ── */
+/* ── Main grid — altijd één kolom, Marcus onder de chart ── */
 
 .terminal-main-grid {
   display: grid;
@@ -179,10 +179,10 @@ body {
 
 @media (min-width: 1200px) {
   .terminal-main-grid {
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
-  .desktop-only { display: grid !important; }
+  .desktop-only { display: none !important; }
 }
 
 @media (max-width: 1199px) {
@@ -1054,10 +1054,29 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Desktop rechterkolom: chat krijgt meer ruimte */
+/* Desktop rechterkolom: niet meer gebruikt */
 .terminal-side-col .terminal-chat-messages {
   height: 55vh;
   max-height: 700px;
+}
+
+/* Marcus onder de chart — altijd zichtbaar */
+.marcus-below-chart {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.marcus-below-chart .terminal-chat-messages {
+  height: 38vh;
+  min-height: 260px;
+  max-height: 520px;
+}
+
+@media (min-width: 900px) {
+  .marcus-below-chart .terminal-chat-messages {
+    height: 44vh;
+    max-height: 600px;
+  }
 }
 
 .terminal-chat-empty {
