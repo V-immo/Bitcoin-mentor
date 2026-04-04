@@ -632,9 +632,48 @@ export default function TradingChart({
         </div>
       )}
 
+      {/* Zoom controls */}
+      <div style={{ display: "flex", gap: 6, padding: "4px 0 2px 0", alignItems: "center" }}>
+        <button
+          onClick={() => {
+            const ts = chartRef.current?.timeScale();
+            if (!ts) return;
+            const range = ts.getVisibleLogicalRange();
+            if (!range) return;
+            const mid = (range.from + range.to) / 2;
+            const half = (range.to - range.from) / 4;
+            ts.setVisibleLogicalRange({ from: mid - half, to: mid + half });
+          }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "#2a1a28", color: "#bf7a99" }}
+          title="Zoom in"
+        >+</button>
+        <button
+          onClick={() => {
+            const ts = chartRef.current?.timeScale();
+            if (!ts) return;
+            const range = ts.getVisibleLogicalRange();
+            if (!range) return;
+            const mid = (range.from + range.to) / 2;
+            const half = (range.to - range.from);
+            ts.setVisibleLogicalRange({ from: mid - half, to: mid + half });
+          }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "#2a1a28", color: "#bf7a99" }}
+          title="Zoom out"
+        >−</button>
+        <button
+          onClick={() => {
+            chartRef.current?.timeScale().fitContent();
+            rsiChartRef.current?.timeScale().fitContent();
+            macdChartRef.current?.timeScale().fitContent();
+          }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "#2a1a28", color: "#bf7a99" }}
+          title="Fit all"
+        >⤢ fit</button>
+      </div>
+
       {/* Main candlestick chart */}
       <div className="market-chart-frame" style={{ overflow: "hidden", borderRadius: compact ? 10 : 14, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
-        <div ref={mainRef} style={{ width: "100%", height }} />
+        <div ref={mainRef} style={{ width: "100%", height, touchAction: "none" }} />
       </div>
 
       {/* RSI sub-chart */}
@@ -649,7 +688,7 @@ export default function TradingChart({
             position: "absolute", left: 8, top: 4, fontSize: 10, color: TEXT,
             zIndex: 1, pointerEvents: "none", letterSpacing: "0.05em",
           }}>RSI 14</span>
-          <div ref={rsiRef} style={{ width: "100%", height: rsiH }} />
+          <div ref={rsiRef} style={{ width: "100%", height: rsiH, touchAction: "none" }} />
         </div>
       </div>
 
@@ -669,7 +708,7 @@ export default function TradingChart({
             position: "absolute", left: 8, top: 4, fontSize: 10, color: TEXT,
             zIndex: 1, pointerEvents: "none", letterSpacing: "0.05em",
           }}>MACD (12, 26, 9)</span>
-          <div ref={macdRef} style={{ width: "100%", height: macdH }} />
+          <div ref={macdRef} style={{ width: "100%", height: macdH, touchAction: "none" }} />
         </div>
       </div>
     </div>
