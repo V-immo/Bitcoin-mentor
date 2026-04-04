@@ -139,15 +139,11 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   ];
   const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
-    { key: "chat",        label: t("nav_marcus_ai"),     icon: "👤", mobileOnly: true },
-    { key: "paper",       label: "Handelen",             icon: "📊" },
-    { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
-    { key: "briefing",    label: "Briefing",             icon: "💡" },
-    { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
-    { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
-    { key: "testnet",     label: "Testnet",              icon: "🔬" },
-    { key: "bitvavo",     label: "Live",                 icon: "💶" },
-    { key: "alerts",      label: "Alerts",               icon: "🔔" },
+    { key: "chat",      label: t("nav_marcus_ai"), icon: "👤", mobileOnly: true },
+    { key: "paper",     label: "Handelen",         icon: "📊" },
+    { key: "checklist", label: t("nav_checklist"), icon: "✅" },
+    { key: "briefing",  label: "Briefing",         icon: "💡" },
+    { key: "nieuws",    label: t("nav_news"),      icon: "📰" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
