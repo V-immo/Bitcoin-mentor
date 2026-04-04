@@ -101,7 +101,7 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts" | "bitvavo";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "leaderboard" | "testnet" | "alerts" | "bitvavo" | "briefing";
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -139,6 +139,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "chat",        label: t("nav_marcus_ai"),     icon: "👤", mobileOnly: true },
     { key: "paper",       label: "Handelen",             icon: "📊" },
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
+    { key: "briefing",    label: "Briefing",             icon: "💡" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },
     { key: "leaderboard", label: t("nav_ranking"),       icon: "🏆" },
     { key: "testnet",     label: "Testnet",              icon: "🔬" },
@@ -733,9 +734,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             />
           )}
 
-          {/* Marcus dagelijkse briefing */}
-          <MarcusBriefing />
-
           {/* Marcus — altijd zichtbaar onder de chart */}
           <div className="marcus-below-chart">
             <MentorChat key={asset} marketContext={marketContext} asset={asset} />
@@ -791,6 +789,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
               </>
             )}
+            {bottomTab === "briefing" && <MarcusBriefing />}
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
             {bottomTab === "leaderboard" && <Leaderboard />}
             {bottomTab === "testnet" && <TestnetPanel currentPrice={chartPrice} asset={asset} />}

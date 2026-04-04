@@ -19,10 +19,10 @@ function markdownToHtml(text: string): string {
     .join("");
 }
 
-export default function MarcusBriefing() {
+export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpanded?: boolean }) {
   const [data, setData] = useState<BriefingData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   useEffect(() => {
     fetch("/api/briefing")
