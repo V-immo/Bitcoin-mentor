@@ -1040,8 +1040,11 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 }
 
 .terminal-chat-messages {
-  max-height: 260px;
+  height: 42vh;
+  min-height: 220px;
+  max-height: 560px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1049,6 +1052,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding: 8px;
   border-radius: var(--radius-sm);
   background: rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop rechterkolom: chat krijgt meer ruimte */
+.terminal-side-col .terminal-chat-messages {
+  height: 55vh;
+  max-height: 700px;
 }
 
 .terminal-chat-empty {

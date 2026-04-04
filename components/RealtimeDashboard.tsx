@@ -793,19 +793,9 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           </div>
         </div>
 
-        {/* Desktop rechter kolom — sticky chat */}
+        {/* Desktop rechter kolom — sticky chat only */}
         <div className="terminal-side-col desktop-only">
           <MentorChat key={`side-${asset}`} marketContext={marketContext} asset={asset} />
-          {signalReady && (
-            <EntryChecklist
-              currentPrice={chartPrice} entryZoneLow={signal.entryZoneLow}
-              entryZoneHigh={signal.entryZoneHigh} rsi4h={signal.rsi4h}
-              trend4h={signal.trend4h} trend1d={signal.trend1d}
-              blockers={signal.blockers} stopLoss={signal.stopLoss}
-              riskRewardEstimate={signal.riskRewardEstimate}
-            />
-          )}
-          <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
         </div>
       </section>
 

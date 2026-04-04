@@ -145,8 +145,10 @@ export default function MentorChat({ marketContext, asset }: Props) {
         return () => { cancelled = true; };
     }, [asset]);
 
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        const el = messagesContainerRef.current;
+        if (el) el.scrollTop = el.scrollHeight;
     }, [messages]);
 
     // Quiz → Marcus opdracht: als gebruiker vanuit quiz-resultaat komt, stuur de opgeslagen prompt
@@ -261,7 +263,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
                 )}
             </div>
 
-            <div className="terminal-chat-messages">
+            <div className="terminal-chat-messages" ref={messagesContainerRef}>
                 {messages.length === 0 && (
                     <div className="terminal-chat-empty">
                         {t("chat_empty")}
