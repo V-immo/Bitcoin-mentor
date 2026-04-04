@@ -749,7 +749,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           {signalReady && (
             <div className={`signal-strip${signalStripOpen ? " open" : ""}`} onClick={() => setSignalStripOpen(v => !v)}>
               <div className="signal-strip-row">
-                <span className={`signal-strip-badge ${signal.action === "KOOP" || signal.action === "BUY" ? "green" : signal.action === "WACHT" || signal.action === "WAIT" ? "yellow" : "red"}`}>
+                <span className={`signal-strip-badge ${signal.action === "Kleine koop mogelijk" ? "green" : signal.action === "Wacht op betere prijs" ? "yellow" : "red"}`}>
                   {signal.action}
                 </span>
                 <span className="signal-strip-zone">Zone ${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}</span>
