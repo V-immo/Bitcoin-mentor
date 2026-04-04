@@ -100,34 +100,33 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
   const c = copy[lang];
 
   return (
-    <div className="landing-wrap">
-
-      {/* ── Sticky header — alleen voor niet-ingelogde bezoekers ── */}
+    <>
+      {/* ── Nav-stijl header — alleen voor niet-ingelogde bezoekers ── */}
       {!loggedIn && (
-        <header className="landing-top-bar">
-          <div className="landing-top-bar-inner">
-            <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
-              <span className="app-nav-logo" style={{ fontFamily: "Arial, sans-serif" }}>₿</span>
-              <span className="app-nav-name">Bitcoin Mentor</span>
-            </Link>
-            <div className="landing-top-right">
-              <div className="landing-lang-toggle">
-                <button
-                  className={`landing-lang-btn${lang === "nl" ? " active" : ""}`}
-                  onClick={() => switchLang("nl")}
-                >🇳🇱 NL</button>
-                <button
-                  className={`landing-lang-btn${lang === "en" ? " active" : ""}`}
-                  onClick={() => switchLang("en")}
-                >🇬🇧 EN</button>
-              </div>
-              <Link href="/auth/login" className="landing-top-login">
-                {lang === "nl" ? "Inloggen" : "Log in"}
-              </Link>
+        <nav className="app-nav">
+          <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
+            <span className="app-nav-logo" style={{ fontFamily: "Arial, sans-serif" }}>₿</span>
+            <span className="app-nav-name">Bitcoin Mentor</span>
+          </Link>
+          <div className="landing-top-right">
+            <div className="landing-lang-toggle">
+              <button
+                className={`landing-lang-btn${lang === "nl" ? " active" : ""}`}
+                onClick={() => switchLang("nl")}
+              >🇳🇱 NL</button>
+              <button
+                className={`landing-lang-btn${lang === "en" ? " active" : ""}`}
+                onClick={() => switchLang("en")}
+              >🇬🇧 EN</button>
             </div>
+            <Link href="/auth/login" className="landing-top-login">
+              {lang === "nl" ? "Inloggen" : "Log in"}
+            </Link>
           </div>
-        </header>
+        </nav>
       )}
+
+    <div className="landing-wrap">
 
       {/* ── Hero ── */}
       <section className="landing-hero">
@@ -286,5 +285,6 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       </section>
 
     </div>
+    </>
   );
 }
