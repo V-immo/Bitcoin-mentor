@@ -60,6 +60,59 @@ type GlobalMetrics = {
   marketCapChange24h: string;
 };
 
+type FundingData = {
+  symbol: string;
+  fundingRate: string;   // bijv. "+0.012%" of "-0.003%"
+  openInterest: string;  // bijv. "$18.4B"
+};
+
+async function fetchFundingRates(): Promise<FundingData[]> {
+  const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"];
+  const results: FundingData[] = [];
+  try {
+    // Binance Futures public API — geen key nodig
+    const [premiumRes, oiRes] = await Promise.allSettled([
+      fetch("https://fapi.binance.com/fapi/v1/premiumIndex", { next: { revalidate: 300 } }),
+      fetch("https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT", { next: { revalidate: 300 } }),
+    ]);
+
+    const premiumData: { symbol: string; lastFundingRate: string }[] =
+      premiumRes.status === "fulfilled" && premiumRes.value.ok
+        ? await premiumRes.value.json()
+        : [];
+
+    // Open interest per asset via losse calls
+    const oiCalls = await Promise.allSettled(
+      symbols.map(s =>
+        fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${s}`, { next: { revalidate: 300 } })
+          .then(r => r.ok ? r.json() : null)
+      )
+    );
+
+    for (let i = 0; i < symbols.length; i++) {
+      const sym = symbols[i];
+      const pm = premiumData.find(p => p.symbol === sym);
+      if (!pm) continue;
+      const rate = parseFloat(pm.lastFundingRate) * 100;
+      const rateStr = `${rate >= 0 ? "+" : ""}${rate.toFixed(4)}%`;
+
+      let oiStr = "onbekend";
+      const oiResult = oiCalls[i];
+      if (oiResult.status === "fulfilled" && oiResult.value) {
+        const oiVal = parseFloat(oiResult.value.openInterest ?? "0");
+        const pmEntry = premiumData.find(p => p.symbol === sym);
+        // OI is in coins — convert to USD using mark price
+        const markPrice = parseFloat((pmEntry as unknown as { markPrice?: string })?.markPrice ?? "0");
+        const oiUsd = oiVal * markPrice;
+        oiStr = oiUsd > 1e9 ? `$${(oiUsd / 1e9).toFixed(1)}B` : oiUsd > 1e6 ? `$${(oiUsd / 1e6).toFixed(0)}M` : "onbekend";
+      }
+
+      results.push({ symbol: sym.replace("USDT", ""), fundingRate: rateStr, openInterest: oiStr });
+    }
+  } catch { /* geen data */ }
+  return results;
+}
+
 async function fetchGlobalMetrics(): Promise<GlobalMetrics> {
   const fallback: GlobalMetrics = {
     btcDominance: "onbekend",
@@ -163,9 +216,10 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
     });
   }
 
-  const [fearGreed, globalMetrics] = await Promise.all([
+  const [fearGreed, globalMetrics, fundingRates] = await Promise.all([
     fetchFearAndGreed(),
     fetchGlobalMetrics(),
+    fetchFundingRates(),
   ]);
   const marketSummary = getMarketSummary();
 
@@ -281,6 +335,21 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
       ? "De trader doet aan long term beleggen — posities worden weken tot maanden aangehouden. Focus op grote trend, fundamentals en geduld."
       : "De trader doet aan swing trading — trades duren 2 tot 14 dagen. Focus op 4H/daily setups, koopzones en duidelijke targets.";
 
+  // Funding rates context voor system prompt
+  const fundingContext = fundingRates.length > 0
+    ? fundingRates.map(f => {
+        const rate = parseFloat(f.fundingRate);
+        let sentiment = "";
+        if (rate > 0.05) sentiment = "⚠️ ZEER HOOG — markt overbought in futures, long squeeze risico";
+        else if (rate > 0.02) sentiment = "🔴 Hoog — longposities domineren, voorzichtig";
+        else if (rate > 0.005) sentiment = "🟡 Normaal positief — licht bullish sentiment";
+        else if (rate >= -0.005) sentiment = "⚪ Neutraal — balans tussen longs en shorts";
+        else if (rate >= -0.02) sentiment = "🟡 Licht negatief — shorts domineren";
+        else sentiment = "🔵 ZEER NEGATIEF — markt oversold in futures, short squeeze mogelijk";
+        return `${f.symbol}: funding ${f.fundingRate} | OI ${f.openInterest} | ${sentiment}`;
+      }).join("\n")
+    : "Funding rate data tijdelijk niet beschikbaar.";
+
   const macroContext = isCrypto
     ? `BTC Dominantie: ${globalMetrics.btcDominance}
 Totale crypto marktcap: ${globalMetrics.totalMarketCap}
@@ -340,6 +409,14 @@ MARKTDATA (gebruik ALTIJD concrete prijzen, nooit vaag):
 ${marketContext}
 Fear & Greed Index: ${fearGreed}
 
+FUNDING RATES & OPEN INTEREST (crypto futures — realtime sentiment):
+${fundingContext}
+Uitleg voor Marcus: Funding rate is wat long-traders betalen aan short-traders (of omgekeerd) elke 8 uur.
+Hoog positief (>0.05%): te veel longs — markt overextended, verhoogd risico op long squeeze.
+Hoog negatief (<-0.05%): te veel shorts — short squeeze mogelijk, vaak bodem-signaal.
+Open Interest hoog + prijs stijgt = sterke trend. OI hoog + prijs daalt = distributie of long squeeze.
+Marcus gebruikt funding rates ALTIJD bij zijn regime-bepaling en setup-beoordeling.
+
 MACRO:
 ${macroContext}
 
@@ -353,9 +430,6 @@ OPEN POSITIES VAN DEZE GEBRUIKER (paper trading):
 ${openPositionsContext || "Geen open paper trades."}
 
 ${bitvavoContext || "BITVAVO LIVE PORTFOLIO: Niet gekoppeld of geen saldo."}
-
-WAT JIJ AL WEET OVER DEZE GEBRUIKER (jouw persoonlijke notities):
-${marcusNotes || "Nog geen notities — dit is een nieuwe gebruiker of eerste sessie."}
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
@@ -602,10 +676,20 @@ Zie je een open positie? Begin daar mee: "Je zit in [asset] — nu €X winst/ve
 Gebruik echte prijzen. Noem nooit externe apps (TradingView, Binance, etc.).
 Schrijf zoals je praat. Geen rapporten, geen opsommingen tenzij echt nodig.
 
-GEHEUGEN — OPTIONEEL:
-Als je iets belangrijks ontdekt over deze gebruiker (handelspatroon, angst, stijl, mijlpaal), voeg dan ONZICHTBAAR toe aan het einde van je antwoord:
-[MEMO: korte notitie max 100 tekens]
-Gebruik dit MAX 1x per 5 antwoorden. Alleen bij echte nieuwe inzichten.${questionContext ? `
+GEHEUGEN — MARCUS BOUWT EEN PROFIEL VAN ELKE GEBRUIKER:
+
+WAT JIJ AL WEET (lees dit ACTIEF en gebruik het in je coaching):
+${marcusNotes || "Nog geen notities — dit is een nieuwe gebruiker of eerste sessie."}
+
+Als je iets nieuws en belangrijk ontdekt over deze gebruiker, voeg dan ONZICHTBAAR toe aan het einde van je antwoord in één van deze categorieën:
+[PATROON: beschrijf een terugkerend handelsgedrag, max 120 tekens]
+[ANGST: beschrijf een emotionele blokkade, max 120 tekens]
+[STIJL: beschrijf hoe deze persoon denkt over traden, max 120 tekens]
+[MIJLPAAL: beschrijf een prestatie of doorbraak, max 120 tekens]
+[FOUT: beschrijf een herhaalde fout om te blijven bewaken, max 120 tekens]
+
+Gebruik dit MAX 1x per 3 antwoorden. Alleen bij echte nieuwe inzichten — niet bij elk bericht.
+Marcus verwijst ACTIEF naar eerdere notities: "Ik herinner me dat jij de neiging hebt om..."${questionContext ? `
 
 QUIZ CONTEXT:
 ${questionContext}
@@ -633,7 +717,7 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
 
     const response = await getClient().messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 900,
+      max_tokens: 1400,
       system: systemPrompt,
       messages: anthropicMessages,
     });
@@ -643,11 +727,19 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
         ? response.content[0].text
         : "Geen antwoord ontvangen.";
 
-    // Extraheer en sla MEMO op als aanwezig
-    const memoMatch = reply.match(/\[MEMO:\s*([^\]]{1,120})\]/i);
-    if (memoMatch && userId) {
-      const newNote = memoMatch[1].trim();
-      reply = reply.replace(memoMatch[0], "").trim();
+    // Extraheer en sla geheugen-notities op (alle categorieën)
+    const memoPattern = /\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*([^\]]{1,140})\]/gi;
+    let memoMatch: RegExpExecArray | null;
+    const newMemos: string[] = [];
+    while ((memoMatch = memoPattern.exec(reply)) !== null) {
+      const category = memoMatch[1].toUpperCase();
+      const content = memoMatch[2].trim();
+      newMemos.push(`[${category}: ${content}]`);
+    }
+    // Verwijder alle memo-tags uit de reply
+    reply = reply.replace(/\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*[^\]]{1,140}\]/gi, "").trim();
+
+    if (newMemos.length > 0 && userId) {
       try {
         const db = getDb();
         const existing = db
@@ -655,10 +747,11 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
           .get(userId) as { marcus_notes?: string } | undefined;
         const currentNotes = existing?.marcus_notes ?? "";
         const date = new Date().toISOString().slice(0, 10);
-        const updated = [currentNotes, `[${date}] ${newNote}`]
+        const additions = newMemos.map(m => `[${date}] ${m}`).join("\n");
+        const updated = [currentNotes, additions]
           .filter(Boolean)
           .join("\n")
-          .slice(-1000); // max 1000 tekens bewaren
+          .slice(-2500); // max 2500 tekens bewaren
         db.prepare("UPDATE settings SET marcus_notes = ? WHERE user_id = ?")
           .run(updated, userId);
       } catch { /* ignore */ }
