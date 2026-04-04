@@ -31,7 +31,7 @@ export default function OnboardingPage() {
 
   const PATH_STEPS = [
     { icon: "🎓", label: t("onboarding_path_step1"), desc: t("onboarding_path_step1_desc") },
-    { icon: "🤖", label: t("onboarding_path_step2"), desc: t("onboarding_path_step2_desc") },
+    { icon: "👤", label: t("onboarding_path_step2"), desc: t("onboarding_path_step2_desc") },
     { icon: "📈", label: t("onboarding_path_step3"), desc: t("onboarding_path_step3_desc") },
     { icon: "🎯", label: t("onboarding_path_step4"), desc: t("onboarding_path_step4_desc") },
   ];

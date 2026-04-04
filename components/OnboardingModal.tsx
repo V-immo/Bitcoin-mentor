@@ -59,7 +59,7 @@ export default function OnboardingModal() {
         {step === 0 && (
           <div style={styles.stepContent}>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-              <div style={styles.avatar}>🤖</div>
+              <div style={{ ...styles.avatar, fontWeight: 700, color: "var(--primary)", fontSize: 20 }}>M</div>
               <div>
                 <div style={styles.name}>Marcus</div>
                 <div style={styles.role}>Jouw trading mentor</div>
@@ -123,7 +123,7 @@ export default function OnboardingModal() {
         {step === 3 && (
           <div style={styles.stepContent}>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-              <div style={styles.avatar}>🤖</div>
+              <div style={{ ...styles.avatar, fontWeight: 700, color: "var(--primary)", fontSize: 20 }}>M</div>
               <div style={styles.name}>Marcus</div>
             </div>
             <p style={styles.bubble}>

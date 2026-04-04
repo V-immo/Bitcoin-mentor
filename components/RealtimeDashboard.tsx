@@ -135,7 +135,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   ];
   const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
-    { key: "chat",        label: t("nav_marcus_ai"),     icon: "🤖", mobileOnly: true },
+    { key: "chat",        label: t("nav_marcus_ai"),     icon: "👤", mobileOnly: true },
     { key: "paper",       label: "Handelen",             icon: "📊" },
     { key: "checklist",   label: t("nav_checklist"),     icon: "✅" },
     { key: "nieuws",      label: t("nav_news"),          icon: "📰" },

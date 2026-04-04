@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Bitcoin Mentor",
-  description: "Leer traden met een AI-coach — Bitcoin Mentor",
+  description: "Leer traden met Marcus, jouw persoonlijke mentor — Bitcoin Mentor",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

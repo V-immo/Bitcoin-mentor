@@ -16,7 +16,7 @@ const copy = {
     mockBubble: "BTC breekt uit boven weerstand. Dit is een goede setup voor swing traders.",
     mockTask: "📌 Opdracht: open een kleine paper trade van €100",
     usp1t: "Marcus — jouw mentor",
-    usp1: "Geen chatbot. Marcus kent jouw niveau, jouw trades en jouw zwakke punten. Hij geeft je elke dag één concrete opdracht.",
+    usp1: "Marcus kent jouw niveau, jouw trades en jouw zwakke punten. Hij geeft je elke dag één concrete opdracht — niet meer, niet minder.",
     usp2t: "Paper trading met live data",
     usp2: "Oefen met echte marktprijzen zonder echt geld te riskeren. Zie je P&L groeien terwijl je leert.",
     usp3t: "Trading agenda",
@@ -29,7 +29,7 @@ const copy = {
     s3t: "Trade en leer elke dag", s3: "Paper trades, live coaching, dagelijkse feedback.",
     s4t: "Trade zelfstandig", s4: "Na 3 maanden ken je je eigen strategie.",
     pricingLabel: "per maand · nu · straks €24,99/mnd",
-    p1: "✓ Volledige toegang tot Marcus AI-coach",
+    p1: "✓ Volledige toegang tot Marcus, jouw mentor",
     p2: "✓ Live marktscanner & grafieken",
     p3: "✓ 65+ tradinglessen",
     p4: "✓ Prijsalerts & push-notificaties",
@@ -55,7 +55,7 @@ const copy = {
     mockBubble: "BTC breaks out above resistance. This is a great setup for swing traders.",
     mockTask: "📌 Assignment: open a small paper trade of €100",
     usp1t: "Marcus — your mentor",
-    usp1: "Not a chatbot. Marcus knows your level, your trades and your weak spots. He gives you one concrete assignment every day.",
+    usp1: "Marcus knows your level, your trades and your weak spots. He gives you one concrete assignment every day — no more, no less.",
     usp2t: "Paper trading with live data",
     usp2: "Practice with real market prices without risking real money. Watch your P&L grow as you learn.",
     usp3t: "Trading journal",
@@ -68,7 +68,7 @@ const copy = {
     s3t: "Trade and learn every day", s3: "Paper trades, live coaching, daily feedback.",
     s4t: "Trade independently", s4: "After 3 months you know your own strategy.",
     pricingLabel: "per month · now · will become €24.99/mo",
-    p1: "✓ Full access to Marcus AI-coach",
+    p1: "✓ Full access to Marcus, your mentor",
     p2: "✓ Live market scanner & charts",
     p3: "✓ 65+ trading lessons",
     p4: "✓ Price alerts & push notifications",
@@ -177,7 +177,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
               </svg>
             </div>
             <div className="landing-mock-marcus">
-              <span className="landing-mock-avatar">🤖</span>
+              <span className="landing-mock-avatar marcus-avatar-m">M</span>
               <div className="landing-mock-bubble">
                 {c.mockBubble}<br /><strong>{c.mockTask}</strong>
               </div>
@@ -189,7 +189,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       {/* ── USPs ── */}
       <section className="landing-usps">
         <div className="landing-usp-card">
-          <div className="landing-usp-icon">🤖</div>
+          <div className="landing-usp-icon marcus-avatar-m" style={{ width: 48, height: 48, fontSize: 22 }}>M</div>
           <h3 className="landing-usp-title">{c.usp1t}</h3>
           <p className="landing-usp-text">{c.usp1}</p>
         </div>

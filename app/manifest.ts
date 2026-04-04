@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Bitcoin Mentor",
     short_name: "BTC Mentor",
-    description: "Leer traden met een AI-coach",
+    description: "Leer traden met Marcus, jouw persoonlijke mentor",
     start_url: "/",
     display: "standalone",
     background_color: "#0d0610",
