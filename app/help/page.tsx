@@ -17,7 +17,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "🤖",
+      icon: "👤",
       title: t("help_section_marcus"),
       items: [
         { q: t("help_q_marcus1"), a: t("help_a_marcus1") },

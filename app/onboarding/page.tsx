@@ -59,7 +59,7 @@ export default function OnboardingPage() {
         {/* Step 1: Marcus intro */}
         {step === 0 && (
           <div className="onboarding-step">
-            <div className="onboarding-avatar">🧑‍💼</div>
+            <div className="onboarding-avatar marcus-avatar-m" style={{ width: 72, height: 72, fontSize: 32, margin: "0 auto 12px" }}>M</div>
             <h1 className="onboarding-title">{t("onboarding_marcus_title")}</h1>
             <p className="onboarding-subtitle">{t("onboarding_marcus_subtitle")}</p>
             <div className="onboarding-speech-bubble">

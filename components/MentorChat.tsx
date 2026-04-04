@@ -245,12 +245,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
         <section className="terminal-side-card terminal-chat-card">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{
-                        width: 36, height: 36, borderRadius: "50%",
-                        background: "linear-gradient(135deg, #7c3aed, #e91e63)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 18, flexShrink: 0,
-                    }}>🧑‍💼</div>
+                    <div className="marcus-avatar-m">M</div>
                     <div>
                         <div style={{ fontWeight: 700, fontSize: 15, color: "var(--accent)", letterSpacing: "0.02em" }}>
                             {t("chat_label")}
