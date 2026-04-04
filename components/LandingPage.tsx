@@ -102,30 +102,32 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
   return (
     <div className="landing-wrap">
 
-      {/* ── Sticky header ── */}
-      <header className="landing-top-bar">
-        <div className="landing-top-bar-inner">
-          <div className="landing-top-logo">
-            <span style={{ color: "var(--primary)", fontWeight: 800 }}>₿</span>
-            <span>Bitcoin Mentor</span>
-          </div>
-          <div className="landing-top-right">
-            <div className="landing-lang-toggle">
-              <button
-                className={`landing-lang-btn${lang === "nl" ? " active" : ""}`}
-                onClick={() => switchLang("nl")}
-              >🇳🇱 NL</button>
-              <button
-                className={`landing-lang-btn${lang === "en" ? " active" : ""}`}
-                onClick={() => switchLang("en")}
-              >🇬🇧 EN</button>
-            </div>
-            <Link href="/auth/login" className="landing-top-login">
-              {lang === "nl" ? "Inloggen" : "Log in"}
+      {/* ── Sticky header — alleen voor niet-ingelogde bezoekers ── */}
+      {!loggedIn && (
+        <header className="landing-top-bar">
+          <div className="landing-top-bar-inner">
+            <Link href="/" className="landing-top-logo" style={{ textDecoration: "none" }}>
+              <span style={{ color: "var(--primary)", fontWeight: 800 }}>₿</span>
+              <span>Bitcoin Mentor</span>
             </Link>
+            <div className="landing-top-right">
+              <div className="landing-lang-toggle">
+                <button
+                  className={`landing-lang-btn${lang === "nl" ? " active" : ""}`}
+                  onClick={() => switchLang("nl")}
+                >🇳🇱 NL</button>
+                <button
+                  className={`landing-lang-btn${lang === "en" ? " active" : ""}`}
+                  onClick={() => switchLang("en")}
+                >🇬🇧 EN</button>
+              </div>
+              <Link href="/auth/login" className="landing-top-login">
+                {lang === "nl" ? "Inloggen" : "Log in"}
+              </Link>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* ── Hero ── */}
       <section className="landing-hero">
