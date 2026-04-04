@@ -7,7 +7,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       {/* ── Hero ── */}
       <section className="landing-hero">
         <div className="landing-hero-inner">
-          <div className="landing-badge">🚀 Gratis starten — geen creditcard nodig</div>
+          <div className="landing-badge">🔥 Vroege toegang — straks €24,99/maand</div>
           <h1 className="landing-title">
             Leer traden met<br />
             <span className="landing-title-accent">Marcus, jouw mentor</span>
@@ -24,17 +24,16 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
             ) : (
               <>
                 <Link href="/auth/register" className="landing-btn-primary">
-                  Begin gratis →
+                  Start nu voor <span className="landing-btn-price">€9,99/mnd</span> →
                 </Link>
                 <Link href="/auth/login" className="landing-btn-ghost">
-                  Inloggen
+                  Al een account? Inloggen
                 </Link>
               </>
             )}
           </div>
-          <div className="landing-social-proof">
-            <span>⭐⭐⭐⭐⭐</span>
-            <span>Meer dan 500 traders gingen je voor</span>
+          <div className="landing-price-note">
+            Nu €9,99/maand · Geen creditcard nodig · Prijs gaat omhoog
           </div>
         </div>
 
@@ -118,7 +117,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
           <div className="landing-step">
             <div className="landing-step-num">1</div>
             <h4>Maak een account</h4>
-            <p>Gratis, geen creditcard. In 30 seconden aangemeld.</p>
+            <p>€9,99/maand, geen creditcard nodig. In 30 seconden aangemeld.</p>
           </div>
           <div className="landing-step-arrow">→</div>
           <div className="landing-step">
@@ -141,17 +140,46 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         </div>
       </section>
 
+      {/* ── Prijs ── */}
+      <section className="landing-pricing-section">
+        <div className="landing-pricing-box">
+          <div className="landing-pricing-left">
+            <div className="landing-pricing-amount">
+              <span className="landing-pricing-currency">€</span>9,99
+            </div>
+            <div className="landing-pricing-sublabel">per maand · nu · straks €24,99/mnd</div>
+          </div>
+          <div className="landing-pricing-divider" />
+          <ul className="landing-pricing-list">
+            <li>✓ Volledige toegang tot Marcus AI-coach</li>
+            <li>✓ Live marktscanner &amp; grafieken</li>
+            <li>✓ 65+ tradinglessen</li>
+            <li>✓ Prijsalerts &amp; push-notificaties</li>
+            <li>✓ Bitvavo-koppeling</li>
+            <li>✓ Alle toekomstige updates</li>
+            <li className="landing-pricing-no">✗ Geen maandelijkse kosten</li>
+            <li className="landing-pricing-no">✗ Geen creditcard nodig</li>
+            <li className="landing-pricing-no">✗ Geen verborgen kosten</li>
+          </ul>
+          {!loggedIn && (
+            <Link href="/auth/register" className="landing-btn-primary landing-pricing-cta">
+              Begin voor €9,99/maand →
+            </Link>
+          )}
+        </div>
+      </section>
+
       {/* ── CTA onderaan ── */}
       <section className="landing-final-cta">
-        <h2>Klaar om te beginnen?</h2>
-        <p>Gratis, geen verplichtingen. Marcus staat voor je klaar.</p>
+        <h2>Nu €9,99/maand. Straks €24,99.</h2>
+        <p>Vroege gebruikers houden hun prijs. Geen creditcard nodig.</p>
         {loggedIn ? (
           <Link href="/dashboard" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
             Naar dashboard →
           </Link>
         ) : (
           <Link href="/auth/register" className="landing-btn-primary" style={{ fontSize: 18, padding: "16px 40px" }}>
-            Begin gratis →
+            Begin voor €9,99/maand →
           </Link>
         )}
       </section>
