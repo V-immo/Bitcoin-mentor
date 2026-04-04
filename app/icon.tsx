@@ -15,11 +15,13 @@ export default function Icon() {
         alignItems: "center",
         justifyContent: "center",
         fontSize: 108,
+        fontFamily: "Arial, sans-serif",
+        fontWeight: 700,
         color: "#e91e63",
         borderRadius: "40px",
       }}
     >
-      ₿
+      B
     </div>
   );
 }

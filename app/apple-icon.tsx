@@ -15,10 +15,12 @@ export default function AppleIcon() {
         alignItems: "center",
         justifyContent: "center",
         fontSize: 104,
+        fontFamily: "Arial, sans-serif",
+        fontWeight: 700,
         color: "#e91e63",
       }}
     >
-      ₿
+      B
     </div>
   );
 }
