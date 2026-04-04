@@ -233,13 +233,21 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
       ).all(userId) as { asset: string; cash: number; position: string; starting_balance: number }[];
       const openTrades = papers
         .map(p => { try { return { asset: p.asset, cash: p.cash, pos: JSON.parse(p.position), start: p.starting_balance }; } catch { return null; } })
-        .filter(Boolean) as { asset: string; cash: number; pos: { entryPrice?: number; openBtc?: number; side?: string; stopLoss?: number }; start: number }[];
+        .filter(Boolean) as { asset: string; cash: number; pos: { entryPrice?: number; avgEntry?: number; openBtc?: number; side?: string; stopLoss?: number; realizedPnl?: number }; start: number }[];
       if (openTrades.length > 0) {
         openPositionsContext = openTrades.map(t => {
           const scanEntry = sharedScanCache.data?.find(s => s.symbol === t.asset);
           const livePrice = scanEntry?.price ?? 0;
-          const pnl = livePrice > 0 && t.pos.openBtc ? ((livePrice - (t.pos.entryPrice ?? 0)) * t.pos.openBtc).toFixed(2) : "onbekend";
-          return `- ${t.asset}: instap $${t.pos.entryPrice?.toFixed(2) ?? "?"}, hoeveelheid ${t.pos.openBtc?.toFixed(6) ?? "?"}, huidige prijs $${livePrice > 0 ? livePrice.toFixed(2) : "?"}, ongerealiseerde P&L €${pnl}, stop-loss $${t.pos.stopLoss?.toFixed(2) ?? "niet ingesteld"}`;
+          // DB slaat instapprijs op als avgEntry of entryPrice
+          const entryPrice = t.pos.avgEntry ?? t.pos.entryPrice ?? 0;
+          const pnl = livePrice > 0 && t.pos.openBtc && entryPrice > 0
+            ? ((livePrice - entryPrice) * t.pos.openBtc).toFixed(2)
+            : "onbekend";
+          const pnlPct = livePrice > 0 && entryPrice > 0
+            ? (((livePrice - entryPrice) / entryPrice) * 100).toFixed(2)
+            : "?";
+          const pnlSign = parseFloat(pnl) >= 0 ? "+" : "";
+          return `- ${t.asset}: instap $${entryPrice > 0 ? entryPrice.toFixed(2) : "?"}, hoeveelheid ${t.pos.openBtc?.toFixed(6) ?? "?"}, huidige prijs $${livePrice > 0 ? livePrice.toFixed(2) : "?"}, P&L ${pnlSign}€${pnl} (${pnlSign}${pnlPct}%), stop-loss $${t.pos.stopLoss?.toFixed(2) ?? "NIET INGESTELD — Marcus moet hierop wijzen!"}`;
         }).join("\n");
       }
     } catch { /* ignore */ }
@@ -672,7 +680,16 @@ Sluit ALTIJD af met een concrete actie voor de gebruiker:
 - Niveau 3+: "📌 [concrete trade of analyse opdracht met getallen]"
 De opdracht moet uitvoerbaar zijn in DEZE app.
 
-Zie je een open positie? Begin daar mee: "Je zit in [asset] — nu €X winst/verlies."
+OPEN TRADES — MARCUS REAGEERT ALTIJD OP DE POSITIE:
+Als er een open trade is, begin je ALTIJD met die trade. Geen uitzonderingen.
+- Noem de instapprijs, huidige prijs, P&L in euro's en procenten.
+- Reageer op de beweging: "Je zit nu +3,2% in de winst — mooi. Je stop staat nog op $X, dat is goed."
+- Als stop-loss NIET INGESTELD is: dit is urgent. "Wacht — je hebt geen stop-loss! Dat is gevaarlijk. Stel hem nu in op $X."
+- Als prijs daalt richting stop: waarschuw direct. "Pas op, prijs nadert je stop op $X. Wil je bijkopen of uitstappen?"
+- Als prijs stijgt sterk: begeleid de winstbewaking. "Je zit +8% — wil je een deel pakken of je stop verhogen?"
+- Als P&L rood is: niet paniekzaaien, maar eerlijk. "Je staat €X in de min. Dat hoort bij traden. Is je stop nog geldig?"
+- Gebruik de % én de euro's — mensen voelen euros meer dan procenten.
+
 Gebruik echte prijzen. Noem nooit externe apps (TradingView, Binance, etc.).
 Schrijf zoals je praat. Geen rapporten, geen opsommingen tenzij echt nodig.
 
