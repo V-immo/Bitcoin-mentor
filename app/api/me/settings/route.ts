@@ -38,6 +38,7 @@ function getOrCreateSettings(userId: number) {
     aiLanguage: row.ai_language as string,
     bitvavoConnected: hasBitvavo,
     goal: (row.goal as number | undefined) ?? 0,
+    preferredCurrency: (row.preferred_currency as string | undefined) ?? "EUR",
   };
 }
 
@@ -107,12 +108,24 @@ export async function PUT(request: NextRequest) {
     }
   }
 
+  // Valuta voorkeur opslaan (apart endpoint, om conflicts te vermijden)
+  if (body.preferredCurrency !== undefined && Object.keys(body).length === 1) {
+    try {
+      db.prepare("UPDATE settings SET preferred_currency = ?, updated_at = datetime('now') WHERE user_id = ?")
+        .run(body.preferredCurrency === "USD" ? "USD" : "EUR", userId);
+      return Response.json({ ok: true });
+    } catch {
+      return Response.json({ error: "preferred_currency kolom ontbreekt, voer db/migrate-currency.js uit" }, { status: 500 });
+    }
+  }
+
   db.prepare(`
     UPDATE settings SET
       trading_mode = ?,
       risk_level = ?,
       preferred_assets = ?,
       ai_language = ?,
+      preferred_currency = ?,
       updated_at = datetime('now')
     WHERE user_id = ?
   `).run(
@@ -120,6 +133,7 @@ export async function PUT(request: NextRequest) {
     body.riskLevel ?? "medium",
     JSON.stringify(body.preferredAssets ?? ["BTCUSDT", "ETHUSDT"]),
     body.aiLanguage ?? "nl",
+    body.preferredCurrency ?? "EUR",
     userId
   );
 

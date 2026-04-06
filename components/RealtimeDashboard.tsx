@@ -11,6 +11,7 @@ import EntryChecklist from "./EntryChecklist";
 import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import NewsPanel from "./NewsPanel";
 import MarcusBriefing from "./MarcusBriefing";
 import Leaderboard from "./Leaderboard";
@@ -107,6 +108,7 @@ const PRIMARY_TABS: BottomTab[] = ["paper", "checklist", "briefing", "nieuws"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
+  const { formatPrice: fmtCurrency } = useCurrency();
 
   // Vertaalde arrays — reageren op taalwisseling
   const TIMEFRAMES_CRYPTO: { key: ViewMode; label: string; desc: string }[] = [
@@ -417,21 +419,21 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     const inZone = (signalAsset === asset) && livePrice >= signal.entryZoneLow && livePrice <= signal.entryZoneHigh;
     if (inZone && !wasInZoneRef.current) {
       const ticker = assetDef?.ticker ?? asset.replace("USDT", "");
-      const msg = `🟢 ${ticker} is in de koopzone! $${Math.round(livePrice).toLocaleString("en-US")} — overweeg een entry.`;
+      const msg = `🟢 ${ticker} is in de koopzone! ${fmtCurrency(Math.round(livePrice), asset)} — overweeg een entry.`;
       setZoneAlert(msg);
       if (alertTimerRef.current) clearTimeout(alertTimerRef.current);
       alertTimerRef.current = setTimeout(() => setZoneAlert(null), 8000);
       // Browser notificatie (ook als tabblad op achtergrond staat)
       if (notifAllowed && "Notification" in window) {
         new Notification(`${ticker} koopzone bereikt!`, {
-          body: `Prijs: $${Math.round(livePrice).toLocaleString("en-US")} staat in de koopzone`,
+          body: `Prijs: ${fmtCurrency(Math.round(livePrice), asset)} staat in de koopzone`,
           icon: "/favicon.ico",
           tag: `zone-${ticker}`,
         });
       }
     }
     wasInZoneRef.current = inZone;
-  }, [livePrice, signal.entryZoneLow, signal.entryZoneHigh, asset, signalAsset, notifAllowed, assetDef]);
+  }, [livePrice, signal.entryZoneLow, signal.entryZoneHigh, asset, signalAsset, notifAllowed, assetDef, fmtCurrency]);
 
   const chartPrice = useMemo(() => livePrice || signal.price, [livePrice, signal.price]);
   const visibleCandles = useMemo(() => candleMap[activeInterval === "multi" ? "1d" : activeInterval] || [], [candleMap, activeInterval]);
@@ -517,7 +519,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     if (aboveBuyZone) return {
       headline: t("advice_too_high_title"),
       verdict: t("advice_too_high_verdict"),
-      bestAction: `${t("advice_too_high_action_prefix")} $${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–$${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}.`,
+      bestAction: `${t("advice_too_high_action_prefix")} ${fmtCurrency(Math.round(signal.entryZoneLow), asset)}–${fmtCurrency(Math.round(signal.entryZoneHigh), asset)}.`,
       biggestMistake: t("advice_too_high_mistake"),
       lesson: t("advice_too_high_lesson"),
       marketTone: t("advice_too_high_tone"),
@@ -608,7 +610,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             <span className="asset-select-caret">▾</span>
           </button>
           <div>
-            <div className="terminal-topbar-price">${fmtPrice(chartPrice, asset)}</div>
+            <div className="terminal-topbar-price">{fmtCurrency(chartPrice, asset)}</div>
             <div className="terminal-topbar-meta">
               <span className={`terminal-change-badge${change24h >= 0 ? " pos" : " neg"}`}>
                 {change24h >= 0 ? "▲" : "▼"} {Math.abs(change24h).toFixed(2)}%
@@ -731,17 +733,17 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 <span className={`signal-strip-badge ${signal.action === "Kleine koop mogelijk" ? "green" : signal.action === "Wacht op betere prijs" ? "yellow" : "red"}`}>
                   {signal.action}
                 </span>
-                <span className="signal-strip-zone">Zone ${Math.round(signal.entryZoneLow).toLocaleString("en-US")}–${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}</span>
-                <span className="signal-strip-sl">SL ${Math.round(signal.stopLoss).toLocaleString("en-US")}</span>
+                <span className="signal-strip-zone">Zone {fmtCurrency(Math.round(signal.entryZoneLow), asset)}–{fmtCurrency(Math.round(signal.entryZoneHigh), asset)}</span>
+                <span className="signal-strip-sl">SL {fmtCurrency(Math.round(signal.stopLoss), asset)}</span>
                 <span className="signal-strip-rr">R:R {signal.riskRewardEstimate}</span>
                 <span className="signal-strip-toggle">{signalStripOpen ? "▲" : "▼"}</span>
               </div>
               {signalStripOpen && (
                 <div className="signal-strip-detail" onClick={e => e.stopPropagation()}>
                   <div className="signal-strip-grid">
-                    <div className="ssd-item"><span className="ssd-label">Entry zone</span><span className="ssd-val">${Math.round(signal.entryZoneLow).toLocaleString("en-US")} – ${Math.round(signal.entryZoneHigh).toLocaleString("en-US")}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Stop-loss</span><span className="ssd-val ssd-red">${Math.round(signal.stopLoss).toLocaleString("en-US")}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Target</span><span className="ssd-val ssd-green">${Math.round(signal.resistanceZoneLow).toLocaleString("en-US")} – ${Math.round(signal.resistanceZoneHigh).toLocaleString("en-US")}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Entry zone</span><span className="ssd-val">{fmtCurrency(Math.round(signal.entryZoneLow), asset)} – {fmtCurrency(Math.round(signal.entryZoneHigh), asset)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Stop-loss</span><span className="ssd-val ssd-red">{fmtCurrency(Math.round(signal.stopLoss), asset)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Target</span><span className="ssd-val ssd-green">{fmtCurrency(Math.round(signal.resistanceZoneLow), asset)} – {fmtCurrency(Math.round(signal.resistanceZoneHigh), asset)}</span></div>
                     <div className="ssd-item"><span className="ssd-label">R:R ratio</span><span className="ssd-val">{signal.riskRewardEstimate}</span></div>
                     <div className="ssd-item"><span className="ssd-label">Score</span><span className="ssd-val">{signal.score}/100 · {signal.setupGrade}</span></div>
                     <div className="ssd-item"><span className="ssd-label">RSI 4H / 1D</span><span className="ssd-val">{signal.rsi4h.toFixed(0)} / {signal.rsi1d.toFixed(0)}</span></div>

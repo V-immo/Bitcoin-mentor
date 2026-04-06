@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,8 +59,10 @@ export default function RootLayout({
         <SessionWrapper>
           <ThemeProvider>
             <LanguageProvider>
-              <Nav />
-              <div className="app-content">{children}</div>
+              <CurrencyProvider>
+                <Nav />
+                <div className="app-content">{children}</div>
+              </CurrencyProvider>
             </LanguageProvider>
           </ThemeProvider>
         </SessionWrapper>
