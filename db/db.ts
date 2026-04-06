@@ -112,6 +112,7 @@ function ensureSchema(database: Database.Database) {
   addCol("settings", "alert_config", "TEXT");
   addCol("settings", "bybit_api_key", "TEXT DEFAULT ''");
   addCol("settings", "bybit_api_secret", "TEXT DEFAULT ''");
+  addCol("settings", "country_code", "TEXT DEFAULT ''");
 
   // users
   addCol("users", "start_capital", "REAL NOT NULL DEFAULT 10000");

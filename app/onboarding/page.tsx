@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+type RegionData = {
+  country: string;
+  countryCode: string;
+  suggestedCurrency: "EUR" | "USD";
+  suggestedExchange: "bitvavo" | "bybit";
+  detected: boolean;
+};
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -11,9 +19,41 @@ export default function OnboardingPage() {
   const [capital, setCapital] = useState("1000");
   const [saving, setSaving] = useState(false);
 
-  const TOTAL_STEPS = 4;
+  // Regio detectie
+  const [region, setRegion] = useState<RegionData | null>(null);
+  const [currency, setCurrency] = useState<"EUR" | "USD">("EUR");
+  const [regionLoading, setRegionLoading] = useState(false);
+
+  const TOTAL_STEPS = 5;
+
+  // Detecteer regio bij stap 1
+  useEffect(() => {
+    if (step === 1 && !region) {
+      setRegionLoading(true);
+      fetch("/api/me/detect-region")
+        .then(r => r.ok ? r.json() : null)
+        .then((d: RegionData | null) => {
+          if (d) {
+            setRegion(d);
+            setCurrency(d.suggestedCurrency);
+          }
+          setRegionLoading(false);
+        })
+        .catch(() => setRegionLoading(false));
+    }
+  }, [step, region]);
 
   async function next() {
+    if (step === 1) {
+      // Sla valutakeuze op
+      await fetch("/api/me/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferredCurrency: currency }),
+      });
+      setStep(s => s + 1);
+      return;
+    }
     if (step === TOTAL_STEPS - 1) {
       setSaving(true);
       await fetch("/api/me/settings", {
@@ -25,7 +65,7 @@ export default function OnboardingPage() {
       router.push("/leren");
       router.refresh();
     } else {
-      setStep((s) => s + 1);
+      setStep(s => s + 1);
     }
   }
 
@@ -43,6 +83,11 @@ export default function OnboardingPage() {
     { icon: "📊", label: t("onboarding_feature_stats"),   desc: t("onboarding_feature_stats_desc") },
   ];
 
+  const exchangeInfo = {
+    bitvavo: { name: "Bitvavo", flag: "🇪🇺", desc: "EU-gereguleerd · EUR-paren · ideaal voor Europese traders" },
+    bybit:   { name: "Bybit",   flag: "🌍", desc: "Globaal beschikbaar · USDT-paren · lage fees" },
+  };
+
   return (
     <div className="login-page">
       <div className="login-card onboarding-card">
@@ -56,7 +101,7 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        {/* Step 1: Marcus intro */}
+        {/* Stap 0: Marcus intro */}
         {step === 0 && (
           <div className="onboarding-step">
             <div className="onboarding-avatar marcus-avatar-m" style={{ width: 72, height: 72, fontSize: 32, margin: "0 auto 12px" }}>M</div>
@@ -72,8 +117,80 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 2: Learning path */}
+        {/* Stap 1: Regio + valuta */}
         {step === 1 && (
+          <div className="onboarding-step">
+            <div className="onboarding-icon">🌍</div>
+            <h1 className="onboarding-title">Jouw regio</h1>
+            <p className="onboarding-subtitle">
+              Marcus past zijn aanbevelingen aan op jouw locatie — juiste valuta, juiste exchange.
+            </p>
+
+            {regionLoading ? (
+              <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 14, padding: "20px 0" }}>
+                Regio detecteren…
+              </div>
+            ) : (
+              <>
+                {region?.detected && region.country && (
+                  <div style={{ textAlign: "center", fontSize: 14, color: "var(--text-secondary)", marginBottom: 16 }}>
+                    📍 We zien dat je uit <strong style={{ color: "var(--text)" }}>{region.country}</strong> verbindt
+                  </div>
+                )}
+
+                {/* Valuta keuze */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8, fontWeight: 600 }}>Jouw valuta</div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {(["EUR", "USD"] as const).map(c => (
+                      <button
+                        key={c}
+                        onClick={() => setCurrency(c)}
+                        style={{
+                          flex: 1, padding: "12px 0", borderRadius: 10, fontWeight: 700,
+                          fontSize: 15, cursor: "pointer", border: "2px solid",
+                          borderColor: currency === c ? "var(--accent)" : "var(--border)",
+                          background: currency === c ? "var(--accent)" : "var(--surface-2)",
+                          color: currency === c ? "#fff" : "var(--text-secondary)",
+                          transition: "all 0.15s",
+                        }}
+                      >
+                        {c === "EUR" ? "🇪🇺 EUR" : "🇺🇸 USD"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Exchange aanbeveling */}
+                <div style={{ background: "var(--surface-2)", borderRadius: 10, padding: "12px 14px", marginBottom: 20, border: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 6, fontWeight: 600 }}>Aanbevolen exchange</div>
+                  {(() => {
+                    const ex = exchangeInfo[currency === "EUR" ? "bitvavo" : "bybit"];
+                    return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 22 }}>{ex.flag}</span>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{ex.name}</div>
+                          <div style={{ fontSize: 12, color: "#6b7280" }}>{ex.desc}</div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  <div style={{ fontSize: 11, color: "#6b7280", marginTop: 8 }}>
+                    Je kunt dit later wijzigen in Instellingen.
+                  </div>
+                </div>
+              </>
+            )}
+
+            <button className="login-btn onboarding-btn" onClick={next} disabled={regionLoading}>
+              Doorgaan
+            </button>
+          </div>
+        )}
+
+        {/* Stap 2: Learning path */}
+        {step === 2 && (
           <div className="onboarding-step">
             <div className="onboarding-icon">🗺️</div>
             <h1 className="onboarding-title">{t("onboarding_path_title")}</h1>
@@ -96,8 +213,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 3: App features */}
-        {step === 2 && (
+        {/* Stap 3: App features */}
+        {step === 3 && (
           <div className="onboarding-step">
             <div className="onboarding-icon">📱</div>
             <h1 className="onboarding-title">{t("onboarding_app_title")}</h1>
@@ -119,8 +236,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 4: Capital + finish */}
-        {step === 3 && (
+        {/* Stap 4: Kapitaal + finish */}
+        {step === 4 && (
           <div className="onboarding-step">
             <div className="onboarding-icon">💰</div>
             <h1 className="onboarding-title">{t("onboarding_goal_title")}</h1>
@@ -149,9 +266,9 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Back button */}
+        {/* Terug knop */}
         {step > 0 && (
-          <button className="onboarding-back-btn" onClick={() => setStep((s) => s - 1)}>
+          <button className="onboarding-back-btn" onClick={() => setStep(s => s - 1)}>
             ← {t("back")}
           </button>
         )}
