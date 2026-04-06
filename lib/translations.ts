@@ -485,6 +485,26 @@ const translations = {
     trade_intro_switch_desc: "Gebruik de balk boven de grafiek om naar BTC, ETH, aandelen of goud te switchen.",
     trade_intro_cta: "Begrepen, laten we traden →",
 
+    // === TRADE DASHBOARD STRINGS ===
+    tab_trade: "Handelen",
+    tab_briefing: "Briefing",
+    tab_more: "Meer",
+    asset_picker_title: "Asset kiezen",
+    trade_accordion_signal: "Marcus Signaal",
+    trade_accordion_paper: "Paper Trade",
+    trade_accordion_calculator: "Risico calculator",
+    signal_strip_trade_btn: "Trade openen →",
+    signal_strip_zone_label: "Zone",
+    more_menu_ranking: "Ranking",
+    more_menu_testnet: "Testnet",
+    more_menu_live: "Live Trading",
+    more_menu_alerts: "Alerts",
+    page_back: "← Terug",
+    testnet_page_title: "Testnet",
+    live_page_title: "Live Trading",
+    leaderboard_page_title: "Ranking",
+    asset_label: "Asset",
+
     // === INSTELLINGEN PAGINA ===
     instellingen_title: "Instellingen",
     instellingen_subtitle: "Pas jouw trading ervaring aan",
@@ -1481,6 +1501,26 @@ const translations = {
     trade_intro_switch: "Switch asset",
     trade_intro_switch_desc: "Use the bar above the chart to switch to BTC, ETH, stocks or gold.",
     trade_intro_cta: "Got it, let's trade →",
+
+    // === TRADE DASHBOARD STRINGS ===
+    tab_trade: "Trade",
+    tab_briefing: "Briefing",
+    tab_more: "More",
+    asset_picker_title: "Choose asset",
+    trade_accordion_signal: "Marcus Signal",
+    trade_accordion_paper: "Paper Trade",
+    trade_accordion_calculator: "Risk calculator",
+    signal_strip_trade_btn: "Open trade →",
+    signal_strip_zone_label: "Zone",
+    more_menu_ranking: "Ranking",
+    more_menu_testnet: "Testnet",
+    more_menu_live: "Live Trading",
+    more_menu_alerts: "Alerts",
+    page_back: "← Back",
+    testnet_page_title: "Testnet",
+    live_page_title: "Live Trading",
+    leaderboard_page_title: "Ranking",
+    asset_label: "Asset",
 
     // === INSTELLINGEN PAGINA ===
     instellingen_title: "Settings",
