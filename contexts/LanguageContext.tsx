@@ -19,7 +19,7 @@ const LanguageContext = createContext<LanguageContextType>({
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("nl");
 
-  // Laad taal uit localStorage bij mount (client-only)
+  // Laad taal: localStorage heeft voorrang, anders sync met DB
   // Standaard altijd Nederlands — gebruiker kan dit wijzigen via Instellingen
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -27,8 +27,23 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (stored === "nl" || stored === "en") {
       setLangState(stored);
     } else {
-      // Geen voorkeur opgeslagen → forceer Nederlands en sla op
-      localStorage.setItem("app_lang", "nl");
+      // Geen localStorage → haal taal op uit DB
+      fetch("/api/me/settings")
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          const dbLang = d?.aiLanguage;
+          if (dbLang === "en") {
+            setLangState("en");
+            localStorage.setItem("app_lang", "en");
+          } else {
+            setLangState("nl");
+            localStorage.setItem("app_lang", "nl");
+          }
+        })
+        .catch(() => {
+          setLangState("nl");
+          localStorage.setItem("app_lang", "nl");
+        });
     }
   }, []);
 

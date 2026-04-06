@@ -5,7 +5,6 @@ import Link from "next/link";
 import TradingChart from "./TradingChart";
 import TerminalMentorPanel from "./TerminalMentorPanel";
 import TerminalPaperPanel from "./TerminalPaperPanel";
-import TradePartnerPanel from "./TradePartnerPanel";
 import MentorChat from "./MentorChat";
 import RisicoCalculator from "./RisicoCalculator";
 import EntryChecklist from "./EntryChecklist";
@@ -149,10 +148,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [asset, setAsset] = useState<string>(initialAsset);
   const [signal, setSignal] = useState<MentorSignal>(initialData);
   const [bottomTab, setBottomTab] = useState<BottomTab>("paper");
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [signalStripOpen, setSignalStripOpen] = useState(false);
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
-  const [tradeAccordion, setTradeAccordion] = useState<"signal" | "paper" | null>("signal");
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1200px)");
@@ -456,10 +453,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isBinance, activeInterval, candleMap]);
 
-  function handlePartnerExecute(amountEur: number) {
-    setAutoExecuteAmount(amountEur);
-    setTimeout(() => setAutoExecuteAmount(null), 300);
-  }
 
   function handleAssetChange(sym: string) {
     localStorage.setItem("bitcoin-mentor-selected-asset", sym);
@@ -766,90 +759,31 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             </div>
           )}
 
-          {/* Bottom tab bar — 4 primaire + ⋯ meer */}
-          <div className="bottom-tab-bar" style={{ position: "relative" }}>
+          {/* Bottom tab bar — 4 tabs */}
+          <div className="bottom-tab-bar">
             {BOTTOM_TABS.filter(tab => PRIMARY_TABS.includes(tab.key)).map(tab => (
               <button
                 key={tab.key}
                 className={`bottom-tab-btn${bottomTab === tab.key ? " active" : ""}`}
-                onClick={() => { setBottomTab(tab.key); setShowMoreMenu(false); }}
+                onClick={() => setBottomTab(tab.key)}
               >
                 <span className="bottom-tab-icon">{tab.icon}</span>
                 <span className="bottom-tab-label">{tab.label}</span>
               </button>
             ))}
-            {/* Meer knop */}
-            <button
-              className={`bottom-tab-btn${showMoreMenu ? " active" : ""}`}
-              onClick={() => setShowMoreMenu(v => !v)}
-            >
-              <span className="bottom-tab-icon">⋯</span>
-              <span className="bottom-tab-label">{t("tab_more")}</span>
-            </button>
-            {/* Meer dropdown — externe links */}
-            {showMoreMenu && (
-              <div className="more-tab-menu">
-                <Link href="/leaderboard" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🏆</span><span>{t("more_menu_ranking")}</span>
-                </Link>
-                <Link href="/testnet" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🔬</span><span>{t("more_menu_testnet")}</span>
-                </Link>
-                <Link href="/live" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>💶</span><span>{t("more_menu_live")}</span>
-                </Link>
-                <Link href="/instellingen#alerts" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🔔</span><span>{t("more_menu_alerts")}</span>
-                </Link>
-              </div>
-            )}
           </div>
 
           {/* Tab content */}
           <div className="bottom-tab-content">
             {bottomTab === "paper" && (
-              <div className="trade-accordion">
-                {/* Sectie 1: Marcus Signaal */}
-                <div className="accordion-section">
-                  <button
-                    className={`accordion-header${tradeAccordion === "signal" ? " open" : ""}`}
-                    onClick={() => setTradeAccordion(v => v === "signal" ? null : "signal")}
-                  >
-                    <span>📊 {t("trade_accordion_signal")}</span>
-                    <span className="accordion-caret">{tradeAccordion === "signal" ? "▲" : "▼"}</span>
-                  </button>
-                  {tradeAccordion === "signal" && (
-                    <div className="accordion-body">
-                      <TradePartnerPanel
-                        signal={signal} currentPrice={chartPrice} asset={asset}
-                        signalReady={signalReady} onExecuteTrade={handlePartnerExecute}
-                      />
-                    </div>
-                  )}
-                </div>
-                {/* Sectie 2: Paper Trade */}
-                <div className="accordion-section">
-                  <button
-                    className={`accordion-header${tradeAccordion === "paper" ? " open" : ""}`}
-                    onClick={() => setTradeAccordion(v => v === "paper" ? null : "paper")}
-                  >
-                    <span>📝 {t("trade_accordion_paper")}</span>
-                    <span className="accordion-caret">{tradeAccordion === "paper" ? "▲" : "▼"}</span>
-                  </button>
-                  {tradeAccordion === "paper" && (
-                    <div className="accordion-body">
-                      <TerminalPaperPanel
-                        currentPrice={chartPrice} status={signal.status} action={signal.action}
-                        entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
-                        entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
-                        resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
-                        riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
-                        autoExecuteAmount={autoExecuteAmount}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
+              <TerminalPaperPanel
+                currentPrice={chartPrice} status={signal.status} action={signal.action}
+                entryZoneText={signal.entryZoneText} entryZoneLow={signal.entryZoneLow}
+                entryZoneHigh={signal.entryZoneHigh} stopLoss={signal.stopLoss}
+                resistanceZoneLow={signal.resistanceZoneLow} resistanceZoneHigh={signal.resistanceZoneHigh}
+                riskRewardEstimate={signal.riskRewardEstimate} asset={asset}
+                autoExecuteAmount={autoExecuteAmount}
+              />
             )}
             {bottomTab === "checklist" && (
               <>
