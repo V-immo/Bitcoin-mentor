@@ -161,6 +161,26 @@ export async function POST(request: NextRequest) {
   const marketContext: string = body.marketContext ?? "";
   const questionContext: string = body.questionContext ?? ""; // quiz question context
 
+  // Live app context — wat de gebruiker nu ziet in de interface
+  const appContext: {
+    asset?: string;
+    currentPrice?: number;
+    change24h?: number;
+    activeTab?: string;
+    activeInterval?: string;
+    signalStatus?: string;
+    signalAction?: string;
+    entryZoneLow?: number;
+    entryZoneHigh?: number;
+    stopLoss?: number;
+    targetLow?: number;
+    targetHigh?: number;
+    rr?: number;
+    rsi4h?: number;
+    trend4h?: string;
+    trend1d?: string;
+  } = body.appContext ?? {};
+
   // Haal quiz profiel op uit DB als ingelogd (niet vertrouwen op client body)
   let traderLevel: number = body.traderLevel ?? 1;
   let weakTopics: string[] = body.weakTopics ?? [];
@@ -498,6 +518,21 @@ ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de 
 LEERVOORTGANG VAN DEZE GEBRUIKER:
 ${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe gebruiker."}
 
+WAT DE GEBRUIKER NU ZIET IN DE APP (live schermcontext — gebruik dit ACTIEF):
+${appContext.asset ? `
+Asset op scherm: ${appContext.asset} | Prijs: $${appContext.currentPrice?.toFixed(2) ?? "?"} | 24u: ${appContext.change24h !== undefined ? (appContext.change24h >= 0 ? "+" : "") + appContext.change24h.toFixed(2) + "%" : "?"}
+Actieve timeframe: ${appContext.activeInterval ?? "onbekend"}
+Actieve tab: ${appContext.activeTab ?? "onbekend"}
+${appContext.signalStatus ? `Marcus signaal status: ${appContext.signalStatus} | Actie: ${appContext.signalAction ?? "—"}` : ""}
+${appContext.entryZoneLow ? `Koopzone: $${appContext.entryZoneLow.toFixed(0)}–$${appContext.entryZoneHigh?.toFixed(0) ?? "?"}` : ""}
+${appContext.stopLoss ? `Stop-loss niveau: $${appContext.stopLoss.toFixed(0)}` : ""}
+${appContext.targetLow ? `Target/weerstand: $${appContext.targetLow.toFixed(0)}–$${appContext.targetHigh?.toFixed(0) ?? "?"}` : ""}
+${appContext.rr ? `R/R verhouding: ${appContext.rr.toFixed(1)}:1` : ""}
+${appContext.rsi4h ? `RSI (4H): ${appContext.rsi4h.toFixed(0)} | Trend 4H: ${appContext.trend4h ?? "?"} | Trend 1D: ${appContext.trend1d ?? "?"}` : ""}
+
+Marcus ziet exact wat de gebruiker ziet. Als de gebruiker vraagt "moet ik kopen?" — bekijk dan de koopzone hierboven en de huidige prijs. Als de gebruiker vraagt "hoe stel ik een stop-loss in?" — verwijs naar de Paper Trade tab in de app.
+` : "Geen live schermdata beschikbaar (gebruiker is niet op het dashboard)."}
+
 OPEN POSITIES VAN DEZE GEBRUIKER (PAPER TRADING — nep geld, geen echt risico):
 ${openPositionsContext || "Geen open paper trades."}
 
@@ -514,6 +549,56 @@ ${bybitContext
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
+
+APP GIDS — MARCUS KENT DE HELE BITCOIN MENTOR APP:
+Marcus kan altijd uitleggen waar iets te vinden is. Gebruik dit als de gebruiker vraagt "hoe doe ik X" of "waar vind ik Y".
+
+NAVIGATIE (bovenbalk):
+- ⚡ Scanner (/dashboard) — Marktoverzicht van alle assets met scores. Klik op een asset → gaat naar het dashboard.
+- 📈 Trade (/trade) — Het hoofd-trading dashboard. Grafiek, signalen, tabs onderaan.
+- 🎓 Leren (/leren) — Leerlessen, video's en quiz met Marcus als coach. Levels 1-5.
+- 📅 Agenda (/agenda) — Trading journal per dag: emoties, notities, P&L kalender. Wekelijkse review door Marcus.
+- 📊 Statistieken (/stats) — Overzicht van alle paper trades, winst/verlies, patronen.
+- Account → Profiel, Instellingen, Help, Uitloggen.
+
+HET TRADE DASHBOARD (/trade) — tabs onderaan:
+- 📊 Paper Trade — Simuleer een trade met nep-geld. Klik "Kopen" of "Verkopen". Vul in: bedrag, stop-loss (SL), take-profit (TP). Stop-loss = het bedrag waarbij de trade automatisch sluit om verlies te beperken.
+- 🎯 Plan Check — Vul je trade plan in (instap, SL, target) en Marcus beoordeelt het: GOED / AANPASSEN / NIET DOEN.
+- ✅ Checklist — Checklist of de markt klaar is voor een entry. RSI, trend, volume etc.
+- 💡 Briefing — Marcus' dagelijkse marktanalyse, automatisch gegenereerd.
+- 📰 Nieuws — Laatste crypto nieuws van CoinTelegraph en CoinDesk.
+- 👤 Marcus (mobiel) — Chat met Marcus, zichtbaar als tab op mobiel.
+
+HOE EEN PAPER TRADE OPENEN:
+1. Ga naar /trade (📈 in navigatie)
+2. Selecteer het asset bovenaan (BTC, ETH, SOL etc.)
+3. Klik op de "Paper Trade" tab onderaan
+4. Kies Kopen of Verkopen
+5. Vul het bedrag in
+6. Stel een Stop-Loss in (VERPLICHT voor goede discipline) — dit is de prijs waarbij je trade automatisch sluit als het tegenzit
+7. Optioneel: Take-Profit (doel-prijs)
+8. Klik op Bevestigen
+
+HOE API KEYS KOPPELEN (voor live trading):
+1. Ga naar Instellingen (⚙️ in Account dropdown)
+2. Scroll naar "Bitvavo" of "Bybit" sectie
+3. Voer je API key en secret in
+4. Klik Opslaan
+5. Na koppeling zie je je saldo in de Live Trading pagina
+
+LIVE TRADING (/live):
+- 💶 Bitvavo tab: echte euro's, EU-gereguleerd. Koppelen via Instellingen.
+- 💛 Bybit tab: echte USDT, globaal. Koppelen via Instellingen.
+- Stap-voor-stap bevestiging — je ziet altijd "ECHTE EURO'S" waarschuwing voor je bevestigt.
+
+INSTELLINGEN (/instellingen):
+- Trading modus: Day / Swing / Long — Marcus past zijn coaching aan op jouw keuze.
+- Bitvavo API key koppelen.
+- Bybit API key koppelen.
+- Taal: Nederlands / English.
+- Thema: Donker / Licht.
+
+Als Marcus iets uitlegt over de app, verwijst hij altijd naar het juiste tabje of pagina. Geen vage antwoorden zoals "ergens in de app" — altijd concreet: "Ga naar de Paper Trade tab onderaan het dashboard, vul het SL-veld in en klik Bevestigen."
 
 TRADING DNA — MARCUS DENKT VANUIT DEZE PRINCIPES:
 

@@ -623,6 +623,26 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   [asset, chartPrice, change24h, signal, fundingRate, openInterest, isBinance, assetDef]
   );
 
+  // Live app context — wat de gebruiker nu ziet (meesturen naar Marcus)
+  const appContext = useMemo(() => ({
+    asset,
+    currentPrice: chartPrice,
+    change24h,
+    activeTab: bottomTab,
+    activeInterval: activeInterval as string,
+    signalStatus: signal.status,
+    signalAction: signal.action,
+    entryZoneLow: signal.entryZoneLow,
+    entryZoneHigh: signal.entryZoneHigh,
+    stopLoss: signal.stopLoss,
+    targetLow: signal.resistanceZoneLow,
+    targetHigh: signal.resistanceZoneHigh,
+    rr: signal.riskRewardEstimate,
+    rsi4h: signal.rsi4h,
+    trend4h: signal.trend4h,
+    trend1d: signal.trend1d,
+  }), [asset, chartPrice, change24h, bottomTab, activeInterval, signal]);
+
   return (
     <main className="terminal-page">
 
@@ -793,7 +813,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
           {/* Marcus — altijd zichtbaar onder de chart */}
           <div className="marcus-below-chart">
-            <MentorChat key={asset} marketContext={marketContext} asset={asset} />
+            <MentorChat key={asset} marketContext={marketContext} asset={asset} appContext={appContext} />
           </div>
 
           {/* Signaalstrip — altijd zichtbaar boven tabs */}
@@ -883,6 +903,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 </details>
               </>
             )}
+            {bottomTab === "chat" && <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />}
             {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
             {bottomTab === "briefing" && <MarcusBriefing />}
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}

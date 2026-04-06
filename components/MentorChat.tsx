@@ -57,9 +57,29 @@ type Message = {
     content: string;
 };
 
+type AppContext = {
+    asset?: string;
+    currentPrice?: number;
+    change24h?: number;
+    activeTab?: string;
+    activeInterval?: string;
+    signalStatus?: string;
+    signalAction?: string;
+    entryZoneLow?: number;
+    entryZoneHigh?: number;
+    stopLoss?: number;
+    targetLow?: number;
+    targetHigh?: number;
+    rr?: number;
+    rsi4h?: number;
+    trend4h?: string;
+    trend1d?: string;
+};
+
 type Props = {
     marketContext: string;
     asset: string;
+    appContext?: AppContext;
 };
 
 // Static Dutch prompts sent to the AI — these stay in Dutch (AI language)
@@ -70,7 +90,7 @@ const QUICK_QUESTION_PROMPTS = [
     { labelKey: "chat_q_compare" as const, prompt: "Vergelijk alle assets die nu in het systeem zitten. Welke ziet er technisch het sterkst uit? Welke zou jij kiezen en waarom? Geef een top 3 met uitleg.", prewarm: true },
 ];
 
-export default function MentorChat({ marketContext, asset }: Props) {
+export default function MentorChat({ marketContext, asset, appContext }: Props) {
     const { t, lang } = useLanguage();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
@@ -185,7 +205,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang }),
+                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
             });
             const json = await res.json();
             const finalMessages: Message[] = [{ role: "assistant", content: json.reply || t("chat_no_reply") }];
@@ -212,7 +232,7 @@ export default function MentorChat({ marketContext, asset }: Props) {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang }),
+                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
             });
             const json = await res.json();
             const finalMessages: Message[] = [
