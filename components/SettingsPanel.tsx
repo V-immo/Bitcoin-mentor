@@ -37,7 +37,8 @@ const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
 export default function SettingsPanel() {
   const { lang, setLang, t } = useLanguage();
   const { currency, setCurrency } = useCurrency();
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  // Initialiseer aiLanguage vanuit context (niet hardcoded "nl" default)
+  const [settings, setSettings] = useState<Settings>({ ...DEFAULT_SETTINGS, aiLanguage: lang });
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -129,10 +130,11 @@ export default function SettingsPanel() {
   }
 
   async function save() {
+    // Gebruik altijd de context-taal — nooit de form-state (die start als "nl" default)
     const res = await fetch("/api/me/settings", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
+      body: JSON.stringify({ ...settings, aiLanguage: lang }),
     });
     if (res.ok) {
       setSaved(true);
