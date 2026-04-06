@@ -39,24 +39,26 @@ async function parseRSS(url: string, publisher: string): Promise<NewsItem[]> {
 
 const CRYPTO_FEEDS: Record<string, { url: string; publisher: string }[]> = {
   BTC: [
-    { url: "https://cointelegraph.com/rss/tag/bitcoin",    publisher: "CoinTelegraph" },
-    { url: "https://feeds.feedburner.com/CoinDesk",        publisher: "CoinDesk" },
+    { url: "https://cointelegraph.com/rss/tag/bitcoin",              publisher: "CoinTelegraph" },
+    { url: "https://feeds.feedburner.com/CoinDesk",                  publisher: "CoinDesk" },
+    { url: "https://bitcoinmagazine.com/.rss/full/",                  publisher: "Bitcoin Magazine" },
   ],
   ETH: [
-    { url: "https://cointelegraph.com/rss/tag/ethereum",   publisher: "CoinTelegraph" },
-    { url: "https://feeds.feedburner.com/CoinDesk",        publisher: "CoinDesk" },
+    { url: "https://cointelegraph.com/rss/tag/ethereum",             publisher: "CoinTelegraph" },
+    { url: "https://feeds.feedburner.com/CoinDesk",                  publisher: "CoinDesk" },
   ],
   SOL: [
-    { url: "https://cointelegraph.com/rss/tag/solana",     publisher: "CoinTelegraph" },
-    { url: "https://feeds.feedburner.com/CoinDesk",        publisher: "CoinDesk" },
+    { url: "https://cointelegraph.com/rss/tag/solana",               publisher: "CoinTelegraph" },
+    { url: "https://feeds.feedburner.com/CoinDesk",                  publisher: "CoinDesk" },
   ],
   XRP: [
-    { url: "https://cointelegraph.com/rss/tag/ripple",     publisher: "CoinTelegraph" },
-    { url: "https://feeds.feedburner.com/CoinDesk",        publisher: "CoinDesk" },
+    { url: "https://cointelegraph.com/rss/tag/ripple",               publisher: "CoinTelegraph" },
+    { url: "https://feeds.feedburner.com/CoinDesk",                  publisher: "CoinDesk" },
   ],
   DEFAULT: [
-    { url: "https://cointelegraph.com/rss",                publisher: "CoinTelegraph" },
-    { url: "https://feeds.feedburner.com/CoinDesk",        publisher: "CoinDesk" },
+    { url: "https://cointelegraph.com/rss",                          publisher: "CoinTelegraph" },
+    { url: "https://feeds.feedburner.com/CoinDesk",                  publisher: "CoinDesk" },
+    { url: "https://decrypt.co/feed",                                publisher: "Decrypt" },
   ],
 };
 
@@ -91,9 +93,24 @@ export async function GET(request: NextRequest) {
     news = await getYahooNews(symbol, 6);
   }
 
-  // Fallback als nog steeds leeg
+  // Fallback 1: Yahoo Finance
   if (news.length === 0) {
     news = await getYahooNews(symbol.replace("USDT", ""), 6);
+  }
+
+  // Fallback 2: algemeen crypto nieuws van CoinTelegraph
+  if (news.length === 0 && cryptoTicker) {
+    const results = await Promise.allSettled(
+      CRYPTO_FEEDS.DEFAULT.map(f => parseRSS(f.url, f.publisher))
+    );
+    const allItems = results
+      .filter(r => r.status === "fulfilled")
+      .flatMap(r => (r as PromiseFulfilledResult<NewsItem[]>).value);
+    const seen = new Set<string>();
+    news = allItems
+      .filter(n => { if (seen.has(n.title)) return false; seen.add(n.title); return true; })
+      .sort((a, b) => b.published - a.published)
+      .slice(0, 8);
   }
 
   return Response.json(news);

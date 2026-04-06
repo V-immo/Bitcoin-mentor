@@ -32,8 +32,22 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return null;
-  if (!data?.briefing) return null;
+  if (loading) return (
+    <div style={{ padding: "24px 16px", textAlign: "center", color: "var(--text-secondary)", fontSize: 13 }}>
+      Briefing laden…
+    </div>
+  );
+
+  if (!data?.briefing) return (
+    <div style={{ padding: "20px 16px", textAlign: "center" }}>
+      <div style={{ fontSize: 28, marginBottom: 10 }}>💡</div>
+      <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>Nog geen briefing vandaag</div>
+      <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+        Marcus genereert elke ochtend om 08:00 een dagelijkse swing briefing.<br />
+        Kom later terug of vraag het aan Marcus via de chat.
+      </div>
+    </div>
+  );
 
   const timeStr = data.createdAt
     ? new Date(data.createdAt + "Z").toLocaleTimeString("nl-BE", { hour: "2-digit", minute: "2-digit" })
