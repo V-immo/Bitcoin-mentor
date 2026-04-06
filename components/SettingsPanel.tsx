@@ -187,6 +187,58 @@ export default function SettingsPanel() {
             </button>
           ))}
         </div>
+
+        {/* Exchange aanbeveling per trading mode */}
+        {(() => {
+          const mode = settings.tradingMode;
+          const recs: Record<TradingMode, { exchanges: { name: string; tag: string; color: string; reason: string }[]; note: string }> = {
+            day: {
+              exchanges: [
+                { name: "Bybit", tag: "Aanbevolen", color: "#f59e0b", reason: "Lage fees (0.10%), diep orderboek, USDT-paren" },
+                { name: "Kraken Pro", tag: "Alternatief", color: "#6b7280", reason: "EU-gereguleerd, goed voor EUR-traders" },
+              ],
+              note: "Day trading vereist lage fees en snelle uitvoering. Bybit is globaal beschikbaar en heeft geen EU-verbod.",
+            },
+            swing: {
+              exchanges: [
+                { name: "Bitvavo", tag: "Aanbevolen", color: "#26c57c", reason: "EU/NL gereguleerd, EUR-paren, al gekoppeld" },
+                { name: "Bybit", tag: "Alternatief", color: "#f59e0b", reason: "Groter aanbod, USDT-paren" },
+              ],
+              note: "Swing trading houdt posities dagen tot weken. Bitvavo is veilig, gereguleerd en ideaal voor EU-traders.",
+            },
+            long: {
+              exchanges: [
+                { name: "Bitvavo", tag: "Aanbevolen", color: "#26c57c", reason: "EU/NL gereguleerd, laag risico, EUR-paren" },
+                { name: "Kraken", tag: "Alternatief", color: "#6b7280", reason: "EU-licentie, staking mogelijk" },
+              ],
+              note: "Long-term holding: kies een gereguleerde exchange in je land. Fees zijn minder belangrijk dan veiligheid.",
+            },
+          };
+          const rec = recs[mode];
+          return (
+            <div style={{ marginTop: 14, padding: "12px 14px", background: "var(--surface-2)", borderRadius: 10, border: "1px solid var(--border)" }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8 }}>
+                Aanbevolen exchanges voor jouw modus
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {rec.exchanges.map(ex => (
+                  <div key={ex.name} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <span style={{ background: `${ex.color}20`, border: `1px solid ${ex.color}50`, color: ex.color, borderRadius: 4, padding: "1px 6px", fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>
+                      {ex.tag}
+                    </span>
+                    <div>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{ex.name}</span>
+                      <span style={{ fontSize: 12, color: "#6b7280", marginLeft: 6 }}>{ex.reason}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 8, lineHeight: 1.5 }}>
+                {rec.note}
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
       {/* Risico niveau */}

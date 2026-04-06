@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BitvavoPanel from "@/components/BitvavoPanel";
+import BybitPanel from "@/components/BybitPanel";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+type Exchange = "bitvavo" | "bybit";
+
 export default function LivePage() {
   const { t } = useLanguage();
-  const [price, setPrice] = useState(0);
-  const [asset, setAsset] = useState("BTCUSDT");
+  const [price, setPrice]       = useState(0);
+  const [asset, setAsset]       = useState("BTCUSDT");
+  const [exchange, setExchange] = useState<Exchange>("bitvavo");
 
   useEffect(() => {
     const stored = localStorage.getItem("bitcoin-mentor-selected-asset");
@@ -39,7 +43,8 @@ export default function LivePage() {
         <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>💶 {t("live_page_title")}</h1>
       </div>
 
-      <div style={{ marginBottom: 12 }}>
+      {/* Asset selector */}
+      <div style={{ marginBottom: 16 }}>
         <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>{t("asset_label")}</label>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {cryptoAssets.map(a => (
@@ -55,7 +60,40 @@ export default function LivePage() {
         </div>
       </div>
 
-      <BitvavoPanel currentPrice={price} asset={asset} />
+      {/* Exchange tabs */}
+      <div style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
+        {([
+          { key: "bitvavo" as Exchange, label: "💶 Bitvavo", desc: "EUR · EU-gereguleerd" },
+          { key: "bybit"   as Exchange, label: "💛 Bybit",   desc: "USDT · Globaal" },
+        ]).map(ex => (
+          <button
+            key={ex.key}
+            onClick={() => setExchange(ex.key)}
+            style={{
+              flex: 1,
+              padding: "10px 12px",
+              border: "none",
+              cursor: "pointer",
+              background: exchange === ex.key ? "var(--accent)" : "var(--surface-2)",
+              color: exchange === ex.key ? "#fff" : "var(--text-secondary)",
+              fontWeight: exchange === ex.key ? 700 : 400,
+              fontSize: 13,
+              transition: "all 0.15s",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <span>{ex.label}</span>
+            <span style={{ fontSize: 10, opacity: 0.75, fontWeight: 400 }}>{ex.desc}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Panel */}
+      {exchange === "bitvavo" && <BitvavoPanel currentPrice={price} asset={asset} />}
+      {exchange === "bybit"   && <BybitPanel   currentPrice={price} asset={asset} />}
     </main>
   );
 }
