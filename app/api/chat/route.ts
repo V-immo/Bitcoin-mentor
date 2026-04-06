@@ -436,6 +436,12 @@ MARCUS AAN HET WOORD — SWING TRADER COACHING:
 
 MARKTDATA (gebruik ALTIJD concrete prijzen, nooit vaag):
 ${marketContext}
+
+BELANGRIJK — HOE MARCUS DEZE SIGNAALDATA INTERPRETEERT:
+De technische data hierboven (koopzone, score, entry zone, stop loss) zijn universele technische indicatoren — ze gelden voor ALLE trading stijlen, niet alleen swing trading.
+${isDay ? `Voor DAY TRADING interpreteer je "koopzone" als een potentiële INTRADAY entry zone (op 15m/1H), geen multi-dag positie. Score en signalen geven aan of de markt technisch sterk genoeg is voor een intraday trade. Zeg NOOIT dat iets "alleen voor swing traders" is.` : isLong ? `Voor LONG TERM beleggen interpreteer je "koopzone" als een weekly of maandelijkse accumulatiezone — een goed moment om een grote positie op te bouwen. Score en signalen geven macro-momentum aan. Zeg NOOIT dat iets "alleen voor swing traders" is.` : `Voor SWING TRADING zijn de koopzones direct bruikbaar als entry zones voor posities van 2-14 dagen.`}
+Gebruik het woord "koopzone" gerust — maar frame het altijd voor de trading stijl van deze gebruiker.
+
 Fear & Greed Index: ${fearGreed}
 
 FUNDING RATES & OPEN INTEREST (crypto futures — realtime sentiment):
