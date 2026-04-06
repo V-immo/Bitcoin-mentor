@@ -119,6 +119,9 @@ export async function PUT(request: NextRequest) {
     }
   }
 
+  // Haal huidige waarden op zodat we alleen meegestuurde velden overschrijven
+  const current = db.prepare("SELECT * FROM settings WHERE user_id = ?").get(userId) as Record<string, unknown> | undefined;
+
   db.prepare(`
     UPDATE settings SET
       trading_mode = ?,
@@ -129,11 +132,11 @@ export async function PUT(request: NextRequest) {
       updated_at = datetime('now')
     WHERE user_id = ?
   `).run(
-    body.tradingMode ?? "swing",
-    body.riskLevel ?? "medium",
-    JSON.stringify(body.preferredAssets ?? ["BTCUSDT", "ETHUSDT"]),
-    body.aiLanguage ?? "nl",
-    body.preferredCurrency ?? "EUR",
+    body.tradingMode ?? current?.trading_mode ?? "swing",
+    body.riskLevel ?? current?.risk_level ?? "medium",
+    JSON.stringify(body.preferredAssets ?? JSON.parse((current?.preferred_assets as string | undefined) ?? '["BTCUSDT","ETHUSDT"]')),
+    body.aiLanguage ?? current?.ai_language ?? "nl",
+    body.preferredCurrency ?? current?.preferred_currency ?? "EUR",
     userId
   );
 
