@@ -492,7 +492,7 @@ const translations = {
     trade_intro_cta: "Begrepen, laten we traden →",
 
     // === TRADE DASHBOARD STRINGS ===
-    tab_trade: "Handelen",
+    tab_trade: "Paper Trade",
     tab_briefing: "Briefing",
     tab_more: "Meer",
     asset_picker_title: "Asset kiezen",
