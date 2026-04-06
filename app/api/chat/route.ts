@@ -281,7 +281,7 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
             const euroVal = b.symbol === "EUR"
               ? `€${parseFloat(b.available).toFixed(2)}`
               : price > 0
-                ? `€${(parseFloat(b.available) * price).toFixed(2)}`
+                ? `~$${(parseFloat(b.available) * price).toFixed(2)} USD (Bitvavo toont EUR)`
                 : "";
             const inOrder = parseFloat(b.inOrder) > 0 ? ` (${b.inOrder} in order)` : "";
             return `  ${b.symbol}: ${parseFloat(b.available).toFixed(6)}${inOrder}${euroVal ? " ≈ " + euroVal : ""}`;
@@ -434,10 +434,14 @@ ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de 
 LEERVOORTGANG VAN DEZE GEBRUIKER:
 ${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe gebruiker."}
 
-OPEN POSITIES VAN DEZE GEBRUIKER (paper trading):
+OPEN POSITIES VAN DEZE GEBRUIKER (PAPER TRADING — nep geld, geen echt risico):
 ${openPositionsContext || "Geen open paper trades."}
 
-${bitvavoContext || "BITVAVO LIVE PORTFOLIO: Niet gekoppeld of geen saldo."}
+BITVAVO LIVE PORTFOLIO (ECHTE EURO'S — dit is het echte geld van de gebruiker, NIET paper trading):
+${bitvavoContext
+  ? `${bitvavoContext}
+BELANGRIJK: Bitvavo toont EUR-prijzen. Bitcoin Mentor toont USD-prijzen (Binance). Dit zijn dezelfde waarden in andere valuta — niet hetzelfde getal. Bijv. BTC = $94.000 USD ≈ €87.000 EUR. Het verschil in getallen klopt dus — het zijn verschillende valuta.`
+  : "Niet gekoppeld of geen saldo. Als de gebruiker vraagt naar hun Bitvavo wallet, vertel hen dat ze de API key kunnen koppelen in Instellingen."}
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}

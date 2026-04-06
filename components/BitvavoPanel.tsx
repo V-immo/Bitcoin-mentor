@@ -247,13 +247,14 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
         </div>
       </div>
 
-      {/* Koers preview */}
+      {/* Koers preview — prijs is indicatief (USD koers van Binance, Bitvavo handelt in EUR) */}
       {currentPrice > 0 && parseFloat(amount) > 0 && (
         <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>
           {side === "buy"
-            ? `≈ ${(parseFloat(amount) / currentPrice).toFixed(6)} ${ticker} @ $${currentPrice.toLocaleString("en-US")}`
-            : `≈ €${(parseFloat(amount) * currentPrice).toFixed(2)} EUR @ $${currentPrice.toLocaleString("en-US")}`
+            ? `≈ ${(parseFloat(amount) / currentPrice).toFixed(6)} ${ticker}`
+            : `≈ ${(parseFloat(amount) * currentPrice).toFixed(2)} EUR`
           }
+          <span style={{ color: "#4b5563", marginLeft: 4 }}>(indicatief · Bitvavo voert uit in EUR)</span>
         </div>
       )}
 

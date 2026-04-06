@@ -140,10 +140,10 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
     { key: "chat",      label: t("nav_marcus_ai"), icon: "👤", mobileOnly: true },
-    { key: "paper",     label: "Handelen",         icon: "📊" },
+    { key: "paper",     label: t("tab_trade"),      icon: "📊" },
     { key: "checklist", label: t("nav_checklist"), icon: "✅" },
-    { key: "briefing",  label: "Briefing",         icon: "💡" },
-    { key: "nieuws",    label: t("nav_news"),      icon: "📰" },
+    { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
+    { key: "nieuws",    label: t("nav_news"),       icon: "📰" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
@@ -577,7 +577,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         <div className="asset-overlay-backdrop" onClick={() => setAssetPickerOpen(false)}>
           <div className="asset-overlay-panel" onClick={e => e.stopPropagation()}>
             <div className="asset-overlay-header">
-              <span>Asset kiezen</span>
+              <span>{t("asset_picker_title")}</span>
               <button className="asset-overlay-close" onClick={() => setAssetPickerOpen(false)}>✕</button>
             </div>
             {ASSET_GROUPS.map((group) => {
@@ -759,7 +759,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     )}
                   </div>
                   <button className="signal-strip-trade-btn" onClick={() => { setBottomTab("paper"); setSignalStripOpen(false); }}>
-                    Trade openen →
+                    {t("signal_strip_trade_btn")}
                   </button>
                 </div>
               )}
@@ -784,22 +784,22 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               onClick={() => setShowMoreMenu(v => !v)}
             >
               <span className="bottom-tab-icon">⋯</span>
-              <span className="bottom-tab-label">Meer</span>
+              <span className="bottom-tab-label">{t("tab_more")}</span>
             </button>
             {/* Meer dropdown — externe links */}
             {showMoreMenu && (
               <div className="more-tab-menu">
                 <Link href="/leaderboard" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🏆</span><span>Ranking</span>
+                  <span>🏆</span><span>{t("more_menu_ranking")}</span>
                 </Link>
                 <Link href="/testnet" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🔬</span><span>Testnet</span>
+                  <span>🔬</span><span>{t("more_menu_testnet")}</span>
                 </Link>
                 <Link href="/live" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>💶</span><span>Live Trading</span>
+                  <span>💶</span><span>{t("more_menu_live")}</span>
                 </Link>
                 <Link href="/instellingen#alerts" className="more-tab-item" onClick={() => setShowMoreMenu(false)}>
-                  <span>🔔</span><span>Alerts</span>
+                  <span>🔔</span><span>{t("more_menu_alerts")}</span>
                 </Link>
               </div>
             )}
@@ -815,7 +815,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     className={`accordion-header${tradeAccordion === "signal" ? " open" : ""}`}
                     onClick={() => setTradeAccordion(v => v === "signal" ? null : "signal")}
                   >
-                    <span>📊 Marcus Signaal</span>
+                    <span>📊 {t("trade_accordion_signal")}</span>
                     <span className="accordion-caret">{tradeAccordion === "signal" ? "▲" : "▼"}</span>
                   </button>
                   {tradeAccordion === "signal" && (
@@ -833,7 +833,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     className={`accordion-header${tradeAccordion === "paper" ? " open" : ""}`}
                     onClick={() => setTradeAccordion(v => v === "paper" ? null : "paper")}
                   >
-                    <span>📝 Paper Trade</span>
+                    <span>📝 {t("trade_accordion_paper")}</span>
                     <span className="accordion-caret">{tradeAccordion === "paper" ? "▲" : "▼"}</span>
                   </button>
                   {tradeAccordion === "paper" && (
@@ -867,7 +867,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                   />
                 )}
                 <details className="accordion-details">
-                  <summary className="accordion-details-summary">🧮 Risico calculator</summary>
+                  <summary className="accordion-details-summary">🧮 {t("trade_accordion_calculator")}</summary>
                   <div className="accordion-details-body">
                     <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
                   </div>

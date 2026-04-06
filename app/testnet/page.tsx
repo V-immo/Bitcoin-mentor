@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TestnetPanel from "@/components/TestnetPanel";
 import { SCAN_ASSETS } from "@/lib/assets";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function TestnetPage() {
+  const { t } = useLanguage();
   const [price, setPrice] = useState(0);
   const [asset, setAsset] = useState("BTCUSDT");
 
@@ -33,12 +35,12 @@ export default function TestnetPage() {
   return (
     <main className="container-page clean-page">
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-        <Link href="/trade" className="page-back-btn">← Terug</Link>
-        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>🔬 Testnet</h1>
+        <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
+        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>🔬 {t("testnet_page_title")}</h1>
       </div>
 
       <div style={{ marginBottom: 12 }}>
-        <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Asset</label>
+        <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>{t("asset_label")}</label>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {cryptoAssets.map(a => (
             <button
