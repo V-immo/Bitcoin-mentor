@@ -164,6 +164,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState("");
   const [livePrice, setLivePrice] = useState<number>(initialData.price);
+  const [priceFlash, setPriceFlash] = useState<"" | "flash-up" | "flash-down">("");
+  const prevPriceRef = useRef<number>(initialData.price);
   const [change24h, setChange24h] = useState<number>(0);
   const [activeInterval, setActiveInterval] = useState<ViewMode>(isFinnhubAsset(initialAsset) ? "1d" : "4h");
   const [candleMap, setCandleMap] = useState<Record<string, Candle[]>>({
@@ -435,6 +437,17 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     wasInZoneRef.current = inZone;
   }, [livePrice, signal.entryZoneLow, signal.entryZoneHigh, asset, signalAsset, notifAllowed, assetDef, fmtCurrency]);
 
+  // Prijs-flash animatie bij elke tick
+  useEffect(() => {
+    const prev = prevPriceRef.current;
+    if (livePrice > 0 && livePrice !== prev) {
+      setPriceFlash(livePrice > prev ? "flash-up" : "flash-down");
+      prevPriceRef.current = livePrice;
+      const t = setTimeout(() => setPriceFlash(""), 600);
+      return () => clearTimeout(t);
+    }
+  }, [livePrice]);
+
   const chartPrice = useMemo(() => livePrice || signal.price, [livePrice, signal.price]);
   const visibleCandles = useMemo(() => candleMap[activeInterval === "multi" ? "1d" : activeInterval] || [], [candleMap, activeInterval]);
   const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval) ?? TIMEFRAMES[0];
@@ -610,7 +623,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             <span className="asset-select-caret">▾</span>
           </button>
           <div>
-            <div className="terminal-topbar-price">{fmtCurrency(chartPrice, asset)}</div>
+            <div className={`terminal-topbar-price${priceFlash ? ` ${priceFlash}` : ""}`}>{fmtCurrency(chartPrice, asset)}</div>
             <div className="terminal-topbar-meta">
               <span className={`terminal-change-badge${change24h >= 0 ? " pos" : " neg"}`}>
                 {change24h >= 0 ? "▲" : "▼"} {Math.abs(change24h).toFixed(2)}%
@@ -728,7 +741,10 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
           {/* Signaalstrip — altijd zichtbaar boven tabs */}
           {signalReady && (
-            <div className={`signal-strip${signalStripOpen ? " open" : ""}`} onClick={() => setSignalStripOpen(v => !v)}>
+            <div
+              className={`signal-strip${signalStripOpen ? " open" : ""} ${signal.action === "Kleine koop mogelijk" ? "green" : signal.action === "Wacht op betere prijs" ? "yellow" : "red"}`}
+              onClick={() => setSignalStripOpen(v => !v)}
+            >
               <div className="signal-strip-row">
                 <span className={`signal-strip-badge ${signal.action === "Kleine koop mogelijk" ? "green" : signal.action === "Wacht op betere prijs" ? "yellow" : "red"}`}>
                   {signal.action}
