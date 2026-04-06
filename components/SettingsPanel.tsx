@@ -51,6 +51,13 @@ export default function SettingsPanel() {
   const [bitvavoChecking, setBitvavoChecking] = useState(false);
   const [bitvavoSaving, setBitvavoSaving] = useState(false);
 
+  // Marcus memory
+  type MemoryEntry = { date: string; category: string; content: string };
+  const [memoryEntries, setMemoryEntries]   = useState<MemoryEntry[]>([]);
+  const [memoryLoading, setMemoryLoading]   = useState(false);
+  const [memoryResetting, setMemoryResetting] = useState(false);
+  const [memoryLoaded, setMemoryLoaded]     = useState(false);
+
   // Bybit
   const [bybitKey, setBybitKey]             = useState("");
   const [bybitSecret, setBybitSecret]       = useState("");
@@ -323,6 +330,85 @@ export default function SettingsPanel() {
           {saved ? t("saved") : t("settings_save_btn")}
         </button>
       </div>
+
+      {/* Marcus geheugen */}
+      <section className="settings-card">
+        <div className="settings-card-title">Marcus geheugen</div>
+        <div className="settings-card-desc">
+          Marcus bouwt per sessie een profiel over jou — patronen, emoties, stijl en mijlpalen. Hier zie je wat hij heeft onthouden.
+        </div>
+
+        {!memoryLoaded ? (
+          <button
+            className="terminal-btn terminal-btn-muted"
+            style={{ marginTop: 12 }}
+            onClick={async () => {
+              setMemoryLoading(true);
+              const res = await fetch("/api/me/marcus-memory");
+              const data = await res.json();
+              setMemoryEntries(data.entries ?? []);
+              setMemoryLoaded(true);
+              setMemoryLoading(false);
+            }}
+            disabled={memoryLoading}
+          >
+            {memoryLoading ? "Laden…" : "Bekijk wat Marcus over jou weet"}
+          </button>
+        ) : memoryEntries.length === 0 ? (
+          <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280", fontStyle: "italic" }}>
+            Marcus heeft nog niets onthouden. Start een gesprek en hij begint automatisch notities bij te houden.
+          </div>
+        ) : (
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+            {(() => {
+              const catColors: Record<string, string> = {
+                PATROON: "#f59e0b", ANGST: "#ef4444", STIJL: "#8b5cf6",
+                MIJLPAAL: "#26c57c", FOUT: "#ef4444", MEMO: "#6b7280",
+              };
+              const catLabels: Record<string, string> = {
+                PATROON: "Patroon", ANGST: "Emotie", STIJL: "Stijl",
+                MIJLPAAL: "Mijlpaal", FOUT: "Aandachtspunt", MEMO: "Notitie",
+              };
+              return memoryEntries.map((e, i) => {
+                const color = catColors[e.category] ?? "#6b7280";
+                return (
+                  <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <span style={{ background: `${color}20`, border: `1px solid ${color}50`, color, borderRadius: 4, padding: "1px 6px", fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>
+                      {catLabels[e.category] ?? e.category}
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.5 }}>{e.content}</div>
+                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 1 }}>{e.date}</div>
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        )}
+
+        {memoryLoaded && memoryEntries.length > 0 && (
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+            <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
+              Wil je opnieuw beginnen? Marcus vergeet alles en start fresh.
+            </div>
+            <button
+              className="terminal-btn terminal-btn-muted"
+              style={{ color: "#ef4444", borderColor: "rgba(239,68,68,0.3)" }}
+              disabled={memoryResetting}
+              onClick={async () => {
+                if (!confirm("Marcus vergeet alles wat hij over jou weet. Zeker?")) return;
+                setMemoryResetting(true);
+                await fetch("/api/me/marcus-memory", { method: "DELETE" });
+                setMemoryEntries([]);
+                setMemoryResetting(false);
+              }}
+            >
+              {memoryResetting ? "Resetten…" : "Geheugen wissen"}
+            </button>
+          </div>
+        )}
+      </section>
 
       {/* Bitvavo koppeling */}
       <section className="settings-card">
