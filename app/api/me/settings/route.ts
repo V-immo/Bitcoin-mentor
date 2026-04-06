@@ -82,8 +82,8 @@ export async function PUT(request: NextRequest) {
     }
   }
 
-  // Doel opslaan indien expliciet meegestuurd (alleen als geen andere keys aanwezig)
-  if (typeof body.goal === "number" && body.bitvavoApiKey === undefined && body.testnetKey === undefined) {
+  // Doel opslaan indien expliciet meegestuurd (alleen als er geen tradingMode of andere settings bij zitten)
+  if (typeof body.goal === "number" && body.tradingMode === undefined && body.bitvavoApiKey === undefined && body.testnetKey === undefined) {
     try {
       db.prepare("UPDATE settings SET goal = ?, updated_at = datetime('now') WHERE user_id = ?").run(body.goal, userId);
       return Response.json({ ok: true });
