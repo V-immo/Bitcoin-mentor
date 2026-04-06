@@ -39,39 +39,89 @@ function getAlertState(
   return "Geen alert";
 }
 
+export type TradingMode = "day" | "swing" | "long";
+
 // Haal candles op voor elk asset type (Binance crypto of Yahoo stock/metal)
-async function fetchAllCandles(symbol: string): Promise<{ price: number; candles1h: Candle[]; candles4h: Candle[]; candles1d: Candle[] }> {
+async function fetchAllCandles(symbol: string, mode: TradingMode): Promise<{ price: number; candles1h: Candle[]; candles4h: Candle[]; candles1d: Candle[] }> {
   if (isYahooAsset(symbol)) {
-    // Yahoo Finance: haal echte daily + hourly candles op
     const [price, candles1d, rawHourly] = await Promise.all([
       getYahooPrice(symbol),
       getYahooCandles(symbol, "1d", "2y"),
       getYahooCandles(symbol, "1h", "3mo"),
     ]);
-    // Simuleer 4H door elke 4e hourly candle te nemen
     const candles4h = rawHourly.filter((_, i) => i % 4 === 3);
-    const candles1h = rawHourly;
-    return { price, candles1h, candles4h, candles1d };
+    return { price, candles1h: rawHourly, candles4h, candles1d };
   } else {
-    // Binance crypto
-    const [{ price }, candles1h, candles4h, candles1d] = await Promise.all([
-      getBitcoinPrice(symbol),
-      getCandles("1h", 250, symbol),
-      getCandles("4h", 250, symbol),
-      getCandles("1d", 250, symbol),
-    ]);
-    return { price, candles1h, candles4h, candles1d };
+    if (mode === "day") {
+      // Day trading: haal ook 15m candles op, simuleer als 1H via aggregatie
+      const [{ price }, candles15m, candles1h, candles4h, candles1d] = await Promise.all([
+        getBitcoinPrice(symbol),
+        getCandles("15m", 250, symbol),
+        getCandles("1h", 100, symbol),
+        getCandles("4h", 100, symbol),
+        getCandles("1d", 50, symbol),
+      ]);
+      // Gebruik 15m als "1h" slot voor day trading zones
+      return { price, candles1h: candles15m, candles4h: candles1h, candles1d: candles4h };
+    } else if (mode === "long") {
+      // Long term: gebruik daily als primaire timeframe, 4H als inzoom
+      const [{ price }, candles4h, candles1d] = await Promise.all([
+        getBitcoinPrice(symbol),
+        getCandles("4h", 100, symbol),
+        getCandles("1d", 365, symbol),
+      ]);
+      return { price, candles1h: candles4h, candles4h: candles1d, candles1d };
+    } else {
+      // Swing (default)
+      const [{ price }, candles1h, candles4h, candles1d] = await Promise.all([
+        getBitcoinPrice(symbol),
+        getCandles("1h", 250, symbol),
+        getCandles("4h", 250, symbol),
+        getCandles("1d", 250, symbol),
+      ]);
+      return { price, candles1h, candles4h, candles1d };
+    }
   }
 }
 
-export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSignal> {
+// Labels per trading mode
+function getModeLabels(mode: TradingMode) {
+  if (mode === "day") return {
+    trendLabel: "4H trend",
+    zoneLabel: "intraday koopzone",
+    structureLabel: "1H structuur",
+    rsiHigh: 70, rsiLow: 30,
+    stopPct: 0.992,   // tight stop: 0.8%
+    entryHighMult: 1.005,
+  };
+  if (mode === "long") return {
+    trendLabel: "Weekly trend",
+    zoneLabel: "accumulatiezone",
+    structureLabel: "Daily structuur",
+    rsiHigh: 78, rsiLow: 28,
+    stopPct: 0.975,   // wijd stop: 2.5%
+    entryHighMult: 1.02,
+  };
+  return {
+    trendLabel: "4H trend",
+    zoneLabel: "koopzone",
+    structureLabel: "4H structuur",
+    rsiHigh: 72, rsiLow: 35,
+    stopPct: 0.985,
+    entryHighMult: 1.01,
+  };
+}
+
+export async function buildMentorSignal(symbol = "BTCUSDT", mode: TradingMode = "swing"): Promise<MentorSignal> {
   const warnings: string[] = [];
   const blockers: string[] = [];
+  const labels = getModeLabels(mode);
 
-  const { price, candles1h, candles4h, candles1d } = await fetchAllCandles(symbol);
+  // candles1h = kortste timeframe voor zones (15m voor day, 4H voor long, 1H voor swing)
+  // candles4h = middel timeframe (1H voor day, 1D voor long, 4H voor swing)
+  // candles1d = grote timeframe (4H voor day, 1D voor long, 1D voor swing)
+  const { price, candles1h, candles4h, candles1d } = await fetchAllCandles(symbol, mode);
 
-  // Gebruik alleen GESLOTEN candles voor analyse — Binance stuurt de huidige
-  // (nog niet gesloten) candle altijd als laatste, wat MA's en RSI vertekenelt.
   const closed1h = filterClosedCandles(candles1h);
   const closed4h = filterClosedCandles(candles4h);
   const closed1d = filterClosedCandles(candles1d);
@@ -87,17 +137,18 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
   const rsi4h = calculateRsi(closed4h, 14);
   const rsi1d = calculateRsi(closed1d, 14);
 
-  const support = detectSupport(closed4h, 50);
-  const resistance = detectResistance(closed4h, 50);
+  // Zones berekend op kortste timeframe (mode-specifiek)
+  const support = detectSupport(closed1h, 50);
+  const resistance = detectResistance(closed1h, 50);
 
-  const supportZone = buildSupportZone(closed4h, 50);
-  const resistanceZone = buildResistanceZone(closed4h, 50);
+  const supportZone = buildSupportZone(closed1h, 50);
+  const resistanceZone = buildResistanceZone(closed1h, 50);
 
   const volume = volumeStrength(closed1h);
 
   const entryZoneLow = supportZone.low * 1.002;
-  const entryZoneHigh = supportZone.high * 1.01;
-  const stopLossRaw = supportZone.low * 0.985;
+  const entryZoneHigh = supportZone.high * labels.entryHighMult;
+  const stopLossRaw = supportZone.low * labels.stopPct;
   const stopLoss = Math.round(stopLossRaw);
 
   const distanceToResistancePct = ((resistanceZone.low - price) / price) * 100;
@@ -112,6 +163,7 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
   let score = 0;
   const whyList: string[] = [];
 
+  // Grote trend (1d slot = grote timeframe voor deze mode)
   if (tf1d.trend === "bullish") {
     score += 20;
     whyList.push("De grote trend staat omhoog.");
@@ -119,33 +171,34 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
     score += 5;
     whyList.push("De grote trend is nog niet volledig duidelijk.");
   } else {
-    blockers.push("Daily trend bearish.");
+    blockers.push("Grote trend bearish.");
     whyList.push("De grote trend staat omlaag.");
   }
 
+  // Middel timeframe trend
   if (tf4h.trend === "bullish") {
     score += 15;
-    whyList.push("De 4H trend helpt mee.");
+    whyList.push(`De ${labels.trendLabel} helpt mee.`);
   } else if (tf4h.trend === "neutral") {
     score += 4;
-    whyList.push("De 4H trend is nog twijfelachtig.");
+    whyList.push(`De ${labels.trendLabel} is nog twijfelachtig.`);
   } else {
-    blockers.push("4H trend bearish.");
-    whyList.push("De 4H trend werkt tegen.");
+    blockers.push(`${labels.trendLabel} bearish.`);
+    whyList.push(`De ${labels.trendLabel} werkt tegen.`);
   }
 
   if (structure1d === "bullish") {
     score += 10;
-    whyList.push("De daily structuur blijft sterk.");
+    whyList.push("De grote structuur blijft sterk.");
   } else if (structure1d === "bearish") {
-    blockers.push("Daily structure bearish.");
+    blockers.push("Grote structuur bearish.");
   }
 
   if (structure4h === "bullish") {
     score += 10;
-    whyList.push("De 4H structuur blijft netjes omhoog.");
+    whyList.push(`De ${labels.structureLabel} blijft netjes omhoog.`);
   } else if (structure4h === "bearish") {
-    blockers.push("4H structure bearish.");
+    blockers.push(`${labels.structureLabel} bearish.`);
   }
 
   if (tf1h.trend === "bullish") {
@@ -161,13 +214,13 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
 
   if (inEntryZone) {
     score += 15;
-    whyList.push("De prijs zit in een betere koopzone.");
+    whyList.push(`De prijs zit in een goede ${labels.zoneLabel}.`);
   } else if (belowEntryZone) {
     score += 5;
-    whyList.push("De prijs zit onder de koopzone.");
+    whyList.push(`De prijs zit onder de ${labels.zoneLabel}.`);
   } else if (aboveEntryZone) {
     warnings.push("Prijs is op dit moment geen nette entry.");
-    whyList.push("De prijs zit boven de betere koopzone.");
+    whyList.push(`De prijs zit boven de ${labels.zoneLabel}.`);
   }
 
   if (distanceToResistancePct > 6) {
@@ -192,16 +245,17 @@ export async function buildMentorSignal(symbol = "BTCUSDT"): Promise<MentorSigna
     blockers.push("Risk/reward is slecht (" + riskRewardEstimate + ").");
   }
 
-  if (rsi4h >= 45 && rsi4h <= 65) {
+  // RSI check op kortste timeframe
+  if (rsi1h >= 45 && rsi1h <= labels.rsiHigh - 5) {
     score += 6;
-  } else if (rsi4h > 72) {
-    warnings.push("RSI 4H is hoog.");
-  } else if (rsi4h < 35) {
-    warnings.push("RSI 4H is laag.");
+  } else if (rsi1h > labels.rsiHigh) {
+    warnings.push("RSI is hoog — mogelijk overbought.");
+  } else if (rsi1h < labels.rsiLow) {
+    warnings.push("RSI is laag — mogelijk oversold.");
   }
 
-  if (rsi1d > 75) {
-    blockers.push("Daily RSI > 75.");
+  if (rsi4h > labels.rsiHigh) {
+    blockers.push("Middel timeframe RSI overbought.");
   }
 
   score = clampScore(score);
