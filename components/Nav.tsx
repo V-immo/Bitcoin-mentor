@@ -11,8 +11,13 @@ const PRIMARY_LINKS = [
   { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
   { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
   { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
-  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
   { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+] as const;
+
+const TRADE_LINKS = [
+  { href: "/testnet",      key: "more_menu_testnet", icon: "🔬" },
+  { href: "/live",         key: "more_menu_live",    icon: "💶" },
+  { href: "/leaderboard",  key: "more_menu_ranking", icon: "🏆" },
 ] as const;
 
 const ACCOUNT_LINKS = [
@@ -160,6 +165,17 @@ export default function Nav() {
               <div className="nav-mobile-section-title">Menu</div>
               {PRIMARY_LINKS.map((l) => {
                 const active = pathname === l.href || pathname.startsWith(l.href + "/");
+                return (
+                  <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
+                    <span className="nav-mobile-link-icon">{l.icon}</span>
+                    <span>{rl(l.key)}</span>
+                  </Link>
+                );
+              })}
+
+              <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Trading</div>
+              {TRADE_LINKS.map((l) => {
+                const active = pathname === l.href;
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
                     <span className="nav-mobile-link-icon">{l.icon}</span>
