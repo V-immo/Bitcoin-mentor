@@ -40,7 +40,7 @@ export default function LivePage() {
     <main className="container-page clean-page">
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
         <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
-        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>💶 {t("live_page_title")}</h1>
+        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>⚡ {t("live_page_title")}</h1>
       </div>
 
       {/* Asset selector */}

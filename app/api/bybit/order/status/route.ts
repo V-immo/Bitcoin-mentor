@@ -35,18 +35,36 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await bybitRequest(apiKey, apiSecret, "GET", "/v5/order/realtime", {
+    // Eerst open orders checken
+    const realtime = await bybitRequest(apiKey, apiSecret, "GET", "/v5/order/realtime", {
       category: "spot",
       orderId,
       symbol,
     });
 
-    if (result.retCode !== 0) {
-      return Response.json({ error: result.retMsg ?? "Order niet gevonden" }, { status: 400 });
+    if (realtime.retCode === 0) {
+      const list = (realtime.result as { list?: unknown[] })?.list ?? [];
+      if (list.length > 0) {
+        return Response.json(list[0]);
+      }
     }
 
-    const orders = (result.result as { list?: unknown[] })?.list ?? [];
-    return Response.json(orders[0] ?? null);
+    // Niet in open orders — zoek in history (marktorders zijn direct gevuld)
+    const history = await bybitRequest(apiKey, apiSecret, "GET", "/v5/order/history", {
+      category: "spot",
+      orderId,
+      symbol,
+      limit: "1",
+    });
+
+    if (history.retCode === 0) {
+      const list = (history.result as { list?: unknown[] })?.list ?? [];
+      if (list.length > 0) {
+        return Response.json(list[0]);
+      }
+    }
+
+    return Response.json({ error: "Order niet gevonden" }, { status: 404 });
   } catch (err) {
     console.error("Bybit order status fout:", err);
     return Response.json({ error: "Verbindingsfout" }, { status: 502 });

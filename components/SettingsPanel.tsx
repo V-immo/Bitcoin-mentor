@@ -27,6 +27,8 @@ const DEFAULT_SETTINGS: Settings = {
   aiLanguage: "nl",
 };
 
+type MemoryEntry = { date: string; category: string; content: string };
+
 const TRADING_MODE_KEYS: TradingMode[] = ["day", "swing", "long"];
 const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
   { key: "low",    color: "#26c57c" },
@@ -52,7 +54,6 @@ export default function SettingsPanel() {
   const [bitvavoSaving, setBitvavoSaving] = useState(false);
 
   // Marcus memory
-  type MemoryEntry = { date: string; category: string; content: string };
   const [memoryEntries, setMemoryEntries]   = useState<MemoryEntry[]>([]);
   const [memoryLoading, setMemoryLoading]   = useState(false);
   const [memoryResetting, setMemoryResetting] = useState(false);
