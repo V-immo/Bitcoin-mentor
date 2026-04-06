@@ -109,7 +109,7 @@ const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "checklist", "briefing", "ni
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
-  const { formatPrice: fmtCurrency } = useCurrency();
+  const { formatPrice: fmtCurrency, currency, eurRate } = useCurrency();
 
   // Vertaalde arrays — reageren op taalwisseling
   const TIMEFRAMES_CRYPTO: { key: ViewMode; label: string; desc: string }[] = [
@@ -209,6 +209,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     setNotifAllowed(perm === "granted");
   }
 
+  // Bitvavo EUR asset mapping — paren die Bitvavo ondersteunt
+  const BITVAVO_MAP: Record<string, string> = {
+    BTCUSDT: "BTC-EUR", ETHUSDT: "ETH-EUR", SOLUSDT: "SOL-EUR",
+    XRPUSDT: "XRP-EUR", DOGEUSDT: "DOGE-EUR", ADAUSDT: "ADA-EUR",
+    AVAXUSDT: "AVAX-EUR", LINKUSDT: "LINK-EUR", LTCUSDT: "LTC-EUR",
+    DOTUSDT: "DOT-EUR",
+  };
+
   const priceWsRef = useRef<WebSocket | null>(null);
   const klineWsRef = useRef<WebSocket | null>(null);
   const wasInZoneRef = useRef(false);
@@ -260,10 +268,12 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     return () => clearInterval(iv);
   }, [asset, isBinance]);
 
-  // Price WebSocket — Binance met auto-reconnect (exponential backoff)
+  // Price WebSocket — Bitvavo (EUR) of Binance (USD) met auto-reconnect
   useEffect(() => {
     priceWsRef.current?.close();
     if (!isBinance) { setPriceWsState("offline"); return; }
+
+    const bitvavoMarket = currency === "EUR" ? BITVAVO_MAP[asset] : undefined;
     let destroyed = false;
     let backoffMs = 1000;
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -271,29 +281,63 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     function connect() {
       if (destroyed) return;
       setPriceWsState("connecting");
-      const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@ticker`);
-      priceWsRef.current = ws;
-      ws.onmessage = (e) => {
-        try {
-          const data = JSON.parse(e.data);
-          const price = parseFloat(data.c);
-          const chg = parseFloat(data.P); // 24h percent change
-          if (Number.isFinite(price) && price > 0) {
-            setLivePrice(price);
-            if (Number.isFinite(chg)) setChange24h(chg);
-            setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
-            setPriceWsState("live");
-            backoffMs = 1000; // reset bij succes
-          }
-        } catch { /* ignore */ }
-      };
-      ws.onerror = () => setPriceWsState("error");
-      ws.onclose = () => {
-        if (destroyed) return;
-        setPriceWsState("offline");
-        timer = setTimeout(connect, backoffMs);
-        backoffMs = Math.min(backoffMs * 2, 30_000);
-      };
+
+      if (bitvavoMarket) {
+        // ── Bitvavo WebSocket — EUR prijs direct, geen conversie nodig ──
+        const ws = new WebSocket("wss://ws.bitvavo.com/v2/");
+        priceWsRef.current = ws;
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ action: "subscribe", channels: [{ name: "ticker", markets: [bitvavoMarket] }] }));
+        };
+        ws.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            if (data.event === "ticker" && data.lastPrice) {
+              const eurPrice = parseFloat(data.lastPrice);
+              if (Number.isFinite(eurPrice) && eurPrice > 0) {
+                // Sla op als USD-equivalent zodat CurrencyContext correct converteert
+                const rate = eurRate > 0 ? eurRate : 0.92;
+                setLivePrice(eurPrice / rate);
+                setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
+                setPriceWsState("live");
+                backoffMs = 1000;
+              }
+            }
+          } catch { /* ignore */ }
+        };
+        ws.onerror = () => setPriceWsState("error");
+        ws.onclose = () => {
+          if (destroyed) return;
+          setPriceWsState("offline");
+          timer = setTimeout(connect, backoffMs);
+          backoffMs = Math.min(backoffMs * 2, 30_000);
+        };
+      } else {
+        // ── Binance WebSocket — USD prijs ──
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@ticker`);
+        priceWsRef.current = ws;
+        ws.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            const price = parseFloat(data.c);
+            const chg = parseFloat(data.P); // 24h percent change
+            if (Number.isFinite(price) && price > 0) {
+              setLivePrice(price);
+              if (Number.isFinite(chg)) setChange24h(chg);
+              setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
+              setPriceWsState("live");
+              backoffMs = 1000;
+            }
+          } catch { /* ignore */ }
+        };
+        ws.onerror = () => setPriceWsState("error");
+        ws.onclose = () => {
+          if (destroyed) return;
+          setPriceWsState("offline");
+          timer = setTimeout(connect, backoffMs);
+          backoffMs = Math.min(backoffMs * 2, 30_000);
+        };
+      }
     }
 
     connect();
@@ -302,7 +346,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       if (timer) clearTimeout(timer);
       priceWsRef.current?.close();
     };
-  }, [asset, isBinance]);
+  }, [asset, isBinance, currency, eurRate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Finnhub: WebSocket voor realtime prijs + REST fallback
   const finnhubWsRef = useRef<WebSocket | null>(null);
@@ -632,9 +676,20 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </span>
               &nbsp;
               {liveMode
-                ? <span style={{ color: "#22c55e", fontSize: 11 }}>● Live</span>
+                ? <span style={{ color: "#22c55e", fontSize: 11 }}>● {currency === "EUR" && BITVAVO_MAP[asset] ? "Bitvavo" : "Live"}</span>
                 : <span style={{ color: "#f59e0b", fontSize: 11 }}>⟳</span>
               }
+              {tradingMode && (
+                <span style={{
+                  marginLeft: 4, fontSize: 10, fontWeight: 700,
+                  background: tradingMode === "day" ? "#3b82f620" : tradingMode === "long" ? "#8b5cf620" : "#6b728020",
+                  color: tradingMode === "day" ? "#3b82f6" : tradingMode === "long" ? "#8b5cf6" : "#9ca3af",
+                  border: `1px solid ${tradingMode === "day" ? "#3b82f640" : tradingMode === "long" ? "#8b5cf640" : "#6b728040"}`,
+                  borderRadius: 4, padding: "0px 5px",
+                }}>
+                  {tradingMode === "day" ? "⚡ Day" : tradingMode === "long" ? "🏦 Long" : "📈 Swing"}
+                </span>
+              )}
             </div>
           </div>
         </div>
