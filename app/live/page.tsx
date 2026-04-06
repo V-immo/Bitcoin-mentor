@@ -63,8 +63,8 @@ export default function LivePage() {
       {/* Exchange tabs */}
       <div style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
         {([
-          { key: "bitvavo" as Exchange, label: "💶 Bitvavo", desc: "EUR · EU-gereguleerd" },
-          { key: "bybit"   as Exchange, label: "💛 Bybit",   desc: "USDT · Globaal" },
+          { key: "bitvavo" as Exchange, label: "💶 Bitvavo", desc: t("live_exchange_bitvavo_desc") },
+          { key: "bybit"   as Exchange, label: "💛 Bybit",   desc: t("live_exchange_bybit_desc") },
         ]).map(ex => (
           <button
             key={ex.key}

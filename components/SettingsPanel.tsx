@@ -202,31 +202,31 @@ export default function SettingsPanel() {
           const recs: Record<TradingMode, { exchanges: { name: string; tag: string; color: string; reason: string }[]; note: string }> = {
             day: {
               exchanges: [
-                { name: "Bybit", tag: "Aanbevolen", color: "#f59e0b", reason: "Lage fees (0.10%), diep orderboek, USDT-paren" },
-                { name: "Kraken Pro", tag: "Alternatief", color: "#6b7280", reason: "EU-gereguleerd, goed voor EUR-traders" },
+                { name: "Bybit", tag: t("settings_recommended"), color: "#f59e0b", reason: t("settings_day_bybit_reason") },
+                { name: "Kraken Pro", tag: t("settings_alternative"), color: "#6b7280", reason: t("settings_day_kraken_reason") },
               ],
-              note: "Day trading vereist lage fees en snelle uitvoering. Bybit is globaal beschikbaar en heeft geen EU-verbod.",
+              note: t("settings_day_note"),
             },
             swing: {
               exchanges: [
-                { name: "Bitvavo", tag: "Aanbevolen", color: "#26c57c", reason: "EU/NL gereguleerd, EUR-paren, al gekoppeld" },
-                { name: "Bybit", tag: "Alternatief", color: "#f59e0b", reason: "Groter aanbod, USDT-paren" },
+                { name: "Bitvavo", tag: t("settings_recommended"), color: "#26c57c", reason: t("settings_swing_bitvavo_reason") },
+                { name: "Bybit", tag: t("settings_alternative"), color: "#f59e0b", reason: t("settings_swing_bybit_reason") },
               ],
-              note: "Swing trading houdt posities dagen tot weken. Bitvavo is veilig, gereguleerd en ideaal voor EU-traders.",
+              note: t("settings_swing_note"),
             },
             long: {
               exchanges: [
-                { name: "Bitvavo", tag: "Aanbevolen", color: "#26c57c", reason: "EU/NL gereguleerd, laag risico, EUR-paren" },
-                { name: "Kraken", tag: "Alternatief", color: "#6b7280", reason: "EU-licentie, staking mogelijk" },
+                { name: "Bitvavo", tag: t("settings_recommended"), color: "#26c57c", reason: t("settings_long_bitvavo_reason") },
+                { name: "Kraken", tag: t("settings_alternative"), color: "#6b7280", reason: t("settings_long_kraken_reason") },
               ],
-              note: "Long-term holding: kies een gereguleerde exchange in je land. Fees zijn minder belangrijk dan veiligheid.",
+              note: t("settings_long_note"),
             },
           };
           const rec = recs[mode];
           return (
             <div style={{ marginTop: 14, padding: "12px 14px", background: "var(--surface-2)", borderRadius: 10, border: "1px solid var(--border)" }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8 }}>
-                Aanbevolen exchanges voor jouw modus
+                {t("settings_exchanges_title")}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {rec.exchanges.map(ex => (
