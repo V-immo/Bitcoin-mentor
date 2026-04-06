@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 import { sharedScanCache } from "@/lib/scan-cache";
 import { bitvavRequest } from "@/lib/bitvavo";
+import { bybitRequest } from "@/lib/bybit";
 
 // Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -299,6 +300,42 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
     } catch { /* geen Bitvavo data, doorgaan */ }
   }
 
+  // Haal Bybit live saldo op voor Marcus context
+  let bybitContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const bbRow = db
+        .prepare("SELECT bybit_api_key, bybit_api_secret FROM settings WHERE user_id = ?")
+        .get(userId) as { bybit_api_key?: string; bybit_api_secret?: string } | undefined;
+      const bbKey    = bbRow?.bybit_api_key ?? "";
+      const bbSecret = bbRow?.bybit_api_secret ?? "";
+      if (bbKey && bbSecret) {
+        const data = await bybitRequest(bbKey, bbSecret, "GET", "/v5/account/wallet-balance", {
+          accountType: "UNIFIED",
+        });
+        if (data.retCode === 0) {
+          const coins = (data.result as { list?: { coin?: { coin: string; availableToWithdraw: string; walletBalance: string }[] }[] })
+            ?.list?.[0]?.coin ?? [];
+          const nonZero = coins.filter(c => parseFloat(c.walletBalance) > 0.000001);
+          if (nonZero.length > 0) {
+            const balLines = nonZero.map(c => {
+              const scanEntry = sharedScanCache.data?.find(s => s.symbol.startsWith(c.coin));
+              const price = scanEntry?.price ?? 0;
+              const usdVal = c.coin === "USDT"
+                ? `$${parseFloat(c.walletBalance).toFixed(2)}`
+                : price > 0
+                  ? `~$${(parseFloat(c.walletBalance) * price).toFixed(2)}`
+                  : "";
+              return `  ${c.coin}: ${parseFloat(c.walletBalance).toFixed(6)}${usdVal ? " ≈ " + usdVal : ""}`;
+            });
+            bybitContext = `BYBIT LIVE PORTFOLIO:\n${balLines.join("\n")}`;
+          }
+        }
+      }
+    } catch { /* geen Bybit data, doorgaan */ }
+  }
+
   // Haal relevante trading kennis op uit de kennisbank
   let relevantKnowledge = "";
   if (userId) {
@@ -469,6 +506,11 @@ ${bitvavoContext
   ? `${bitvavoContext}
 BELANGRIJK: Bitvavo toont EUR-prijzen. Bitcoin Mentor toont USD-prijzen (Binance). Dit zijn dezelfde waarden in andere valuta — niet hetzelfde getal. Bijv. BTC = $94.000 USD ≈ €87.000 EUR. Het verschil in getallen klopt dus — het zijn verschillende valuta.`
   : "Niet gekoppeld of geen saldo. Als de gebruiker vraagt naar hun Bitvavo wallet, vertel hen dat ze de API key kunnen koppelen in Instellingen."}
+
+BYBIT LIVE PORTFOLIO (ECHTE USDT — dit is het echte geld van de gebruiker op Bybit, NIET paper trading):
+${bybitContext
+  ? bybitContext
+  : "Niet gekoppeld of geen saldo. Als de gebruiker vraagt naar hun Bybit account, vertel hen dat ze de API key kunnen koppelen in Instellingen."}
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}

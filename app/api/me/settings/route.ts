@@ -29,6 +29,7 @@ function getOrCreateSettings(userId: number) {
   }
 
   const hasBitvavo = !!(row.bitvavo_api_key as string | undefined);
+  const hasBybit   = !!(row.bybit_api_key as string | undefined);
 
   return {
     tradingMode: row.trading_mode as string,
@@ -37,6 +38,7 @@ function getOrCreateSettings(userId: number) {
     preferredAssets: JSON.parse(row.preferred_assets as string) as string[],
     aiLanguage: row.ai_language as string,
     bitvavoConnected: hasBitvavo,
+    bybitConnected: hasBybit,
     goal: (row.goal as number | undefined) ?? 0,
     preferredCurrency: (row.preferred_currency as string | undefined) ?? "EUR",
   };
@@ -61,6 +63,22 @@ export async function PUT(request: NextRequest) {
 
   // Zorg dat rij bestaat
   getOrCreateSettings(userId);
+
+  // Bybit sleutels opslaan indien meegestuurd
+  if (body.bybitApiKey !== undefined && body.bybitApiSecret !== undefined) {
+    db.prepare(`
+      UPDATE settings SET
+        bybit_api_key = ?,
+        bybit_api_secret = ?,
+        updated_at = datetime('now')
+      WHERE user_id = ?
+    `).run(
+      body.bybitApiKey ?? "",
+      body.bybitApiSecret ?? "",
+      userId
+    );
+    return Response.json({ ok: true });
+  }
 
   // Bitvavo sleutels opslaan indien meegestuurd (vóór goal check — goal zit altijd in settings spread)
   if (body.bitvavoApiKey !== undefined && body.bitvavoApiSecret !== undefined) {

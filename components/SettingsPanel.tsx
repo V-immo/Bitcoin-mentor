@@ -51,6 +51,15 @@ export default function SettingsPanel() {
   const [bitvavoChecking, setBitvavoChecking] = useState(false);
   const [bitvavoSaving, setBitvavoSaving] = useState(false);
 
+  // Bybit
+  const [bybitKey, setBybitKey]             = useState("");
+  const [bybitSecret, setBybitSecret]       = useState("");
+  const [bybitConnected, setBybitConnected] = useState<boolean | null>(null);
+  const [bybitSaved, setBybitSaved]         = useState(false);
+  const [bybitBalance, setBybitBalance]     = useState<{ symbol: string; walletBalance: string }[] | null>(null);
+  const [bybitSaving, setBybitSaving]       = useState(false);
+  const [bybitChecking, setBybitChecking]   = useState(false);
+
   // Binance Testnet
   const [testnetKey, setTestnetKey]         = useState("");
   const [testnetSecret, setTestnetSecret]   = useState("");
@@ -117,6 +126,19 @@ export default function SettingsPanel() {
         }
       })
       .catch(() => setBitvavoConnected(false));
+
+    // Check of Bybit al gekoppeld is
+    fetch("/api/bybit/balance")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.connected) {
+          setBybitConnected(true);
+          setBybitBalance(data.balance ?? []);
+        } else {
+          setBybitConnected(false);
+        }
+      })
+      .catch(() => setBybitConnected(false));
   }, []);
 
   function update<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -343,6 +365,105 @@ export default function SettingsPanel() {
                 }}
               >
                 {bitvavoChecking ? t("settings_bitvavo_loading") : t("settings_bitvavo_refresh")}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Bybit koppeling */}
+      <section className="settings-card">
+        <div className="settings-card-title">Bybit Live Trading</div>
+        <div className="settings-card-desc">
+          Koppel je Bybit account voor live trading vanuit Bitcoin Mentor. Maak een API key aan op{" "}
+          <a href="https://www.bybit.com/app/user/api-management" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+            bybit.com/app/user/api-management →
+          </a>{" "}
+          Zet alleen <strong>Spot Trading</strong> aan. Geen withdrawal-rechten.
+        </div>
+
+        {bybitConnected === true && (
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>
+            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✅ Bybit gekoppeld</div>
+            {bybitBalance && bybitBalance.length > 0 ? (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {bybitBalance.map((b) => (
+                  <span key={b.symbol} style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "#86efac" }}>
+                    {b.symbol}: {parseFloat(b.walletBalance).toFixed(4)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div style={{ color: "#86efac", fontSize: 13 }}>Geen saldo gevonden</div>
+            )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Key</label>
+            <input
+              type="text"
+              value={bybitKey}
+              onChange={e => setBybitKey(e.target.value)}
+              placeholder={bybitConnected ? "••••••••••••••••" : "Plak je Bybit API Key"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Secret</label>
+            <input
+              type="password"
+              value={bybitSecret}
+              onChange={e => setBybitSecret(e.target.value)}
+              placeholder={bybitConnected ? "••••••••••••••••" : "Plak je Bybit API Secret"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              className="terminal-btn terminal-btn-primary"
+              disabled={bybitSaving || (!bybitKey && !bybitSecret)}
+              style={{ alignSelf: "flex-start" }}
+              onClick={async () => {
+                if (!bybitKey || !bybitSecret) return;
+                setBybitSaving(true);
+                await fetch("/api/me/settings", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ bybitApiKey: bybitKey, bybitApiSecret: bybitSecret }),
+                });
+                setBybitChecking(true);
+                const res = await fetch("/api/bybit/balance");
+                const data = await res.json();
+                if (data?.connected) {
+                  setBybitConnected(true);
+                  setBybitBalance(data.balance ?? []);
+                  setBybitSaved(true);
+                  setBybitKey(""); setBybitSecret("");
+                  setTimeout(() => setBybitSaved(false), 3000);
+                } else {
+                  setBybitConnected(false);
+                  alert(data.error ?? "Verbinding mislukt — controleer je keys");
+                }
+                setBybitSaving(false);
+                setBybitChecking(false);
+              }}
+            >
+              {bybitSaving ? (bybitChecking ? "Testen…" : "Opslaan…") : bybitSaved ? "✅ Gekoppeld!" : "Opslaan & testen"}
+            </button>
+            {bybitConnected && (
+              <button
+                className="terminal-btn terminal-btn-muted"
+                onClick={async () => {
+                  setBybitChecking(true);
+                  const res = await fetch("/api/bybit/balance");
+                  const data = await res.json();
+                  if (data?.connected) setBybitBalance(data.balance ?? []);
+                  setBybitChecking(false);
+                }}
+              >
+                {bybitChecking ? "Laden…" : "Vernieuwen"}
               </button>
             )}
           </div>
