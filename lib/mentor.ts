@@ -41,47 +41,59 @@ function getAlertState(
 
 export type TradingMode = "day" | "swing" | "long";
 
+type FetchedCandles = {
+  price: number;
+  candles15m: Candle[];
+  candles1h: Candle[];
+  candles4h: Candle[];
+  candles1d: Candle[];
+};
+
 // Haal candles op voor elk asset type (Binance crypto of Yahoo stock/metal)
-async function fetchAllCandles(symbol: string, mode: TradingMode): Promise<{ price: number; candles1h: Candle[]; candles4h: Candle[]; candles1d: Candle[] }> {
+async function fetchAllCandles(symbol: string, mode: TradingMode): Promise<FetchedCandles> {
+  const empty: Candle[] = [];
+
   if (isYahooAsset(symbol)) {
+    // Yahoo: geen 15m beschikbaar — gebruik 1H als kortste timeframe voor alle modes
     const [price, candles1d, rawHourly] = await Promise.all([
       getYahooPrice(symbol),
       getYahooCandles(symbol, "1d", "2y"),
       getYahooCandles(symbol, "1h", "3mo"),
     ]);
     const candles4h = rawHourly.filter((_, i) => i % 4 === 3);
-    return { price, candles1h: rawHourly, candles4h, candles1d };
-  } else {
-    if (mode === "day") {
-      // Day trading: haal ook 15m candles op, simuleer als 1H via aggregatie
-      const [{ price }, candles15m, candles1h, candles4h, candles1d] = await Promise.all([
-        getBitcoinPrice(symbol),
-        getCandles("15m", 250, symbol),
-        getCandles("1h", 100, symbol),
-        getCandles("4h", 100, symbol),
-        getCandles("1d", 50, symbol),
-      ]);
-      // Gebruik 15m als "1h" slot voor day trading zones
-      return { price, candles1h: candles15m, candles4h: candles1h, candles1d: candles4h };
-    } else if (mode === "long") {
-      // Long term: gebruik daily als primaire timeframe, 4H als inzoom
-      const [{ price }, candles4h, candles1d] = await Promise.all([
-        getBitcoinPrice(symbol),
-        getCandles("4h", 100, symbol),
-        getCandles("1d", 365, symbol),
-      ]);
-      return { price, candles1h: candles4h, candles4h: candles1d, candles1d };
-    } else {
-      // Swing (default)
-      const [{ price }, candles1h, candles4h, candles1d] = await Promise.all([
-        getBitcoinPrice(symbol),
-        getCandles("1h", 250, symbol),
-        getCandles("4h", 250, symbol),
-        getCandles("1d", 250, symbol),
-      ]);
-      return { price, candles1h, candles4h, candles1d };
-    }
+    return { price, candles15m: rawHourly, candles1h: rawHourly, candles4h, candles1d };
   }
+
+  if (mode === "day") {
+    // Day trading: 15m voor zones, 1H + 4H voor trend context
+    const [{ price }, candles15m, candles1h, candles4h, candles1d] = await Promise.all([
+      getBitcoinPrice(symbol),
+      getCandles("15m", 250, symbol),
+      getCandles("1h", 100, symbol),
+      getCandles("4h", 50, symbol),
+      getCandles("1d", 30, symbol),
+    ]);
+    return { price, candles15m, candles1h, candles4h, candles1d };
+  }
+
+  if (mode === "long") {
+    // Long term: daily voor zones, 4H voor trend context
+    const [{ price }, candles4h, candles1d] = await Promise.all([
+      getBitcoinPrice(symbol),
+      getCandles("4h", 100, symbol),
+      getCandles("1d", 365, symbol),
+    ]);
+    return { price, candles15m: empty, candles1h: candles4h, candles4h, candles1d };
+  }
+
+  // Swing (default): 4H voor zones, 1H + 1D voor context
+  const [{ price }, candles1h, candles4h, candles1d] = await Promise.all([
+    getBitcoinPrice(symbol),
+    getCandles("1h", 250, symbol),
+    getCandles("4h", 250, symbol),
+    getCandles("1d", 250, symbol),
+  ]);
+  return { price, candles15m: empty, candles1h, candles4h, candles1d };
 }
 
 // Labels per trading mode
@@ -117,14 +129,15 @@ export async function buildMentorSignal(symbol = "BTCUSDT", mode: TradingMode = 
   const blockers: string[] = [];
   const labels = getModeLabels(mode);
 
-  // candles1h = kortste timeframe voor zones (15m voor day, 4H voor long, 1H voor swing)
-  // candles4h = middel timeframe (1H voor day, 1D voor long, 4H voor swing)
-  // candles1d = grote timeframe (4H voor day, 1D voor long, 1D voor swing)
-  const { price, candles1h, candles4h, candles1d } = await fetchAllCandles(symbol, mode);
+  const { price, candles15m, candles1h, candles4h, candles1d } = await fetchAllCandles(symbol, mode);
 
+  const closed15m = filterClosedCandles(candles15m);
   const closed1h = filterClosedCandles(candles1h);
   const closed4h = filterClosedCandles(candles4h);
   const closed1d = filterClosedCandles(candles1d);
+
+  // Zones berekend op de kortste timeframe die bij de mode past
+  const zoneCandles = mode === "day" ? closed15m : mode === "long" ? closed1d : closed4h;
 
   const tf1h = analyzeTimeframe("1h", closed1h);
   const tf4h = analyzeTimeframe("4h", closed4h);
@@ -137,14 +150,14 @@ export async function buildMentorSignal(symbol = "BTCUSDT", mode: TradingMode = 
   const rsi4h = calculateRsi(closed4h, 14);
   const rsi1d = calculateRsi(closed1d, 14);
 
-  // Zones berekend op kortste timeframe (mode-specifiek)
-  const support = detectSupport(closed1h, 50);
-  const resistance = detectResistance(closed1h, 50);
+  // Zones berekend op mode-specifieke timeframe (15m voor day, 4H voor swing, 1D voor long)
+  const support = detectSupport(zoneCandles, 50);
+  const resistance = detectResistance(zoneCandles, 50);
 
-  const supportZone = buildSupportZone(closed1h, 50);
-  const resistanceZone = buildResistanceZone(closed1h, 50);
+  const supportZone = buildSupportZone(zoneCandles, 50);
+  const resistanceZone = buildResistanceZone(zoneCandles, 50);
 
-  const volume = volumeStrength(closed1h);
+  const volume = volumeStrength(zoneCandles);
 
   const entryZoneLow = supportZone.low * 1.002;
   const entryZoneHigh = supportZone.high * labels.entryHighMult;
@@ -364,6 +377,6 @@ export async function buildMentorSignal(symbol = "BTCUSDT", mode: TradingMode = 
     canBuyNow,
     alertState: getAlertState(price, entryZoneLow, entryZoneHigh),
 
-    chartCandles4h: candles4h.slice(-40),
+    chartCandles4h: (mode === "day" ? candles15m : mode === "long" ? candles1d : candles4h).slice(-40),
   };
 }
