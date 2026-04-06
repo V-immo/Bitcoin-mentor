@@ -582,7 +582,7 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* === HEADER (compact) === */}
+            {/* === HEADER (compact — balance + cash + help) === */}
             <div className="paper-header">
                 <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -593,29 +593,27 @@ export default function TerminalPaperPanel({
                         <span className={`paper-pnl-badge ${totalPnl >= 0 ? "pos" : "neg"}`}>
                             {totalPnl >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%
                         </span>
+                        {sparkPath && (
+                            <svg className="paper-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none" style={{ marginLeft: 4 }}>
+                                <path d={sparkPath} fill="none" stroke={sparkColor} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                            </svg>
+                        )}
                     </div>
-                    <div style={{ display: "flex", gap: 12, marginTop: 4, fontSize: 11, color: "var(--text-secondary)" }}>
-                        <span>{t("paper_stat_cash")}: <strong style={{ color: "var(--text)" }}>{eur(state.cash)}</strong></span>
+                    <div style={{ display: "flex", gap: 12, marginTop: 3, fontSize: 11, color: "var(--text-secondary)" }}>
+                        <span>Cash: <strong style={{ color: "var(--text)" }}>{eur(state.cash)}</strong></span>
                         {state.openBtc > 0 && (
                             <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                                P&L: {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
+                                Open: {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
                             </span>
                         )}
                     </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    {sparkPath && (
-                        <svg className="paper-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
-                            <path d={sparkPath} fill="none" stroke={sparkColor} strokeWidth="2" vectorEffect="non-scaling-stroke" />
-                        </svg>
-                    )}
-                    <button
-                        className="terminal-btn terminal-btn-muted"
-                        onClick={() => setShowHelp(v => !v)}
-                        style={{ fontSize: 11, padding: "3px 8px" }}
-                        title="Uitleg"
-                    >?</button>
-                </div>
+                <button
+                    className="terminal-btn terminal-btn-muted"
+                    onClick={() => setShowHelp(v => !v)}
+                    style={{ fontSize: 11, padding: "3px 8px", alignSelf: "flex-start" }}
+                    title="Uitleg"
+                >?</button>
             </div>
 
             {/* === HELP === */}
@@ -633,141 +631,7 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* === OPEN POSITION CARD === */}
-            {state.openBtc > 0 && (
-                <div className="paper-position-card">
-                    <div className="paper-position-header">
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span className="paper-position-badge">LONG</span>
-                            <span style={{ fontWeight: 700, fontSize: 14 }}>{assetTicker}</span>
-                            <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
-                                {state.openBtc.toFixed(6)}
-                            </span>
-                        </div>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                            {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
-                        </span>
-                    </div>
-
-                    <div className="paper-position-metrics">
-                        <div className="paper-position-metric">
-                            <div className="paper-position-metric-label">{t("paper_position_entry")}</div>
-                            <div className="paper-position-metric-value">
-                                ${Math.round(state.avgEntry).toLocaleString("en-US")}
-                            </div>
-                        </div>
-                        <div className="paper-position-metric">
-                            <div className="paper-position-metric-label">{t("paper_position_current")}</div>
-                            <div className="paper-position-metric-value">
-                                ${Math.round(currentPrice).toLocaleString("en-US")}
-                            </div>
-                        </div>
-                        <div className="paper-position-metric">
-                            <div className="paper-position-metric-label">{t("paper_position_roi")}</div>
-                            <div className="paper-position-metric-value" style={{ color: roiPct >= 0 ? "#26c57c" : "#ef4444" }}>
-                                {roiPct >= 0 ? "+" : ""}{roiPct.toFixed(2)}%
-                            </div>
-                        </div>
-                        <div className="paper-position-metric">
-                            <div className="paper-position-metric-label">{t("paper_position_size")}</div>
-                            <div className="paper-position-metric-value">{eur(openValue)}</div>
-                        </div>
-                    </div>
-
-                    {/* SL/TP status pills */}
-                    <div className="paper-sltp-row">
-                        <div className={`paper-sltp-pill${state.activeSL ? " sl-active" : ""}`}>
-                            <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 10 }}>SL</span>
-                            <span>
-                                {state.activeSL
-                                    ? `$${Math.round(state.activeSL).toLocaleString("en-US")}`
-                                    : t("paper_sl_not_set")}
-                            </span>
-                        </div>
-                        <div className={`paper-sltp-pill${state.activeTP ? " tp-active" : ""}`}>
-                            <span style={{ color: "#26c57c", fontWeight: 700, fontSize: 10 }}>TP</span>
-                            <span>
-                                {state.activeTP
-                                    ? `$${Math.round(state.activeTP).toLocaleString("en-US")}`
-                                    : t("paper_tp_not_set")}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Partial close buttons */}
-                    <div className="paper-close-btns">
-                        {[25, 50, 75].map(pct => (
-                            <button
-                                key={pct}
-                                className="paper-close-btn"
-                                onClick={() => requestPartialClose(pct / 100)}
-                            >
-                                {pct}%
-                            </button>
-                        ))}
-                        <button
-                            className="paper-close-btn full"
-                            onClick={() => requestPartialClose(1)}
-                        >
-                            {t("paper_close_all")}
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* === PENDING LIMIT ORDER === */}
-            {pendingLimitOrder && (
-                <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "#f59e0b55" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: 12 }}>
-                            {t("paper_limit_pending")} ${Math.round(pendingLimitOrder.price).toLocaleString("en-US")}
-                            <span style={{ color: "var(--text-secondary)", marginLeft: 6 }}>({eur(pendingLimitOrder.amount)})</span>
-                        </span>
-                        <button
-                            onClick={() => setPendingLimitOrder(null)}
-                            style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 12 }}
-                        >
-                            {t("paper_limit_cancel")} ✕
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* === GOAL TRACKER (compact — alleen tonen als actief) === */}
-            {goal !== null && (
-                <div className="paper-goal-strip">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{t("paper_goal_label")} {eur(goal)}</span>
-                        <button onClick={() => { setGoal(null); setGoalInput(""); }} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 11 }}>✕</button>
-                    </div>
-                    <div className="paper-goal-bar">
-                        <div className="paper-goal-fill" style={{ width: `${Math.max(0, goalPct ?? 0)}%` }} />
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
-                        {goalPct !== null && goalPct >= 100
-                            ? t("paper_goal_achieved")
-                            : `${Math.max(0, goalPct ?? 0).toFixed(0)}${t("paper_goal_pct_suffix")}`}
-                    </div>
-                </div>
-            )}
-            {showGoalInput && (
-                <div className="paper-goal-strip">
-                    <div style={{ display: "flex", gap: 6 }}>
-                        <input
-                            className="terminal-terminal-input"
-                            type="number"
-                            placeholder={`Doel b.v. €${Math.round(state.startCapital * 1.1)}`}
-                            value={goalInput}
-                            onChange={e => setGoalInput(e.target.value)}
-                            style={{ flex: 1 }}
-                        />
-                        <button className="terminal-btn terminal-btn-primary" onClick={() => { const g = Number(goalInput); if (g > state.startCapital) { setGoal(g); setShowGoalInput(false); } }}>OK</button>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setShowGoalInput(false)}>✕</button>
-                    </div>
-                </div>
-            )}
-
-            {/* === ORDER PANEL === */}
+            {/* === ORDER PANEL (PRIMARY — always first) === */}
             <div className="paper-order-panel">
 
                 {/* Buy / Sell tabs */}
@@ -811,6 +675,26 @@ export default function TerminalPaperPanel({
                                 placeholder={`Bedrag in EUR (max ${eur(state.cash)})`}
                             />
                         </div>
+
+                        {/* Signal levels — compact inline hint */}
+                        {entryZoneLow > 0 && (
+                            <div className="paper-signal-hint">
+                                <span className="paper-signal-hint-item green">
+                                    ↗ ${Math.round(entryZoneLow).toLocaleString()}–${Math.round(entryZoneHigh).toLocaleString()}
+                                </span>
+                                {stopLoss > 0 && (
+                                    <span className="paper-signal-hint-item red">
+                                        SL ${Math.round(stopLoss).toLocaleString()}
+                                    </span>
+                                )}
+                                {resistanceZoneLow > 0 && (
+                                    <span className="paper-signal-hint-item amber">
+                                        TP ${Math.round(resistanceZoneLow).toLocaleString()}
+                                    </span>
+                                )}
+                                <span className="paper-signal-hint-item muted">R:R {riskRewardEstimate}</span>
+                            </div>
+                        )}
 
                         {/* Geavanceerd toggle */}
                         <button
@@ -1056,38 +940,140 @@ export default function TerminalPaperPanel({
                 </div>
             </div>
 
-            {/* === TRADE PLAN === */}
-            <div className="paper-tradeplan">
-                <div className="paper-tradeplan-title">{t("paper_tradeplan_title")}</div>
-                <div className="paper-tradeplan-grid">
-                    <div className="paper-tradeplan-row">
-                        <span className="paper-tradeplan-label">{t("paper_tradeplan_entry")}</span>
-                        <span className="paper-tradeplan-value" style={{ color: "#26c57c" }}>
-                            ${Math.round(entryZoneLow).toLocaleString("en-US")} – ${Math.round(entryZoneHigh).toLocaleString("en-US")}
+            {/* === PENDING LIMIT ORDER === */}
+            {pendingLimitOrder && (
+                <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "#f59e0b55" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 12 }}>
+                            {t("paper_limit_pending")} ${Math.round(pendingLimitOrder.price).toLocaleString("en-US")}
+                            <span style={{ color: "var(--text-secondary)", marginLeft: 6 }}>({eur(pendingLimitOrder.amount)})</span>
                         </span>
-                    </div>
-                    {resistanceZoneLow > 0 && (
-                        <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">{t("paper_tradeplan_profit")}</span>
-                            <span className="paper-tradeplan-value" style={{ color: "#f59e0b" }}>
-                                ${Math.round(resistanceZoneLow).toLocaleString("en-US")} – ${Math.round(resistanceZoneHigh).toLocaleString("en-US")}
-                            </span>
-                        </div>
-                    )}
-                    {stopLoss > 0 && (
-                        <div className="paper-tradeplan-row">
-                            <span className="paper-tradeplan-label">{t("paper_tradeplan_stop")}</span>
-                            <span className="paper-tradeplan-value" style={{ color: "#ef4444" }}>
-                                ${Math.round(stopLoss).toLocaleString("en-US")}
-                            </span>
-                        </div>
-                    )}
-                    <div className="paper-tradeplan-row">
-                        <span className="paper-tradeplan-label">{t("paper_tradeplan_rr")}</span>
-                        <span className="paper-tradeplan-value">{riskRewardEstimate}</span>
+                        <button
+                            onClick={() => setPendingLimitOrder(null)}
+                            style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 12 }}
+                        >
+                            {t("paper_limit_cancel")} ✕
+                        </button>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {/* === OPEN POSITION CARD === */}
+            {state.openBtc > 0 && (
+                <div className="paper-position-card">
+                    <div className="paper-position-header">
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span className="paper-position-badge">LONG</span>
+                            <span style={{ fontWeight: 700, fontSize: 14 }}>{assetTicker}</span>
+                            <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                                {state.openBtc.toFixed(6)}
+                            </span>
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                            {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
+                        </span>
+                    </div>
+
+                    <div className="paper-position-metrics">
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_entry")}</div>
+                            <div className="paper-position-metric-value">
+                                ${Math.round(state.avgEntry).toLocaleString("en-US")}
+                            </div>
+                        </div>
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_current")}</div>
+                            <div className="paper-position-metric-value">
+                                ${Math.round(currentPrice).toLocaleString("en-US")}
+                            </div>
+                        </div>
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_roi")}</div>
+                            <div className="paper-position-metric-value" style={{ color: roiPct >= 0 ? "#26c57c" : "#ef4444" }}>
+                                {roiPct >= 0 ? "+" : ""}{roiPct.toFixed(2)}%
+                            </div>
+                        </div>
+                        <div className="paper-position-metric">
+                            <div className="paper-position-metric-label">{t("paper_position_size")}</div>
+                            <div className="paper-position-metric-value">{eur(openValue)}</div>
+                        </div>
+                    </div>
+
+                    {/* SL/TP status pills */}
+                    <div className="paper-sltp-row">
+                        <div className={`paper-sltp-pill${state.activeSL ? " sl-active" : ""}`}>
+                            <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 10 }}>SL</span>
+                            <span>
+                                {state.activeSL
+                                    ? `$${Math.round(state.activeSL).toLocaleString("en-US")}`
+                                    : t("paper_sl_not_set")}
+                            </span>
+                        </div>
+                        <div className={`paper-sltp-pill${state.activeTP ? " tp-active" : ""}`}>
+                            <span style={{ color: "#26c57c", fontWeight: 700, fontSize: 10 }}>TP</span>
+                            <span>
+                                {state.activeTP
+                                    ? `$${Math.round(state.activeTP).toLocaleString("en-US")}`
+                                    : t("paper_tp_not_set")}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Partial close buttons */}
+                    <div className="paper-close-btns">
+                        {[25, 50, 75].map(pct => (
+                            <button
+                                key={pct}
+                                className="paper-close-btn"
+                                onClick={() => requestPartialClose(pct / 100)}
+                            >
+                                {pct}%
+                            </button>
+                        ))}
+                        <button
+                            className="paper-close-btn full"
+                            onClick={() => requestPartialClose(1)}
+                        >
+                            {t("paper_close_all")}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* === GOAL TRACKER (compact — alleen tonen als actief) === */}
+            {goal !== null && (
+                <div className="paper-goal-strip">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{t("paper_goal_label")} {eur(goal)}</span>
+                        <button onClick={() => { setGoal(null); setGoalInput(""); }} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 11 }}>✕</button>
+                    </div>
+                    <div className="paper-goal-bar">
+                        <div className="paper-goal-fill" style={{ width: `${Math.max(0, goalPct ?? 0)}%` }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
+                        {goalPct !== null && goalPct >= 100
+                            ? t("paper_goal_achieved")
+                            : `${Math.max(0, goalPct ?? 0).toFixed(0)}${t("paper_goal_pct_suffix")}`}
+                    </div>
+                </div>
+            )}
+            {showGoalInput && (
+                <div className="paper-goal-strip">
+                    <div style={{ display: "flex", gap: 6 }}>
+                        <input
+                            className="terminal-terminal-input"
+                            type="number"
+                            placeholder={`Doel b.v. €${Math.round(state.startCapital * 1.1)}`}
+                            value={goalInput}
+                            onChange={e => setGoalInput(e.target.value)}
+                            style={{ flex: 1 }}
+                        />
+                        <button className="terminal-btn terminal-btn-primary" onClick={() => { const g = Number(goalInput); if (g > state.startCapital) { setGoal(g); setShowGoalInput(false); } }}>OK</button>
+                        <button className="terminal-btn terminal-btn-muted" onClick={() => setShowGoalInput(false)}>✕</button>
+                    </div>
+                </div>
+            )}
+
 
             {/* === CONFIRMATION DIALOG === */}
             {showConfirm && confirmAction && (
