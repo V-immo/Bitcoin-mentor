@@ -20,6 +20,7 @@ import PriceAlerts from "./PriceAlerts";
 import AITradeCoach from "./AITradeCoach";
 import LiveSimpleMode from "./LiveSimpleMode";
 import BitvavoPanel from "./BitvavoPanel";
+import TradePlanValidator from "./TradePlanValidator";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -101,10 +102,10 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "briefing";
+type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "briefing" | "plan";
 
 // Tabs zichtbaar in balk
-const PRIMARY_TABS: BottomTab[] = ["paper", "checklist", "briefing", "nieuws"];
+const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "checklist", "briefing", "nieuws"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -142,6 +143,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
     { key: "chat",      label: t("nav_marcus_ai"), icon: "👤", mobileOnly: true },
     { key: "paper",     label: t("tab_trade"),      icon: "📊" },
+    { key: "plan",      label: "Plan Check",         icon: "🎯" },
     { key: "checklist", label: t("nav_checklist"), icon: "✅" },
     { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
     { key: "nieuws",    label: t("nav_news"),       icon: "📰" },
@@ -826,6 +828,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 </details>
               </>
             )}
+            {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
             {bottomTab === "briefing" && <MarcusBriefing />}
             {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
           </div>
