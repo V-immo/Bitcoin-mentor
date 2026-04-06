@@ -174,6 +174,7 @@ export default function TerminalPaperPanel({
     const [pendingEmotionSide, setPendingEmotionSide] = useState<"buy" | "sell">("buy");
     const [zoneWarning, setZoneWarning] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
+    const [showAdvanced, setShowAdvanced] = useState(false); // SL/TP + limit verborgen
     const [goal, setGoal] = useState<number | null>(null);
     const [goalInput, setGoalInput] = useState("");
     const [showGoalInput, setShowGoalInput] = useState(false);
@@ -581,20 +582,28 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* === HEADER === */}
+            {/* === HEADER (compact) === */}
             <div className="paper-header">
                 <div style={{ flex: 1 }}>
-                    <div className="terminal-label">{t("paper_label")}</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span className="terminal-label">{t("paper_label")}</span>
                         <span className="paper-balance-display" style={{ color: totalPnl >= 0 ? "#26c57c" : "#ef4444" }}>
                             {eur(totalBalance)}
                         </span>
                         <span className={`paper-pnl-badge ${totalPnl >= 0 ? "pos" : "neg"}`}>
-                            {totalPnl >= 0 ? "+" : ""}{eur(totalPnl)} ({totalPnlPct >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%)
+                            {totalPnl >= 0 ? "+" : ""}{totalPnlPct.toFixed(1)}%
                         </span>
                     </div>
+                    <div style={{ display: "flex", gap: 12, marginTop: 4, fontSize: 11, color: "var(--text-secondary)" }}>
+                        <span>{t("paper_stat_cash")}: <strong style={{ color: "var(--text)" }}>{eur(state.cash)}</strong></span>
+                        {state.openBtc > 0 && (
+                            <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                                P&L: {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
+                            </span>
+                        )}
+                    </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {sparkPath && (
                         <svg className="paper-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
                             <path d={sparkPath} fill="none" stroke={sparkColor} strokeWidth="2" vectorEffect="non-scaling-stroke" />
@@ -604,27 +613,8 @@ export default function TerminalPaperPanel({
                         className="terminal-btn terminal-btn-muted"
                         onClick={() => setShowHelp(v => !v)}
                         style={{ fontSize: 11, padding: "3px 8px" }}
-                    >
-                        {showHelp ? "✕" : "?"}
-                    </button>
-                </div>
-            </div>
-
-            {/* === STATS BAR === */}
-            <div className="paper-stat-bar">
-                <div className="paper-stat-bar-item">
-                    <div className="paper-stat-bar-label">{t("paper_stat_cash")}</div>
-                    <div className="paper-stat-bar-value">{eur(state.cash)}</div>
-                </div>
-                <div className="paper-stat-bar-item">
-                    <div className="paper-stat-bar-label">{t("paper_stat_position")}</div>
-                    <div className="paper-stat-bar-value">{state.openBtc > 0 ? eur(openValue) : "—"}</div>
-                </div>
-                <div className="paper-stat-bar-item">
-                    <div className="paper-stat-bar-label">{t("paper_stat_unrealized")}</div>
-                    <div className="paper-stat-bar-value" style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
-                        {state.openBtc > 0 ? (unrealized >= 0 ? "+" : "") + eur(unrealized) : "—"}
-                    </div>
+                        title="Uitleg"
+                    >?</button>
                 </div>
             </div>
 
@@ -743,54 +733,38 @@ export default function TerminalPaperPanel({
                 </div>
             )}
 
-            {/* === GOAL TRACKER === */}
-            {goal !== null ? (
+            {/* === GOAL TRACKER (compact — alleen tonen als actief) === */}
+            {goal !== null && (
                 <div className="paper-goal-strip">
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("paper_goal_label")} {eur(goal)}</span>
+                        <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{t("paper_goal_label")} {eur(goal)}</span>
                         <button onClick={() => { setGoal(null); setGoalInput(""); }} style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 11 }}>✕</button>
                     </div>
                     <div className="paper-goal-bar">
                         <div className="paper-goal-fill" style={{ width: `${Math.max(0, goalPct ?? 0)}%` }} />
                     </div>
-                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 3 }}>
+                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
                         {goalPct !== null && goalPct >= 100
                             ? t("paper_goal_achieved")
                             : `${Math.max(0, goalPct ?? 0).toFixed(0)}${t("paper_goal_pct_suffix")}`}
                     </div>
                 </div>
-            ) : showGoalInput ? (
+            )}
+            {showGoalInput && (
                 <div className="paper-goal-strip">
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 6 }}>
-                        {t("paper_goal_set_hint")} €{(state.startCapital * 1.1).toFixed(0)} {t("paper_goal_growth")}
-                    </div>
                     <div style={{ display: "flex", gap: 6 }}>
                         <input
                             className="terminal-terminal-input"
                             type="number"
-                            placeholder={`${Math.round(state.startCapital * 1.1)}`}
+                            placeholder={`Doel b.v. €${Math.round(state.startCapital * 1.1)}`}
                             value={goalInput}
                             onChange={e => setGoalInput(e.target.value)}
                             style={{ flex: 1 }}
                         />
-                        <button
-                            className="terminal-btn terminal-btn-primary"
-                            onClick={() => {
-                                const g = Number(goalInput);
-                                if (g > state.startCapital) { setGoal(g); setShowGoalInput(false); }
-                            }}
-                        >OK</button>
+                        <button className="terminal-btn terminal-btn-primary" onClick={() => { const g = Number(goalInput); if (g > state.startCapital) { setGoal(g); setShowGoalInput(false); } }}>OK</button>
                         <button className="terminal-btn terminal-btn-muted" onClick={() => setShowGoalInput(false)}>✕</button>
                     </div>
                 </div>
-            ) : (
-                <button
-                    className="terminal-btn terminal-btn-muted"
-                    style={{ fontSize: 11, width: "100%", marginBottom: 8 }}
-                    onClick={() => setShowGoalInput(true)}
-                >
-                    {t("paper_goal_set_btn")}
-                </button>
             )}
 
             {/* === ORDER PANEL === */}
@@ -815,62 +789,17 @@ export default function TerminalPaperPanel({
                 {/* === BUY PANEL === */}
                 {activeSide === "buy" && (
                     <>
-                        {/* Order type */}
-                        <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
-                            <button
-                                className={`terminal-btn${orderType === "market" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
-                                style={{ flex: 1, fontSize: 12 }}
-                                onClick={() => setOrderType("market")}
-                            >
-                                {t("paper_order_market")}
-                            </button>
-                            <button
-                                className={`terminal-btn${orderType === "limit" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
-                                style={{ flex: 1, fontSize: 12 }}
-                                onClick={() => setOrderType("limit")}
-                            >
-                                {t("paper_order_limit")}
-                            </button>
-                        </div>
-
-                        {/* Limit price */}
-                        {orderType === "limit" && (
-                            <div style={{ marginBottom: 10 }}>
-                                <label className="terminal-mini-label" style={{ display: "block", marginBottom: 4 }}>
-                                    {t("paper_limit_price_label")}
-                                </label>
-                                <input
-                                    className="terminal-terminal-input"
-                                    type="number"
-                                    value={limitPrice}
-                                    onChange={(e) => setLimitPrice(e.target.value)}
-                                    placeholder={t("paper_limit_price_placeholder")}
-                                />
-                                {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
-                                    <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
-                                        {t("paper_limit_above_market")}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Amount */}
+                        {/* Amount — compact met % knoppen */}
                         <div style={{ marginBottom: 10 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                <label className="terminal-mini-label">{t("paper_buy_label")}</label>
-                                <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-                                    {t("paper_buy_available")} {eur(state.cash)}
-                                </span>
-                            </div>
-                            <div className="paper-quick-amounts">
+                            <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
                                 {quickAmounts.map((amt, i) => (
                                     <button
                                         key={i}
                                         className={`paper-quick-btn${Number(buyAmount) === amt ? " active" : ""}`}
                                         onClick={() => setBuyAmount(String(amt))}
+                                        style={{ flex: 1 }}
                                     >
-                                        {quickLabels[i]}<br />
-                                        <span style={{ fontSize: 10, opacity: 0.7 }}>{eur(amt)}</span>
+                                        {quickLabels[i]}
                                     </button>
                                 ))}
                             </div>
@@ -879,34 +808,81 @@ export default function TerminalPaperPanel({
                                 value={buyAmount}
                                 onChange={(e) => setBuyAmount(e.target.value)}
                                 inputMode="decimal"
-                                placeholder={t("paper_buy_placeholder")}
-                                style={{ marginTop: 6 }}
+                                placeholder={`Bedrag in EUR (max ${eur(state.cash)})`}
                             />
                         </div>
 
-                        {/* SL / TP inputs */}
-                        <div className="paper-sltp-inputs">
-                            <div className="paper-sltp-input-wrap sl">
-                                <label>{t("paper_sl_label")}</label>
-                                <input
-                                    className="terminal-terminal-input"
-                                    type="number"
-                                    value={slInput}
-                                    onChange={e => setSlInput(e.target.value)}
-                                    placeholder={stopLoss > 0 ? `${Math.round(stopLoss)}` : "$ optioneel"}
-                                />
+                        {/* Geavanceerd toggle */}
+                        <button
+                            className="terminal-btn terminal-btn-muted"
+                            style={{ width: "100%", fontSize: 11, marginBottom: showAdvanced ? 10 : 0 }}
+                            onClick={() => setShowAdvanced(v => !v)}
+                        >
+                            {showAdvanced ? "▲ Minder opties" : "▾ Geavanceerd (Limit · SL · TP)"}
+                        </button>
+
+                        {/* Geavanceerd: Limit + SL/TP */}
+                        {showAdvanced && (
+                            <div style={{ marginBottom: 10 }}>
+                                {/* Order type */}
+                                <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                                    <button
+                                        className={`terminal-btn${orderType === "market" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                                        style={{ flex: 1, fontSize: 12 }}
+                                        onClick={() => setOrderType("market")}
+                                    >
+                                        {t("paper_order_market")}
+                                    </button>
+                                    <button
+                                        className={`terminal-btn${orderType === "limit" ? " terminal-btn-primary" : " terminal-btn-muted"}`}
+                                        style={{ flex: 1, fontSize: 12 }}
+                                        onClick={() => setOrderType("limit")}
+                                    >
+                                        {t("paper_order_limit")}
+                                    </button>
+                                </div>
+                                {/* Limit price */}
+                                {orderType === "limit" && (
+                                    <div style={{ marginBottom: 8 }}>
+                                        <input
+                                            className="terminal-terminal-input"
+                                            type="number"
+                                            value={limitPrice}
+                                            onChange={(e) => setLimitPrice(e.target.value)}
+                                            placeholder={t("paper_limit_price_placeholder")}
+                                        />
+                                        {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
+                                            <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
+                                                {t("paper_limit_above_market")}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                {/* SL / TP inputs */}
+                                <div className="paper-sltp-inputs">
+                                    <div className="paper-sltp-input-wrap sl">
+                                        <label>{t("paper_sl_label")}</label>
+                                        <input
+                                            className="terminal-terminal-input"
+                                            type="number"
+                                            value={slInput}
+                                            onChange={e => setSlInput(e.target.value)}
+                                            placeholder={stopLoss > 0 ? `${Math.round(stopLoss)}` : "optioneel"}
+                                        />
+                                    </div>
+                                    <div className="paper-sltp-input-wrap tp">
+                                        <label>{t("paper_tp_label")}</label>
+                                        <input
+                                            className="terminal-terminal-input"
+                                            type="number"
+                                            value={tpInput}
+                                            onChange={e => setTpInput(e.target.value)}
+                                            placeholder={resistanceZoneLow > 0 ? `${Math.round(resistanceZoneLow)}` : "optioneel"}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="paper-sltp-input-wrap tp">
-                                <label>{t("paper_tp_label")}</label>
-                                <input
-                                    className="terminal-terminal-input"
-                                    type="number"
-                                    value={tpInput}
-                                    onChange={e => setTpInput(e.target.value)}
-                                    placeholder={resistanceZoneLow > 0 ? `${Math.round(resistanceZoneLow)}` : "$ optioneel"}
-                                />
-                            </div>
-                        </div>
+                        )}
 
                         {/* Order preview */}
                         {previewBtc > 0 && (
