@@ -1,6 +1,6 @@
 # Bitcoin Mentor — Prioriteitenlijst
 
-Laatste update: 2026-03-25
+Laatste update: 2026-04-06
 
 ## Voltooide items
 
@@ -10,6 +10,13 @@ Laatste update: 2026-03-25
 - ✅ "Trading Mentor" + "Marcus AI" samengevoegd → Mentor Marcus tab
 - ✅ Quiz JSON afkap gefixed (max_tokens: 1200 → 4096)
 - ✅ Finnhub timeouts toegevoegd (AbortSignal.timeout(5000))
+
+### 2026-04-06
+- ✅ Marcus past zich aan per trading stijl (day/swing/long) — coaching, timeframes, taal
+- ✅ Settings save bug gefixed (goal early-return blokkeerde trading_mode opslaan)
+- ✅ Scan engine is mode-aware — 15m zones voor day, 4H voor swing, 1D voor long
+- ✅ Trade layout redesign — order panel bovenaan, inline signal hint (entry/SL/TP)
+- ✅ DB auto-migratie in getDb() — alle tabellen en kolommen altijd aanwezig op productie
 
 ### 2026-03-25
 - ✅ Paper trading UX zoals echt platform — buy/sell tabs, SL/TP, equity sparkline
@@ -38,6 +45,37 @@ Laatste update: 2026-03-25
 | 8 | **Trade journal exporteren** — download trades als CSV/Excel | ⭐⭐⭐ | ⬜ |
 | 9 | **Binance Testnet koppeling** — echte order flow zonder echt geld | ⭐⭐⭐ | ⬜ |
 | 10 | **A/B test: Marcus toon** — meting welke stijl beter converteert | ⭐⭐ | ⬜ |
+| 11 | **Exchange aanbevelingen per trading mode** — in Settings tonen welk platform het beste past (day→Bybit/Kraken, swing/long→Bitvavo) | ⭐⭐⭐⭐ | ⬜ |
+| 12 | **Bybit API integratie** — API keys koppelen, live saldo zien, orders plaatsen (net zoals Bitvavo). Bybit: 0.10% fees, spot + futures, wereldwijd beschikbaar | ⭐⭐⭐⭐⭐ | ⬜ |
+| 13 | **Internationalisering — exchange ondersteuning buiten EU** — zie sectie hieronder | ⭐⭐⭐⭐⭐ | ⬜ |
+| 14 | **Landdetectie** — automatisch juiste exchange aanbevelen op basis van land van gebruiker | ⭐⭐⭐⭐ | ⬜ |
+| 15 | **Stripe betalingen** — abonnementen internationaal accepteren (nu alleen NL?) | ⭐⭐⭐⭐ | ⬜ |
+| 16 | **USD als standaard valuta voor niet-EU gebruikers** — nu is EUR standaard | ⭐⭐⭐ | ⬜ |
+| 17 | **Meertalige ondersteuning uitbreiden** — nu NL/EN, toevoegen: Spaans, Frans, Duits | ⭐⭐⭐⭐ | ⬜ |
+| 18 | **Content lokalisatie** — Marcus tone of voice per taal aanpassen (niet alleen vertalen) | ⭐⭐⭐ | ⬜ |
+
+---
+
+## Internationaal — Wat missen we om wereldwijd te kunnen groeien?
+
+### Exchange per regio
+| Regio | Beste exchange voor day trading | Beste voor swing/long |
+|---|---|---|
+| 🇳🇱 Nederland / EU | Kraken (DNB-vergunning) of Bybit | Bitvavo |
+| 🌍 Buiten EU (globaal) | Bybit (wereldwijd, 0.10%), OKX (0.08% maker) | Binance (niet NL), Bybit |
+| 🇺🇸 USA | Kraken Pro, Coinbase Advanced | Coinbase, Kraken |
+| 🌏 Azië | Bybit, OKX, MEXC (0% maker!) | Bybit, OKX |
+
+**Conclusie:** Bybit is de meest universele keuze — werkt wereldwijd (behalve VS), laagste fees, goede API.
+
+### Wat ontbreekt technisch voor internationaal
+1. **Meertalige Marcus** — nu NL/EN maar geen ES/FR/DE/AR
+2. **Lokale betaalmethoden** — Stripe alleen, geen iDEAL-alternatief voor andere landen
+3. **Tijdzone bewustzijn** — market hours per regio (Aziatische sessie, VS sessie)
+4. **Regulatory disclaimers per land** — sommige landen vereisen specifieke teksten
+5. **Mobiele app** — internationaal publiek verwacht native app (nu PWA)
+6. **MEXC integratie** — populair in Azië, 0% maker fees
+7. **OKX integratie** — groot in Azië en Midden-Oosten
 
 ---
 
