@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { usePushNotifications } from "@/lib/usePushNotifications";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import type { Currency } from "@/contexts/CurrencyContext";
 
 type TradingMode = "day" | "swing" | "long";
 type RiskLevel = "low" | "medium" | "high";
@@ -34,6 +36,7 @@ const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
 
 export default function SettingsPanel() {
   const { lang, setLang, t } = useLanguage();
+  const { currency, setCurrency } = useCurrency();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -217,6 +220,24 @@ export default function SettingsPanel() {
           >
             <div className="settings-option-title">{t("lang_en")}</div>
           </button>
+        </div>
+      </section>
+
+      {/* Valuta weergave */}
+      <section className="settings-card">
+        <div className="settings-card-title">{t("settings_title_currency")}</div>
+        <div className="settings-card-desc">{t("settings_desc_currency")}</div>
+        <div className="settings-options settings-options-2">
+          {(["EUR", "USD"] as Currency[]).map((c) => (
+            <button
+              key={c}
+              className={`settings-option${currency === c ? " active" : ""}`}
+              onClick={() => setCurrency(c)}
+            >
+              <div className="settings-option-title">{t(c === "EUR" ? "settings_currency_eur" : "settings_currency_usd")}</div>
+              <div className="settings-option-desc">{t(c === "EUR" ? "settings_currency_eur_desc" : "settings_currency_usd_desc")}</div>
+            </button>
+          ))}
         </div>
       </section>
 
