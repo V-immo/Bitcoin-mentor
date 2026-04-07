@@ -196,19 +196,63 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
         await saveMessages([]);
     }
 
+    // ── Helper: lees streaming response woord-voor-woord ──────────────────────
+    async function readStream(
+        res: Response,
+        onChunk: (text: string) => void
+    ): Promise<string> {
+        if (!res.body) {
+            const text = await res.text();
+            onChunk(text);
+            return text;
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let full = "";
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            full += chunk;
+            onChunk(full); // geeft volledige tekst tot nu mee (voor display)
+        }
+        return full;
+    }
+
+    // Strip memo-tags die Marcus intern gebruikt voor geheugen
+    function cleanReply(text: string): string {
+        return text
+            .replace(/\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*[^\]]{1,160}\]/gi, "")
+            .trim();
+    }
+
     // Intern: stuur zonder user-bericht in de chat te tonen (voor auto-briefing)
     async function sendInternal(text: string) {
         if (!text.trim()) return;
-        setLoading(true);
+        setLoading(true); // toont typing dots
         const next: Message[] = [{ role: "user", content: text.trim() }];
+
         try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
             });
-            const json = await res.json();
-            const finalMessages: Message[] = [{ role: "assistant", content: json.reply || t("chat_no_reply") }];
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            let firstChunk = true;
+            const full = await readStream(res, (partial) => {
+                if (firstChunk) {
+                    setLoading(false); // verberg typing dots zodra tekst begint
+                    firstChunk = false;
+                }
+                setMessages([{ role: "assistant", content: partial }]);
+            });
+
+            const clean = cleanReply(full);
+            const finalMessages: Message[] = [{ role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
         } catch {
@@ -223,9 +267,9 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
 
         const userMsg: Message = { role: "user", content: text.trim() };
         const next = [...messages, userMsg];
-        setMessages(next);
+        setMessages(next); // toon user bericht, nog geen assistant placeholder
         setInput("");
-        setLoading(true);
+        setLoading(true); // toont typing dots
         setUserSending(true);
 
         try {
@@ -234,11 +278,20 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
             });
-            const json = await res.json();
-            const finalMessages: Message[] = [
-                ...next,
-                { role: "assistant", content: json.reply || t("chat_no_reply") },
-            ];
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            let firstChunk = true;
+            const full = await readStream(res, (partial) => {
+                if (firstChunk) {
+                    setLoading(false); // verberg typing dots, tekst neemt het over
+                    firstChunk = false;
+                }
+                setMessages([...next, { role: "assistant", content: partial }]);
+            });
+
+            const clean = cleanReply(full);
+            const finalMessages: Message[] = [...next, { role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
         } catch {

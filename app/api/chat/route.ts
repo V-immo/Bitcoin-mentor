@@ -23,6 +23,14 @@ function checkChatRate(key: string): boolean {
   return true;
 }
 
+// ─── Module-level cache voor externe API data ─────────────────────────────────
+// Voorkomt 7+ HTTP calls per chat bericht. TTL: 5 minuten.
+const EXT_TTL = 5 * 60 * 1000;
+type Cached<T> = { data: T; ts: number } | null;
+let cachedFearGreed:    Cached<string>        = null;
+let cachedGlobalMetics: Cached<GlobalMetrics> = null;
+let cachedFunding:      Cached<FundingData[]> = null;
+
 function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 }
@@ -142,6 +150,28 @@ async function fetchGlobalMetrics(): Promise<GlobalMetrics> {
   }
 }
 
+// Gecachede wrappers — retourneren stale data als vers ophalen mislukt
+async function getCachedFearGreed(): Promise<string> {
+  if (cachedFearGreed && Date.now() - cachedFearGreed.ts < EXT_TTL) return cachedFearGreed.data;
+  const data = await fetchFearAndGreed();
+  cachedFearGreed = { data, ts: Date.now() };
+  return data;
+}
+
+async function getCachedGlobalMetrics(): Promise<GlobalMetrics> {
+  if (cachedGlobalMetics && Date.now() - cachedGlobalMetics.ts < EXT_TTL) return cachedGlobalMetics.data;
+  const data = await fetchGlobalMetrics();
+  cachedGlobalMetics = { data, ts: Date.now() };
+  return data;
+}
+
+async function getCachedFundingRates(): Promise<FundingData[]> {
+  if (cachedFunding && Date.now() - cachedFunding.ts < EXT_TTL) return cachedFunding.data;
+  const data = await fetchFundingRates();
+  cachedFunding = { data, ts: Date.now() };
+  return data;
+}
+
 export async function POST(request: NextRequest) {
   // Auth check
   const session = await auth();
@@ -238,9 +268,9 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
   }
 
   const [fearGreed, globalMetrics, fundingRates] = await Promise.all([
-    fetchFearAndGreed(),
-    fetchGlobalMetrics(),
-    fetchFundingRates(),
+    getCachedFearGreed(),
+    getCachedGlobalMetrics(),
+    getCachedFundingRates(),
   ]);
   const marketSummary = getMarketSummary();
 
@@ -912,71 +942,97 @@ QUIZ CONTEXT:
 ${questionContext}
 Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
 
-  try {
-    const filtered = messages
-      .filter((m) => m.role === "user" || m.role === "assistant")
-      .slice(-12)
-      .map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      }));
+  const filtered = messages
+    .filter((m) => m.role === "user" || m.role === "assistant")
+    .slice(-12)
+    .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
 
-    // Anthropic vereist dat de eerste boodschap van een user is
-    while (filtered.length > 0 && filtered[0].role !== "user") {
-      filtered.shift();
-    }
+  // Anthropic vereist dat de eerste boodschap van een user is
+  while (filtered.length > 0 && filtered[0].role !== "user") filtered.shift();
 
-    if (filtered.length === 0) {
-      return Response.json({ reply: "Geen geldige vraag ontvangen." });
-    }
-
-    const anthropicMessages = filtered;
-
-    const response = await getClient().messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1400,
-      system: systemPrompt,
-      messages: anthropicMessages,
-    });
-
-    let reply =
-      response.content[0]?.type === "text"
-        ? response.content[0].text
-        : "Geen antwoord ontvangen.";
-
-    // Extraheer en sla geheugen-notities op (alle categorieën)
-    const memoPattern = /\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*([^\]]{1,140})\]/gi;
-    let memoMatch: RegExpExecArray | null;
-    const newMemos: string[] = [];
-    while ((memoMatch = memoPattern.exec(reply)) !== null) {
-      const category = memoMatch[1].toUpperCase();
-      const content = memoMatch[2].trim();
-      newMemos.push(`[${category}: ${content}]`);
-    }
-    // Verwijder alle memo-tags uit de reply
-    reply = reply.replace(/\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*[^\]]{1,140}\]/gi, "").trim();
-
-    if (newMemos.length > 0 && userId) {
-      try {
-        const db = getDb();
-        const existing = db
-          .prepare("SELECT marcus_notes FROM settings WHERE user_id = ?")
-          .get(userId) as { marcus_notes?: string } | undefined;
-        const currentNotes = existing?.marcus_notes ?? "";
-        const date = new Date().toISOString().slice(0, 10);
-        const additions = newMemos.map(m => `[${date}] ${m}`).join("\n");
-        const updated = [currentNotes, additions]
-          .filter(Boolean)
-          .join("\n")
-          .slice(-2500); // max 2500 tekens bewaren
-        db.prepare("UPDATE settings SET marcus_notes = ? WHERE user_id = ?")
-          .run(updated, userId);
-      } catch { /* ignore */ }
-    }
-
-    return Response.json({ reply });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "Onbekende fout";
-    return Response.json({ reply: `Fout: ${msg}` });
+  if (filtered.length === 0) {
+    return new Response("Geen geldige vraag ontvangen.", { status: 400 });
   }
+
+  // ── Streaming response ─────────────────────────────────────────────────────
+  // Tekst verschijnt direct woord-voor-woord — geen wachttijd op volledig antwoord.
+  let accumulated = "";
+  const capturedUserId = userId;
+
+  const readable = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      try {
+        const stream = getClient().messages.stream({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1400,
+          system: systemPrompt,
+          messages: filtered,
+        });
+
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            const chunk = event.delta.text;
+            accumulated += chunk;
+            controller.enqueue(encoder.encode(chunk));
+          }
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Stream fout";
+        controller.enqueue(encoder.encode(`\nFout: ${msg}`));
+      } finally {
+        controller.close();
+
+        // Sla geheugen-notities op nadat stream klaar is
+        if (capturedUserId && accumulated) {
+          try {
+            const memoPattern =
+              /\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*([^\]]{1,140})\]/gi;
+            let memoMatch: RegExpExecArray | null;
+            const newMemos: string[] = [];
+            while ((memoMatch = memoPattern.exec(accumulated)) !== null) {
+              newMemos.push(
+                `[${memoMatch[1].toUpperCase()}: ${memoMatch[2].trim()}]`
+              );
+            }
+            if (newMemos.length > 0) {
+              const db = getDb();
+              const existing = db
+                .prepare(
+                  "SELECT marcus_notes FROM settings WHERE user_id = ?"
+                )
+                .get(capturedUserId) as
+                | { marcus_notes?: string }
+                | undefined;
+              const current = existing?.marcus_notes ?? "";
+              const date = new Date().toISOString().slice(0, 10);
+              const additions = newMemos
+                .map((m) => `[${date}] ${m}`)
+                .join("\n");
+              const updated = [current, additions]
+                .filter(Boolean)
+                .join("\n")
+                .slice(-2500);
+              db.prepare(
+                "UPDATE settings SET marcus_notes = ? WHERE user_id = ?"
+              ).run(updated, capturedUserId);
+            }
+          } catch {
+            /* memo opslaan mislukt — niet erg */
+          }
+        }
+      }
+    },
+  });
+
+  return new Response(readable, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache, no-store",
+      "X-Accel-Buffering": "no", // Nginx: geen buffering voor streaming
+    },
+  });
 }

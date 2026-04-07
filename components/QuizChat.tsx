@@ -54,9 +54,9 @@ Gegeven antwoord van de trader: ${selectedAnswer}${selectedAnswer !== question.c
 
     const profile = loadQuizProfile();
     const next: Msg[] = [...messages, { role: "user", content: text }];
-    setMessages(next);
+    setMessages(next); // toon user bericht, nog geen placeholder
     setInput("");
-    setLoading(true);
+    setLoading(true); // toont typing dots
 
     try {
       const res = await fetch("/api/chat", {
@@ -71,9 +71,33 @@ Gegeven antwoord van de trader: ${selectedAnswer}${selectedAnswer !== question.c
           lang,
         }),
       });
-      const json = await res.json();
-      const reply = json.reply ?? t("quiz_chat_no_reply");
-      setMessages([...next, { role: "assistant", content: reply }]);
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      if (!res.body) throw new Error("no body");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let full = "";
+      let firstChunk = true;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        full += decoder.decode(value, { stream: true });
+        if (firstChunk) {
+          setLoading(false); // verberg dots, tekst neemt het over
+          firstChunk = false;
+        }
+        const display = full
+          .replace(/\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*[^\]]{1,160}\]/gi, "")
+          .trim();
+        setMessages([...next, { role: "assistant", content: display }]);
+      }
+
+      const clean = full
+        .replace(/\[(PATROON|ANGST|STIJL|MIJLPAAL|FOUT|MEMO):\s*[^\]]{1,160}\]/gi, "")
+        .trim();
+      setMessages([...next, { role: "assistant", content: clean || t("quiz_chat_no_reply") }]);
     } catch {
       setMessages([...next, { role: "assistant", content: t("quiz_chat_error") }]);
     }
