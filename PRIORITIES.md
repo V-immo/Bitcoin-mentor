@@ -1,10 +1,25 @@
 # Bitcoin Mentor — Prioriteitenlijst & Internationale Roadmap
 
-Laatste update: 2026-04-06
+Laatste update: 2026-04-07
 
 ---
 
 ## Voltooide items
+
+### 2026-04-07
+- ✅ **Trade Plan Validator** — Marcus beoordeelt trade plan (GOED/AANPASSEN/NIET_DOEN), score 1-10, sterk/zwak/tip
+- ✅ **Bitvavo EUR pricefeed** — directe WS, geen conversie meer, prijs klopt exact met Bitvavo app
+- ✅ Trading mode badge in topbar (Day/Swing/Long zichtbaar)
+- ✅ Neutrale timeframe labels (geen "Swing trading" meer op 4H knop)
+- ✅ tab "Handelen" terug naar "Paper Trade" (NL + EN)
+- ✅ Agenda terug in navigatie
+- ✅ Volledige taalaudit NL/EN — alle strings vertaald, geen hardcoded tekst meer
+- ✅ Exchange aanbevelingen per trading mode in Settings (Bybit/Bitvavo/Kraken per dag/swing/long)
+- ✅ **Marcus ziet live wat gebruiker ziet** — appContext: asset, prijs, tab, signaal, koopzone, SL, R/R, RSI, trend
+- ✅ Volledige APP GIDS in Marcus system prompt — hij kent alle routes, tabs, hoe paper trade openen etc.
+- ✅ **Marcus Curriculum** — 5 niveaus volledig uitgeschreven lessen in Marcus-stem + begrippen-woordenboek
+- ✅ Quiz topics verdubbeld (30 per niveau, was 15-20) — sterk verminderde herhaling
+- ✅ deploy.yml: `rm -rf .next` voor schone builds — geen stale cache fouten meer
 
 ### 2026-04-06
 - ✅ Marcus past zich aan per trading stijl (day/swing/long) — coaching, timeframes, taal
@@ -34,12 +49,12 @@ Laatste update: 2026-04-06
 
 | # | Item | Impact | Status |
 |---|------|--------|--------|
-| 1 | **Exchange aanbevelingen per mode** — in Settings tonen welk platform past (day→Bybit/Kraken, swing/long→Bitvavo) | ⭐⭐⭐⭐ | ⬜ |
-| 2 | **Bybit API integratie** — keys koppelen, live saldo + orders (net zoals Bitvavo). 0.10% fees, wereldwijd beschikbaar | ⭐⭐⭐⭐⭐ | ⬜ |
-| 3 | **Landdetectie + juiste exchange aanbevelen** — automatisch op basis van IP/land | ⭐⭐⭐⭐ | ⬜ |
-| 4 | **USD als standaard voor niet-EU gebruikers** — nu is EUR hardcoded default | ⭐⭐⭐ | ⬜ |
-| 5 | **Alerts via e-mail** — push als asset in koopzone komt | ⭐⭐⭐⭐ | ⬜ |
-| 6 | **Onboarding flow** — stap-voor-stap intro, trading stijl kiezen, exchange koppelen | ⭐⭐⭐⭐ | ⬜ |
+| 1 | **Exchange aanbevelingen per mode** — in Settings tonen welk platform past (day→Bybit/Kraken, swing/long→Bitvavo) | ⭐⭐⭐⭐ | ✅ |
+| 2 | **Bybit API integratie** — keys koppelen, live saldo + orders (net zoals Bitvavo). 0.10% fees, wereldwijd beschikbaar | ⭐⭐⭐⭐⭐ | ✅ |
+| 3 | **Landdetectie + juiste exchange aanbevelen** — automatisch op basis van IP/land | ⭐⭐⭐⭐ | ✅ |
+| 4 | **USD als standaard voor niet-EU gebruikers** — nu is EUR hardcoded default | ⭐⭐⭐ | ✅ |
+| 5 | **Alerts via e-mail** — push als asset in koopzone komt | ⭐⭐⭐⭐ | ✅ |
+| 6 | **Onboarding flow** — stap-voor-stap intro, trading stijl kiezen, exchange koppelen | ⭐⭐⭐⭐ | ✅ |
 | 7 | **Admin: quiz pool beheren** — knop in admin om pool bij te vullen per level | ⭐⭐⭐ | ⬜ |
 | 8 | **Trade journal exporteren** — CSV/Excel download | ⭐⭐⭐ | ⬜ |
 
@@ -49,8 +64,8 @@ Laatste update: 2026-04-06
 
 | # | Item | Impact | Status |
 |---|------|--------|--------|
-| 9 | **Marcus memory** — onthoudt stijl, niveau, vorige trades over sessies heen. Niemand doet dit écht goed | ⭐⭐⭐⭐⭐ | ⬜ |
-| 10 | **Trade Plan Validator** — voor je een trade doet, leg het plan voor aan Marcus. Hij geeft een score (setup kwaliteit, R:R, risico) en rode vlaggen. *Bestaat nergens anders in deze vorm* | ⭐⭐⭐⭐⭐ | ⬜ |
+| 9 | **Marcus memory** — onthoudt stijl, niveau, vorige trades over sessies heen. Niemand doet dit écht goed | ⭐⭐⭐⭐⭐ | ✅ |
+| 10 | **Trade Plan Validator** — voor je een trade doet, leg het plan voor aan Marcus. Hij geeft een score (setup kwaliteit, R:R, risico) en rode vlaggen. *Bestaat nergens anders in deze vorm* | ⭐⭐⭐⭐⭐ | ✅ |
 | 11 | **Psychology score per trade** — na elke trade vul je emotie in (FOMO, rustig, twijfel). Marcus correleert dit over tijd: "je handelt 31% slechter als je FOMO voelt" | ⭐⭐⭐⭐⭐ | ⬜ |
 | 12 | **Multi-asset vergelijking** — scan alle assets naast elkaar, filter op beste setup | ⭐⭐⭐⭐ | ⬜ |
 | 13 | **Meertalig uitbreiden** — ES, FR, DE (Marcus toon per taal aanpassen, niet alleen vertalen) | ⭐⭐⭐⭐ | ⬜ |
