@@ -2,6 +2,11 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
 
+// Zorg dat quiz_pool lang-kolom bestaat (zelfde migratie als quiz route)
+function ensureQuizLang() {
+  try { getDb().exec(`ALTER TABLE quiz_pool ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'`); } catch { /* bestaat al */ }
+}
+
 type QuizPoolRow = {
   id: number;
   level: number;
@@ -16,6 +21,7 @@ type QuizPoolRow = {
 export async function GET(request: NextRequest) {
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
+  ensureQuizLang();
 
   const { searchParams } = request.nextUrl;
 
@@ -60,6 +66,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
+  ensureQuizLang();
 
   const body = await request.json().catch(() => ({}));
   const { level, lang, topic, question, context, options, correct, explanation } = body;
@@ -91,6 +98,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
+  ensureQuizLang();
 
   const { searchParams } = request.nextUrl;
   const id = searchParams.get("id");
