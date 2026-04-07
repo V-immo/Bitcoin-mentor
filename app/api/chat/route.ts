@@ -177,6 +177,11 @@ export async function POST(request: NextRequest) {
   const session = await auth();
   const userId = parseInt((session?.user as { id?: string })?.id ?? "0") || null;
 
+  // Activiteit bijhouden — zodat Marcus weet wanneer gebruiker echt actief was
+  if (userId) {
+    getDb().prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
+  }
+
   // Rate limit: 20 berichten per uur per user (of per IP als niet ingelogd)
   const rateKey = userId ? `user:${userId}` : (request.headers.get("x-forwarded-for") ?? "anon");
   if (!checkChatRate(rateKey)) {

@@ -14,10 +14,11 @@ function checkRate(key: string): boolean {
   return true;
 }
 
-function daysSince(dateStr: string | null): number {
-  if (!dateStr) return 0; // null = nog nooit gedaan, niet "lang geleden"
+// Geeft null terug als nooit gedaan, getal als wel gedaan
+function daysSince(dateStr: string | null): number | null {
+  if (!dateStr) return null;
   const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return 0;
+  if (isNaN(d.getTime())) return null;
   return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
 }
 
@@ -36,12 +37,12 @@ export async function GET() {
 
   const db = getDb();
 
-  // Update last_login_at
-  db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
-
-  // Haal activiteitsdata op
+  // Lees EERST de vorige activiteit, daarna updaten
   const user = db.prepare("SELECT last_login_at, username FROM users WHERE id = ?")
     .get(userId) as { last_login_at: string | null; username: string } | undefined;
+
+  // Update last_login_at na het lezen
+  db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
 
   // Haal history JSON op — echte trades, niet alleen "rij bestaat"
   const paperRow = db.prepare("SELECT history FROM paper_trading WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1")
@@ -63,22 +64,27 @@ export async function GET() {
 
   const daysSinceTrade = daysSince(lastTradeDate);
   const daysSinceJournal = daysSince(lastJournal?.last ?? null);
+  const daysSinceLogin = daysSince(user?.last_login_at ?? null) ?? 0;
 
-  // Geen nudge nodig als actief vandaag
-  if (daysSinceTrade <= 1 && daysSinceJournal <= 1) {
+  // Geen nudge als gebruiker vandaag of gisteren actief was (trade, journal OF sitebezoek)
+  const recentlyActive =
+    daysSinceLogin <= 1 ||
+    (daysSinceTrade !== null && daysSinceTrade <= 1) ||
+    (daysSinceJournal !== null && daysSinceJournal <= 1);
+  if (recentlyActive) {
     return Response.json({ nudge: null, active: true });
   }
 
-  // Minimale inactiviteit voor nudge: 2 dagen geen trade OF 3 dagen geen journal
-  const shouldNudge = daysSinceTrade >= 2 || daysSinceJournal >= 3;
+  // Nudge alleen als sitebezoek ook 2+ dagen geleden is
+  const shouldNudge = daysSinceLogin >= 2;
   if (!shouldNudge) return Response.json({ nudge: null });
 
   if (!checkRate(String(userId))) {
     return Response.json({ nudge: null });
   }
 
-  // Bepaal inactiviteitstype — max 14 dagen voor zinvolle tekst
-  const inactiveDays = Math.min(14, Math.max(daysSinceTrade, daysSinceJournal));
+  // Inactieve dagen op basis van écht laatste bezoek
+  const inactiveDays = Math.min(14, daysSinceLogin);
   const neverTraded = !lastTradeDate;
   const btcSummary = getBtcSummary();
 
