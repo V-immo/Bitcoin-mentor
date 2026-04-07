@@ -12,6 +12,8 @@ type QuizRow = {
   times_shown: number;
 };
 
+type PoolStat = { level: number; lang: string; count: number };
+
 const LEVELS = [1, 2, 3, 4, 5];
 const LANGS  = ["nl", "en"];
 
@@ -37,6 +39,15 @@ export default function AdminQuizPage() {
   const [generating, setGenerating] = useState(false);
   const [genMsg, setGenMsg]       = useState<string | null>(null);
   const [deleting, setDeleting]   = useState<number | null>(null);
+  const [stats, setStats]         = useState<PoolStat[]>([]);
+  const [bulkGen, setBulkGen]     = useState(false);
+  const [bulkMsg, setBulkMsg]     = useState<string | null>(null);
+
+  async function loadStats() {
+    const res = await fetch("/api/admin/quiz?stats=1");
+    const data = await res.json();
+    if (Array.isArray(data)) setStats(data);
+  }
 
   async function loadRows() {
     setLoading(true);
@@ -49,7 +60,7 @@ export default function AdminQuizPage() {
     setLoading(false);
   }
 
-  useEffect(() => { loadRows(); }, [filterLevel, filterLang]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadRows(); loadStats(); }, [filterLevel, filterLang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSave() {
     setSaving(true); setSaveMsg(null);
@@ -94,10 +105,41 @@ export default function AdminQuizPage() {
     setGenerating(false);
     if (data.ok) {
       setGenMsg(`✅ ${data.count} vragen gegenereerd en opgeslagen.`);
-      loadRows();
+      loadRows(); loadStats();
     } else {
       setGenMsg(`❌ ${data.error}`);
     }
+  }
+
+  // Genereer 10 vragen per niveau voor beide talen waar pool < 20 vragen
+  async function handleBulkGenerate() {
+    setBulkGen(true); setBulkMsg(null);
+    let total = 0;
+    const errors: string[] = [];
+    for (const lvl of LEVELS) {
+      for (const lang of LANGS) {
+        const existing = stats.find(s => s.level === lvl && s.lang === lang)?.count ?? 0;
+        if (existing >= 20) continue; // al genoeg
+        try {
+          const res = await fetch("/api/admin/quiz/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ level: lvl, lang, count: 10 }),
+          });
+          const data = await res.json();
+          if (data.ok) total += data.count;
+          else errors.push(`L${lvl}/${lang}: ${data.error}`);
+        } catch { errors.push(`L${lvl}/${lang}: netwerk fout`); }
+      }
+    }
+    setBulkGen(false);
+    setBulkMsg(errors.length > 0
+      ? `⚠️ ${total} vragen gegenereerd. Fouten: ${errors.join(", ")}`
+      : total > 0
+        ? `✅ ${total} vragen gegenereerd voor lege niveaus.`
+        : `ℹ️ Alle niveaus hebben al 20+ vragen.`
+    );
+    loadRows(); loadStats();
   }
 
   const f = (key: keyof typeof form, val: string | number) =>
@@ -108,6 +150,48 @@ export default function AdminQuizPage() {
       <div className="admin-page-header">
         <h1 className="admin-page-title">Quiz Pool</h1>
         <span className="admin-page-sub">{rows.length} vragen zichtbaar</span>
+      </div>
+
+      {/* Pool Statistieken */}
+      <div className="admin-card" style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+          <div className="admin-card-title" style={{ marginBottom: 0 }}>📊 Pool statistieken</div>
+          <button
+            className="admin-btn admin-btn-primary"
+            onClick={handleBulkGenerate}
+            disabled={bulkGen}
+            style={{ fontSize: 12, padding: "5px 12px" }}
+          >
+            {bulkGen ? "Genereren…" : "⚡ Vul lege niveaus bij"}
+          </button>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #2a1a28" }}>
+                <th style={thStyle}>Niveau</th>
+                {LANGS.map(l => <th key={l} style={thStyle}>{l.toUpperCase()}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {LEVELS.map(lvl => (
+                <tr key={lvl} style={{ borderBottom: "1px solid #1a0f18" }}>
+                  <td style={{ padding: "7px 8px", color: "#e91e63", fontWeight: 700 }}>Level {lvl}</td>
+                  {LANGS.map(lang => {
+                    const count = stats.find(s => s.level === lvl && s.lang === lang)?.count ?? 0;
+                    const color = count === 0 ? "#ef4444" : count < 15 ? "#f59e0b" : "#22c55e";
+                    return (
+                      <td key={lang} style={{ padding: "7px 8px", color, fontWeight: 600 }}>
+                        {count} vragen {count < 15 ? "⚠️" : "✓"}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {bulkMsg && <div style={{ marginTop: 10, fontSize: 13 }}>{bulkMsg}</div>}
       </div>
 
       {/* AI Genereren */}
@@ -279,4 +363,7 @@ const labelStyle: React.CSSProperties = { display: "block", fontSize: 11, color:
 const selectStyle: React.CSSProperties = {
   background: "#1a0f18", border: "1px solid #3d2a3b", borderRadius: 6,
   color: "#e5d4e7", padding: "6px 10px", fontSize: 13, cursor: "pointer",
+};
+const thStyle: React.CSSProperties = {
+  padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap",
 };

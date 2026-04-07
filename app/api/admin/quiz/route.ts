@@ -12,12 +12,22 @@ type QuizPoolRow = {
   times_shown: number;
 };
 
-// GET — lijst vragen met optionele filters
+// GET — lijst vragen met optionele filters, of ?stats=1 voor pool-statistieken
 export async function GET(request: NextRequest) {
   const session = await auth();
   if ((session?.user as { role?: string })?.role !== "admin") return Response.json({ error: "Geen toegang" }, { status: 403 });
 
   const { searchParams } = request.nextUrl;
+
+  // Pool-statistieken: per level/lang hoeveel vragen
+  if (searchParams.get("stats") === "1") {
+    const db = getDb();
+    const counts = db.prepare(
+      "SELECT level, lang, COUNT(*) as count FROM quiz_pool GROUP BY level, lang ORDER BY level ASC, lang ASC"
+    ).all() as { level: number; lang: string; count: number }[];
+    return Response.json(counts);
+  }
+
   const level = searchParams.get("level");
   const lang  = searchParams.get("lang");
 

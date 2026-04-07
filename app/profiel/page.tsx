@@ -454,6 +454,40 @@ export default function ProfielPage() {
             </div>
           </div>
 
+          {/* ── Exporteren ── */}
+          <div className="card">
+            <div style={sectionTitle}>{t("profiel_export_title")}</div>
+            <p style={{ fontSize: 13, color: "#bf7a99", margin: "10px 0 16px" }}>
+              {t("profiel_export_desc")}
+            </p>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <a
+                href="/api/me/export?type=trades"
+                download="bitcoin-mentor-trades.csv"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  background: "rgba(233,30,99,0.12)", border: "1px solid rgba(233,30,99,0.3)",
+                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600,
+                  color: "#e91e63", textDecoration: "none", cursor: "pointer",
+                }}
+              >
+                📥 {t("profiel_export_trades")}
+              </a>
+              <a
+                href="/api/me/export?type=journal"
+                download="bitcoin-mentor-journal.csv"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  background: "rgba(233,30,99,0.07)", border: "1px solid rgba(233,30,99,0.2)",
+                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600,
+                  color: "#bf7a99", textDecoration: "none", cursor: "pointer",
+                }}
+              >
+                📓 {t("profiel_export_journal")}
+              </a>
+            </div>
+          </div>
+
           {/* ── Instellingen samenvatting ── */}
           <div className="card">
             <div style={sectionTitle}>{t("profiel_settings_title")}</div>

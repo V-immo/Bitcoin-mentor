@@ -1,10 +1,14 @@
 # Bitcoin Mentor — Prioriteitenlijst & Internationale Roadmap
 
-Laatste update: 2026-04-07
+Laatste update: 2026-04-07 (avond)
 
 ---
 
 ## Voltooide items
+
+### 2026-04-07 (avond)
+- ✅ **Admin quiz pool statistieken** — per niveau/taal hoeveel vragen, kleurcodering (rood/geel/groen), bulk bijvullen knop
+- ✅ **Trade journal CSV export** — `/api/me/export` geeft trades of dagboek als CSV, knop op profielpagina (NL+EN)
 
 ### 2026-04-07
 - ✅ **Trade Plan Validator** — Marcus beoordeelt trade plan (GOED/AANPASSEN/NIET_DOEN), score 1-10, sterk/zwak/tip
@@ -55,8 +59,8 @@ Laatste update: 2026-04-07
 | 4 | **USD als standaard voor niet-EU gebruikers** — nu is EUR hardcoded default | ⭐⭐⭐ | ✅ |
 | 5 | **Alerts via e-mail** — push als asset in koopzone komt | ⭐⭐⭐⭐ | ✅ |
 | 6 | **Onboarding flow** — stap-voor-stap intro, trading stijl kiezen, exchange koppelen | ⭐⭐⭐⭐ | ✅ |
-| 7 | **Admin: quiz pool beheren** — knop in admin om pool bij te vullen per level | ⭐⭐⭐ | ⬜ |
-| 8 | **Trade journal exporteren** — CSV/Excel download | ⭐⭐⭐ | ⬜ |
+| 7 | **Admin: quiz pool beheren** — statistieken per niveau/taal, bulk bijvullen knop | ⭐⭐⭐ | ✅ |
+| 8 | **Trade journal exporteren** — CSV download (trades + dagboek), knop op profielpagina | ⭐⭐⭐ | ✅ |
 
 ---
 
