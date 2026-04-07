@@ -1,10 +1,15 @@
 # Bitcoin Mentor — Prioriteitenlijst & Internationale Roadmap
 
-Laatste update: 2026-04-07 (avond)
+Laatste update: 2026-04-08
 
 ---
 
 ## Voltooide items
+
+### 2026-04-08
+- ✅ **Psychology score per trade** — emotie-breakdown in StatsPanel (gem. P&L + winrate per emotie, Marcus inzicht), psychologie-patronen in Marcus system prompt, NL+EN vertalingen
+- ✅ **Marcus streaming** — tekst verschijnt woord-voor-woord, typing dots verdwijnen bij eerste chunk
+- ✅ **Externe API cache** — 5-min cache voor FearGreed/CoinGecko/Binance funding (was 7 calls/bericht)
 
 ### 2026-04-07 (avond)
 - ✅ **Admin quiz pool statistieken** — per niveau/taal hoeveel vragen, kleurcodering (rood/geel/groen), bulk bijvullen knop
@@ -70,7 +75,7 @@ Laatste update: 2026-04-07 (avond)
 |---|------|--------|--------|
 | 9 | **Marcus memory** — onthoudt stijl, niveau, vorige trades over sessies heen. Niemand doet dit écht goed | ⭐⭐⭐⭐⭐ | ✅ |
 | 10 | **Trade Plan Validator** — voor je een trade doet, leg het plan voor aan Marcus. Hij geeft een score (setup kwaliteit, R:R, risico) en rode vlaggen. *Bestaat nergens anders in deze vorm* | ⭐⭐⭐⭐⭐ | ✅ |
-| 11 | **Psychology score per trade** — na elke trade vul je emotie in (FOMO, rustig, twijfel). Marcus correleert dit over tijd: "je handelt 31% slechter als je FOMO voelt" | ⭐⭐⭐⭐⭐ | ⬜ |
+| 11 | **Psychology score per trade** — emotie na trade, breakdown in stats, Marcus coaching op basis van patronen | ⭐⭐⭐⭐⭐ | ✅ |
 | 12 | **Multi-asset vergelijking** — scan alle assets naast elkaar, filter op beste setup | ⭐⭐⭐⭐ | ⬜ |
 | 13 | **Meertalig uitbreiden** — ES, FR, DE (Marcus toon per taal aanpassen, niet alleen vertalen) | ⭐⭐⭐⭐ | ⬜ |
 | 14 | **Tijdzone bewustzijn Marcus** — hij kent Aziatische, Europese en VS sessies, past advies aan | ⭐⭐⭐ | ⬜ |

@@ -10,10 +10,19 @@ type PaperTrade = {
     pnl?: number;
     timestamp?: number;
     asset?: string;
+    emotion?: number;
 };
 
+const EMOTION_DATA = [
+    { value: 1, emoji: "😨", labelKey: "stats_emo_1" as const },
+    { value: 2, emoji: "😟", labelKey: "stats_emo_2" as const },
+    { value: 3, emoji: "😐", labelKey: "stats_emo_3" as const },
+    { value: 4, emoji: "😊", labelKey: "stats_emo_4" as const },
+    { value: 5, emoji: "🔥", labelKey: "stats_emo_5" as const },
+];
+
 export default function StatsPanel() {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [trades, setTrades] = useState<PaperTrade[]>([]);
 
     const DAYS = [
@@ -77,8 +86,33 @@ export default function StatsPanel() {
         return map;
     }, [sells]);
 
+    const byEmotion = useMemo(() => {
+        const map: Record<number, { pnl: number; count: number; wins: number }> = {};
+        for (const trade of sells) {
+            if (!trade.emotion) continue;
+            if (!map[trade.emotion]) map[trade.emotion] = { pnl: 0, count: 0, wins: 0 };
+            map[trade.emotion].pnl += trade.pnl || 0;
+            map[trade.emotion].count++;
+            if ((trade.pnl || 0) > 0) map[trade.emotion].wins++;
+        }
+        return map;
+    }, [sells]);
+
+    // Marcus-inzicht: welke emotie levert de beste resultaten?
+    const psychInsight = useMemo(() => {
+        const entries = Object.entries(byEmotion)
+            .filter(([, d]) => d.count >= 2)
+            .map(([emo, d]) => ({ emo: Number(emo), avg: d.pnl / d.count, wr: Math.round((d.wins / d.count) * 100) }));
+        if (entries.length < 2) return null;
+        const best  = entries.reduce((a, b) => a.avg > b.avg ? a : b);
+        const worst = entries.reduce((a, b) => a.avg < b.avg ? a : b);
+        if (best.emo === worst.emo) return null;
+        return { best, worst };
+    }, [byEmotion]);
+
     const hasDayData = sells.some((trade) => trade.timestamp);
     const hasAssetData = sells.some((trade) => trade.asset);
+    const hasEmotionData = Object.keys(byEmotion).length > 0;
 
     if (sells.length === 0) {
         return (
@@ -144,6 +178,59 @@ export default function StatsPanel() {
                                 </div>
                             );
                         })}
+                    </div>
+                </>
+            )}
+            {hasEmotionData && (
+                <>
+                    <div className="terminal-stats-subtitle" style={{ marginTop: 14 }}>{t("stats_panel_psychology")}</div>
+
+                    {psychInsight && (() => {
+                        const bestEmo = EMOTION_DATA.find(e => e.value === psychInsight.best.emo);
+                        const worstEmo = EMOTION_DATA.find(e => e.value === psychInsight.worst.emo);
+                        return (
+                            <div style={{
+                                background: "rgba(233,30,99,0.07)", border: "1px solid rgba(233,30,99,0.2)",
+                                borderRadius: 8, padding: "8px 12px", marginBottom: 10, fontSize: 12, color: "#e8d5e0", lineHeight: 1.6,
+                            }}>
+                                🧠 {lang === "en"
+                                    ? <>Best: {bestEmo?.emoji} <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (avg +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Worst: {worstEmo?.emoji} <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (avg −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
+                                    : <>Best: {bestEmo?.emoji} <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (gem. +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Slechtst: {worstEmo?.emoji} <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (gem. −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
+                                }
+                            </div>
+                        );
+                    })()}
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {EMOTION_DATA
+                            .filter(e => byEmotion[e.value])
+                            .map(e => {
+                                const d = byEmotion[e.value];
+                                const avg = d.pnl / d.count;
+                                const wr = Math.round((d.wins / d.count) * 100);
+                                const isPos = avg >= 0;
+                                const maxAbs = Math.max(...Object.values(byEmotion).map(x => Math.abs(x.pnl / x.count)), 1);
+                                const barW = Math.round((Math.abs(avg) / maxAbs) * 100);
+                                return (
+                                    <div key={e.value} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
+                                        <span style={{ fontSize: 16, flexShrink: 0 }}>{e.emoji}</span>
+                                        <span style={{ width: 68, color: "var(--text-secondary)", flexShrink: 0 }}>{t(e.labelKey)}</span>
+                                        <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 3, height: 6, overflow: "hidden" }}>
+                                            <div style={{ width: `${barW}%`, height: "100%", background: isPos ? "#26c57c" : "#ef4444", borderRadius: 3 }} />
+                                        </div>
+                                        <span style={{ width: 52, textAlign: "right", fontWeight: 700, color: isPos ? "#26c57c" : "#ef4444", flexShrink: 0 }}>
+                                            {isPos ? "+" : ""}€{avg.toFixed(0)}
+                                        </span>
+                                        <span style={{ width: 32, textAlign: "right", color: "var(--text-secondary)", fontSize: 11, flexShrink: 0 }}>
+                                            {wr}%
+                                        </span>
+                                        <span style={{ color: "var(--text-secondary)", fontSize: 11, flexShrink: 0 }}>
+                                            {d.count}×
+                                        </span>
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </>
             )}

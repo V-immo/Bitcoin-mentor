@@ -260,6 +260,65 @@ Zwakke punten: ${weakTopics.join(", ") || "nog niet bepaald"}`;
     } catch { /* gebruik body values als fallback */ }
   }
 
+  // ── Psychology patronen uit paper trades ───────────────────────────────────
+  let psychologyContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const papers = db.prepare(
+        "SELECT history FROM paper_trading WHERE user_id = ?"
+      ).all(userId) as { history: string }[];
+
+      type TradeEntry = { side?: string; pnl?: number; emotion?: number };
+      const EMOTION_NAMES: Record<number, string> = {
+        1: "Angstig/Fearful", 2: "Onzeker/Uncertain", 3: "Neutraal/Neutral",
+        4: "Goed/Good", 5: "Top/On fire",
+      };
+
+      const emoMap: Record<number, { pnl: number; count: number; wins: number }> = {};
+      for (const p of papers) {
+        let hist: TradeEntry[] = [];
+        try { hist = JSON.parse(p.history ?? "[]"); } catch { continue; }
+        for (const t of hist) {
+          if (t.side !== "sell" || typeof t.pnl !== "number" || !t.emotion) continue;
+          if (!emoMap[t.emotion]) emoMap[t.emotion] = { pnl: 0, count: 0, wins: 0 };
+          emoMap[t.emotion].pnl += t.pnl;
+          emoMap[t.emotion].count++;
+          if (t.pnl > 0) emoMap[t.emotion].wins++;
+        }
+      }
+
+      const entries = Object.entries(emoMap)
+        .filter(([, d]) => d.count >= 1)
+        .map(([emo, d]) => ({
+          emo: Number(emo),
+          name: EMOTION_NAMES[Number(emo)] ?? `emotie ${emo}`,
+          avg: d.pnl / d.count,
+          wr: Math.round((d.wins / d.count) * 100),
+          count: d.count,
+        }));
+
+      if (entries.length > 0) {
+        const lines = entries
+          .sort((a, b) => b.avg - a.avg)
+          .map(e => `  ${e.name}: gem. €${e.avg.toFixed(1)} P&L | winrate ${e.wr}% | ${e.count} trades`);
+        psychologyContext = `PSYCHOLOGIE ANALYSE (gebaseerd op echte trade data van deze gebruiker):
+${lines.join("\n")}`;
+
+        // Voeg concrete inzichten toe als er genoeg data is
+        if (entries.length >= 2) {
+          const best = entries.reduce((a, b) => a.avg > b.avg ? a : b);
+          const worst = entries.reduce((a, b) => a.avg < b.avg ? a : b);
+          if (best.emo !== worst.emo) {
+            psychologyContext += `\n\nMARCUS INZICHT: Deze gebruiker presteert gemiddeld ${(best.avg - worst.avg).toFixed(0)}% beter bij emotie "${best.name}" vs "${worst.name}". Gebruik dit actief in coaching — wijs de gebruiker hierop als hij twijfelt of gestrest klinkt.`;
+          }
+        }
+      } else {
+        psychologyContext = "Nog geen emotie-data beschikbaar (gebruiker heeft nog geen trades met emotie-score gesloten).";
+      }
+    } catch { /* geen psychology data */ }
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return Response.json({
@@ -579,6 +638,10 @@ ${bybitContext
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
+
+TRADING PSYCHOLOGIE — PERSOONLIJK PROFIEL VAN DEZE GEBRUIKER:
+${psychologyContext || "Nog geen emotie-data beschikbaar."}
+Marcus gebruikt deze data actief. Als de gebruiker FOMO of stress uitdrukt, koppelt Marcus dit aan zijn historische prestaties: "Kijk, jouw data toont dat je bij twijfel gemiddeld €X slechter presteert — dat is precies nu het geval." Wees concreet, geen algemene wijsheden.
 
 APP GIDS — MARCUS KENT DE HELE BITCOIN MENTOR APP:
 Marcus kan altijd uitleggen waar iets te vinden is. Gebruik dit als de gebruiker vraagt "hoe doe ik X" of "waar vind ik Y".
