@@ -4,16 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DailyQuiz from "@/components/DailyQuiz";
 import LearningResources from "@/components/LearningResources";
+import MarcusCurriculum from "@/components/MarcusCurriculum";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LerenPage() {
   const { t } = useLanguage();
-  const [tab, setTab] = useState("quiz");
+  const [tab, setTab] = useState("lessons");
   const [showIntro, setShowIntro] = useState(false);
 
   const TABS = [
+    { id: "lessons", label: t("leren_tab_lessons"), icon: "📖" },
     { id: "quiz", label: t("leren_tab_quiz"), icon: "🎓" },
-    { id: "resources", label: t("leren_tab_resources"), icon: "📚" },
+    { id: "resources", label: t("leren_tab_resources"), icon: "📺" },
   ];
 
   useEffect(() => {
@@ -68,6 +70,7 @@ export default function LerenPage() {
         ))}
       </div>
 
+      {tab === "lessons" && <MarcusCurriculum />}
       {tab === "quiz" && <DailyQuiz />}
       {tab === "resources" && <LearningResources />}
 

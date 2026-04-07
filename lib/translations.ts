@@ -359,8 +359,9 @@ const translations = {
 
     // === LEREN PAGINA ===
     leren_back: "← Terug naar Traden",
+    leren_tab_lessons: "Lessen",
     leren_tab_quiz: "Dagelijkse quiz",
-    leren_tab_resources: "Leerbronnen",
+    leren_tab_resources: "Video's",
     leren_intro_title: "Welkom bij Leren 🎓",
     leren_intro_body1: "Hier word je stap voor stap een betere trader. Er zijn twee onderdelen:",
     leren_intro_quiz_title: "Dagelijkse quiz",
@@ -1396,8 +1397,9 @@ const translations = {
 
     // === LEREN PAGINA ===
     leren_back: "← Back to Trading",
+    leren_tab_lessons: "Lessons",
     leren_tab_quiz: "Daily quiz",
-    leren_tab_resources: "Learning resources",
+    leren_tab_resources: "Videos",
     leren_intro_title: "Welcome to Learning 🎓",
     leren_intro_body1: "Here you become a better trader step by step. There are two sections:",
     leren_intro_quiz_title: "Daily quiz",
