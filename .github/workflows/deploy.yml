@@ -48,18 +48,11 @@ jobs:
             # Stop pm2 — site even offline (~2-3 min bouwtijd)
             pm2 stop bitcoin-mentor || true
 
-            # Verwijder Turbopack lock file zodat build niet vastloopt
-            rm -f .next/lock
+            # Verwijder .next volledig voor een schone build (voorkomt corrupt tmp-bestanden)
+            rm -rf .next
 
-            # Build — bij fout: pm2 altijd herstarten met oude .next/
-            if NODE_OPTIONS='--max-old-space-size=1400' npm run build; then
-              echo "✅ Build geslaagd"
-            else
-              echo "❌ Build mislukt — site herstarten met oude versie"
-              pm2 start bitcoin-mentor || pm2 start ecosystem.config.js
-              pm2 save
-              exit 1
-            fi
+            # Build — schone .next garanteert geen stale cache issues
+            NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
             # Start pm2 — site weer online
             pm2 start bitcoin-mentor || pm2 start ecosystem.config.js
