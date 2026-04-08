@@ -20,17 +20,17 @@
 }
 
 [data-theme="light"] {
-  --bg: #f0e8f0;
-  --surface: #ffffff;
-  --surface-2: #f7f0f7;
-  --text: #12080f;
-  --text-secondary: #5c3050;
-  --border: rgba(173, 20, 87, 0.22);
-  --border-hover: rgba(173, 20, 87, 0.55);
-  --card-shadow: 0 1px 4px rgba(100, 0, 60, 0.10);
-  --green: #16a34a;
-  --red: #dc2626;
-  --orange: #d97706;
+  --bg: #e8d5e8;
+  --surface: #faf5fa;
+  --surface-2: #dfc8df;
+  --text: #0f0510;
+  --text-secondary: #4a1f40;
+  --border: rgba(173, 20, 87, 0.35);
+  --border-hover: rgba(173, 20, 87, 0.70);
+  --card-shadow: 0 2px 8px rgba(100, 0, 60, 0.14);
+  --green: #15803d;
+  --red: #b91c1c;
+  --orange: #b45309;
 }
 
 html,
