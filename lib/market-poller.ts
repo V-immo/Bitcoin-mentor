@@ -12,7 +12,7 @@ type Cached<T> = { data: T; ts: number } | null;
 
 // Gedeelde cache — geïmporteerd door chat route en andere modules
 export let cachedFearGreed:    Cached<string>        = null;
-export let cachedGlobalMetics: Cached<GlobalMetrics> = null;
+export let cachedGlobalMetrics: Cached<GlobalMetrics> = null;
 export let cachedFunding:      Cached<FundingData[]> = null;
 
 export type GlobalMetrics = {
@@ -122,9 +122,9 @@ export async function getCachedFearGreed(): Promise<string> {
 }
 
 export async function getCachedGlobalMetrics(): Promise<GlobalMetrics> {
-  if (cachedGlobalMetics && Date.now() - cachedGlobalMetics.ts < EXT_TTL) return cachedGlobalMetics.data;
+  if (cachedGlobalMetrics && Date.now() - cachedGlobalMetrics.ts < EXT_TTL) return cachedGlobalMetrics.data;
   const data = await fetchGlobalMetrics();
-  cachedGlobalMetics = { data, ts: Date.now() };
+  cachedGlobalMetrics = { data, ts: Date.now() };
   return data;
 }
 
@@ -147,7 +147,7 @@ async function pollAll(): Promise<void> {
       fetchFundingRates(),
     ]);
     if (fg.status === "fulfilled") cachedFearGreed    = { data: fg.value, ts: Date.now() };
-    if (gm.status === "fulfilled") cachedGlobalMetics = { data: gm.value, ts: Date.now() };
+    if (gm.status === "fulfilled") cachedGlobalMetrics = { data: gm.value, ts: Date.now() };
     if (fr.status === "fulfilled") cachedFunding      = { data: fr.value, ts: Date.now() };
   } catch {
     // stilletjes falen — stale cache blijft geldig

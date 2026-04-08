@@ -35,7 +35,10 @@ function checkQuickQuizRate(key: string): boolean {
   return checkRateLimit(quickQuizRateMap, key, QUICK_QUIZ_MAX);
 }
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+function getClient() {
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY niet geconfigureerd");
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+}
 
 export const LEVEL_TOPICS: Record<number, string[]> = {
   1: [
@@ -533,7 +536,7 @@ Geef ALLEEN een JSON array terug (geen extra tekst):
 
 Zorg dat exact één antwoord correct is en de andere 3 plausibel maar fout zijn.`;
 
-  const response = await client.messages.create({
+  const response = await getClient().messages.create({
     model: "claude-haiku-4-5",
     max_tokens: 2048,
     messages: [{ role: "user", content: prompt }],
