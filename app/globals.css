@@ -20,13 +20,17 @@
 }
 
 [data-theme="light"] {
-  --bg: #f7f2f7;
+  --bg: #f0e8f0;
   --surface: #ffffff;
-  --surface-2: #ede5f0;
-  --text: #1a0f18;
-  --text-secondary: #7a4d6e;
-  --border: rgba(233, 30, 99, 0.18);
-  --border-hover: rgba(233, 30, 99, 0.42);
+  --surface-2: #f7f0f7;
+  --text: #12080f;
+  --text-secondary: #5c3050;
+  --border: rgba(173, 20, 87, 0.22);
+  --border-hover: rgba(173, 20, 87, 0.55);
+  --card-shadow: 0 1px 4px rgba(100, 0, 60, 0.10);
+  --green: #16a34a;
+  --red: #dc2626;
+  --orange: #d97706;
 }
 
 html,
@@ -63,6 +67,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
+  box-shadow: var(--card-shadow, none);
 }
 
 .value-sm {
@@ -6467,4 +6472,119 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
     width: 100%;
     max-width: 100%;
   }
+}
+
+/* ══════════════════════════════════════════════════════
+   LIGHT MODE — verbeterd contrast en leesbaarheid
+   ══════════════════════════════════════════════════════ */
+
+[data-theme="light"] .card,
+[data-theme="light"] .terminal-chart-card,
+[data-theme="light"] .terminal-side-card,
+[data-theme="light"] .terminal-advanced,
+[data-theme="light"] .terminal-advanced-card {
+  box-shadow: 0 1px 4px rgba(100, 0, 60, 0.10), 0 0 0 1px rgba(173, 20, 87, 0.10);
+}
+
+[data-theme="light"] .scanner-card {
+  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
+  border-color: rgba(173, 20, 87, 0.20);
+}
+
+[data-theme="light"] .scanner-card:hover {
+  box-shadow: 0 4px 16px rgba(100, 0, 60, 0.15);
+  border-color: rgba(173, 20, 87, 0.45);
+}
+
+/* Signal badges — leesbaar op witte achtergrond */
+[data-theme="light"] .scanner-signal-green  {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.35);
+}
+[data-theme="light"] .scanner-signal-yellow {
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.35);
+}
+[data-theme="light"] .scanner-signal-red {
+  background: rgba(220, 38, 38, 0.10);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.30);
+}
+
+/* Winst/verlies kleuren — meer contrast in light */
+[data-theme="light"] .scanner-card-change.pos { color: #15803d; }
+[data-theme="light"] .scanner-card-change.neg { color: #b91c1c; }
+
+/* Score bar label */
+[data-theme="light"] .scanner-card-score-label { color: #5c3050; font-weight: 600; }
+
+/* Topbar in light mode */
+[data-theme="light"] .terminal-topbar {
+  background: var(--surface);
+  border-bottom: 1px solid rgba(173, 20, 87, 0.18);
+  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
+}
+
+/* Tabs in light mode */
+[data-theme="light"] .terminal-tab {
+  color: #5c3050;
+}
+[data-theme="light"] .terminal-tab.active {
+  color: #ad1457;
+  border-bottom-color: #ad1457;
+}
+
+/* Input velden in light mode */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: var(--surface);
+  border-color: rgba(173, 20, 87, 0.28);
+  color: #12080f;
+}
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus {
+  border-color: #ad1457;
+  box-shadow: 0 0 0 2px rgba(173, 20, 87, 0.12);
+  outline: none;
+}
+
+/* Knoppen in light mode */
+[data-theme="light"] .terminal-btn-muted {
+  background: #f0e8f0;
+  border-color: rgba(173, 20, 87, 0.25);
+  color: #5c3050;
+}
+[data-theme="light"] .terminal-btn-muted:hover {
+  background: #e8dce8;
+  border-color: rgba(173, 20, 87, 0.45);
+}
+
+/* Muted tekst — donkerder in light */
+[data-theme="light"] .muted,
+[data-theme="light"] .scanner-card-meta,
+[data-theme="light"] .scanner-card-name {
+  color: #7a4060;
+}
+
+/* StatsPanel kaarten */
+[data-theme="light"] .stats-card,
+[data-theme="light"] [class*="stats-"] {
+  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
+}
+
+/* Tabel rijen */
+[data-theme="light"] tr:hover {
+  background: rgba(173, 20, 87, 0.04);
+}
+[data-theme="light"] th {
+  background: #f0e8f0;
+  color: #5c3050;
+  font-weight: 700;
+}
+[data-theme="light"] td {
+  border-bottom-color: rgba(173, 20, 87, 0.10);
+  color: #12080f;
 }
