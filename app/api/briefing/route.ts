@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
   if (!scanData || scanData.length === 0) {
     // Trigger scan eerst
     try {
-      await fetch(`${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/market-scan`, { method: "GET" });
+      await fetch(`${process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "https://bitcoinmentor.be"}/api/market-scan`, { method: "GET" });
       await new Promise(r => setTimeout(r, 3000));
     } catch { /* ignore */ }
   }

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   db.prepare("INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)")
     .run(user.id, token, expiresAt);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.NEXTAUTH_URL ?? "https://bitcoinmentor.be";
   const resetUrl = `${baseUrl}/auth/reset-password/${token}`;
 
   // E-mail versturen

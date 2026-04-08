@@ -10,6 +10,7 @@ function getUserId(session: Session | null): number | null {
 }
 
 function getClient() {
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY niet geconfigureerd");
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 }
 
