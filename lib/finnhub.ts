@@ -118,21 +118,44 @@ export async function getFinnhubQuote(finnhubSymbol: string): Promise<FinnhubQuo
   let previousClose = 0;
 
   if (isForex) {
-    // Forex/commodity: gebruik recentste candle als prijs
-    const to = Math.floor(Date.now() / 1000);
-    const from = to - 3600;
+    // Forex/commodity (goud, zilver, olie): gebruik Finnhub forex/rates voor huidige prijs
+    // Dit werkt 24/5 (goud handelt 23u/dag) en geeft altijd de spot prijs
     const res = await fetch(
-      `${FINNHUB_BASE}/forex/candle?symbol=${encodeURIComponent(finnhubSymbol)}&resolution=1&from=${from}&to=${to}&token=${apiKey}`,
+      `${FINNHUB_BASE}/forex/rates?base=USD&token=${apiKey}`,
       { cache: "no-store", signal: AbortSignal.timeout(5000) }
     );
     if (res.ok) {
       const data = await res.json();
-      if (data.s === "ok" && data.c?.length > 0) {
-        price = data.c[data.c.length - 1];
-        previousClose = data.c[0];
-        change24h = previousClose > 0 ? ((price - previousClose) / previousClose) * 100 : 0;
+      // OANDA:XAU_USD → extract "XAU" uit het symbool
+      const parts = finnhubSymbol.split(":");
+      const pair = parts[1] ?? parts[0]; // bijv. "XAU_USD"
+      const base = pair.split("_")[0];   // bijv. "XAU"
+      const rate = data.quote?.[base];
+      if (rate && rate > 0) {
+        // forex/rates geeft hoeveel van `base` je krijgt per 1 USD
+        // Voor XAU: 1 USD = 0.000xxx XAU → prijs = 1/rate
+        price = 1 / rate;
       }
     }
+
+    // Fallback: als forex/rates geen data heeft → recentste candle gebruiken
+    if (price === 0) {
+      const to = Math.floor(Date.now() / 1000);
+      const from = to - 7200; // 2 uur terug
+      const res2 = await fetch(
+        `${FINNHUB_BASE}/forex/candle?symbol=${encodeURIComponent(finnhubSymbol)}&resolution=1&from=${from}&to=${to}&token=${apiKey}`,
+        { cache: "no-store", signal: AbortSignal.timeout(5000) }
+      );
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2.s === "ok" && data2.c?.length > 0) {
+          price = data2.c[data2.c.length - 1];
+          previousClose = data2.c[0];
+        }
+      }
+    }
+
+    change24h = previousClose > 0 ? ((price - previousClose) / previousClose) * 100 : 0;
   } else {
     const res = await fetch(
       `${FINNHUB_BASE}/quote?symbol=${encodeURIComponent(finnhubSymbol)}&token=${apiKey}`,

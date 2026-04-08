@@ -8,21 +8,22 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const PRIMARY_LINKS = [
-  { href: "/dashboard",    key: "nav_link_scanner",  icon: "⚡" },
-  { href: "/trade",        key: "nav_link_trade",    icon: "📈" },
-  { href: "/leren",        key: "nav_link_learn",    icon: "🎓" },
-  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
-  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+  { href: "/dashboard", key: "nav_link_dashboard", icon: "🏠" },
+  { href: "/leren",     key: "nav_link_learn",     icon: "🎓" },
+  { href: "/nieuws",    key: "nav_link_news",      icon: "📰" },
+  { href: "/scanner",   key: "nav_link_scanner",   icon: "📡" },
+  { href: "/trade",     key: "nav_link_trade",     icon: "📈" },
+  { href: "/profiel",   key: "nav_link_profile",   icon: "👤" },
 ] as const;
 
-const TRADE_LINKS = [
+const EXTRA_LINKS = [
+  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
+  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
   { href: "/testnet",      key: "more_menu_testnet", icon: "🔬" },
-  { href: "/live",         key: "more_menu_live",    icon: "💶" },
   { href: "/leaderboard",  key: "more_menu_ranking", icon: "🏆" },
 ] as const;
 
 const ACCOUNT_LINKS = [
-  { href: "/profiel",      key: "nav_link_profile",  icon: "👤" },
   { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
   { href: "/help",         key: "nav_link_help",     icon: "❓" },
 ] as const;
@@ -58,6 +59,7 @@ export default function Nav() {
 
   const accountActive = [...ACCOUNT_LINKS, ...(isAdmin ? [{ href: "/admin" }] : [])]
     .some(l => pathname === l.href || pathname.startsWith(l.href + "/"));
+  const username = session?.user?.name?.split(" ")[0] ?? "Account";
 
   return (
     <>
@@ -85,14 +87,24 @@ export default function Nav() {
               className={`app-nav-link app-nav-account-btn${accountActive || dropOpen ? " active" : ""}`}
               onClick={() => setDropOpen(v => !v)}
             >
-              <span className="app-nav-icon">👤</span>
+              <span className="app-nav-icon">⚙️</span>
               <span className="app-nav-label">
-                {session?.user?.name ?? "Account"} {dropOpen ? "▴" : "▾"}
+                {username} {dropOpen ? "▴" : "▾"}
               </span>
             </button>
 
             {dropOpen && (
               <div className="app-nav-dropdown">
+                {EXTRA_LINKS.map((l) => {
+                  const active = pathname === l.href || pathname.startsWith(l.href + "/");
+                  return (
+                    <Link key={l.href} href={l.href} className={`app-nav-dd-item${active ? " active" : ""}`}>
+                      <span>{l.icon}</span>
+                      <span>{rl(l.key)}</span>
+                    </Link>
+                  );
+                })}
+                <div className="app-nav-dd-divider" />
                 {ACCOUNT_LINKS.map((l) => {
                   const active = pathname === l.href || pathname.startsWith(l.href + "/");
                   return (
@@ -174,8 +186,8 @@ export default function Nav() {
                 );
               })}
 
-              <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Trading</div>
-              {TRADE_LINKS.map((l) => {
+              <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Extra</div>
+              {EXTRA_LINKS.map((l) => {
                 const active = pathname === l.href;
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>

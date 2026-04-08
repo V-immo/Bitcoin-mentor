@@ -5,9 +5,9 @@ import { calculateRsi, analyzeTimeframe, detectStructure } from "@/lib/market";
 import type { Candle } from "@/lib/types";
 import { sharedScanCache } from "@/lib/scan-cache";
 
-// Server-side cache: 30 seconden
+// Server-side cache: 10 seconden — zo live mogelijk zonder WebSocket
 let scanCache: { data: unknown; ts: number } | null = null;
-const SCAN_TTL = 30_000;
+const SCAN_TTL = 10_000;
 
 export type ScanResult = {
   symbol: string;
@@ -130,9 +130,34 @@ export async function GET() {
         const ticker = binanceTickers.get(asset.symbol);
         price = ticker?.price ?? 0;
         change24h = ticker?.change24h ?? 0;
-        try {
-          candles = await getCandles("1d", 60, asset.symbol);
-        } catch { /* ignore */ }
+        // Dagelijks voor scoring (MA20/MA50/RSI), uurlijks voor live sparkline
+        // Promise.allSettled zodat als één fetch faalt de andere nog werkt
+        const [dailyRes, hourlyRes] = await Promise.allSettled([
+          getCandles("1d", 60, asset.symbol),
+          getCandles("1h", 48, asset.symbol),
+        ]);
+        const dailyCandles = dailyRes.status === "fulfilled" ? dailyRes.value : [];
+        const hourlyCandles = hourlyRes.status === "fulfilled" ? hourlyRes.value : [];
+
+        const { score: s, rsi: r, trend: tr } = quickScore(dailyCandles, price);
+        const color = scoreToColor(s);
+        // Fallback: als hourly mislukt, gebruik dagelijkse candles voor sparkline
+        const sparkline = hourlyCandles.length > 0 ? hourlyCandles : dailyCandles.slice(-30);
+        return {
+          symbol: asset.symbol,
+          name: asset.name,
+          ticker: asset.ticker,
+          type: asset.type,
+          emoji: asset.emoji,
+          price,
+          change24h,
+          score: s,
+          color,
+          signal: scoreToSignal(s, color),
+          trend: tr,
+          rsi: r,
+          candles: sparkline,
+        };
       } else {
         const quote = finnhubQuotes.get(asset.symbol);
         price = quote?.price ?? 0;
