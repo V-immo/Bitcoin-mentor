@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const body = await req.json();
+    if (!process.env.OPENAI_API_KEY) {
+        return NextResponse.json({ text: "Geen analyse beschikbaar." }, { status: 503 });
+    }
+
+    const body = await req.json().catch(() => ({}));
 
     const prompt = `
 You are a professional trading mentor.
@@ -19,21 +23,25 @@ Explain:
 3 what mistake beginners make here
 `;
 
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-            model: "gpt-4o-mini",
-            input: prompt,
-        }),
-    });
+    try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                input: prompt,
+            }),
+        });
 
-    const json = await res.json();
-
-    return NextResponse.json({
-        text: json.output?.[0]?.content?.[0]?.text ?? "Geen analyse beschikbaar.",
-    });
+        if (!res.ok) return NextResponse.json({ text: "Geen analyse beschikbaar." });
+        const json = await res.json();
+        return NextResponse.json({
+            text: json.output?.[0]?.content?.[0]?.text ?? "Geen analyse beschikbaar.",
+        });
+    } catch {
+        return NextResponse.json({ text: "Geen analyse beschikbaar." });
+    }
 }

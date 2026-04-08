@@ -158,7 +158,7 @@ Eindig altijd met een concrete focus voor de komende week.`,
     }],
   });
 
-  const review = (msg.content[0] as { text: string }).text;
+  const review = (msg.content[0] as { text?: string } | undefined)?.text ?? "";
 
   db.prepare(`
     INSERT OR REPLACE INTO marcus_weekly_reviews (user_id, week_start, review)
