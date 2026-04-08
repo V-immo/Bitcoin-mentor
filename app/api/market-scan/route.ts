@@ -131,17 +131,18 @@ export async function GET() {
         price = ticker?.price ?? 0;
         change24h = ticker?.change24h ?? 0;
         // Dagelijks voor scoring (MA20/MA50/RSI), uurlijks voor live sparkline
-        let dailyCandles: Candle[] = [];
-        let hourlyCandles: Candle[] = [];
-        try {
-          [dailyCandles, hourlyCandles] = await Promise.all([
-            getCandles("1d", 60, asset.symbol),
-            getCandles("1h", 48, asset.symbol),   // laatste 48u = live intraday
-          ]);
-        } catch { /* ignore */ }
-        candles = dailyCandles;
+        // Promise.allSettled zodat als één fetch faalt de andere nog werkt
+        const [dailyRes, hourlyRes] = await Promise.allSettled([
+          getCandles("1d", 60, asset.symbol),
+          getCandles("1h", 48, asset.symbol),
+        ]);
+        const dailyCandles = dailyRes.status === "fulfilled" ? dailyRes.value : [];
+        const hourlyCandles = hourlyRes.status === "fulfilled" ? hourlyRes.value : [];
+
         const { score: s, rsi: r, trend: tr } = quickScore(dailyCandles, price);
         const color = scoreToColor(s);
+        // Fallback: als hourly mislukt, gebruik dagelijkse candles voor sparkline
+        const sparkline = hourlyCandles.length > 0 ? hourlyCandles : dailyCandles.slice(-30);
         return {
           symbol: asset.symbol,
           name: asset.name,
@@ -155,7 +156,7 @@ export async function GET() {
           signal: scoreToSignal(s, color),
           trend: tr,
           rsi: r,
-          candles: hourlyCandles.slice(-48),   // 48u intraday sparkline
+          candles: sparkline,
         };
       } else {
         const quote = finnhubQuotes.get(asset.symbol);
