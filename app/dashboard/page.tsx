@@ -1,7 +1,7 @@
-import AssetScanner from "@/components/AssetScanner";
 import OnboardingModal from "@/components/OnboardingModal";
 import MarcusNudge from "@/components/MarcusNudge";
 import DashboardBriefing from "@/components/DashboardBriefing";
+import DashboardTopPicks from "@/components/DashboardTopPicks";
 
 export default function DashboardPage() {
   return (
@@ -10,7 +10,7 @@ export default function DashboardPage() {
       <div className="dash-layout">
         <MarcusNudge />
         <DashboardBriefing />
-        <AssetScanner />
+        <DashboardTopPicks />
       </div>
     </>
   );
