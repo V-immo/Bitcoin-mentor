@@ -5,9 +5,9 @@ import { calculateRsi, analyzeTimeframe, detectStructure } from "@/lib/market";
 import type { Candle } from "@/lib/types";
 import { sharedScanCache } from "@/lib/scan-cache";
 
-// Server-side cache: 30 seconden
+// Server-side cache: 10 seconden — zo live mogelijk zonder WebSocket
 let scanCache: { data: unknown; ts: number } | null = null;
-const SCAN_TTL = 30_000;
+const SCAN_TTL = 10_000;
 
 export type ScanResult = {
   symbol: string;
@@ -130,9 +130,33 @@ export async function GET() {
         const ticker = binanceTickers.get(asset.symbol);
         price = ticker?.price ?? 0;
         change24h = ticker?.change24h ?? 0;
+        // Dagelijks voor scoring (MA20/MA50/RSI), uurlijks voor live sparkline
+        let dailyCandles: Candle[] = [];
+        let hourlyCandles: Candle[] = [];
         try {
-          candles = await getCandles("1d", 60, asset.symbol);
+          [dailyCandles, hourlyCandles] = await Promise.all([
+            getCandles("1d", 60, asset.symbol),
+            getCandles("1h", 48, asset.symbol),   // laatste 48u = live intraday
+          ]);
         } catch { /* ignore */ }
+        candles = dailyCandles;
+        const { score: s, rsi: r, trend: tr } = quickScore(dailyCandles, price);
+        const color = scoreToColor(s);
+        return {
+          symbol: asset.symbol,
+          name: asset.name,
+          ticker: asset.ticker,
+          type: asset.type,
+          emoji: asset.emoji,
+          price,
+          change24h,
+          score: s,
+          color,
+          signal: scoreToSignal(s, color),
+          trend: tr,
+          rsi: r,
+          candles: hourlyCandles.slice(-48),   // 48u intraday sparkline
+        };
       } else {
         const quote = finnhubQuotes.get(asset.symbol);
         price = quote?.price ?? 0;

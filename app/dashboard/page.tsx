@@ -1,15 +1,17 @@
 import AssetScanner from "@/components/AssetScanner";
 import OnboardingModal from "@/components/OnboardingModal";
 import MarcusNudge from "@/components/MarcusNudge";
+import DashboardBriefing from "@/components/DashboardBriefing";
 
 export default function DashboardPage() {
   return (
     <>
       <OnboardingModal />
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 16px 0" }}>
+      <div className="dash-layout">
         <MarcusNudge />
+        <DashboardBriefing />
+        <AssetScanner />
       </div>
-      <AssetScanner />
     </>
   );
 }

@@ -6588,3 +6588,266 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   border-bottom-color: rgba(173, 20, 87, 0.10);
   color: #12080f;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   DASHBOARD REDESIGN — professioneel, kleurrijk, niet alleen roze
+   ══════════════════════════════════════════════════════════════ */
+
+/* Dashboard wrapper */
+.dash-layout {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 0 40px;
+}
+
+/* ── Market Stats Balk ── */
+.dash-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dash-stat-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  min-width: 100px;
+}
+
+.dash-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.dash-stat-value {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+}
+
+.dash-signals-pill .dash-stat-value {
+  font-size: 12px;
+}
+
+/* Live badge */
+.dash-live-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(34, 212, 122, 0.08);
+  border: 1px solid rgba(34, 212, 122, 0.22);
+}
+
+.dash-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22d47a;
+  box-shadow: 0 0 0 0 rgba(34, 212, 122, 0.4);
+  animation: live-pulse 1.8s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 212, 122, 0.45); }
+  70%  { box-shadow: 0 0 0 7px rgba(34, 212, 122, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 212, 122, 0); }
+}
+
+.dash-live-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #22d47a;
+}
+
+.dash-countdown {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(34, 212, 122, 0.6);
+  min-width: 24px;
+}
+
+/* ── Marcus Briefing Card ── */
+.dash-briefing-card {
+  margin: 16px 20px 4px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(22, 12, 40, 0.95) 0%, rgba(35, 10, 50, 0.9) 100%);
+  border: 1px solid rgba(170, 0, 255, 0.22);
+  border-left: 3px solid #9c27b0;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(100, 0, 180, 0.12);
+}
+
+.dash-briefing-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.dash-briefing-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9c27b0, #e91e63);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.dash-briefing-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #d8b4f8;
+}
+
+.dash-briefing-date {
+  font-size: 11px;
+  color: rgba(216, 180, 248, 0.55);
+  margin-top: 1px;
+}
+
+.dash-briefing-assets {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.dash-briefing-asset-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(156, 39, 176, 0.18);
+  border: 1px solid rgba(156, 39, 176, 0.3);
+  color: #d8b4f8;
+}
+
+.dash-briefing-text {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(252, 232, 240, 0.85);
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.dash-briefing-toggle {
+  background: none;
+  border: none;
+  color: #9c27b0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+.dash-briefing-toggle:hover { color: #d8b4f8; }
+
+/* ── Scanner: accent top strip (vervangt border-left) ── */
+.scanner-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanner-card-accent {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+.scanner-accent-green  { background: linear-gradient(90deg, #22d47a 0%, rgba(34,212,122,0.3) 100%); }
+.scanner-accent-yellow { background: linear-gradient(90deg, #f59e0b 0%, rgba(245,158,11,0.3) 100%); }
+.scanner-accent-red    { background: linear-gradient(90deg, #f05252 0%, rgba(240,82,82,0.3) 100%); }
+
+/* Verwijder de oude border-left kleur van cards — de accent top strip doet het nu */
+.scanner-card-green  { border-left: none; background: linear-gradient(160deg, rgba(34,212,122,0.05) 0%, var(--surface) 40%); }
+.scanner-card-yellow { border-left: none; background: linear-gradient(160deg, rgba(245,158,11,0.05) 0%, var(--surface) 40%); }
+.scanner-card-red    { border-left: none; background: linear-gradient(160deg, rgba(240,82,82,0.05) 0%, var(--surface) 40%); }
+
+/* Hover gloed per kleur */
+.scanner-card-green:hover  { border-color: rgba(34,212,122,0.4); box-shadow: 0 6px 24px rgba(34,212,122,0.10); }
+.scanner-card-yellow:hover { border-color: rgba(245,158,11,0.4); box-shadow: 0 6px 24px rgba(245,158,11,0.10); }
+.scanner-card-red:hover    { border-color: rgba(240,82,82,0.4);  box-shadow: 0 6px 24px rgba(240,82,82,0.10); }
+
+/* Score fill kleuren: levendiger */
+.scanner-score-fill-green  { background: linear-gradient(90deg, #22d47a, #16a34a); }
+.scanner-score-fill-yellow { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.scanner-score-fill-red    { background: linear-gradient(90deg, #f05252, #b91c1c); }
+
+/* Scanner in dashboard: geen extra padding bovenaan */
+.dash-layout .scanner-page {
+  padding-top: 16px;
+}
+
+/* ── Light mode overrides voor de nieuwe componenten ── */
+[data-theme="light"] .dash-stats-bar {
+  background: #faf5fa;
+  border-bottom-color: rgba(173, 20, 87, 0.2);
+}
+
+[data-theme="light"] .dash-stat-pill {
+  background: #f5eef5;
+  border-color: rgba(173, 20, 87, 0.18);
+}
+
+[data-theme="light"] .dash-stat-value { color: #0f0510; }
+
+[data-theme="light"] .dash-briefing-card {
+  background: linear-gradient(135deg, #f0e8f8 0%, #ebe0f5 100%);
+  border-color: rgba(156, 39, 176, 0.3);
+  border-left-color: #9c27b0;
+  box-shadow: 0 2px 12px rgba(100, 0, 180, 0.08);
+}
+
+[data-theme="light"] .dash-briefing-title { color: #6d1b7b; }
+[data-theme="light"] .dash-briefing-date  { color: rgba(109, 27, 123, 0.55); }
+[data-theme="light"] .dash-briefing-text  { color: #2d0b3a; }
+[data-theme="light"] .dash-briefing-asset-chip {
+  background: rgba(156, 39, 176, 0.12);
+  border-color: rgba(156, 39, 176, 0.25);
+  color: #6d1b7b;
+}
+
+[data-theme="light"] .scanner-card-green  { background: linear-gradient(160deg, rgba(21,128,61,0.06) 0%, #faf5fa 40%); }
+[data-theme="light"] .scanner-card-yellow { background: linear-gradient(160deg, rgba(180,83,9,0.06) 0%, #faf5fa 40%); }
+[data-theme="light"] .scanner-card-red    { background: linear-gradient(160deg, rgba(185,28,28,0.06) 0%, #faf5fa 40%); }
+
+[data-theme="light"] .scanner-card-green:hover  { border-color: rgba(21,128,61,0.4); }
+[data-theme="light"] .scanner-card-yellow:hover { border-color: rgba(180,83,9,0.4); }
+[data-theme="light"] .scanner-card-red:hover    { border-color: rgba(185,28,28,0.4); }
+
+[data-theme="light"] .dash-live-wrap {
+  background: rgba(21, 128, 61, 0.08);
+  border-color: rgba(21, 128, 61, 0.25);
+}
+[data-theme="light"] .dash-live-dot { background: #16a34a; }
+[data-theme="light"] .dash-live-label { color: #16a34a; }
+[data-theme="light"] .dash-countdown  { color: rgba(21, 128, 61, 0.6); }
