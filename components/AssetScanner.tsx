@@ -8,9 +8,11 @@ import { useLivePrices } from "@/hooks/useLivePrices";
 
 const REFRESH_INTERVAL = 15; // seconden — ≤25s verschil met server cache (10s)
 
-function Sparkline({ candles }: { candles: { close: number }[] }) {
+function Sparkline({ candles, livePrice }: { candles: { close: number }[]; livePrice?: number }) {
   if (candles.length < 2) return <div style={{ height: 36 }} />;
+  // Vervang het laatste punt met de live WebSocket prijs zodat de sparkline altijd actueel eindigt
   const closes = candles.map((c) => c.close);
+  if (livePrice && livePrice > 0) closes[closes.length - 1] = livePrice;
   const min = Math.min(...closes);
   const max = Math.max(...closes);
   const range = max - min || 1;
@@ -314,7 +316,7 @@ export default function AssetScanner() {
               </div>
 
               <div className="scanner-card-chart">
-                <Sparkline candles={r.candles} />
+                <Sparkline candles={r.candles} livePrice={displayPrice} />
               </div>
 
               <div className="scanner-card-bottom">
