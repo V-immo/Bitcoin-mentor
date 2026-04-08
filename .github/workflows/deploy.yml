@@ -48,14 +48,16 @@ jobs:
             # Stop PM2 zodat het NIET herstart tijdens de build
             pm2 stop bitcoin-mentor || true
 
-            # Verwijder alleen de lock — niet de hele .next (voorkomt "no build found" crashes)
-            rm -f .next/lock .next/*.lock
+            # Verwijder lock agressief — voorkomt "lock already acquired" buildfout
+            rm -f .next/lock
+            find .next -name "*.lock" -delete 2>/dev/null || true
 
-            # Build — schrijft over bestaande .next incrementeel
+            # Build
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
-            # Start PM2 — .next bestaat nu gegarandeerd
+            # Reset restart teller + start PM2
             pm2 startOrRestart ecosystem.config.js --update-env
+            pm2 reset bitcoin-mentor || true
             pm2 save
 
             echo "✅ Deploy klaar"
