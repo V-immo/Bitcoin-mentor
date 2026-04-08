@@ -6851,3 +6851,16 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 [data-theme="light"] .dash-live-dot { background: #16a34a; }
 [data-theme="light"] .dash-live-label { color: #16a34a; }
 [data-theme="light"] .dash-countdown  { color: rgba(21, 128, 61, 0.6); }
+
+/* ── Live WebSocket dot op scanner kaart ── */
+.scanner-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22d47a;
+  margin-left: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  animation: live-pulse 1.8s ease-out infinite;
+}

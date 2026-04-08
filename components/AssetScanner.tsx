@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { ScanResult } from "@/app/api/market-scan/route";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLivePrices } from "@/hooks/useLivePrices";
 
 const REFRESH_INTERVAL = 15; // seconden — ≤25s verschil met server cache (10s)
 
@@ -79,6 +80,9 @@ export default function AssetScanner() {
   const router = useRouter();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Live WebSocket prijzen — crypto sub-seconde, stocks tijdens beurstijden
+  const livePrices = useLivePrices();
 
   const load = useCallback(async () => {
     try {
@@ -270,57 +274,66 @@ export default function AssetScanner() {
 
       {/* ── Grid ── */}
       <div className="scanner-grid">
-        {sorted.map((r) => (
-          <button
-            key={r.symbol}
-            className={`scanner-card scanner-card-${r.color}`}
-            onClick={() => handleClick(r.symbol)}
-          >
-            {/* Score glow accent */}
-            <div className={`scanner-card-accent scanner-accent-${r.color}`} />
+        {sorted.map((r) => {
+          // Gebruik live WebSocket prijs als beschikbaar, anders REST prijs
+          const live = livePrices.get(r.symbol);
+          const displayPrice = live?.price ?? r.price;
+          const displayChange = live?.change24h ?? r.change24h;
+          const isLive = live?.live === true;
 
-            <div className="scanner-card-top">
-              <div className="scanner-card-id">
-                <span className="scanner-card-emoji">{r.emoji}</span>
-                <div>
-                  <div className="scanner-card-ticker">{r.ticker}</div>
-                  <div className="scanner-card-name">{r.name}</div>
+          return (
+            <button
+              key={r.symbol}
+              className={`scanner-card scanner-card-${r.color}`}
+              onClick={() => handleClick(r.symbol)}
+            >
+              {/* Score glow accent */}
+              <div className={`scanner-card-accent scanner-accent-${r.color}`} />
+
+              <div className="scanner-card-top">
+                <div className="scanner-card-id">
+                  <span className="scanner-card-emoji">{r.emoji}</span>
+                  <div>
+                    <div className="scanner-card-ticker">{r.ticker}</div>
+                    <div className="scanner-card-name">{r.name}</div>
+                  </div>
+                </div>
+                <div className={`scanner-card-signal scanner-signal-${r.color}`}>
+                  {r.signal === "Goed moment" ? t("status_good_moment")
+                    : r.signal === "Wachten" ? t("status_wait")
+                    : t("status_no_buy")}
                 </div>
               </div>
-              <div className={`scanner-card-signal scanner-signal-${r.color}`}>
-                {r.signal === "Goed moment" ? t("status_good_moment")
-                  : r.signal === "Wachten" ? t("status_wait")
-                  : t("status_no_buy")}
+
+              <div className="scanner-card-price">
+                ${fmt(displayPrice)}
+                <span className={`scanner-card-change ${displayChange >= 0 ? "pos" : "neg"}`}>
+                  {displayChange >= 0 ? "+" : ""}{displayChange.toFixed(2)}%
+                </span>
+                {isLive && <span className="scanner-live-dot" title="Live WebSocket" />}
               </div>
-            </div>
 
-            <div className="scanner-card-price">
-              ${fmt(r.price)}
-              <span className={`scanner-card-change ${r.change24h >= 0 ? "pos" : "neg"}`}>
-                {r.change24h >= 0 ? "+" : ""}{r.change24h.toFixed(2)}%
-              </span>
-            </div>
+              <div className="scanner-card-chart">
+                <Sparkline candles={r.candles} />
+              </div>
 
-            <div className="scanner-card-chart">
-              <Sparkline candles={r.candles} />
-            </div>
-
-            <div className="scanner-card-bottom">
-              <div className="scanner-card-score">
-                <div className="scanner-score-bar">
-                  <div
-                    className={`scanner-score-fill scanner-score-fill-${r.color}`}
-                    style={{ width: `${r.score}%` }}
-                  />
+              <div className="scanner-card-bottom">
+                <div className="scanner-card-score">
+                  <div className="scanner-score-bar">
+                    <div
+                      className={`scanner-score-fill scanner-score-fill-${r.color}`}
+                      style={{ width: `${r.score}%` }}
+                    />
+                  </div>
+                  <span className="scanner-score-num">{r.score}/100</span>
                 </div>
-                <span className="scanner-score-num">{r.score}/100</span>
+                <div className="scanner-card-meta">
+                  RSI {r.rsi} · {r.trend}
+                </div>
               </div>
-              <div className="scanner-card-meta">
-                RSI {r.rsi} · {r.trend}
-              </div>
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
