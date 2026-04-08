@@ -5,6 +5,13 @@ import { getDb } from "@/db/db";
 import { sharedScanCache } from "@/lib/scan-cache";
 import { bitvavRequest } from "@/lib/bitvavo";
 import { bybitRequest } from "@/lib/bybit";
+import {
+  getCachedFearGreed,
+  getCachedGlobalMetrics,
+  getCachedFundingRates,
+  type GlobalMetrics,
+  type FundingData,
+} from "@/lib/market-poller";
 
 // Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -23,14 +30,6 @@ function checkChatRate(key: string): boolean {
   return true;
 }
 
-// ─── Module-level cache voor externe API data ─────────────────────────────────
-// Voorkomt 7+ HTTP calls per chat bericht. TTL: 5 minuten.
-const EXT_TTL = 5 * 60 * 1000;
-type Cached<T> = { data: T; ts: number } | null;
-let cachedFearGreed:    Cached<string>        = null;
-let cachedGlobalMetics: Cached<GlobalMetrics> = null;
-let cachedFunding:      Cached<FundingData[]> = null;
-
 function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 }
@@ -48,129 +47,7 @@ function getMarketSummary(): string {
   return lines.join("\n") + (staleNote ? `\n${staleNote}` : "");
 }
 
-async function fetchFearAndGreed(): Promise<string> {
-  try {
-    const res = await fetch("https://api.alternative.me/fng/?limit=1", {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return "onbekend";
-    const data = await res.json();
-    const entry = data?.data?.[0];
-    if (!entry) return "onbekend";
-    return `${entry.value}/100 (${entry.value_classification})`;
-  } catch {
-    return "onbekend";
-  }
-}
-
-type GlobalMetrics = {
-  btcDominance: string;
-  totalMarketCap: string;
-  marketCapChange24h: string;
-};
-
-type FundingData = {
-  symbol: string;
-  fundingRate: string;   // bijv. "+0.012%" of "-0.003%"
-  openInterest: string;  // bijv. "$18.4B"
-};
-
-async function fetchFundingRates(): Promise<FundingData[]> {
-  const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"];
-  const results: FundingData[] = [];
-  try {
-    // Binance Futures public API — geen key nodig
-    const [premiumRes, oiRes] = await Promise.allSettled([
-      fetch("https://fapi.binance.com/fapi/v1/premiumIndex", { next: { revalidate: 300 } }),
-      fetch("https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT", { next: { revalidate: 300 } }),
-    ]);
-
-    const premiumData: { symbol: string; lastFundingRate: string }[] =
-      premiumRes.status === "fulfilled" && premiumRes.value.ok
-        ? await premiumRes.value.json()
-        : [];
-
-    // Open interest per asset via losse calls
-    const oiCalls = await Promise.allSettled(
-      symbols.map(s =>
-        fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${s}`, { next: { revalidate: 300 } })
-          .then(r => r.ok ? r.json() : null)
-      )
-    );
-
-    for (let i = 0; i < symbols.length; i++) {
-      const sym = symbols[i];
-      const pm = premiumData.find(p => p.symbol === sym);
-      if (!pm) continue;
-      const rate = parseFloat(pm.lastFundingRate) * 100;
-      const rateStr = `${rate >= 0 ? "+" : ""}${rate.toFixed(4)}%`;
-
-      let oiStr = "onbekend";
-      const oiResult = oiCalls[i];
-      if (oiResult.status === "fulfilled" && oiResult.value) {
-        const oiVal = parseFloat(oiResult.value.openInterest ?? "0");
-        const pmEntry = premiumData.find(p => p.symbol === sym);
-        // OI is in coins — convert to USD using mark price
-        const markPrice = parseFloat((pmEntry as unknown as { markPrice?: string })?.markPrice ?? "0");
-        const oiUsd = oiVal * markPrice;
-        oiStr = oiUsd > 1e9 ? `$${(oiUsd / 1e9).toFixed(1)}B` : oiUsd > 1e6 ? `$${(oiUsd / 1e6).toFixed(0)}M` : "onbekend";
-      }
-
-      results.push({ symbol: sym.replace("USDT", ""), fundingRate: rateStr, openInterest: oiStr });
-    }
-  } catch { /* geen data */ }
-  return results;
-}
-
-async function fetchGlobalMetrics(): Promise<GlobalMetrics> {
-  const fallback: GlobalMetrics = {
-    btcDominance: "onbekend",
-    totalMarketCap: "onbekend",
-    marketCapChange24h: "onbekend",
-  };
-  try {
-    const res = await fetch("https://api.coingecko.com/api/v3/global", {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return fallback;
-    const data = await res.json();
-    const d = data?.data;
-    if (!d) return fallback;
-    const btcDominance = `${d.market_cap_percentage?.btc?.toFixed(1) ?? "?"}%`;
-    const totalCap = d.total_market_cap?.usd;
-    const totalMarketCap = totalCap
-      ? `$${(totalCap / 1e12).toFixed(2)}T`
-      : "onbekend";
-    const change = d.market_cap_change_percentage_24h_usd;
-    const marketCapChange24h =
-      typeof change === "number" ? `${change.toFixed(2)}%` : "onbekend";
-    return { btcDominance, totalMarketCap, marketCapChange24h };
-  } catch {
-    return fallback;
-  }
-}
-
-// Gecachede wrappers — retourneren stale data als vers ophalen mislukt
-async function getCachedFearGreed(): Promise<string> {
-  if (cachedFearGreed && Date.now() - cachedFearGreed.ts < EXT_TTL) return cachedFearGreed.data;
-  const data = await fetchFearAndGreed();
-  cachedFearGreed = { data, ts: Date.now() };
-  return data;
-}
-
-async function getCachedGlobalMetrics(): Promise<GlobalMetrics> {
-  if (cachedGlobalMetics && Date.now() - cachedGlobalMetics.ts < EXT_TTL) return cachedGlobalMetics.data;
-  const data = await fetchGlobalMetrics();
-  cachedGlobalMetics = { data, ts: Date.now() };
-  return data;
-}
-
-async function getCachedFundingRates(): Promise<FundingData[]> {
-  if (cachedFunding && Date.now() - cachedFunding.ts < EXT_TTL) return cachedFunding.data;
-  const data = await fetchFundingRates();
-  cachedFunding = { data, ts: Date.now() };
-  return data;
-}
+// Marktdata komt nu uit lib/market-poller — actief bijgewerkt elke 30 min via instrumentation.ts
 
 export async function POST(request: NextRequest) {
   // Auth check
