@@ -26,9 +26,15 @@ const BROWSER_CACHE: Record<string, number> = {
   "1m": 10, "5m": 20, "15m": 45, "1h": 90, "4h": 240, "1d": 540, "1W": 1700,
 };
 
-// Binance limit per interval
+// Binance limit per interval (max 1000 per call)
+// Chart toont standaard laatste 80, maar gebruiker kan uitzoomen voor meer context
 const BINANCE_LIMIT: Record<string, number> = {
-  "1m": 300, "5m": 288, "15m": 200, "1h": 168, "4h": 200, "1d": 365,
+  "1m": 1000,  // ~16 uur
+  "5m": 1000,  // ~3.5 dagen
+  "15m": 1000, // ~10 dagen
+  "1h": 1000,  // ~42 dagen
+  "4h": 1000,  // ~166 dagen
+  "1d": 1000,  // ~2.7 jaar
 };
 
 type CacheEntry = { data: unknown; ts: number };
