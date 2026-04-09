@@ -1764,6 +1764,54 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   color: var(--text-secondary);
 }
 
+/* ── Chart indicator / type toggle knoppen ── */
+.chart-controls-bar {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0 2px 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chart-type-wrap {
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #2a1a28;
+  margin-right: 4px;
+}
+
+.chart-type-btn {
+  padding: 3px 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a1a28;
+  color: #bf7a99;
+  transition: background 0.15s, color 0.15s;
+}
+.chart-type-btn.active {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.chart-indicator-btn {
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a1a28;
+  color: #bf7a99;
+  transition: background 0.15s, color 0.15s;
+}
+.chart-indicator-btn.active {
+  background: #e91e63;
+  color: #fff;
+}
+
 .market-chart-frame {
   position: relative;
   width: 100%;
@@ -6851,6 +6899,81 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 [data-theme="light"] .dash-live-dot { background: #16a34a; }
 [data-theme="light"] .dash-live-label { color: #16a34a; }
 [data-theme="light"] .dash-countdown  { color: rgba(21, 128, 61, 0.6); }
+
+/* ── Timeframe knoppen in light ── */
+[data-theme="light"] .terminal-tf-btn {
+  background: #f0e8f0;
+  border-color: rgba(173, 20, 87, 0.22);
+  color: #5c3050;
+}
+[data-theme="light"] .terminal-tf-btn:hover {
+  background: #e8dce8;
+  border-color: rgba(173, 20, 87, 0.45);
+  color: #2d0b3a;
+}
+[data-theme="light"] .terminal-tf-btn.active {
+  background: rgba(124, 58, 237, 0.14);
+  border-color: rgba(124, 58, 237, 0.45);
+  color: #5b21b6;
+}
+
+/* ── Chart chips (Live, MA20, MA50, hints) in light ── */
+[data-theme="light"] .market-chart-chip {
+  background: #f0e8f0;
+  border-color: rgba(173, 20, 87, 0.18);
+  color: #5c3050;
+}
+
+/* ── Context badges (Koopzone, Stop, Resistance) in light ── */
+[data-theme="light"] .market-chart-context-box {
+  background: #eee6f0;
+  border-color: rgba(173, 20, 87, 0.25);
+  color: #2d0b3a;
+  font-weight: 500;
+}
+
+/* ── Indicator knoppen (Candle/Lijn/BB/MACD) in light ── */
+[data-theme="light"] .chart-type-wrap {
+  border-color: rgba(173, 20, 87, 0.25);
+}
+[data-theme="light"] .chart-type-btn {
+  background: #f0e8f0;
+  color: #5c3050;
+}
+[data-theme="light"] .chart-type-btn.active {
+  background: #7c3aed;
+  color: #fff;
+}
+[data-theme="light"] .chart-indicator-btn {
+  background: #f0e8f0;
+  color: #5c3050;
+}
+[data-theme="light"] .chart-indicator-btn.active {
+  background: #e91e63;
+  color: #fff;
+}
+
+/* ── Signal strip in light ── */
+[data-theme="light"] .signal-strip {
+  background: var(--surface);
+  border-top-color: rgba(173, 20, 87, 0.2);
+}
+[data-theme="light"] .ssd-val   { color: #0f0510; }
+[data-theme="light"] .ssd-label { color: #7a4060; }
+[data-theme="light"] .ssd-green { color: #15803d; }
+[data-theme="light"] .ssd-red   { color: #b91c1c; }
+
+/* ── Zoom/fit knoppen onder de chart in light ── */
+[data-theme="light"] .terminal-btn-muted {
+  background: #f0e8f0;
+  border-color: rgba(173, 20, 87, 0.25);
+  color: #5c3050;
+}
+[data-theme="light"] .terminal-btn-muted:hover {
+  background: #e8dce8;
+  border-color: rgba(173, 20, 87, 0.5);
+  color: #2d0b3a;
+}
 
 /* ── Live WebSocket dot op scanner kaart ── */
 .scanner-live-dot {
