@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Candle } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   candles: Candle[];
@@ -157,6 +158,8 @@ export default function TradingChart({
   compact = false,
 }: Props) {
   const { t } = useLanguage();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [showBB, setShowBB] = useState(false);
   const [showMACD, setShowMACD] = useState(false);
   const [chartType, setChartType] = useState<"candle" | "line">("candle");
@@ -211,9 +214,12 @@ export default function TradingChart({
   const showMACDRef = useRef(showMACD);
   showMACDRef.current = showMACD;
 
-  const BG = "#0e0810";
-  const GRID = "#1a0f18";
-  const TEXT = "#bf7a99";
+  const BG   = isLight ? "#f0e6f0" : "#0e0810";
+  const GRID = isLight ? "rgba(173,20,87,0.12)" : "#1a0f18";
+  const TEXT = isLight ? "#5c3050" : "#bf7a99";
+
+  // Herinitialiseer chart als thema wisselt
+  useEffect(() => { setChartInitKey(k => k + 1); }, [theme]);
 
   useEffect(() => {
     if (!mainRef.current || !rsiRef.current) return;
