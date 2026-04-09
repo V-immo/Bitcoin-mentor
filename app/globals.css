@@ -20,14 +20,14 @@
 }
 
 [data-theme="light"] {
-  --bg: #e8d5e8;
-  --surface: #faf5fa;
-  --surface-2: #dfc8df;
+  --bg: #d4b8d4;
+  --surface: #e8d8e8;
+  --surface-2: #c8aac8;
   --text: #0f0510;
-  --text-secondary: #4a1f40;
-  --border: rgba(173, 20, 87, 0.35);
-  --border-hover: rgba(173, 20, 87, 0.70);
-  --card-shadow: 0 2px 8px rgba(100, 0, 60, 0.14);
+  --text-secondary: #3d1535;
+  --border: rgba(140, 10, 70, 0.45);
+  --border-hover: rgba(140, 10, 70, 0.80);
+  --card-shadow: 0 2px 10px rgba(100, 0, 60, 0.22);
   --green: #15803d;
   --red: #b91c1c;
   --orange: #b45309;
@@ -6531,17 +6531,17 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 [data-theme="light"] .terminal-side-card,
 [data-theme="light"] .terminal-advanced,
 [data-theme="light"] .terminal-advanced-card {
-  box-shadow: 0 1px 4px rgba(100, 0, 60, 0.10), 0 0 0 1px rgba(173, 20, 87, 0.10);
+  box-shadow: 0 2px 8px rgba(100, 0, 60, 0.18), 0 0 0 1px rgba(140, 10, 70, 0.22);
 }
 
 [data-theme="light"] .scanner-card {
-  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
-  border-color: rgba(173, 20, 87, 0.20);
+  box-shadow: 0 1px 4px rgba(100, 0, 60, 0.14);
+  border-color: rgba(140, 10, 70, 0.35);
 }
 
 [data-theme="light"] .scanner-card:hover {
-  box-shadow: 0 4px 16px rgba(100, 0, 60, 0.15);
-  border-color: rgba(173, 20, 87, 0.45);
+  box-shadow: 0 4px 16px rgba(100, 0, 60, 0.22);
+  border-color: rgba(140, 10, 70, 0.60);
 }
 
 /* Signal badges — leesbaar op witte achtergrond */
@@ -6571,8 +6571,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 /* Topbar in light mode */
 [data-theme="light"] .terminal-topbar {
   background: var(--surface);
-  border-bottom: 1px solid rgba(173, 20, 87, 0.18);
-  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
+  border-bottom: 1px solid rgba(140, 10, 70, 0.35);
+  box-shadow: 0 2px 6px rgba(100, 0, 60, 0.14);
 }
 
 /* Tabs in light mode */
@@ -6902,51 +6902,51 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 /* ── Timeframe knoppen in light ── */
 [data-theme="light"] .terminal-tf-btn {
-  background: #f0e8f0;
-  border-color: rgba(173, 20, 87, 0.22);
-  color: #5c3050;
-}
-[data-theme="light"] .terminal-tf-btn:hover {
-  background: #e8dce8;
-  border-color: rgba(173, 20, 87, 0.45);
+  background: #dccadc;
+  border-color: rgba(140, 10, 70, 0.38);
   color: #2d0b3a;
 }
+[data-theme="light"] .terminal-tf-btn:hover {
+  background: #d0bcd0;
+  border-color: rgba(140, 10, 70, 0.6);
+  color: #1a0520;
+}
 [data-theme="light"] .terminal-tf-btn.active {
-  background: rgba(124, 58, 237, 0.14);
-  border-color: rgba(124, 58, 237, 0.45);
-  color: #5b21b6;
+  background: rgba(124, 58, 237, 0.20);
+  border-color: rgba(124, 58, 237, 0.55);
+  color: #4c1d95;
 }
 
 /* ── Chart chips (Live, MA20, MA50, hints) in light ── */
 [data-theme="light"] .market-chart-chip {
-  background: #f0e8f0;
-  border-color: rgba(173, 20, 87, 0.18);
-  color: #5c3050;
+  background: #dccadc;
+  border-color: rgba(140, 10, 70, 0.35);
+  color: #3d1535;
 }
 
 /* ── Context badges (Koopzone, Stop, Resistance) in light ── */
 [data-theme="light"] .market-chart-context-box {
-  background: #eee6f0;
-  border-color: rgba(173, 20, 87, 0.25);
-  color: #2d0b3a;
-  font-weight: 500;
+  background: #d8c4d8;
+  border-color: rgba(140, 10, 70, 0.4);
+  color: #1a0520;
+  font-weight: 600;
 }
 
 /* ── Indicator knoppen (Candle/Lijn/BB/MACD) in light ── */
 [data-theme="light"] .chart-type-wrap {
-  border-color: rgba(173, 20, 87, 0.25);
+  border-color: rgba(140, 10, 70, 0.4);
 }
 [data-theme="light"] .chart-type-btn {
-  background: #f0e8f0;
-  color: #5c3050;
+  background: #dccadc;
+  color: #2d0b3a;
 }
 [data-theme="light"] .chart-type-btn.active {
   background: #7c3aed;
   color: #fff;
 }
 [data-theme="light"] .chart-indicator-btn {
-  background: #f0e8f0;
-  color: #5c3050;
+  background: #dccadc;
+  color: #2d0b3a;
 }
 [data-theme="light"] .chart-indicator-btn.active {
   background: #e91e63;
@@ -6965,14 +6965,14 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 /* ── Zoom/fit knoppen onder de chart in light ── */
 [data-theme="light"] .terminal-btn-muted {
-  background: #f0e8f0;
-  border-color: rgba(173, 20, 87, 0.25);
-  color: #5c3050;
+  background: #dccadc;
+  border-color: rgba(140, 10, 70, 0.38);
+  color: #2d0b3a;
 }
 [data-theme="light"] .terminal-btn-muted:hover {
-  background: #e8dce8;
-  border-color: rgba(173, 20, 87, 0.5);
-  color: #2d0b3a;
+  background: #d0bcd0;
+  border-color: rgba(140, 10, 70, 0.6);
+  color: #1a0520;
 }
 
 /* ── Live WebSocket dot op scanner kaart ── */
