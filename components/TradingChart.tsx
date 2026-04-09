@@ -472,11 +472,17 @@ export default function TradingChart({
       macdHistRef.current.setData(showMACD ? macdData.histogram : []);
     }
 
-    // Alleen auto-fit als gebruiker nog niet handmatig heeft gezoomd
-    if (!userZoomedRef.current) {
-      chartRef.current?.timeScale().fitContent();
-      rsiChartRef.current?.timeScale().fitContent();
-      macdChartRef.current?.timeScale().fitContent();
+    // Toon standaard de laatste 80 candles zodat recente candles goed zichtbaar zijn
+    // Als gebruiker al heeft ingezoomd, niet overschrijven
+    if (!userZoomedRef.current && candles.length > 0) {
+      const visible = candles.slice(-80);
+      const fromTime = Math.floor(visible[0].openTime / 1000);
+      // rightmost = closeTime van laatste candle + kleine buffer
+      const last = candles[candles.length - 1];
+      const toTime = Math.floor(last.closeTime / 1000) + 1;
+      chartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
+      rsiChartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
+      macdChartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
     }
   }, [candles, showBB, showMACD, chartInitKey]);
 
