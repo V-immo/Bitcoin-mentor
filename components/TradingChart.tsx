@@ -17,15 +17,23 @@ type Props = {
   compact?: boolean;
 };
 
+// Converteer UTC timestamp naar lokale tijd (browser timezone)
+// zodat de x-as de lokale tijd toont in plaats van UTC
+const TZ_OFFSET_SEC = new Date().getTimezoneOffset() * -60;
+
+function toLocalTime(utcMs: number): import("lightweight-charts").Time {
+  return (Math.floor(utcMs / 1000) + TZ_OFFSET_SEC) as unknown as import("lightweight-charts").Time;
+}
+
 function candleToBar(c: Candle) {
   return {
-    time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time,
+    time: toLocalTime(c.openTime),
     open: c.open, high: c.high, low: c.low, close: c.close,
   };
 }
 function candleToVol(c: Candle) {
   return {
-    time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time,
+    time: toLocalTime(c.openTime),
     value: c.volume,
     color: c.close >= c.open ? "#26c57c44" : "#ef444444",
   };
@@ -37,7 +45,7 @@ function calcMA(candles: Candle[], period: number) {
     const slice = candles.slice(i - period + 1, i + 1);
     const avg = slice.reduce((s, x) => s + x.close, 0) / period;
     return {
-      time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time,
+      time: toLocalTime(c.openTime),
       value: avg,
     };
   }).filter(Boolean) as { time: import("lightweight-charts").Time; value: number }[];
@@ -61,7 +69,7 @@ function calcRSI(candles: Candle[], period = 14) {
     }
     const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
     result.push({
-      time: Math.floor(candles[i].openTime / 1000) as unknown as import("lightweight-charts").Time,
+      time: toLocalTime(candles[i].openTime),
       value: Math.round((100 - 100 / (1 + rs)) * 100) / 100,
     });
   }
@@ -79,7 +87,7 @@ function calcBB(candles: Candle[], period = 20, mult = 2) {
     const avg = slice.reduce((s, x) => s + x.close, 0) / period;
     const variance = slice.reduce((s, x) => s + Math.pow(x.close - avg, 2), 0) / period;
     const stdDev = Math.sqrt(variance);
-    const t = Math.floor(candles[i].openTime / 1000) as unknown as import("lightweight-charts").Time;
+    const t = toLocalTime(candles[i].openTime);
     upper.push({ time: t, value: avg + mult * stdDev });
     middle.push({ time: t, value: avg });
     lower.push({ time: t, value: avg - mult * stdDev });
@@ -113,7 +121,7 @@ function calcMACD(candles: Candle[], fast = 12, slow = 26, signalPeriod = 9) {
 
   for (let i = slow - 1; i < candles.length; i++) {
     macdLine.push(emaFast[i] - emaSlow[i]);
-    macdTimes.push(Math.floor(candles[i].openTime / 1000) as unknown as import("lightweight-charts").Time);
+    macdTimes.push(toLocalTime(candles[i].openTime));
   }
 
   const signalLine = calcEMA(macdLine, signalPeriod);
@@ -224,11 +232,23 @@ export default function TradingChart({
 
       const containerW = mainRef.current.clientWidth || 320;
 
+      // Tijdzone-offset voor lokale tijd (UTC+2 in België = +7200s)
+      const tzOffsetSec = new Date().getTimezoneOffset() * -60;
+
       const commonLayout = {
         layout: { background: { type: ColorType.Solid, color: BG }, textColor: TEXT },
         grid: { vertLines: { color: GRID }, horzLines: { color: GRID } },
         rightPriceScale: { borderColor: GRID, textColor: TEXT },
-        timeScale: { borderColor: GRID, timeVisible: true, secondsVisible: false, rightOffset: 8 },
+        timeScale: {
+          borderColor: GRID, timeVisible: true, secondsVisible: false, rightOffset: 8,
+          // Toon lokale tijd op x-as
+          tickMarkFormatter: (time: number) => {
+            const d = new Date((time - tzOffsetSec) * 1000); // time is al in lokale seconden
+            const h = String(d.getUTCHours()).padStart(2, "0");
+            const m = String(d.getUTCMinutes()).padStart(2, "0");
+            return `${h}:${m}`;
+          },
+        },
         crosshair: { mode: CrosshairMode.Normal },
         handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
         handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
@@ -363,7 +383,7 @@ export default function TradingChart({
       const snap = candlesRef.current;
       if (snap.length > 0) {
         candleSeries.setData(snap.map(candleToBar));
-        lineSeries.setData(snap.map(c => ({ time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time, value: c.close })));
+        lineSeries.setData(snap.map(c => ({ time: toLocalTime(c.openTime), value: c.close })));
         // In line mode, hide volume bars (they look cluttered without candles)
         volumeSeries.applyOptions({ visible: chartTypeRef.current === "candle" });
         ma20Series.setData(calcMA(snap, 20));
@@ -453,7 +473,7 @@ export default function TradingChart({
     seriesRef.current.setData(candles.map(candleToBar));
     volumeSeriesRef.current.setData(candles.map(candleToVol));
     lineSeriesRef.current?.setData(candles.map(c => ({
-      time: Math.floor(c.openTime / 1000) as unknown as import("lightweight-charts").Time,
+      time: toLocalTime(c.openTime),
       value: c.close,
     })));
     ma20Ref.current?.setData(calcMA(candles, 20));
@@ -476,13 +496,13 @@ export default function TradingChart({
     // Als gebruiker al heeft ingezoomd, niet overschrijven
     if (!userZoomedRef.current && candles.length > 0) {
       const visible = candles.slice(-80);
-      const fromTime = Math.floor(visible[0].openTime / 1000);
-      // rightmost = closeTime van laatste candle + kleine buffer
+      const fromTime = toLocalTime(visible[0].openTime);
+      // rightmost = closeTime van laatste candle (ook in lokale tijd) + kleine buffer
       const last = candles[candles.length - 1];
-      const toTime = Math.floor(last.closeTime / 1000) + 1;
-      chartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
-      rsiChartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
-      macdChartRef.current?.timeScale().setVisibleRange({ from: fromTime as import("lightweight-charts").Time, to: toTime as import("lightweight-charts").Time });
+      const toTime = (Math.floor(last.closeTime / 1000) + TZ_OFFSET_SEC + 1) as unknown as import("lightweight-charts").Time;
+      chartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+      rsiChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+      macdChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
     }
   }, [candles, showBB, showMACD, chartInitKey]);
 

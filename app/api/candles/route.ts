@@ -26,9 +26,9 @@ const BROWSER_CACHE: Record<string, number> = {
   "1m": 10, "5m": 20, "15m": 45, "1h": 90, "4h": 240, "1d": 540, "1W": 1700,
 };
 
-// Binance limit per interval — niet te veel candles anders zijn recente te klein om te zien
+// Binance limit per interval
 const BINANCE_LIMIT: Record<string, number> = {
-  "1m": 300, "5m": 200, "15m": 150, "1h": 120, "4h": 100, "1d": 365,
+  "1m": 300, "5m": 288, "15m": 200, "1h": 168, "4h": 200, "1d": 365,
 };
 
 type CacheEntry = { data: unknown; ts: number };
