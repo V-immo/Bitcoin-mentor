@@ -20,17 +20,17 @@
 }
 
 [data-theme="light"] {
-  --bg: #d4b8d4;
-  --surface: #e8d8e8;
-  --surface-2: #c8aac8;
-  --text: #0f0510;
-  --text-secondary: #3d1535;
-  --border: rgba(140, 10, 70, 0.45);
-  --border-hover: rgba(140, 10, 70, 0.80);
-  --card-shadow: 0 2px 10px rgba(100, 0, 60, 0.22);
-  --green: #15803d;
-  --red: #b91c1c;
-  --orange: #b45309;
+  --bg: #1e0a2e;
+  --surface: #2a1040;
+  --surface-2: #361455;
+  --text: #f0e6ff;
+  --text-secondary: #b89ad4;
+  --border: rgba(160, 80, 255, 0.28);
+  --border-hover: rgba(160, 80, 255, 0.60);
+  --card-shadow: 0 2px 12px rgba(80, 0, 160, 0.35);
+  --green: #22c55e;
+  --red: #ef4444;
+  --orange: #f59e0b;
 }
 
 html,
@@ -6531,110 +6531,99 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 [data-theme="light"] .terminal-side-card,
 [data-theme="light"] .terminal-advanced,
 [data-theme="light"] .terminal-advanced-card {
-  box-shadow: 0 2px 8px rgba(100, 0, 60, 0.18), 0 0 0 1px rgba(140, 10, 70, 0.22);
+  box-shadow: 0 2px 12px rgba(80, 0, 160, 0.3), 0 0 0 1px rgba(160, 80, 255, 0.18);
 }
 
 [data-theme="light"] .scanner-card {
-  box-shadow: 0 1px 4px rgba(100, 0, 60, 0.14);
-  border-color: rgba(140, 10, 70, 0.35);
+  box-shadow: 0 1px 6px rgba(80, 0, 160, 0.25);
+  border-color: rgba(160, 80, 255, 0.28);
 }
 
 [data-theme="light"] .scanner-card:hover {
-  box-shadow: 0 4px 16px rgba(100, 0, 60, 0.22);
-  border-color: rgba(140, 10, 70, 0.60);
+  box-shadow: 0 4px 20px rgba(80, 0, 160, 0.40);
+  border-color: rgba(160, 80, 255, 0.55);
 }
 
-/* Signal badges — leesbaar op witte achtergrond */
+/* Signal badges */
 [data-theme="light"] .scanner-signal-green  {
-  background: rgba(22, 163, 74, 0.12);
-  color: #15803d;
-  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(34, 197, 94, 0.18);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.40);
 }
 [data-theme="light"] .scanner-signal-yellow {
-  background: rgba(217, 119, 6, 0.12);
-  color: #b45309;
-  border-color: rgba(217, 119, 6, 0.35);
+  background: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.40);
 }
 [data-theme="light"] .scanner-signal-red {
-  background: rgba(220, 38, 38, 0.10);
-  color: #b91c1c;
-  border-color: rgba(220, 38, 38, 0.30);
+  background: rgba(239, 68, 68, 0.18);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.40);
 }
 
-/* Winst/verlies kleuren — meer contrast in light */
-[data-theme="light"] .scanner-card-change.pos { color: #15803d; }
-[data-theme="light"] .scanner-card-change.neg { color: #b91c1c; }
+/* Winst/verlies kleuren */
+[data-theme="light"] .scanner-card-change.pos { color: #22c55e; }
+[data-theme="light"] .scanner-card-change.neg { color: #ef4444; }
 
 /* Score bar label */
-[data-theme="light"] .scanner-card-score-label { color: #5c3050; font-weight: 600; }
+[data-theme="light"] .scanner-card-score-label { color: #c4a0f0; font-weight: 600; }
 
-/* Topbar in light mode */
+/* Topbar */
 [data-theme="light"] .terminal-topbar {
   background: var(--surface);
-  border-bottom: 1px solid rgba(140, 10, 70, 0.35);
-  box-shadow: 0 2px 6px rgba(100, 0, 60, 0.14);
+  border-bottom: 1px solid rgba(160, 80, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(80, 0, 160, 0.25);
 }
 
-/* Tabs in light mode */
+/* Tabs */
 [data-theme="light"] .terminal-tab {
-  color: #5c3050;
+  color: #b89ad4;
 }
 [data-theme="light"] .terminal-tab.active {
-  color: #ad1457;
-  border-bottom-color: #ad1457;
+  color: #c084fc;
+  border-bottom-color: #c084fc;
 }
 
-/* Input velden in light mode */
+/* Input velden */
 [data-theme="light"] input,
 [data-theme="light"] select,
 [data-theme="light"] textarea {
-  background: var(--surface);
-  border-color: rgba(173, 20, 87, 0.28);
-  color: #12080f;
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.30);
+  color: #f0e6ff;
 }
 [data-theme="light"] input:focus,
 [data-theme="light"] select:focus {
-  border-color: #ad1457;
-  box-shadow: 0 0 0 2px rgba(173, 20, 87, 0.12);
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.20);
   outline: none;
 }
 
-/* Knoppen in light mode */
-[data-theme="light"] .terminal-btn-muted {
-  background: #f0e8f0;
-  border-color: rgba(173, 20, 87, 0.25);
-  color: #5c3050;
-}
-[data-theme="light"] .terminal-btn-muted:hover {
-  background: #e8dce8;
-  border-color: rgba(173, 20, 87, 0.45);
-}
-
-/* Muted tekst — donkerder in light */
+/* Muted tekst */
 [data-theme="light"] .muted,
 [data-theme="light"] .scanner-card-meta,
 [data-theme="light"] .scanner-card-name {
-  color: #7a4060;
+  color: #b89ad4;
 }
 
 /* StatsPanel kaarten */
 [data-theme="light"] .stats-card,
 [data-theme="light"] [class*="stats-"] {
-  box-shadow: 0 1px 3px rgba(100, 0, 60, 0.08);
+  box-shadow: 0 1px 6px rgba(80, 0, 160, 0.22);
 }
 
 /* Tabel rijen */
 [data-theme="light"] tr:hover {
-  background: rgba(173, 20, 87, 0.04);
+  background: rgba(160, 80, 255, 0.08);
 }
 [data-theme="light"] th {
-  background: #f0e8f0;
-  color: #5c3050;
+  background: var(--surface-2);
+  color: #c4a0f0;
   font-weight: 700;
 }
 [data-theme="light"] td {
-  border-bottom-color: rgba(173, 20, 87, 0.10);
-  color: #12080f;
+  border-bottom-color: rgba(160, 80, 255, 0.12);
+  color: #f0e6ff;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -6855,124 +6844,124 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding-top: 16px;
 }
 
-/* ── Light mode overrides voor de nieuwe componenten ── */
+/* ── Paars thema — dashboard componenten ── */
 [data-theme="light"] .dash-stats-bar {
-  background: #faf5fa;
-  border-bottom-color: rgba(173, 20, 87, 0.2);
+  background: var(--surface);
+  border-bottom-color: rgba(160, 80, 255, 0.22);
 }
 
 [data-theme="light"] .dash-stat-pill {
-  background: #f5eef5;
-  border-color: rgba(173, 20, 87, 0.18);
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.25);
 }
 
-[data-theme="light"] .dash-stat-value { color: #0f0510; }
+[data-theme="light"] .dash-stat-value { color: #f0e6ff; }
 
 [data-theme="light"] .dash-briefing-card {
-  background: linear-gradient(135deg, #f0e8f8 0%, #ebe0f5 100%);
-  border-color: rgba(156, 39, 176, 0.3);
-  border-left-color: #9c27b0;
-  box-shadow: 0 2px 12px rgba(100, 0, 180, 0.08);
+  background: linear-gradient(135deg, #2e1050 0%, #3a1460 100%);
+  border-color: rgba(168, 85, 247, 0.40);
+  border-left-color: #a855f7;
+  box-shadow: 0 2px 16px rgba(80, 0, 160, 0.35);
 }
 
-[data-theme="light"] .dash-briefing-title { color: #6d1b7b; }
-[data-theme="light"] .dash-briefing-date  { color: rgba(109, 27, 123, 0.55); }
-[data-theme="light"] .dash-briefing-text  { color: #2d0b3a; }
+[data-theme="light"] .dash-briefing-title { color: #e0b8ff; }
+[data-theme="light"] .dash-briefing-date  { color: rgba(192, 148, 255, 0.6); }
+[data-theme="light"] .dash-briefing-text  { color: #d8c8f0; }
 [data-theme="light"] .dash-briefing-asset-chip {
-  background: rgba(156, 39, 176, 0.12);
-  border-color: rgba(156, 39, 176, 0.25);
-  color: #6d1b7b;
+  background: rgba(168, 85, 247, 0.18);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #d8b4fe;
 }
 
-[data-theme="light"] .scanner-card-green  { background: linear-gradient(160deg, rgba(21,128,61,0.06) 0%, #faf5fa 40%); }
-[data-theme="light"] .scanner-card-yellow { background: linear-gradient(160deg, rgba(180,83,9,0.06) 0%, #faf5fa 40%); }
-[data-theme="light"] .scanner-card-red    { background: linear-gradient(160deg, rgba(185,28,28,0.06) 0%, #faf5fa 40%); }
+[data-theme="light"] .scanner-card-green  { background: linear-gradient(160deg, rgba(34,197,94,0.10) 0%, var(--surface) 40%); }
+[data-theme="light"] .scanner-card-yellow { background: linear-gradient(160deg, rgba(245,158,11,0.10) 0%, var(--surface) 40%); }
+[data-theme="light"] .scanner-card-red    { background: linear-gradient(160deg, rgba(239,68,68,0.10) 0%, var(--surface) 40%); }
 
-[data-theme="light"] .scanner-card-green:hover  { border-color: rgba(21,128,61,0.4); }
-[data-theme="light"] .scanner-card-yellow:hover { border-color: rgba(180,83,9,0.4); }
-[data-theme="light"] .scanner-card-red:hover    { border-color: rgba(185,28,28,0.4); }
+[data-theme="light"] .scanner-card-green:hover  { border-color: rgba(34,197,94,0.45); }
+[data-theme="light"] .scanner-card-yellow:hover { border-color: rgba(245,158,11,0.45); }
+[data-theme="light"] .scanner-card-red:hover    { border-color: rgba(239,68,68,0.45); }
 
 [data-theme="light"] .dash-live-wrap {
-  background: rgba(21, 128, 61, 0.08);
-  border-color: rgba(21, 128, 61, 0.25);
+  background: rgba(34, 197, 94, 0.10);
+  border-color: rgba(34, 197, 94, 0.30);
 }
-[data-theme="light"] .dash-live-dot { background: #16a34a; }
-[data-theme="light"] .dash-live-label { color: #16a34a; }
-[data-theme="light"] .dash-countdown  { color: rgba(21, 128, 61, 0.6); }
+[data-theme="light"] .dash-live-dot   { background: #22c55e; }
+[data-theme="light"] .dash-live-label { color: #22c55e; }
+[data-theme="light"] .dash-countdown  { color: rgba(34, 197, 94, 0.65); }
 
-/* ── Timeframe knoppen in light ── */
+/* ── Timeframe knoppen ── */
 [data-theme="light"] .terminal-tf-btn {
-  background: #dccadc;
-  border-color: rgba(140, 10, 70, 0.38);
-  color: #2d0b3a;
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.30);
+  color: #c4a0f0;
 }
 [data-theme="light"] .terminal-tf-btn:hover {
-  background: #d0bcd0;
-  border-color: rgba(140, 10, 70, 0.6);
-  color: #1a0520;
+  background: #42186a;
+  border-color: rgba(160, 80, 255, 0.55);
+  color: #e0c8ff;
 }
 [data-theme="light"] .terminal-tf-btn.active {
-  background: rgba(124, 58, 237, 0.20);
-  border-color: rgba(124, 58, 237, 0.55);
-  color: #4c1d95;
+  background: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.65);
+  color: #e0b8ff;
 }
 
-/* ── Chart chips (Live, MA20, MA50, hints) in light ── */
+/* ── Chart chips (Live, MA20, MA50, hints) ── */
 [data-theme="light"] .market-chart-chip {
-  background: #dccadc;
-  border-color: rgba(140, 10, 70, 0.35);
-  color: #3d1535;
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.28);
+  color: #c4a0f0;
 }
 
-/* ── Context badges (Koopzone, Stop, Resistance) in light ── */
+/* ── Context badges (Koopzone, Stop, Resistance) ── */
 [data-theme="light"] .market-chart-context-box {
-  background: #d8c4d8;
-  border-color: rgba(140, 10, 70, 0.4);
-  color: #1a0520;
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.35);
+  color: #f0e6ff;
   font-weight: 600;
 }
 
-/* ── Indicator knoppen (Candle/Lijn/BB/MACD) in light ── */
+/* ── Indicator knoppen (Candle/Lijn/BB/MACD) ── */
 [data-theme="light"] .chart-type-wrap {
-  border-color: rgba(140, 10, 70, 0.4);
+  border-color: rgba(160, 80, 255, 0.35);
 }
 [data-theme="light"] .chart-type-btn {
-  background: #dccadc;
-  color: #2d0b3a;
+  background: var(--surface-2);
+  color: #c4a0f0;
 }
 [data-theme="light"] .chart-type-btn.active {
   background: #7c3aed;
   color: #fff;
 }
 [data-theme="light"] .chart-indicator-btn {
-  background: #dccadc;
-  color: #2d0b3a;
+  background: var(--surface-2);
+  color: #c4a0f0;
 }
 [data-theme="light"] .chart-indicator-btn.active {
   background: #e91e63;
   color: #fff;
 }
 
-/* ── Signal strip in light ── */
+/* ── Signal strip ── */
 [data-theme="light"] .signal-strip {
   background: var(--surface);
-  border-top-color: rgba(173, 20, 87, 0.2);
+  border-top-color: rgba(160, 80, 255, 0.22);
 }
-[data-theme="light"] .ssd-val   { color: #0f0510; }
-[data-theme="light"] .ssd-label { color: #7a4060; }
-[data-theme="light"] .ssd-green { color: #15803d; }
-[data-theme="light"] .ssd-red   { color: #b91c1c; }
+[data-theme="light"] .ssd-val   { color: #f0e6ff; }
+[data-theme="light"] .ssd-label { color: #b89ad4; }
+[data-theme="light"] .ssd-green { color: #22c55e; }
+[data-theme="light"] .ssd-red   { color: #ef4444; }
 
-/* ── Zoom/fit knoppen onder de chart in light ── */
+/* ── Zoom/fit knoppen ── */
 [data-theme="light"] .terminal-btn-muted {
-  background: #dccadc;
-  border-color: rgba(140, 10, 70, 0.38);
-  color: #2d0b3a;
+  background: var(--surface-2);
+  border-color: rgba(160, 80, 255, 0.30);
+  color: #c4a0f0;
 }
 [data-theme="light"] .terminal-btn-muted:hover {
-  background: #d0bcd0;
-  border-color: rgba(140, 10, 70, 0.6);
-  color: #1a0520;
+  background: #42186a;
+  border-color: rgba(160, 80, 255, 0.55);
+  color: #e0c8ff;
 }
 
 /* ── Live WebSocket dot op scanner kaart ── */
