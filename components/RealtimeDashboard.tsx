@@ -257,15 +257,9 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset]);
 
-  // Herlaad candles als interval gewisseld wordt en data leeg of te oud is
+  // Herlaad candles als interval gewisseld wordt en data leeg is
   useEffect(() => {
     if (activeInterval === "multi") return;
-    setCandleMap(prev => {
-      const current = prev[activeInterval];
-      if (current && current.length > 0) return prev; // data aanwezig, niet opnieuw laden
-      return prev;
-    });
-    // Fetch direct als de candle-array voor dit interval nog leeg is
     let cancelled = false;
     (async () => {
       const current = candleMapRef.current?.[activeInterval];
@@ -277,6 +271,22 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeInterval, asset]);
+
+  // Periodieke REST refresh — vangt gemiste candles op als kline WebSocket offline was
+  // Elke 30s controleren: is er een nieuwe candle die de WebSocket gemist heeft?
+  useEffect(() => {
+    if (activeInterval === "multi" || !isBinance) return;
+    const timer = setInterval(async () => {
+      // Alleen fetchen als WebSocket niet live is — anders doet die het werk
+      if (klineWsState === "live") return;
+      const data = await fetchCandles(asset, activeInterval);
+      if (data.length > 0) {
+        setCandleMap(prev => ({ ...prev, [activeInterval]: data }));
+      }
+    }, 30_000);
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asset, activeInterval, isBinance, klineWsState]);
 
   // Futures data (funding rate + open interest)
   useEffect(() => {
@@ -461,6 +471,13 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             if (last && last.openTime === candle.openTime) {
               return { ...prev, [wsInterval]: [...current.slice(0, -1), candle] };
             }
+            // Nieuwe periode gedetecteerd — voeg candle toe en haal direct REST-data op
+            // zodat de vorige (nu gesloten) candle zijn definitieve slotprijs krijgt
+            fetchCandles(asset, wsInterval).then(fresh => {
+              if (fresh.length > 0) {
+                setCandleMap(p => ({ ...p, [wsInterval]: fresh }));
+              }
+            }).catch(() => {});
             return { ...prev, [wsInterval]: [...current, candle].slice(-500) };
           });
           setKlineWsState("live");
