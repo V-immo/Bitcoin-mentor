@@ -1,6 +1,7 @@
 import { SCAN_ASSETS } from "@/lib/assets";
 import { getCandles } from "@/lib/market";
-import { getFinnhubCandles, getFinnhubBatchQuotes } from "@/lib/finnhub";
+import { getFinnhubBatchQuotes } from "@/lib/finnhub";
+import { getYahooCandles } from "@/lib/yahoo";
 import { calculateRsi, analyzeTimeframe, detectStructure } from "@/lib/market";
 import type { Candle } from "@/lib/types";
 import { sharedScanCache } from "@/lib/scan-cache";
@@ -162,29 +163,41 @@ export async function GET() {
         const quote = finnhubQuotes.get(asset.symbol);
         price = quote?.price ?? 0;
         change24h = quote?.change24h ?? 0;
+        // Dagelijkse candles voor scoring (MA20/MA50/RSI)
+        // Hourly candles voor sparkline (laatste 48 uur)
+        // symbol is al in Yahoo-formaat: GC=F, NVDA, AAPL, etc.
+        let dailyForScore: Candle[] = [];
+        let sparklineCandles: Candle[] = [];
         try {
-          candles = await getFinnhubCandles(asset.finnhubSymbol ?? asset.symbol, "1d");
+          const [dailyResult, hourlyResult] = await Promise.allSettled([
+            getYahooCandles(asset.symbol, "1d"),
+            getYahooCandles(asset.symbol, "1h", "5d"),
+          ]);
+          dailyForScore = dailyResult.status === "fulfilled" ? dailyResult.value : [];
+          const hourly = hourlyResult.status === "fulfilled" ? hourlyResult.value : [];
+          sparklineCandles = hourly.length >= 5 ? hourly.slice(-48) : dailyForScore.slice(-30);
         } catch { /* ignore */ }
+        candles = dailyForScore; // voor quickScore
+
+        const { score, rsi, trend } = quickScore(candles, price);
+        const color = scoreToColor(score);
+
+        return {
+          symbol: asset.symbol,
+          name: asset.name,
+          ticker: asset.ticker,
+          type: asset.type,
+          emoji: asset.emoji,
+          price,
+          change24h,
+          score,
+          color,
+          signal: scoreToSignal(score, color),
+          trend,
+          rsi,
+          candles: sparklineCandles,
+        };
       }
-
-      const { score, rsi, trend } = quickScore(candles, price);
-      const color = scoreToColor(score);
-
-      return {
-        symbol: asset.symbol,
-        name: asset.name,
-        ticker: asset.ticker,
-        type: asset.type,
-        emoji: asset.emoji,
-        price,
-        change24h,
-        score,
-        color,
-        signal: scoreToSignal(score, color),
-        trend,
-        rsi,
-        candles: candles.slice(-30),
-      };
     })
   );
 
