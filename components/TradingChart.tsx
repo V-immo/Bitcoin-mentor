@@ -558,66 +558,31 @@ export default function TradingChart({
 
       {/* Indicator toggle buttons */}
       {!compact && (
-        <div style={{ display: "flex", gap: 8, padding: "6px 0 2px 0", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="chart-controls-bar">
           {/* Chart type toggle */}
-          <div style={{
-            display: "flex", borderRadius: 20, overflow: "hidden",
-            border: "1px solid #2a1a28", marginRight: 4,
-          }}>
+          <div className="chart-type-wrap">
             <button
               onClick={() => setChartType("candle")}
-              style={{
-                padding: "3px 12px", border: "none", cursor: "pointer",
-                fontSize: 12, fontWeight: 600,
-                background: chartType === "candle" ? "#7c3aed" : "#2a1a28",
-                color: chartType === "candle" ? "#fff" : "#bf7a99",
-                transition: "background 0.15s",
-              }}
+              className={`chart-type-btn${chartType === "candle" ? " active" : ""}`}
             >
               🕯 {t("chart_candle_label")}
             </button>
             <button
               onClick={() => setChartType("line")}
-              style={{
-                padding: "3px 12px", border: "none", cursor: "pointer",
-                fontSize: 12, fontWeight: 600,
-                background: chartType === "line" ? "#7c3aed" : "#2a1a28",
-                color: chartType === "line" ? "#fff" : "#bf7a99",
-                transition: "background 0.15s",
-              }}
+              className={`chart-type-btn${chartType === "line" ? " active" : ""}`}
             >
               📈 {t("chart_line_label")}
             </button>
           </div>
           <button
             onClick={() => setShowBB(v => !v)}
-            style={{
-              padding: "3px 12px",
-              borderRadius: 20,
-              border: "none",
-              cursor: "pointer",
-              fontSize: 12,
-              fontWeight: 600,
-              background: showBB ? "#e91e63" : "#2a1a28",
-              color: showBB ? "#fff" : "#bf7a99",
-              transition: "background 0.15s",
-            }}
+            className={`chart-indicator-btn${showBB ? " active" : ""}`}
           >
             BB
           </button>
           <button
             onClick={() => setShowMACD(v => !v)}
-            style={{
-              padding: "3px 12px",
-              borderRadius: 20,
-              border: "none",
-              cursor: "pointer",
-              fontSize: 12,
-              fontWeight: 600,
-              background: showMACD ? "#e91e63" : "#2a1a28",
-              color: showMACD ? "#fff" : "#bf7a99",
-              transition: "background 0.15s",
-            }}
+            className={`chart-indicator-btn${showMACD ? " active" : ""}`}
           >
             MACD
           </button>
