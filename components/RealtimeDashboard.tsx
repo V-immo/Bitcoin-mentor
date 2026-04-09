@@ -173,6 +173,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [candleMap, setCandleMap] = useState<Record<string, Candle[]>>({
     "1m": [], "5m": [], "15m": [], "1h": [], "4h": initialData.chartCandles4h, "1d": [],
   });
+  const candleMapRef = useRef<Record<string, Candle[]>>({});
+  useEffect(() => { candleMapRef.current = candleMap; }, [candleMap]);
   const [priceWsState, setPriceWsState] = useState("connecting");
   const [klineWsState, setKlineWsState] = useState("connecting");
   const [lastTickLabel, setLastTickLabel] = useState("");
@@ -254,6 +256,27 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset]);
+
+  // Herlaad candles als interval gewisseld wordt en data leeg of te oud is
+  useEffect(() => {
+    if (activeInterval === "multi") return;
+    setCandleMap(prev => {
+      const current = prev[activeInterval];
+      if (current && current.length > 0) return prev; // data aanwezig, niet opnieuw laden
+      return prev;
+    });
+    // Fetch direct als de candle-array voor dit interval nog leeg is
+    let cancelled = false;
+    (async () => {
+      const current = candleMapRef.current?.[activeInterval];
+      if (current && current.length > 0) return; // al geladen
+      const data = await fetchCandles(asset, activeInterval);
+      if (cancelled) return;
+      setCandleMap(prev => ({ ...prev, [activeInterval]: data }));
+    })();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeInterval, asset]);
 
   // Futures data (funding rate + open interest)
   useEffect(() => {
