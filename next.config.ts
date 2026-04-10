@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: getTurbopackRoot(),
   },
+  // Voorkom dat browsers HTML-pagina's cachen na een deploy
+  // (stale HTML met oude chunk-hashes → "Application error")
+  async headers() {
+    return [
+      {
+        source: "/((?!_next/static|_next/image|favicon|icon|manifest|sw\\.js).*)",
+        headers: [
+          { key: "Cache-Control", value: "no-store, must-revalidate" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -33,21 +33,18 @@ export default function FloatingMarcus() {
 
   // Verberg op uitgesloten pagina's en als niet ingelogd
   const hidden = !session?.user || EXCLUDED_PATHS.some(p => pathname.startsWith(p));
-  if (hidden) return null;
 
-  // Scroll naar beneden bij nieuwe berichten
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // Hooks altijd aanroepen (vóór conditional return — React rules of hooks)
   useEffect(() => {
+    if (hidden) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streaming]);
+  }, [messages, streaming, hidden]);
 
-  // Focus input bij openen
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    if (hidden) return;
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
-  }, [open]);
+  }, [open, hidden]);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const send = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
     const userMsg: Message = { role: "user", content: text.trim() };
@@ -119,6 +116,8 @@ export default function FloatingMarcus() {
       send(input);
     }
   }
+
+  if (hidden) return null;
 
   return (
     <>
