@@ -14,7 +14,18 @@ function checkRate(key: string): boolean {
   return true;
 }
 
-// Geeft null terug als nooit gedaan, getal als wel gedaan
+// Vergelijkt twee YYYY-MM-DD datums en geeft verschil in kalenderdagen
+function calendarDaysSince(dateStr: string | null): number | null {
+  if (!dateStr) return null;
+  const date = dateStr.slice(0, 10); // zeker YYYY-MM-DD
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const diffMs = new Date(today).getTime() - new Date(date).getTime();
+  if (isNaN(diffMs)) return null;
+  return Math.round(diffMs / 86_400_000);
+}
+
+// Geeft null terug als nooit gedaan, getal als wel gedaan (voor trades/journal met datetime)
 function daysSince(dateStr: string | null): number | null {
   if (!dateStr) return null;
   const d = new Date(dateStr);
@@ -76,7 +87,10 @@ export async function GET() {
 
   const daysSinceTrade = daysSince(lastTradeDate);
   const daysSinceJournal = daysSince(lastJournal?.last ?? null);
-  const daysSinceLogin = daysSince(user?.last_login_at ?? null) ?? 0;
+
+  // Gebruik last_streak_date (kalenderdatum) voor login-recency — accurater dan last_login_at (datetime)
+  // user.last_streak_date is de OUDE waarde (vóór de update hierboven)
+  const daysSinceLogin = calendarDaysSince(user?.last_streak_date ?? null) ?? 0;
 
   // Geen nudge als gebruiker vandaag of gisteren actief was (trade, journal OF sitebezoek)
   const recentlyActive =
@@ -87,7 +101,7 @@ export async function GET() {
     return Response.json({ nudge: null, active: true, streak: newStreak });
   }
 
-  // Nudge alleen als sitebezoek ook 2+ dagen geleden is
+  // Nudge alleen als sitebezoek 2+ kalenderdagen geleden is
   const shouldNudge = daysSinceLogin >= 2;
   if (!shouldNudge) return Response.json({ nudge: null });
 
@@ -95,7 +109,7 @@ export async function GET() {
     return Response.json({ nudge: null });
   }
 
-  // Inactieve dagen op basis van écht laatste bezoek
+  // Afwezige dagen op basis van kalenderdatum laatste bezoek
   const inactiveDays = Math.min(14, daysSinceLogin);
   const neverTraded = !lastTradeDate;
   const btcSummary = getBtcSummary();
@@ -111,14 +125,14 @@ export async function GET() {
   }
 
   const context = neverTraded
-    ? "een nieuwe trader die nog geen paper trade heeft gedaan"
-    : `een trader die ${inactiveDays} ${inactiveDays === 1 ? "dag" : "dagen"} inactief is geweest`;
+    ? "een nieuwe trader die net terugkomt en nog geen paper trade heeft gedaan"
+    : `een trader die terugkomt na ${inactiveDays} ${inactiveDays === 1 ? "dag" : "dagen"} afwezigheid`;
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const msg = await client.messages.create({
     model: "claude-haiku-4-5",
     max_tokens: 120,
-    system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE motiverende nudge (max 2 zinnen) voor ${context}. Wees concreet en positief, niet veroordelend. Gebruik "je/jij". Geen aanhef, geen afsluiting. Alleen de boodschap zelf.${btcSummary ? ` Marktcontext: ${btcSummary}` : ""}`,
+    system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE welkomstboodschap (max 2 zinnen) voor ${context}. Verwelkom ze terug, wees positief en concreet. Gebruik "je/jij". Geen aanhef, geen afsluiting. Alleen de boodschap zelf.${btcSummary ? ` Marktcontext: ${btcSummary}` : ""}`,
     messages: [{ role: "user", content: "Geef me een nudge." }],
   });
 
