@@ -49,8 +49,8 @@ export async function GET() {
   const db = getDb();
 
   // Lees EERST de vorige activiteit + streak data, daarna updaten
-  const user = db.prepare("SELECT last_login_at, username, login_streak, last_streak_date FROM users WHERE id = ?")
-    .get(userId) as { last_login_at: string | null; username: string; login_streak: number; last_streak_date: string | null } | undefined;
+  const user = db.prepare("SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date FROM users WHERE id = ?")
+    .get(userId) as { last_login_at: string | null; username: string; login_streak: number; last_streak_date: string | null; last_greeting_date: string | null } | undefined;
 
   // Bereken nieuwe streak
   const today = new Date().toISOString().slice(0, 10);
@@ -92,21 +92,46 @@ export async function GET() {
   // user.last_streak_date is de OUDE waarde (vóór de update hierboven)
   const daysSinceLogin = calendarDaysSince(user?.last_streak_date ?? null) ?? 0;
 
+  // Ochtendgroet: eenmaal per dag, ongeacht activiteit
+  const needsMorningGreeting = user?.last_greeting_date !== today;
+  let morningGreeting: string | null = null;
+
+  if (needsMorningGreeting && process.env.ANTHROPIC_API_KEY && checkRate(String(userId))) {
+    const btcSummary = getBtcSummary();
+    const tradingPlan = db.prepare("SELECT risk_per_trade, max_trades_per_day, max_daily_loss FROM trading_plan WHERE user_id = ?").get(userId) as { risk_per_trade?: number; max_trades_per_day?: number; max_daily_loss?: number } | undefined;
+    const planHint = tradingPlan
+      ? `Deze trader handelt met max ${tradingPlan.risk_per_trade ?? 1}% risico per trade, max ${tradingPlan.max_trades_per_day ?? 3} trades per dag.`
+      : "Geen tradingplan ingevuld.";
+    const streakHint = newStreak >= 2 ? `Streak van ${newStreak} dagen — benoem dat kort.` : "";
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    try {
+      const msg = await client.messages.create({
+        model: "claude-haiku-4-5",
+        max_tokens: 80,
+        system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE ochtendgroet (max 2 zinnen) voor je trader die net inlogt. Wees direct en persoonlijk. Gebruik "je/jij". Geen aanhef. ${streakHint} ${btcSummary ? `Marktcontext: ${btcSummary}` : ""} ${planHint}`,
+        messages: [{ role: "user", content: "Goedemorgen Marcus." }],
+      });
+      morningGreeting = (msg.content[0] as { text: string }).text.trim();
+      db.prepare("UPDATE users SET last_greeting_date = ? WHERE id = ?").run(today, userId);
+    } catch { /* geen greeting als API faalt */ }
+  }
+
   // Geen nudge als gebruiker vandaag of gisteren actief was (trade, journal OF sitebezoek)
   const recentlyActive =
     daysSinceLogin <= 1 ||
     (daysSinceTrade !== null && daysSinceTrade <= 1) ||
     (daysSinceJournal !== null && daysSinceJournal <= 1);
   if (recentlyActive) {
-    return Response.json({ nudge: null, active: true, streak: newStreak });
+    return Response.json({ nudge: null, active: true, streak: newStreak, morningGreeting });
   }
 
   // Nudge alleen als sitebezoek 2+ kalenderdagen geleden is
   const shouldNudge = daysSinceLogin >= 2;
-  if (!shouldNudge) return Response.json({ nudge: null });
+  if (!shouldNudge) return Response.json({ nudge: null, morningGreeting });
 
   if (!checkRate(String(userId))) {
-    return Response.json({ nudge: null });
+    return Response.json({ nudge: null, morningGreeting });
   }
 
   // Afwezige dagen op basis van kalenderdatum laatste bezoek
@@ -121,21 +146,21 @@ export async function GET() {
       "Kom terug en check wat er speelt. 5 minuten is genoeg.",
       "Je agenda is leeg. Zelfs op rustige dagen valt er wat te noteren.",
     ];
-    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays, streak: newStreak });
+    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays, streak: newStreak, morningGreeting });
   }
 
   const context = neverTraded
     ? "een nieuwe trader die net terugkomt en nog geen paper trade heeft gedaan"
     : `een trader die terugkomt na ${inactiveDays} ${inactiveDays === 1 ? "dag" : "dagen"} afwezigheid`;
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const msg = await client.messages.create({
+  const client2 = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const msg2 = await client2.messages.create({
     model: "claude-haiku-4-5",
     max_tokens: 120,
     system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE welkomstboodschap (max 2 zinnen) voor ${context}. Verwelkom ze terug, wees positief en concreet. Gebruik "je/jij". Geen aanhef, geen afsluiting. Alleen de boodschap zelf.${btcSummary ? ` Marktcontext: ${btcSummary}` : ""}`,
     messages: [{ role: "user", content: "Geef me een nudge." }],
   });
 
-  const nudge = (msg.content[0] as { text: string }).text.trim();
-  return Response.json({ nudge, inactiveDays, streak: newStreak });
+  const nudge = (msg2.content[0] as { text: string }).text.trim();
+  return Response.json({ nudge, inactiveDays, streak: newStreak, morningGreeting });
 }
