@@ -37,12 +37,24 @@ export async function GET() {
 
   const db = getDb();
 
-  // Lees EERST de vorige activiteit, daarna updaten
-  const user = db.prepare("SELECT last_login_at, username FROM users WHERE id = ?")
-    .get(userId) as { last_login_at: string | null; username: string } | undefined;
+  // Lees EERST de vorige activiteit + streak data, daarna updaten
+  const user = db.prepare("SELECT last_login_at, username, login_streak, last_streak_date FROM users WHERE id = ?")
+    .get(userId) as { last_login_at: string | null; username: string; login_streak: number; last_streak_date: string | null } | undefined;
 
-  // Update last_login_at na het lezen
-  db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
+  // Bereken nieuwe streak
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  let newStreak = 1;
+  if (user?.last_streak_date === today) {
+    newStreak = user.login_streak || 1; // al geteld vandaag
+  } else if (user?.last_streak_date === yesterday) {
+    newStreak = (user.login_streak || 0) + 1; // dag op dag → uitbreiden
+  }
+  // else: streek verbroken of eerste keer → reset naar 1
+
+  // Update last_login_at + streak na het lezen
+  db.prepare("UPDATE users SET last_login_at = datetime('now'), login_streak = ?, last_streak_date = ? WHERE id = ?")
+    .run(newStreak, today, userId);
 
   // Haal history JSON op — echte trades, niet alleen "rij bestaat"
   const paperRow = db.prepare("SELECT history FROM paper_trading WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1")
@@ -72,7 +84,7 @@ export async function GET() {
     (daysSinceTrade !== null && daysSinceTrade <= 1) ||
     (daysSinceJournal !== null && daysSinceJournal <= 1);
   if (recentlyActive) {
-    return Response.json({ nudge: null, active: true });
+    return Response.json({ nudge: null, active: true, streak: newStreak });
   }
 
   // Nudge alleen als sitebezoek ook 2+ dagen geleden is
@@ -95,7 +107,7 @@ export async function GET() {
       "Kom terug en check wat er speelt. 5 minuten is genoeg.",
       "Je agenda is leeg. Zelfs op rustige dagen valt er wat te noteren.",
     ];
-    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays });
+    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays, streak: newStreak });
   }
 
   const context = neverTraded
@@ -111,5 +123,5 @@ export async function GET() {
   });
 
   const nudge = (msg.content[0] as { text: string }).text.trim();
-  return Response.json({ nudge, inactiveDays });
+  return Response.json({ nudge, inactiveDays, streak: newStreak });
 }

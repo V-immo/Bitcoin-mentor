@@ -37,6 +37,15 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
+  const [streak, setStreak] = useState<number>(0);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/me/nudge")
+      .then(r => r.json())
+      .then(d => { if (d.streak) setStreak(d.streak); })
+      .catch(() => {});
+  }, [session]);
 
   useEffect(() => { setMenuOpen(false); setDropOpen(false); }, [pathname]);
   useEffect(() => {
@@ -132,6 +141,13 @@ export default function Nav() {
             )}
           </div>
 
+          {/* Streak badge */}
+          {streak >= 2 && (
+            <div className="nav-streak-badge" title={`${streak} dagen op rij actief`}>
+              🔥 <span>{streak}</span>
+            </div>
+          )}
+
           {/* Thema toggle */}
           <button
             onClick={toggleTheme}
@@ -171,6 +187,9 @@ export default function Nav() {
               <div className="nav-mobile-user">
                 <span className="nav-mobile-username">{session.user.name}</span>
                 {isAdmin && <span className="app-nav-badge-admin">Admin</span>}
+                {streak >= 2 && (
+                  <span className="nav-streak-badge" title={`${streak} dagen op rij`}>🔥 {streak}</span>
+                )}
               </div>
             )}
 

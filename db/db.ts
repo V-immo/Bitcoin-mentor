@@ -118,6 +118,8 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "start_capital", "REAL NOT NULL DEFAULT 10000");
   addCol("users", "totp_secret", "TEXT");
   addCol("users", "totp_enabled", "INTEGER NOT NULL DEFAULT 0");
+  addCol("users", "login_streak", "INTEGER NOT NULL DEFAULT 0");
+  addCol("users", "last_streak_date", "TEXT DEFAULT ''");
 }
 
 export function getDb(): Database.Database {
