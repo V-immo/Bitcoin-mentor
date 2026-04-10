@@ -202,6 +202,34 @@ ${lines.join("\n")}`;
     } catch { /* geen psychology data */ }
   }
 
+  // ── Gebruikersprofiel uit user_profile tabel ───────────────────────────────
+  let userProfileContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const profile = db.prepare("SELECT * FROM user_profile WHERE user_id = ?").get(userId) as {
+        trading_style?: string; risk_profile?: string; goals?: string; fears?: string;
+        strengths?: string; weaknesses?: string; best_time_of_day?: string;
+        worst_emotions?: string; best_emotions?: string; impulse_patterns?: string; notes?: string;
+      } | undefined;
+      if (profile) {
+        const lines: string[] = [];
+        if (profile.goals)           lines.push(`Doelen: ${profile.goals}`);
+        if (profile.trading_style)   lines.push(`Trading stijl (zelfomschrijving): ${profile.trading_style}`);
+        if (profile.risk_profile)    lines.push(`Risicoprofiel: ${profile.risk_profile}`);
+        if (profile.strengths)       lines.push(`Sterke punten: ${profile.strengths}`);
+        if (profile.weaknesses)      lines.push(`Zwakke punten: ${profile.weaknesses}`);
+        if (profile.fears)           lines.push(`Angsten: ${profile.fears}`);
+        if (profile.best_time_of_day) lines.push(`Beste tijd van de dag om te traden: ${profile.best_time_of_day}`);
+        if (profile.best_emotions)   lines.push(`Emoties bij beste trades: ${profile.best_emotions}`);
+        if (profile.worst_emotions)  lines.push(`Emoties bij slechtste trades: ${profile.worst_emotions}`);
+        if (profile.impulse_patterns) lines.push(`Impulspatronen: ${profile.impulse_patterns}`);
+        if (profile.notes)           lines.push(`Extra notities: ${profile.notes}`);
+        if (lines.length > 0) userProfileContext = lines.join("\n");
+      }
+    } catch { /* geen profiel data */ }
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return Response.json({
@@ -522,7 +550,11 @@ ${bybitContext
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
 
-TRADING PSYCHOLOGIE — PERSOONLIJK PROFIEL VAN DEZE GEBRUIKER:
+PERSOONLIJK GEBRUIKERSPROFIEL (handmatig ingevuld door de gebruiker of bijgewerkt door Marcus):
+${userProfileContext || "Nog geen persoonlijk profiel ingevuld. Marcus bouwt dit op door goede vragen te stellen."}
+Gebruik dit profiel actief: als de gebruiker doelen noemt verwijs je terug, als ze angsten tonen benoem je die concreet, als ze impulsgedrag vertonen herinner je aan hun eigen ingevulde patroon.
+
+TRADING PSYCHOLOGIE — PERSOONLIJK PROFIEL VAN DEZE GEBRUIKER (data-gedreven vanuit trades):
 ${psychologyContext || "Nog geen emotie-data beschikbaar."}
 Marcus gebruikt deze data actief. Als de gebruiker FOMO of stress uitdrukt, koppelt Marcus dit aan zijn historische prestaties: "Kijk, jouw data toont dat je bij twijfel gemiddeld €X slechter presteert — dat is precies nu het geval." Wees concreet, geen algemene wijsheden.
 
