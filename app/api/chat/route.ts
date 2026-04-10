@@ -202,6 +202,31 @@ ${lines.join("\n")}`;
     } catch { /* geen psychology data */ }
   }
 
+  // ── Persoonlijk tradingplan ────────────────────────────────────────────────
+  let tradingPlanContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const plan = db.prepare("SELECT * FROM trading_plan WHERE user_id = ?").get(userId) as {
+        rules?: string; risk_per_trade?: number; max_daily_loss?: number;
+        max_trades_per_day?: number; preferred_assets?: string;
+        entry_rules?: string; exit_rules?: string; commitments?: string;
+      } | undefined;
+      if (plan) {
+        const lines: string[] = [];
+        if (plan.risk_per_trade)     lines.push(`Max risico per trade: ${plan.risk_per_trade}% van kapitaal`);
+        if (plan.max_daily_loss)     lines.push(`Max dagverlies: ${plan.max_daily_loss}%`);
+        if (plan.max_trades_per_day) lines.push(`Max trades per dag: ${plan.max_trades_per_day}`);
+        if (plan.preferred_assets)   lines.push(`Voorkeur assets: ${plan.preferred_assets}`);
+        if (plan.rules)              lines.push(`Trading regels: ${plan.rules}`);
+        if (plan.entry_rules)        lines.push(`Entry regels: ${plan.entry_rules}`);
+        if (plan.exit_rules)         lines.push(`Exit regels: ${plan.exit_rules}`);
+        if (plan.commitments)        lines.push(`Beloften aan zichzelf: ${plan.commitments}`);
+        if (lines.length > 0) tradingPlanContext = lines.join("\n");
+      }
+    } catch { /* geen plan data */ }
+  }
+
   // ── Gebruikersprofiel uit user_profile tabel ───────────────────────────────
   let userProfileContext = "";
   if (userId) {
@@ -550,6 +575,14 @@ ${bybitContext
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}
 
+PERSOONLIJK TRADINGPLAN VAN DEZE GEBRUIKER:
+${tradingPlanContext || "Nog geen tradingplan ingevuld. Moedig de gebruiker aan dit in te vullen via /profiel — het helpt Marcus beter coachen."}
+${tradingPlanContext ? `Marcus BEWAAKT dit plan actief. Als de gebruiker een trade bespreekt, check je altijd:
+- Valt de trade binnen de max risico per trade?
+- Zijn er al te veel trades vandaag geopend?
+- Klopt de entry met hun eigen entry-regels?
+Als ze een planoverschrijding willen doen, benoem je dat direct: "Wacht — dit gaat tegen jouw eigen plan in. Jij hebt vastgelegd dat je max X% riskeert per trade."` : ""}
+
 PERSOONLIJK GEBRUIKERSPROFIEL (handmatig ingevuld door de gebruiker of bijgewerkt door Marcus):
 ${userProfileContext || "Nog geen persoonlijk profiel ingevuld. Marcus bouwt dit op door goede vragen te stellen."}
 Gebruik dit profiel actief: als de gebruiker doelen noemt verwijs je terug, als ze angsten tonen benoem je die concreet, als ze impulsgedrag vertonen herinner je aan hun eigen ingevulde patroon.
@@ -637,7 +670,7 @@ NAVIGATIE (bovenbalk — van links naar rechts):
 - 📰 Nieuws (/nieuws) — Laatste crypto nieuws van CoinTelegraph en CoinDesk. Apart tabblad.
 - 📡 Scanner (/scanner) — Live marktscanner met scores voor alle assets. Klik op een asset → gaat naar Trade. Onderaan ook een volledig Marktoverzicht met prijzen van alle assets.
 - 📈 Handelen (/trade) — Het hoofd-trading dashboard. Grafiek, signalen, Paper Trade, Plan Check etc.
-- 👤 Profiel (/profiel) — Jouw profiel en voortgang.
+- 👤 Profiel (/profiel) — Jouw profiel, voortgang en persoonlijk tradingplan (📋 sectie bovenaan).
 - Account dropdown → Agenda, Statistieken, Testnet, Leaderboard, Instellingen, Help, Uitloggen.
 
 ZWEVENDE MARCUS KNOP (rechtsonder op elke pagina behalve Leren):
