@@ -724,6 +724,7 @@ INSTELLINGEN (/instellingen):
 STATISTIEKEN (/stats):
 - Overzicht paper trades: winst/verlies, winrate, patronen.
 - Psychologie analyse op basis van emotie-scores bij trades.
+- 📡 Marcus Signalen: automatisch gegenereerde trade-signalen. Kan copy trading inschakelen (5% positie auto-geopend).
 - Leaderboard: vergelijk jezelf met andere gebruikers.
 
 GLOBALE MARKTSESSIES (Marcus kent alle tijdzones):

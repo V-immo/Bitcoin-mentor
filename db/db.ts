@@ -120,6 +120,24 @@ function ensureSchema(database: Database.Database) {
       updated_at          TEXT    NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_trading_plan_user ON trading_plan(user_id);
+
+    CREATE TABLE IF NOT EXISTS marcus_signals (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      asset       TEXT    NOT NULL,
+      symbol      TEXT    NOT NULL,
+      direction   TEXT    NOT NULL DEFAULT 'long',
+      entry_price REAL    NOT NULL,
+      stop_loss   REAL    NOT NULL,
+      target      REAL    NOT NULL,
+      rsi         REAL    NOT NULL DEFAULT 50,
+      score       INTEGER NOT NULL DEFAULT 0,
+      trend       TEXT    DEFAULT '',
+      status      TEXT    NOT NULL DEFAULT 'open',
+      close_price REAL,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+      closed_at   TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_signals_status ON marcus_signals(status, created_at);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen
@@ -147,6 +165,7 @@ function ensureSchema(database: Database.Database) {
   addCol("settings", "bybit_api_key", "TEXT DEFAULT ''");
   addCol("settings", "bybit_api_secret", "TEXT DEFAULT ''");
   addCol("settings", "country_code", "TEXT DEFAULT ''");
+  addCol("settings", "copy_trading", "INTEGER NOT NULL DEFAULT 0");
 
   // users
   addCol("users", "start_capital", "REAL NOT NULL DEFAULT 10000");

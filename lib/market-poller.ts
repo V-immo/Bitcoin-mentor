@@ -7,6 +7,7 @@
 
 import { sharedScanCache } from "./scan-cache";
 import { calculateRsi } from "./market";
+import { getDb } from "@/db/db";
 
 const POLL_INTERVAL = 30 * 60 * 1000; // 30 minuten
 const EXT_TTL       = 35 * 60 * 1000; // 35 min — iets ruimer dan poll interval
@@ -207,6 +208,111 @@ async function fetchBtcSnapshot(): Promise<void> {
   }
 }
 
+// --- Marcus signal engine ---
+
+type MarcusSignalRow = {
+  id: number; asset: string; symbol: string; entry_price: number;
+  stop_loss: number; target: number; status: string; created_at: string;
+};
+
+function autoOpenPaperTrade(
+  db: ReturnType<typeof getDb>,
+  userId: number, asset: string, symbol: string,
+  entryPrice: number, stopLoss: number, target: number, signalId: number
+): void {
+  try {
+    const user = db.prepare("SELECT start_capital FROM users WHERE id = ?").get(userId) as { start_capital: number } | undefined;
+    const startCapital = user?.start_capital ?? 10000;
+
+    let row = db.prepare("SELECT cash, position, history, starting_balance FROM paper_trading WHERE user_id = ? AND asset = ?")
+      .get(userId, symbol) as { cash: number; position: string | null; history: string; starting_balance: number } | undefined;
+
+    if (!row) {
+      db.prepare("INSERT INTO paper_trading (user_id, asset, cash, position, history, starting_balance) VALUES (?, ?, ?, NULL, '[]', ?)")
+        .run(userId, symbol, startCapital, startCapital);
+      row = db.prepare("SELECT cash, position, history, starting_balance FROM paper_trading WHERE user_id = ? AND asset = ?")
+        .get(userId, symbol) as { cash: number; position: string | null; history: string; starting_balance: number };
+    }
+
+    if (!row || row.position) return; // already has open position
+
+    const tradeValue = row.cash * 0.05; // 5% van cash per auto-trade
+    if (tradeValue < 5) return;
+
+    const openBtc = tradeValue / entryPrice;
+    const newCash = row.cash - tradeValue;
+
+    const position = { avgEntry: entryPrice, openBtc, side: "long", stopLoss, target, realizedPnl: 0, auto: true, signalId };
+    const history = JSON.parse(row.history ?? "[]") as unknown[];
+    history.push({ side: "buy", timestamp: Date.now(), price: entryPrice, amount: openBtc, auto: true, signalId });
+
+    db.prepare("UPDATE paper_trading SET cash = ?, position = ?, history = ?, updated_at = datetime('now') WHERE user_id = ? AND asset = ?")
+      .run(newCash, JSON.stringify(position), JSON.stringify(history), userId, symbol);
+  } catch { /* stilletjes falen */ }
+}
+
+function runSignalEngine(): void {
+  try {
+    const db = getDb();
+    const { data: scan } = sharedScanCache;
+    if (!scan || scan.length === 0) return;
+
+    const now = new Date().toISOString();
+    const cutoff = new Date(Date.now() - 24 * 3600 * 1000).toISOString(); // 24u cooldown per asset
+
+    for (const entry of scan) {
+      if (entry.score < 70 || entry.color !== "green") continue;
+
+      // Check if already have open signal for this asset (within 24h)
+      const existing = db.prepare(
+        "SELECT id FROM marcus_signals WHERE symbol = ? AND (status = 'open' OR created_at > ?)"
+      ).get(entry.symbol, cutoff);
+      if (existing) continue;
+
+      const sl = parseFloat((entry.price * 0.97).toFixed(2));
+      const target = parseFloat((entry.price * 1.06).toFixed(2));
+
+      db.prepare(`
+        INSERT INTO marcus_signals (asset, symbol, direction, entry_price, stop_loss, target, rsi, score, trend)
+        VALUES (?, ?, 'long', ?, ?, ?, ?, ?, ?)
+      `).run(entry.name ?? entry.ticker, entry.symbol, entry.price, sl, target, entry.rsi, entry.score, entry.trend);
+
+      const signalId = (db.prepare("SELECT last_insert_rowid() as id").get() as { id: number }).id;
+
+      // Auto-copy voor gebruikers met copy_trading ingeschakeld
+      const copyUsers = db.prepare(
+        "SELECT user_id FROM settings WHERE copy_trading = 1"
+      ).all() as { user_id: number }[];
+
+      for (const { user_id } of copyUsers) {
+        autoOpenPaperTrade(db, user_id, entry.name ?? entry.ticker, entry.symbol, entry.price, sl, target, signalId);
+      }
+    }
+
+    // Sluit verlopen/gerichte signals
+    const openSignals = db.prepare("SELECT * FROM marcus_signals WHERE status = 'open'").all() as MarcusSignalRow[];
+    for (const sig of openSignals) {
+      const cached = scan.find(s => s.symbol === sig.symbol);
+      if (!cached) continue;
+
+      const p = cached.price;
+      let newStatus: string | null = null;
+
+      if (p <= sig.stop_loss) newStatus = "hit_stop";
+      else if (p >= sig.target) newStatus = "hit_target";
+      else {
+        const ageMs = Date.now() - new Date(sig.created_at).getTime();
+        if (ageMs > 14 * 24 * 3600 * 1000) newStatus = "expired";
+      }
+
+      if (newStatus) {
+        db.prepare("UPDATE marcus_signals SET status = ?, close_price = ?, closed_at = ? WHERE id = ?")
+          .run(newStatus, p, now, sig.id);
+      }
+    }
+  } catch { /* stilletjes falen */ }
+}
+
 // --- Actieve background poller ---
 
 let pollerStarted = false;
@@ -223,6 +329,9 @@ async function pollAll(): Promise<void> {
     if (gm.status === "fulfilled") cachedGlobalMetrics = { data: gm.value, ts: Date.now() };
     if (fr.status === "fulfilled") cachedFunding      = { data: fr.value, ts: Date.now() };
     // btcSnapshot werkt direct op sharedScanCache, geen return value nodig
+
+    // Signal engine — genereer Marcus signals na data update
+    runSignalEngine();
   } catch {
     // stilletjes falen — stale cache blijft geldig
   }

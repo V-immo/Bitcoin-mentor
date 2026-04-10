@@ -41,6 +41,7 @@ function getOrCreateSettings(userId: number) {
     bybitConnected: hasBybit,
     goal: (row.goal as number | undefined) ?? 0,
     preferredCurrency: (row.preferred_currency as string | undefined) ?? "EUR",
+    copyTrading: !!((row.copy_trading as number | undefined) ?? 0),
   };
 }
 
@@ -124,6 +125,13 @@ export async function PUT(request: NextRequest) {
     } catch {
       return Response.json({ error: "Testnet kolommen ontbreken, voer db/migrate-testnet.js uit" }, { status: 500 });
     }
+  }
+
+  // Copy trading toggle
+  if (body.copyTrading !== undefined && Object.keys(body).length === 1) {
+    db.prepare("UPDATE settings SET copy_trading = ?, updated_at = datetime('now') WHERE user_id = ?")
+      .run(body.copyTrading ? 1 : 0, userId);
+    return Response.json({ ok: true });
   }
 
   // Valuta voorkeur opslaan (apart endpoint, om conflicts te vermijden)
