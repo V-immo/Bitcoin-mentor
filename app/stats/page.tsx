@@ -3,6 +3,7 @@
 import StatsPanel from "@/components/StatsPanel";
 import GoalTracker from "@/components/GoalTracker";
 import Leaderboard from "@/components/Leaderboard";
+import PatternPanel from "@/components/PatternPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function StatsPage() {
@@ -18,6 +19,10 @@ export default function StatsPage() {
       <div className="stats-grid">
         <GoalTracker />
         <StatsPanel />
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <PatternPanel />
       </div>
 
       <div style={{ marginTop: 24 }}>
