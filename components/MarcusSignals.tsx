@@ -19,10 +19,10 @@ export default function MarcusSignals() {
   useEffect(() => {
     Promise.all([
       fetch("/api/signals").then(r => r.ok ? r.json() : { signals: [] }),
-      fetch("/api/me/settings").then(r => r.ok ? r.json() : {}),
+      fetch("/api/me/settings").then(r => r.ok ? r.json() : {} as Record<string, unknown>),
     ]).then(([sigData, settings]) => {
       setSignals(sigData.signals ?? []);
-      setCopyEnabled(!!settings.copyTrading);
+      setCopyEnabled(!!(settings as Record<string, unknown>).copyTrading);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
