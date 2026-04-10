@@ -48,9 +48,8 @@ jobs:
             # Stop PM2 zodat het NIET herstart tijdens de build
             pm2 stop bitcoin-mentor || true
 
-            # Verwijder lock agressief — voorkomt "lock already acquired" buildfout
-            rm -f .next/lock
-            find .next -name "*.lock" -delete 2>/dev/null || true
+            # Volledige .next clean — voorkomt ENOENT en stale cache bij elke deploy
+            rm -rf .next
 
             # Build
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
