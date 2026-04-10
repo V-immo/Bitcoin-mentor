@@ -5,14 +5,14 @@ import { useState, useEffect } from "react";
 
 const copy = {
   nl: {
-    badge: "🔥 Vroege toegang — straks €24,99/maand",
+    badge: "🚀 Nu gratis beschikbaar",
     h1a: "Leer traden met",
     h1b: "Marcus, jouw mentor",
     subtitle: "Marcus kent jouw niveau, jouw trades en jouw fouten. Hij coacht je elke dag — van je eerste trade tot je eigen strategie.",
-    cta: "Start nu voor €9,99/mnd →",
+    cta: "Start nu gratis →",
     ctaDashboard: "Naar dashboard →",
     login: "Al een account? Inloggen",
-    priceNote: "Nu €9,99/maand · Geen creditcard nodig · Prijs gaat omhoog",
+    priceNote: "Gratis · Geen creditcard nodig · Volledig toegankelijk",
     mockBubble: "BTC breekt uit boven weerstand. Dit is een goede setup voor swing traders.",
     mockTask: "📌 Opdracht: open een kleine paper trade van €100",
     usp1t: "Marcus — jouw mentor",
@@ -24,34 +24,23 @@ const copy = {
     usp4t: "Leer terwijl je tradt",
     usp4: "Dagelijkse quizzen, lessen van Mark Douglas tot ICT — afgestemd op jouw niveau en tempo.",
     stepsTitle: "Hoe het werkt",
-    s1t: "Maak een account", s1: "€9,99/maand, geen creditcard. In 30 seconden aangemeld.",
+    s1t: "Maak een account", s1: "Gratis, geen creditcard. In 30 seconden aangemeld.",
     s2t: "Marcus leert je kennen", s2: "Hij stelt je niveau in en geeft je eerste opdracht.",
     s3t: "Trade en leer elke dag", s3: "Paper trades, live coaching, dagelijkse feedback.",
     s4t: "Trade zelfstandig", s4: "Op jouw tempo bouw je jouw eigen strategie.",
-    pricingLabel: "per maand · nu · straks €24,99/mnd",
-    p1: "✓ Volledige toegang tot Marcus, jouw mentor",
-    p2: "✓ Live marktscanner & grafieken",
-    p3: "✓ 65+ tradinglessen",
-    p4: "✓ Prijsalerts & push-notificaties",
-    p5: "✓ Bitvavo-koppeling",
-    p6: "✓ Alle toekomstige updates",
-    p7: "✓ Maandelijks opzegbaar",
-    p8: "✗ Geen creditcard nodig",
-    p9: "✗ Geen verborgen kosten",
-    pricingCta: "Begin voor €9,99/maand →",
-    finalH: "Nu €9,99/maand. Straks €24,99.",
-    finalSub: "Vroege gebruikers houden hun prijs. Geen creditcard nodig.",
-    finalCta: "Begin voor €9,99/maand →",
+    finalH: "Gratis starten. Geen creditcard.",
+    finalSub: "Volledige toegang tot alle functies — geen verborgen kosten.",
+    finalCta: "Maak gratis een account →",
   },
   en: {
-    badge: "🔥 Early access — price goes up to €24.99/month",
+    badge: "🚀 Now free to use",
     h1a: "Learn to trade with",
     h1b: "Marcus, your mentor",
     subtitle: "Marcus knows your level, your trades and your mistakes. He coaches you every day — from your first trade to your own strategy.",
-    cta: "Start now for €9.99/mo →",
+    cta: "Start for free →",
     ctaDashboard: "Go to dashboard →",
     login: "Already have an account? Log in",
-    priceNote: "Now €9.99/month · No credit card needed · Price will increase",
+    priceNote: "Free · No credit card needed · Full access",
     mockBubble: "BTC breaks out above resistance. This is a great setup for swing traders.",
     mockTask: "📌 Assignment: open a small paper trade of €100",
     usp1t: "Marcus — your mentor",
@@ -63,24 +52,13 @@ const copy = {
     usp4t: "Learn while you trade",
     usp4: "Daily quizzes, lessons from Mark Douglas to ICT — tailored to your level.",
     stepsTitle: "How it works",
-    s1t: "Create an account", s1: "€9.99/month, no credit card. Signed up in 30 seconds.",
+    s1t: "Create an account", s1: "Free, no credit card. Signed up in 30 seconds.",
     s2t: "Marcus gets to know you", s2: "He sets your level and gives you your first assignment.",
     s3t: "Trade and learn every day", s3: "Paper trades, live coaching, daily feedback.",
     s4t: "Trade independently", s4: "At your own pace you build your own strategy.",
-    pricingLabel: "per month · now · will become €24.99/mo",
-    p1: "✓ Full access to Marcus, your mentor",
-    p2: "✓ Live market scanner & charts",
-    p3: "✓ 65+ trading lessons",
-    p4: "✓ Price alerts & push notifications",
-    p5: "✓ Bitvavo integration",
-    p6: "✓ All future updates",
-    p7: "✓ Cancel anytime",
-    p8: "✗ No credit card needed",
-    p9: "✗ No hidden costs",
-    pricingCta: "Start for €9.99/month →",
-    finalH: "Now €9.99/month. Later €24.99.",
-    finalSub: "Early users keep their price. No credit card needed.",
-    finalCta: "Start for €9.99/month →",
+    finalH: "Start for free. No credit card.",
+    finalSub: "Full access to all features — no hidden costs.",
+    finalCta: "Create a free account →",
   },
 };
 
@@ -240,30 +218,19 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         </div>
       </section>
 
-      {/* ── Prijs + CTA ── */}
+      {/* ── Gratis CTA ── */}
       <section className="landing-final-cta">
-        <div className="landing-price-card">
-          <div className="landing-price-card-amount">€9,99<span className="landing-price-card-per">{lang === "nl" ? "/maand" : "/month"}</span></div>
-          <div className="landing-price-card-note">{lang === "nl" ? "🔥 Vroege toegang — straks €24,99/mnd" : "🔥 Early access — will become €24.99/mo"}</div>
-          <ul className="landing-price-card-list">
-            <li>✓ {lang === "nl" ? "Volledige toegang tot Marcus" : "Full access to Marcus"}</li>
-            <li>✓ {lang === "nl" ? "Live marktscanner & grafieken" : "Live market scanner & charts"}</li>
-            <li>✓ {lang === "nl" ? "65+ tradinglessen" : "65+ trading lessons"}</li>
-            <li>✓ {lang === "nl" ? "Prijsalerts & push-notificaties" : "Price alerts & push notifications"}</li>
-            <li>✓ {lang === "nl" ? "Maandelijks opzegbaar" : "Cancel anytime"}</li>
-            <li className="muted">✗ {lang === "nl" ? "Geen creditcard nodig" : "No credit card needed"}</li>
-          </ul>
-          {!loggedIn && (
-            <Link href="/auth/register" className="landing-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-              {c.pricingCta}
-            </Link>
-          )}
-          {loggedIn && (
-            <Link href="/dashboard" className="landing-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-              {c.ctaDashboard}
-            </Link>
-          )}
-        </div>
+        <h2 className="landing-section-title">{c.finalH}</h2>
+        <p className="landing-subtitle" style={{ marginTop: 8, marginBottom: 24 }}>{c.finalSub}</p>
+        {!loggedIn ? (
+          <Link href="/auth/register" className="landing-btn-primary">
+            {c.finalCta}
+          </Link>
+        ) : (
+          <Link href="/dashboard" className="landing-btn-primary">
+            {c.ctaDashboard}
+          </Link>
+        )}
       </section>
 
     </div>
