@@ -4,6 +4,7 @@ import StatsPanel from "@/components/StatsPanel";
 import GoalTracker from "@/components/GoalTracker";
 import Leaderboard from "@/components/Leaderboard";
 import PatternPanel from "@/components/PatternPanel";
+import MarcusSignals from "@/components/MarcusSignals";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function StatsPage() {
@@ -24,6 +25,8 @@ export default function StatsPage() {
       <div style={{ marginTop: 24 }}>
         <PatternPanel />
       </div>
+
+      <MarcusSignals />
 
       <div style={{ marginTop: 24 }}>
         <Leaderboard />
