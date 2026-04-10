@@ -7378,3 +7378,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   .float-marcus-btn { bottom: 80px; right: 16px; }
   .float-marcus-overlay { bottom: 140px; right: 8px; width: calc(100vw - 16px); }
 }
+
+/* ── PatternPanel chips ── */
+.pattern-stat-chip {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 14px; min-width: 64px; text-align: center;
+}
+.pattern-stat-chip-val { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.pattern-stat-chip-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }

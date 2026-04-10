@@ -127,6 +127,47 @@ export async function GET() {
     lines.push("");
   }
 
+  // Revenge trading detectie
+  // Definitie: een trade openen binnen 24 uur na een verliezende trade
+  let revengeTrades = 0;
+  let revengeWins = 0;
+  let revengePnl = 0;
+
+  for (const paper of papers) {
+    try {
+      const history = JSON.parse(paper.history ?? "[]") as {
+        timestamp?: number; side: string; pnl?: number;
+      }[];
+      const sells = history
+        .filter(t => t.side === "sell" && t.timestamp)
+        .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0));
+
+      for (let i = 0; i < sells.length - 1; i++) {
+        const prev = sells[i];
+        const next = sells[i + 1];
+        if (typeof prev.pnl !== "number" || prev.pnl >= 0) continue; // alleen na verlies
+        const gap = ((next.timestamp ?? 0) - (prev.timestamp ?? 0)) / 1000 / 60 / 60; // uren
+        if (gap <= 24) {
+          revengeTrades++;
+          if (typeof next.pnl === "number") {
+            if (next.pnl > 0) revengeWins++;
+            revengePnl += next.pnl;
+          }
+        }
+      }
+    } catch { /* ignore */ }
+  }
+
+  if (revengeTrades > 0) {
+    const revengeWr = Math.round((revengeWins / revengeTrades) * 100);
+    lines.push(`REVENGE TRADING DETECTIE:`);
+    lines.push(`  ${revengeTrades} trades geopend binnen 24u na een verlies`);
+    lines.push(`  Winrate bij revenge trades: ${revengeWr}%`);
+    lines.push(`  Totaal P&L bij revenge trades: €${revengePnl.toFixed(0)}`);
+    lines.push(`  ${revengeTrades >= 3 ? "⚠️ Patroon gedetecteerd — dit is een significant gedragspatroon." : "Licht signaal — let hier op."}`);
+    lines.push("");
+  }
+
   // Recente journal notities
   const withNotes = entries.filter(e => e.note?.trim());
   if (withNotes.length > 0) {
@@ -150,12 +191,13 @@ export async function GET() {
   // Vraag Marcus om analyse
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
   const msg = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-haiku-4-5",
     max_tokens: 600,
     system: `Je bent Marcus, een directe tradingcoach met 15 jaar ervaring.
 Analyseer de trading data en geef CONCREET en PERSOONLIJK feedback.
 Spreek de trader direct aan met "jij/je". Wees eerlijk, ook als het niet goed gaat.
 Gebruik korte paragrafen. Max 4 punten. Geen bullet hell — schrijf als een mens.
+Als revenge trading gedetecteerd is, benoem dat direct en geef een concrete tip.
 Eindig met ÉÉN concrete actie die ze morgen kunnen doen.`,
     messages: [{
       role: "user",
@@ -165,9 +207,20 @@ Eindig met ÉÉN concrete actie die ze morgen kunnen doen.`,
 
   const analysis = (msg.content[0] as { text: string }).text;
 
+  // Dag-van-de-week data teruggeven voor UI
+  const dowData = Object.entries(dowStats).map(([day, s]) => ({
+    day,
+    wins: s.wins,
+    losses: s.losses,
+    pnl: s.pnl,
+    wr: s.wins + s.losses > 0 ? Math.round((s.wins / (s.wins + s.losses)) * 100) : 0,
+  }));
+
   return Response.json({
     analysis,
     dataPoints: tradeDays + journalDays,
     stats: { totalTrades, totalWins, totalLosses, totalPnl, tradeDays },
+    dowData,
+    revengeTrades: revengeTrades > 0 ? { count: revengeTrades, wr: Math.round((revengeWins / revengeTrades) * 100), pnl: revengePnl } : null,
   });
 }
