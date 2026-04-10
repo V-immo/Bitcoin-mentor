@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
+import TrophyWall from "@/components/TrophyWall";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -245,34 +246,8 @@ export default function ProfielPage() {
             </div>
           </div>
 
-          {/* ── Badges ── */}
-          <div className="card" style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 14 }}>🏅 Badges</div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {[
-                { icon: "🎯", label: "Eerste trade",    earned: closedTrades.length >= 1 },
-                { icon: "📈", label: "10 trades",        earned: closedTrades.length >= 10 },
-                { icon: "💰", label: "Eerste winst",     earned: closedTrades.some(t => (t.pnl ?? 0) > 0) },
-                { icon: "🧠", label: "Level 2",          earned: (quiz?.level ?? 1) >= 2 },
-                { icon: "🔥", label: "7 dagen streak",   earned: (quiz?.streak ?? 0) >= 7 },
-                { icon: "🏆", label: "Winrate 60%+",     earned: closedTrades.length >= 5 && winRate >= 60 },
-                { icon: "⚡", label: "20 trades",        earned: closedTrades.length >= 20 },
-                { icon: "🎓", label: "Level 3",          earned: (quiz?.level ?? 1) >= 3 },
-              ].map(badge => (
-                <div key={badge.label} style={{
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                  padding: "10px 14px", borderRadius: 10,
-                  background: badge.earned ? "rgba(233,30,99,0.1)" : "var(--surface-2)",
-                  border: `1px solid ${badge.earned ? "rgba(233,30,99,0.3)" : "var(--border)"}`,
-                  opacity: badge.earned ? 1 : 0.4,
-                  minWidth: 72,
-                }}>
-                  <span style={{ fontSize: 22 }}>{badge.icon}</span>
-                  <span style={{ fontSize: 10, color: badge.earned ? "var(--text)" : "var(--text-secondary)", textAlign: "center", lineHeight: 1.3 }}>{badge.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* ── Trophy Wall ── */}
+          <TrophyWall />
         </>
       )}
 
