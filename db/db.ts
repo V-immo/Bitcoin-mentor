@@ -86,6 +86,24 @@ function ensureSchema(database: Database.Database) {
       expires_at TEXT    NOT NULL,
       created_at TEXT    NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS user_profile (
+      id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id             INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+      trading_style       TEXT    DEFAULT '',
+      risk_profile        TEXT    DEFAULT '',
+      goals               TEXT    DEFAULT '',
+      fears               TEXT    DEFAULT '',
+      strengths           TEXT    DEFAULT '',
+      weaknesses          TEXT    DEFAULT '',
+      best_time_of_day    TEXT    DEFAULT '',
+      worst_emotions      TEXT    DEFAULT '',
+      best_emotions       TEXT    DEFAULT '',
+      impulse_patterns    TEXT    DEFAULT '',
+      notes               TEXT    DEFAULT '',
+      updated_at          TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_user_profile_user ON user_profile(user_id);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen
