@@ -59,6 +59,15 @@ export default function ProfielPage() {
   const [papers, setPapers] = useState<PaperData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Trading plan state
+  const [plan, setPlan] = useState<{
+    rules: string; risk_per_trade: number; max_daily_loss: number;
+    max_trades_per_day: number; preferred_assets: string;
+    entry_rules: string; exit_rules: string; commitments: string;
+  }>({ rules: "", risk_per_trade: 1, max_daily_loss: 3, max_trades_per_day: 3, preferred_assets: "", entry_rules: "", exit_rules: "", commitments: "" });
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planStatus, setPlanStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+
   // Password change state
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -76,9 +85,10 @@ export default function ProfielPage() {
           fetch("/api/me/settings"),
           fetch("/api/me/quiz"),
         ]);
-        const [s, q] = await Promise.all([sRes.json(), qRes.json()]);
+        const [s, q, planRes] = await Promise.all([sRes.json(), qRes.json(), fetch("/api/me/trading-plan").then(r => r.json())]);
         if (!s.error) setSettings(s);
         if (!q.error) setQuiz(q);
+        if (planRes && !planRes.error) setPlan(prev => ({ ...prev, ...planRes }));
 
         // Haal paper data op voor alle assets
         const paperResults = await Promise.all(
@@ -100,6 +110,28 @@ export default function ProfielPage() {
     }
     load();
   }, []);
+
+  async function savePlan(e: React.FormEvent) {
+    e.preventDefault();
+    setPlanLoading(true);
+    setPlanStatus(null);
+    try {
+      const res = await fetch("/api/me/trading-plan", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(plan),
+      });
+      if (res.ok) {
+        setPlanStatus({ type: "success", msg: "Tradingplan opgeslagen. Marcus houdt jou hier nu aan." });
+      } else {
+        setPlanStatus({ type: "error", msg: "Opslaan mislukt. Probeer opnieuw." });
+      }
+    } catch {
+      setPlanStatus({ type: "error", msg: "Netwerkfout. Probeer opnieuw." });
+    } finally {
+      setPlanLoading(false);
+    }
+  }
 
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault();
@@ -248,6 +280,114 @@ export default function ProfielPage() {
         <div style={{ color: "var(--text-secondary)", padding: "24px 0" }}>{t("profiel_loading")}</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+          {/* ── Persoonlijk tradingplan ── */}
+          <div className="card">
+            <div style={sectionTitle}>📋 Persoonlijk Tradingplan</div>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 16px", lineHeight: 1.5 }}>
+              Marcus gebruikt dit plan om jou te coachen. Als je een trade wil doen die niet klopt met je eigen regels, zal hij je direct aanspreken.
+            </p>
+            <form onSubmit={savePlan} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 140, ...fieldGroup }}>
+                  <label style={labelStyle}>Max risico per trade (%)</label>
+                  <input
+                    type="number" min={0.1} max={10} step={0.1}
+                    value={plan.risk_per_trade}
+                    onChange={e => setPlan(p => ({ ...p, risk_per_trade: parseFloat(e.target.value) || 1 }))}
+                    style={inputStyle}
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 140, ...fieldGroup }}>
+                  <label style={labelStyle}>Max dagverlies (%)</label>
+                  <input
+                    type="number" min={0.5} max={20} step={0.5}
+                    value={plan.max_daily_loss}
+                    onChange={e => setPlan(p => ({ ...p, max_daily_loss: parseFloat(e.target.value) || 3 }))}
+                    style={inputStyle}
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 140, ...fieldGroup }}>
+                  <label style={labelStyle}>Max trades per dag</label>
+                  <input
+                    type="number" min={1} max={20} step={1}
+                    value={plan.max_trades_per_day}
+                    onChange={e => setPlan(p => ({ ...p, max_trades_per_day: parseInt(e.target.value) || 3 }))}
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Voorkeur assets (bijv. BTC, ETH, SOL)</label>
+                <input
+                  type="text" placeholder="BTC, ETH"
+                  value={plan.preferred_assets}
+                  onChange={e => setPlan(p => ({ ...p, preferred_assets: e.target.value }))}
+                  style={inputStyle}
+                />
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn entry-regels (wanneer stap ik IN?)</label>
+                <textarea
+                  rows={3} placeholder="Bijv: Alleen entries na bevestiging op 4H, RSI onder 40, boven weekly support..."
+                  value={plan.entry_rules}
+                  onChange={e => setPlan(p => ({ ...p, entry_rules: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }}
+                />
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn exit-regels (wanneer stap ik UIT?)</label>
+                <textarea
+                  rows={3} placeholder="Bijv: Stop-loss altijd instellen voor entry, winst nemen bij 2R, geen nacht aanhouden..."
+                  value={plan.exit_rules}
+                  onChange={e => setPlan(p => ({ ...p, exit_rules: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }}
+                />
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn trading regels (wat zijn mijn vaste regels?)</label>
+                <textarea
+                  rows={3} placeholder="Bijv: Geen trades als ik emotioneel ben, geen revenge trading, altijd stop-loss..."
+                  value={plan.rules}
+                  onChange={e => setPlan(p => ({ ...p, rules: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }}
+                />
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn beloften aan mezelf</label>
+                <textarea
+                  rows={2} placeholder="Bijv: Ik stop als ik mijn dagverlies bereikt heb. Ik log elke trade in het journaal..."
+                  value={plan.commitments}
+                  onChange={e => setPlan(p => ({ ...p, commitments: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }}
+                />
+              </div>
+              {planStatus && (
+                <div style={{
+                  padding: "9px 14px", borderRadius: 8, fontSize: 13,
+                  background: planStatus.type === "success" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
+                  color: planStatus.type === "success" ? "#86efac" : "#fca5a5",
+                  border: `1px solid ${planStatus.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
+                }}>
+                  {planStatus.msg}
+                </div>
+              )}
+              <div>
+                <button
+                  type="submit"
+                  disabled={planLoading}
+                  style={{
+                    background: "#e91e63", color: "#fff", border: "none",
+                    borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
+                    cursor: planLoading ? "not-allowed" : "pointer",
+                    opacity: planLoading ? 0.7 : 1,
+                  }}
+                >
+                  {planLoading ? "Opslaan…" : "Tradingplan opslaan"}
+                </button>
+              </div>
+            </form>
+          </div>
 
           {/* ── Wachtwoord wijzigen ── */}
           <div className="card">
