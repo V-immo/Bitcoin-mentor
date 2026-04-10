@@ -109,21 +109,12 @@ export default function FloatingMarcus() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split("\n")) {
-          if (!line.startsWith("data: ")) continue;
-          const data = line.slice(6);
-          if (data === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(data);
-            const token = parsed?.choices?.[0]?.delta?.content ?? parsed?.delta?.text ?? "";
-            full += token;
-            setMessages(m => {
-              const copy = [...m];
-              copy[copy.length - 1] = { role: "assistant", content: full };
-              return copy;
-            });
-          } catch { /* ignore malformed */ }
-        }
+        full += chunk;
+        setMessages(m => {
+          const copy = [...m];
+          copy[copy.length - 1] = { role: "assistant", content: full };
+          return copy;
+        });
       }
     } catch (e: unknown) {
       if ((e as Error)?.name !== "AbortError") {
