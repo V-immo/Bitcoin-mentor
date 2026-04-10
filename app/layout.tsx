@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
 import FloatingMarcus from "@/components/FloatingMarcus";
+import AppWalkthrough from "@/components/AppWalkthrough";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -64,6 +65,7 @@ export default function RootLayout({
                 <Nav />
                 <div className="app-content">{children}</div>
                 <FloatingMarcus />
+                <AppWalkthrough />
               </CurrencyProvider>
             </LanguageProvider>
           </ThemeProvider>
