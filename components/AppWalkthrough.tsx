@@ -1,295 +1,183 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-const STORAGE_KEY = "walkthrough-v2";
-const HELP_KEY = "walkthrough-help-shown";
+const STORAGE_KEY = "walkthrough-v3";
 
-interface WalkthroughStep {
-  title: string;
-  text: string;
-  selector?: string;       // CSS selector van het te markeren element
-  route?: string;          // navigeer eerst naar deze route
-  position?: "top" | "bottom" | "left" | "right" | "center";
-}
-
-const STEPS: WalkthroughStep[] = [
+const STEPS = [
   {
+    icon: "👋",
     title: "Welkom bij Bitcoin Mentor",
-    text: "Marcus is jouw persoonlijke tradingcoach. In 2 minuten leer je hoe je de app gebruikt. Je kunt deze tour altijd opnieuw starten via de ❓ knop.",
-    position: "center",
+    text: "Marcus is jouw persoonlijke tradingcoach. Klik Volgende om te zien wat de app kan.",
   },
   {
-    title: "📊 Dashboard",
-    text: "Dit is je startpunt. Je ziet hier de ochtendgroet van Marcus, de dagelijkse marktbriefing en een overzicht van alle assets.",
-    route: "/dashboard",
-    selector: ".dash-layout",
-    position: "center",
+    icon: "📊",
+    title: "Dashboard",
+    text: "Je startpunt: ochtendgroet van Marcus, dagelijkse marktbriefing en een overzicht van alle assets.",
   },
   {
-    title: "📡 Scanner — vind de beste kansen",
-    text: "De scanner geeft elke asset een score van 0-100. Groen = setup klaar. Klik op een asset om direct naar het trading dashboard te gaan.",
-    route: "/scanner",
-    selector: ".scanner-grid, .scanner-container, [class*='scanner']",
-    position: "bottom",
+    icon: "📡",
+    title: "Scanner",
+    text: "Elke asset krijgt een score 0–100. Groen = goede setup. Klik op een asset om direct te traden.",
   },
   {
-    title: "📈 Handelen — paper trade",
-    text: "Hier oefen je met nep-geld. Open een positie, stel een stop-loss in en leer de markt kennen zonder financieel risico.",
-    route: "/trade",
-    position: "center",
+    icon: "📈",
+    title: "Paper Trading",
+    text: "Oefen met nep-geld. Open een positie, stel stop-loss in — geen financieel risico.",
   },
   {
-    title: "🎯 Plan Check — laat Marcus je trade beoordelen",
-    text: "Vul je instapprijs, stop-loss en target in. Marcus geeft een oordeel: GOED, AANPASSEN of NIET DOEN — met uitleg.",
-    route: "/trade",
-    position: "center",
+    icon: "📋",
+    title: "Tradingplan",
+    text: "Vul in je Profiel je max risico, entry- en exit-regels in. Marcus houdt je er aan.",
   },
   {
-    title: "🎓 Leren — groei stap voor stap",
-    text: "Maak dagelijkse quizzes om te stijgen van level 1 naar 5. Hoe hoger je level, hoe dieper Marcus zijn coaching gaat.",
-    route: "/leren",
-    position: "center",
+    icon: "🎓",
+    title: "Leren",
+    text: "Dagelijkse quizzes om te groeien van level 1 naar 5. Meer kennis = diepere coaching van Marcus.",
   },
   {
-    title: "📋 Profiel — jouw tradingplan",
-    text: "Vul hier je persoonlijke tradingplan in: max risico per trade, entry-regels, exit-regels. Marcus houdt je er aan.",
-    route: "/profiel",
-    position: "center",
+    icon: "📅",
+    title: "Agenda",
+    text: "Schrijf elke dag op hoe je je voelde. Marcus analyseert je patronen en geeft wekelijks review.",
   },
   {
-    title: "📅 Agenda — dagboek bijhouden",
-    text: "Schrijf elke dag op hoe je je voelde en wat je hebt gedaan. Marcus analyseert deze patronen en geeft je wekelijks een review.",
-    route: "/agenda",
-    position: "center",
+    icon: "🤖",
+    title: "Marcus knop",
+    text: "De roze M-knop rechtsonder is Marcus. Stel hem direct een vraag over de markt of jouw trade.",
   },
   {
-    title: "📊 Statistieken — gedragspatronen",
-    text: "Hier zie je je winrate, P&L per dag van de week, revenge trading waarschuwingen en Marcus' signalen. Inclusief copy trading toggle.",
-    route: "/stats",
-    position: "center",
-  },
-  {
-    title: "🤖 Marcus — altijd beschikbaar",
-    text: "De roze M-knop rechtsonder is Marcus. Stel hem direct een vraag over de markt, jouw trade of jouw plan. Hij kent alles van de app.",
-    selector: ".float-marcus-btn",
-    position: "left",
-  },
-  {
-    title: "Klaar 🎉",
-    text: "Je weet hoe Bitcoin Mentor werkt. Begin met het invullen van je tradingplan in je Profiel en open je eerste paper trade. Succes!",
-    position: "center",
+    icon: "🎉",
+    title: "Je bent klaar!",
+    text: "Begin met je tradingplan invullen in Profiel en open je eerste paper trade. Succes!",
   },
 ];
 
 export default function AppWalkthrough() {
-  const router = useRouter();
-  const pathname = usePathname();
   const [step, setStep] = useState<number | null>(null);
   const [visible, setVisible] = useState(false);
-  const [pos, setPos] = useState({ top: 0, left: 0, width: 0, height: 0 });
-  const [hasTarget, setHasTarget] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  const currentStep = step !== null ? STEPS[step] : null;
-
-  // Bereken positie van target element
-  const updatePos = useCallback(() => {
-    if (!currentStep?.selector) { setHasTarget(false); return; }
-    const el = document.querySelector(currentStep.selector);
-    if (!el) { setHasTarget(false); return; }
-    const rect = el.getBoundingClientRect();
-    setPos({ top: rect.top + window.scrollY, left: rect.left + window.scrollX, width: rect.width, height: rect.height });
-    setHasTarget(true);
-  }, [currentStep]);
 
   useEffect(() => {
-    if (!visible) return;
-    updatePos();
-    const id = setInterval(updatePos, 300);
-    return () => clearInterval(id);
-  }, [visible, updatePos]);
-
-  // Eerste keer automatisch tonen
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      setTimeout(() => { setStep(0); setVisible(true); }, 1500);
+    const done = localStorage.getItem(STORAGE_KEY);
+    if (!done) {
+      setTimeout(() => { setStep(0); setVisible(true); }, 1200);
     }
-  }, []);
 
-  // Hulpknop H-key
-  useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "?" || (e.key === "h" && !e.ctrlKey && !e.metaKey && !(document.activeElement instanceof HTMLInputElement) && !(document.activeElement instanceof HTMLTextAreaElement))) {
+      const active = document.activeElement;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) return;
+      if (e.key === "?" || e.key === "h") {
         setStep(0); setVisible(true);
       }
-      if (e.key === "Escape" && visible) close();
+      if (e.key === "Escape") {
+        setVisible(false);
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [visible]);
+  }, []);
 
-  async function goTo(newStep: number) {
-    if (newStep >= STEPS.length) { finish(); return; }
-    const target = STEPS[newStep];
-    if (target.route && target.route !== pathname) {
-      router.push(target.route);
-      await new Promise(r => setTimeout(r, 400));
-    }
-    setStep(newStep);
-    setTimeout(updatePos, 100);
+  function next() {
+    if (step === null) return;
+    if (step >= STEPS.length - 1) finish();
+    else setStep(step + 1);
   }
 
-  function close() {
-    setVisible(false);
-    setStep(null);
+  function prev() {
+    if (step === null || step <= 0) return;
+    setStep(step - 1);
   }
 
   function finish() {
     localStorage.setItem(STORAGE_KEY, "done");
-    close();
+    setVisible(false);
   }
 
-  if (!visible || step === null || !currentStep) return (
-    <button
-      onClick={() => { setStep(0); setVisible(true); }}
-      title="Hulp / App tour (druk ? om te openen)"
-      style={{
-        position: "fixed", bottom: 90, left: 20, zIndex: 9990,
-        width: 36, height: 36, borderRadius: "50%",
-        background: "rgba(255,255,255,0.08)",
-        border: "1px solid rgba(255,255,255,0.15)",
-        color: "rgba(255,255,255,0.5)",
-        fontSize: 16, fontWeight: 700, cursor: "pointer",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        backdropFilter: "blur(4px)",
-        transition: "all 0.2s",
-      }}
-      onMouseEnter={e => { (e.target as HTMLButtonElement).style.opacity = "1"; (e.target as HTMLButtonElement).style.color = "#fff"; }}
-      onMouseLeave={e => { (e.target as HTMLButtonElement).style.opacity = "1"; (e.target as HTMLButtonElement).style.color = "rgba(255,255,255,0.5)"; }}
-    >?</button>
-  );
-
-  const pct = Math.round(((step + 1) / STEPS.length) * 100);
-  const isCenter = currentStep.position === "center" || !hasTarget;
-
-  // Tooltip positie ten opzichte van target
-  let tooltipStyle: React.CSSProperties = {};
-  if (hasTarget && !isCenter) {
-    const MARGIN = 16;
-    const TW = 300;
-    switch (currentStep.position) {
-      case "bottom":
-        tooltipStyle = { position: "absolute", top: pos.top + pos.height + MARGIN, left: Math.max(8, Math.min(pos.left, window.innerWidth - TW - 8)) };
-        break;
-      case "top":
-        tooltipStyle = { position: "absolute", top: pos.top - 160 - MARGIN, left: Math.max(8, Math.min(pos.left, window.innerWidth - TW - 8)) };
-        break;
-      case "left":
-        tooltipStyle = { position: "absolute", top: pos.top, left: Math.max(8, pos.left - TW - MARGIN) };
-        break;
-      default:
-        tooltipStyle = { position: "absolute", top: pos.top + pos.height + MARGIN, left: Math.max(8, Math.min(pos.left, window.innerWidth - TW - 8)) };
-    }
+  function skip() {
+    localStorage.setItem(STORAGE_KEY, "done");
+    setVisible(false);
   }
+
+  const current = step !== null ? STEPS[step] : null;
+  const pct = step !== null ? Math.round(((step + 1) / STEPS.length) * 100) : 0;
 
   return (
     <>
-      {/* Overlay dimming */}
-      <div
-        ref={overlayRef}
-        onClick={close}
-        style={{
-          position: "fixed", inset: 0, zIndex: 9991,
-          background: "rgba(0,0,0,0.6)",
-          backdropFilter: "blur(2px)",
-        }}
-      />
-
-      {/* Target highlight */}
-      {hasTarget && (
-        <div style={{
-          position: "absolute",
-          top: pos.top - 4, left: pos.left - 4,
-          width: pos.width + 8, height: pos.height + 8,
-          zIndex: 9992,
-          borderRadius: 10,
-          boxShadow: "0 0 0 9999px rgba(0,0,0,0.6), 0 0 0 2px #e91e63",
-          pointerEvents: "none",
-        }} />
+      {/* ❓ help knop — altijd zichtbaar als tour niet actief */}
+      {!visible && (
+        <button
+          onClick={() => { setStep(0); setVisible(true); }}
+          title="App tour starten (? toets)"
+          style={{
+            position: "fixed", bottom: 90, left: 20, zIndex: 9990,
+            width: 34, height: 34, borderRadius: "50%",
+            background: "rgba(255,255,255,0.07)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            color: "rgba(255,255,255,0.4)",
+            fontSize: 15, fontWeight: 700, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
       )}
 
-      {/* Tooltip */}
-      <div
-        onClick={e => e.stopPropagation()}
-        style={isCenter ? {
-          position: "fixed",
-          top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 9993,
-          width: 320,
-        } : {
-          ...tooltipStyle,
-          zIndex: 9993,
-          width: 300,
-        }}
-      >
+      {/* Tour balk — onderaan het scherm */}
+      {visible && current && (
         <div style={{
-          background: "var(--surface, #1a1a2e)",
-          border: "1px solid rgba(233,30,99,0.4)",
-          borderRadius: 14, padding: "18px 18px 14px",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+          position: "fixed",
+          bottom: 0, left: 0, right: 0,
+          zIndex: 9999,
+          background: "var(--surface, #1a0d1e)",
+          borderTop: "2px solid rgba(233,30,99,0.5)",
+          boxShadow: "0 -8px 32px rgba(0,0,0,0.5)",
+          padding: "16px 20px 20px",
         }}>
           {/* Progress bar */}
           <div style={{ height: 3, background: "rgba(233,30,99,0.15)", borderRadius: 99, marginBottom: 14, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${pct}%`, background: "#e91e63", borderRadius: 99, transition: "width 0.3s" }} />
           </div>
 
-          {/* Step counter */}
-          <div style={{ fontSize: 11, color: "var(--text-muted, #64748b)", marginBottom: 6 }}>
-            Stap {step + 1} van {STEPS.length}
-          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {/* Icon + tekst */}
+            <div style={{ fontSize: 28, flexShrink: 0 }}>{current.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text, #fce8f0)" }}>{current.title}</span>
+                <span style={{ fontSize: 11, color: "var(--text-muted, #64748b)" }}>{step! + 1}/{STEPS.length}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary, #bf7a99)", lineHeight: 1.5 }}>
+                {current.text}
+              </p>
+            </div>
 
-          {/* Title */}
-          <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text, #fce8f0)", marginBottom: 8 }}>
-            {currentStep.title}
-          </div>
-
-          {/* Text */}
-          <p style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text-secondary, #bf7a99)", margin: "0 0 16px" }}>
-            {currentStep.text}
-          </p>
-
-          {/* Buttons */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <button
-              onClick={close}
-              style={{
-                fontSize: 12, color: "var(--text-muted, #64748b)",
-                background: "none", border: "none", cursor: "pointer", padding: 0,
-              }}
-            >
-              Tour overslaan
-            </button>
-            <div style={{ display: "flex", gap: 8 }}>
-              {step > 0 && (
+            {/* Knoppen */}
+            <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
+              <button
+                onClick={skip}
+                style={{
+                  fontSize: 12, color: "var(--text-muted, #64748b)",
+                  background: "none", border: "none", cursor: "pointer",
+                  padding: "6px 8px", whiteSpace: "nowrap",
+                }}
+              >
+                Overslaan
+              </button>
+              {step! > 0 && (
                 <button
-                  onClick={() => goTo(step - 1)}
+                  onClick={prev}
                   style={{
-                    fontSize: 13, padding: "6px 14px", borderRadius: 8,
+                    fontSize: 13, padding: "7px 14px", borderRadius: 8,
                     background: "rgba(233,30,99,0.1)", color: "#e91e63",
                     border: "1px solid rgba(233,30,99,0.3)", cursor: "pointer", fontWeight: 500,
+                    whiteSpace: "nowrap",
                   }}
                 >← Terug</button>
               )}
               <button
-                onClick={() => goTo(step + 1)}
+                onClick={next}
                 style={{
-                  fontSize: 13, padding: "6px 16px", borderRadius: 8,
+                  fontSize: 13, padding: "7px 18px", borderRadius: 8,
                   background: "#e91e63", color: "#fff",
                   border: "none", cursor: "pointer", fontWeight: 600,
+                  whiteSpace: "nowrap",
                 }}
               >
                 {step === STEPS.length - 1 ? "Klaar 🎉" : "Volgende →"}
@@ -297,7 +185,7 @@ export default function AppWalkthrough() {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

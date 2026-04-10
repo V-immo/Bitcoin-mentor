@@ -1071,8 +1071,8 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
       const encoder = new TextEncoder();
       try {
         const stream = getClient().messages.stream({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1400,
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1000,
           system: systemPrompt,
           messages: filtered,
         });
