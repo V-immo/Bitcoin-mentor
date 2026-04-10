@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
+import FloatingMarcus from "@/components/FloatingMarcus";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -62,6 +63,7 @@ export default function RootLayout({
               <CurrencyProvider>
                 <Nav />
                 <div className="app-content">{children}</div>
+                <FloatingMarcus />
               </CurrencyProvider>
             </LanguageProvider>
           </ThemeProvider>
