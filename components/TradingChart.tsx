@@ -214,9 +214,9 @@ export default function TradingChart({
   const showMACDRef = useRef(showMACD);
   showMACDRef.current = showMACD;
 
-  const BG   = isLight ? "#2a1040" : "#0e0810";
-  const GRID = isLight ? "rgba(160,80,255,0.12)" : "#1a0f18";
-  const TEXT = isLight ? "#c4a0f0" : "#bf7a99";
+  const BG   = isLight ? "#f2ebe0" : "#0e0810";
+  const GRID = isLight ? "rgba(160,100,20,0.10)" : "#1a0f18";
+  const TEXT = isLight ? "#7a5530" : "#bf7a99";
 
   // Herinitialiseer chart als thema wisselt
   useEffect(() => { setChartInitKey(k => k + 1); }, [theme]);
