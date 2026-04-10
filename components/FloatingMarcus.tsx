@@ -27,6 +27,7 @@ export default function FloatingMarcus() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
+  const [hasNotification, setHasNotification] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -44,6 +45,34 @@ export default function FloatingMarcus() {
     if (hidden) return;
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
   }, [open, hidden]);
+
+  // Check of Marcus een bericht klaar heeft (nudge / ochtendgroet)
+  useEffect(() => {
+    if (hidden || open) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const nudgeDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-nudge-dismissed") === today;
+    const greetingDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-greeting-dismissed") === today;
+    const eveningDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-evening-dismissed") === today;
+    const hour = new Date().getHours();
+
+    // Avond check (na 16u) of nudge/greeting nog niet gelezen
+    if ((hour >= 16 && !eveningDismissed) || !nudgeDismissed || !greetingDismissed) {
+      // Snelle check of er iets is
+      fetch("/api/me/nudge")
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data) return;
+          const hasMsg = (data.nudge && !nudgeDismissed) || (data.morningGreeting && !greetingDismissed) || (hour >= 16 && !eveningDismissed);
+          setHasNotification(!!hasMsg);
+        })
+        .catch(() => {});
+    }
+  }, [hidden, open]);
+
+  // Notificatie wissen zodra chat opengaat
+  useEffect(() => {
+    if (open) setHasNotification(false);
+  }, [open]);
 
   const send = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
@@ -177,12 +206,22 @@ export default function FloatingMarcus() {
 
       {/* Zwevende knop */}
       <button
-        className={`float-marcus-btn${open ? " active" : ""}`}
+        className={`float-marcus-btn${open ? " active" : hasNotification ? " notify" : ""}`}
         onClick={() => setOpen(v => !v)}
-        title="Vraag Marcus"
+        title={hasNotification ? "Marcus heeft een bericht voor je" : "Vraag Marcus"}
         aria-label="Marcus openen"
       >
         M
+        {hasNotification && !open && (
+          <span style={{
+            position: "absolute", top: 2, right: 2,
+            width: 12, height: 12, borderRadius: "50%",
+            background: "#fff",
+            boxShadow: "0 0 6px 2px rgba(233,30,99,0.8)",
+            border: "2px solid #e91e63",
+            display: "block",
+          }} />
+        )}
       </button>
     </>
   );
