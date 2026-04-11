@@ -541,6 +541,16 @@ Marcus gebruikt funding rates ALTIJD bij zijn regime-bepaling en setup-beoordeli
 MACRO:
 ${macroContext}
 
+PLATFORM TICKERS (gebruik dit als de gebruiker vraagt waar ze een asset kunnen traden):
+- Olie (WTI/CL=F) → eToro: zoek op "USOIL", MT4/5: "USOIL" of "WTI", TradingView: "USOIL" of "CL1!"
+- Goud (XAU/USD) → eToro: "GOLD", MT4/5: "XAUUSD", TradingView: "XAUUSD" of "GC1!"
+- Zilver (XAG/USD) → eToro: "SILVER", MT4/5: "XAGUSD", TradingView: "XAGUSD"
+- S&P 500 (SPY) → eToro: "SPY500", TradingView: "SPY"
+- NASDAQ-100 (QQQ) → eToro: "NSDQ100", TradingView: "QQQ"
+- Aandelen (NVDA, AAPL, TSLA, etc.) → zelfde ticker op eToro, TradingView, Degiro
+- Crypto → zelfde ticker op alle platforms (BTC, ETH, SOL, etc.)
+ACTIE: Als de gebruiker vraagt "waar vind ik dit op eToro?" of een ticker noemt die ze niet kunnen vinden — geef dan DIRECT de juiste eToro-naam. Noem dit ook proactief als je een setup adviseert op oil/goud/zilver.
+
 MARKTOVERZICHT ALLE ASSETS (voor vergelijking):
 ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de scanner pagina even te openen."}
 

@@ -205,6 +205,8 @@ export default function TradingChart({
 
   const candlesRef = useRef<Candle[]>(candles);
   candlesRef.current = candles;
+  // Ref naar vorige candles — voor incremental update detectie
+  const prevCandlesRef = useRef<Candle[]>([]);
 
   // Track of gebruiker handmatig heeft gezoomd — dan geen auto-fitContent meer
   const userZoomedRef = useRef(false);
@@ -238,22 +240,12 @@ export default function TradingChart({
 
       const containerW = mainRef.current.clientWidth || 320;
 
-      // Tijdzone-offset voor lokale tijd (UTC+2 in België = +7200s)
-      const tzOffsetSec = new Date().getTimezoneOffset() * -60;
-
       const commonLayout = {
         layout: { background: { type: ColorType.Solid, color: BG }, textColor: TEXT },
         grid: { vertLines: { color: GRID }, horzLines: { color: GRID } },
         rightPriceScale: { borderColor: GRID, textColor: TEXT },
         timeScale: {
           borderColor: GRID, timeVisible: true, secondsVisible: false, rightOffset: 8,
-          // Toon lokale tijd op x-as
-          tickMarkFormatter: (time: number) => {
-            const d = new Date((time - tzOffsetSec) * 1000); // time is al in lokale seconden
-            const h = String(d.getUTCHours()).padStart(2, "0");
-            const m = String(d.getUTCMinutes()).padStart(2, "0");
-            return `${h}:${m}`;
-          },
         },
         crosshair: { mode: CrosshairMode.Normal },
         handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
@@ -473,43 +465,61 @@ export default function TradingChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, stopLoss, entryZoneLow, entryZoneHigh, resistanceZoneLow]);
 
-  // Update candle data
+  // Update candle data — incremental update voor live candles, full reset bij nieuw interval/asset
   useEffect(() => {
     if (!seriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
-    seriesRef.current.setData(candles.map(candleToBar));
-    volumeSeriesRef.current.setData(candles.map(candleToVol));
-    lineSeriesRef.current?.setData(candles.map(c => ({
-      time: toLocalTime(c.openTime),
-      value: c.close,
-    })));
-    ma20Ref.current?.setData(calcMA(candles, 20));
-    ma50Ref.current?.setData(calcMA(candles, 50));
-    rsiSeriesRef.current?.setData(calcRSI(candles, 14));
 
-    const bb = calcBB(candles);
-    bbUpperRef.current?.setData(showBB ? bb.upper : []);
-    bbMiddleRef.current?.setData(showBB ? bb.middle : []);
-    bbLowerRef.current?.setData(showBB ? bb.lower : []);
+    const prev = prevCandlesRef.current;
+    // Detecteer live kline-update: zelfde startcandle, max 1 nieuwe candle, laatste candle gewijzigd
+    const isLiveUpdate =
+      prev.length >= candles.length - 1 &&
+      prev.length > 0 &&
+      prev[0]?.openTime === candles[0]?.openTime;
 
-    if (macdLineRef.current && macdSignalRef.current && macdHistRef.current) {
-      const macdData = calcMACD(candles);
-      macdLineRef.current.setData(showMACD ? macdData.macd : []);
-      macdSignalRef.current.setData(showMACD ? macdData.signal : []);
-      macdHistRef.current.setData(showMACD ? macdData.histogram : []);
-    }
-
-    // Toon standaard de laatste 80 candles zodat recente candles goed zichtbaar zijn
-    // Als gebruiker al heeft ingezoomd, niet overschrijven
-    if (!userZoomedRef.current && candles.length > 0) {
-      const visible = candles.slice(-80);
-      const fromTime = toLocalTime(visible[0].openTime);
-      // rightmost = closeTime van laatste candle (ook in lokale tijd) + kleine buffer
+    if (isLiveUpdate) {
+      // Alleen de laatste candle updaten — geen setData(), geen range-reset
       const last = candles[candles.length - 1];
-      const toTime = (Math.floor(last.closeTime / 1000) + TZ_OFFSET_SEC + 1) as unknown as import("lightweight-charts").Time;
-      chartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
-      rsiChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
-      macdChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+      const bar = candleToBar(last);
+      seriesRef.current.update(bar);
+      volumeSeriesRef.current.update(candleToVol(last));
+      lineSeriesRef.current?.update({ time: bar.time, value: last.close });
+    } else {
+      // Volledige reset (nieuw asset, nieuw interval, initieel laden)
+      seriesRef.current.setData(candles.map(candleToBar));
+      volumeSeriesRef.current.setData(candles.map(candleToVol));
+      lineSeriesRef.current?.setData(candles.map(c => ({
+        time: toLocalTime(c.openTime),
+        value: c.close,
+      })));
+      ma20Ref.current?.setData(calcMA(candles, 20));
+      ma50Ref.current?.setData(calcMA(candles, 50));
+      rsiSeriesRef.current?.setData(calcRSI(candles, 14));
+
+      const bb = calcBB(candles);
+      bbUpperRef.current?.setData(showBB ? bb.upper : []);
+      bbMiddleRef.current?.setData(showBB ? bb.middle : []);
+      bbLowerRef.current?.setData(showBB ? bb.lower : []);
+
+      if (macdLineRef.current && macdSignalRef.current && macdHistRef.current) {
+        const macdData = calcMACD(candles);
+        macdLineRef.current.setData(showMACD ? macdData.macd : []);
+        macdSignalRef.current.setData(showMACD ? macdData.signal : []);
+        macdHistRef.current.setData(showMACD ? macdData.histogram : []);
+      }
+
+      // Toon laatste 80 candles — alleen bij full reset (niet bij live updates)
+      if (!userZoomedRef.current && candles.length > 0) {
+        const visible = candles.slice(-80);
+        const fromTime = toLocalTime(visible[0].openTime);
+        const last = candles[candles.length - 1];
+        const toTime = (Math.floor(last.closeTime / 1000) + TZ_OFFSET_SEC + 1) as unknown as import("lightweight-charts").Time;
+        chartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+        rsiChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+        macdChartRef.current?.timeScale().setVisibleRange({ from: fromTime, to: toTime });
+      }
     }
+
+    prevCandlesRef.current = candles;
   }, [candles, showBB, showMACD, chartInitKey]);
 
   // Toggle candle / line chart type
