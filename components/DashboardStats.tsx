@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SCAN_ASSETS } from "@/lib/assets";
 
 type Stats = {
   loginStreak: number;
@@ -28,7 +29,6 @@ export default function DashboardStats() {
         ]);
 
         // Haal alle paper trades op voor alle assets
-        const { SCAN_ASSETS } = await import("@/lib/assets");
         const allPapers = await Promise.all(
           SCAN_ASSETS.map(a => fetch(`/api/me/paper?asset=${a.symbol}`).then(r => r.ok ? r.json() : null).catch(() => null))
         );
