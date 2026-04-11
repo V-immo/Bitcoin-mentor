@@ -17,7 +17,7 @@ function mdToHtml(text: string): string {
 }
 
 // Pagina's waar de zwevende knop NIET getoond wordt
-const EXCLUDED_PATHS = ["/leren", "/auth"];
+const EXCLUDED_PATHS = ["/auth"];
 
 export default function FloatingMarcus() {
   const pathname = usePathname();

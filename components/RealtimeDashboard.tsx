@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import TradingChart from "./TradingChart";
-import TerminalMentorPanel from "./TerminalMentorPanel";
 import TerminalPaperPanel from "./TerminalPaperPanel";
 import MentorChat from "./MentorChat";
 import RisicoCalculator from "./RisicoCalculator";
@@ -14,12 +13,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import NewsPanel from "./NewsPanel";
 import MarcusBriefing from "./MarcusBriefing";
-import Leaderboard from "./Leaderboard";
-import TestnetPanel from "./TestnetPanel";
-import PriceAlerts from "./PriceAlerts";
-import AITradeCoach from "./AITradeCoach";
-import LiveSimpleMode from "./LiveSimpleMode";
-import BitvavoPanel from "./BitvavoPanel";
 import TradePlanValidator from "./TradePlanValidator";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
@@ -558,7 +551,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   function handleAssetChange(sym: string) {
     localStorage.setItem("bitcoin-mentor-selected-asset", sym);
     setAsset(sym);
-    setBottomTab("chat");
+    setBottomTab("paper");
   }
 
   async function refreshSignal(sym?: string) {
@@ -850,11 +843,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               mode={activeInterval === "1m" || activeInterval === "5m" || activeInterval === "15m" ? "fast" : "analysis"}
             />
           )}
-
-          {/* Marcus — altijd zichtbaar onder de chart */}
-          <div className="marcus-below-chart">
-            <MentorChat key={asset} marketContext={marketContext} asset={asset} appContext={appContext} />
-          </div>
 
           {/* Signaalstrip — altijd zichtbaar boven tabs */}
           {signalReady && (
