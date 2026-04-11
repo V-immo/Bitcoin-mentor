@@ -82,7 +82,7 @@ export default function MarcusSignals() {
       }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
-            🤖 Automatisch kopiëren {copyEnabled ? "— AAN" : "— UIT"}
+            ⚡ Automatisch kopiëren {copyEnabled ? "— AAN" : "— UIT"}
           </div>
           <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
             Als Marcus een signaal geeft, opent hij automatisch een paper trade voor jou (5% van je cash).

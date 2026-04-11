@@ -63,7 +63,7 @@ const STEPS = [
     selector: "main, .container-page",
   },
   {
-    icon: "🤖",
+    icon: "💬",
     title: "Marcus — altijd beschikbaar",
     text: "De roze M-knop rechtsonder. Stel hem een vraag over de markt of jouw trade.",
     route: null,

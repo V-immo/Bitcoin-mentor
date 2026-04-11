@@ -4,7 +4,6 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RealtimeDashboard from "@/components/RealtimeDashboard";
-import MarcusNudge from "@/components/MarcusNudge";
 import { SCAN_ASSETS } from "@/lib/assets";
 import type { MentorSignal } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -151,9 +150,6 @@ function TradePageInner() {
           </div>
         </div>
       )}
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 16px 0" }}>
-        <MarcusNudge />
-      </div>
       <RealtimeDashboard initialData={signal} initialAsset={selectedAsset ?? "BTCUSDT"} />
     </>
   );

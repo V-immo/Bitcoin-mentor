@@ -25,7 +25,7 @@ function fmtPrice(price: number, asset: AssetDef): string {
   return "$" + price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function MarketOverview() {
+export default function MarketOverview({ compact }: { compact?: boolean }) {
   const { t } = useLanguage();
   const [prices, setPrices] = useState<PriceMap>({});
   const [loading, setLoading] = useState(true);
