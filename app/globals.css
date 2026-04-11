@@ -6383,38 +6383,78 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .landing-usp-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
 .landing-usp-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
 
-/* Stappen */
+/* Stappen — vertical timeline */
 .landing-section-title {
   font-size: 28px; font-weight: 800; color: var(--text);
   text-align: center; margin-bottom: 40px;
 }
 .landing-steps { margin-bottom: 80px; }
-.landing-steps-row {
-  display: flex; align-items: flex-start; justify-content: center;
-  gap: 8px; flex-wrap: wrap;
+.landing-steps-timeline {
+  display: flex; flex-direction: column; gap: 0;
+  max-width: 520px; margin: 0 auto;
 }
-.landing-step {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 24px 20px;
-  text-align: center; flex: 1; min-width: 160px; max-width: 200px;
+.landing-step-item {
+  display: flex; gap: 20px; align-items: flex-start;
 }
-.landing-step-num {
+.landing-step-spine {
+  display: flex; flex-direction: column; align-items: center; flex-shrink: 0;
+}
+.landing-step-dot {
   width: 36px; height: 36px; border-radius: 50%;
-  background: var(--primary); color: #fff;
-  font-weight: 800; font-size: 16px;
+  background: linear-gradient(135deg, #e91e63, #c2185b);
+  box-shadow: 0 0 12px rgba(233,30,99,0.5);
+  color: #fff; font-weight: 800; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 12px;
+  flex-shrink: 0; position: relative; z-index: 1;
 }
-.landing-step h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 6px; }
-.landing-step p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
-.landing-step-arrow { font-size: 20px; color: var(--text-secondary); padding-top: 32px; }
-@media (max-width: 700px) { .landing-step-arrow { display: none; } }
+.landing-step-line {
+  width: 2px; flex: 1; min-height: 32px;
+  background: linear-gradient(to bottom, rgba(233,30,99,0.4), rgba(233,30,99,0.08));
+  margin: 4px 0;
+}
+.landing-step-body {
+  padding-bottom: 28px; padding-top: 6px;
+}
+.landing-step-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+.landing-step-desc { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
 
-/* Pricing + Final CTA */
+/* Final CTA */
 .landing-final-cta {
-  padding: 40px 20px 64px;
+  padding: 40px 20px 80px;
   display: flex;
   justify-content: center;
+}
+.landing-final-card {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, rgba(233,30,99,0.08) 0%, rgba(20,10,25,0.95) 60%);
+  border: 1px solid rgba(233,30,99,0.35);
+  border-radius: 24px;
+  padding: 48px 40px;
+  text-align: center;
+  width: 100%; max-width: 480px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  box-shadow: 0 0 40px rgba(233,30,99,0.12), 0 2px 32px rgba(0,0,0,0.4);
+}
+.landing-final-glow {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(233,30,99,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.landing-final-avatar {
+  width: 56px; height: 56px; font-size: 24px;
+  box-shadow: 0 0 20px rgba(233,30,99,0.6);
+  margin-bottom: 4px;
+}
+.landing-final-title {
+  font-size: 26px; font-weight: 800; color: var(--text); margin: 0;
+}
+.landing-final-sub {
+  font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.6;
+}
+.landing-final-btn {
+  margin-top: 8px; font-size: 16px; padding: 14px 36px !important;
+  box-shadow: 0 4px 24px rgba(233,30,99,0.5);
 }
 .landing-price-card {
   background: var(--surface);

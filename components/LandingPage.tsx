@@ -191,46 +191,44 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       {/* ── Hoe het werkt ── */}
       <section className="landing-steps">
         <h2 className="landing-section-title">{c.stepsTitle}</h2>
-        <div className="landing-steps-row">
-          <div className="landing-step">
-            <div className="landing-step-num">1</div>
-            <h4>{c.s1t}</h4>
-            <p>{c.s1}</p>
-          </div>
-          <div className="landing-step-arrow">→</div>
-          <div className="landing-step">
-            <div className="landing-step-num">2</div>
-            <h4>{c.s2t}</h4>
-            <p>{c.s2}</p>
-          </div>
-          <div className="landing-step-arrow">→</div>
-          <div className="landing-step">
-            <div className="landing-step-num">3</div>
-            <h4>{c.s3t}</h4>
-            <p>{c.s3}</p>
-          </div>
-          <div className="landing-step-arrow">→</div>
-          <div className="landing-step">
-            <div className="landing-step-num">4</div>
-            <h4>{c.s4t}</h4>
-            <p>{c.s4}</p>
-          </div>
+        <div className="landing-steps-timeline">
+          {[
+            { num: 1, title: c.s1t, desc: c.s1, icon: "✦" },
+            { num: 2, title: c.s2t, desc: c.s2, icon: "✦" },
+            { num: 3, title: c.s3t, desc: c.s3, icon: "✦" },
+            { num: 4, title: c.s4t, desc: c.s4, icon: "✦" },
+          ].map((step, i, arr) => (
+            <div key={step.num} className="landing-step-item">
+              <div className="landing-step-spine">
+                <div className="landing-step-dot">{step.num}</div>
+                {i < arr.length - 1 && <div className="landing-step-line" />}
+              </div>
+              <div className="landing-step-body">
+                <h4 className="landing-step-title">{step.title}</h4>
+                <p className="landing-step-desc">{step.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* ── Gratis CTA ── */}
       <section className="landing-final-cta">
-        <h2 className="landing-section-title">{c.finalH}</h2>
-        <p className="landing-subtitle" style={{ marginTop: 8, marginBottom: 24 }}>{c.finalSub}</p>
-        {!loggedIn ? (
-          <Link href="/auth/register" className="landing-btn-primary">
-            {c.finalCta}
-          </Link>
-        ) : (
-          <Link href="/dashboard" className="landing-btn-primary">
-            {c.ctaDashboard}
-          </Link>
-        )}
+        <div className="landing-final-card">
+          <div className="landing-final-glow" />
+          <div className="marcus-avatar-m landing-final-avatar">M</div>
+          <h2 className="landing-final-title">{c.finalH}</h2>
+          <p className="landing-final-sub">{c.finalSub}</p>
+          {!loggedIn ? (
+            <Link href="/auth/register" className="landing-btn-primary landing-final-btn">
+              {c.finalCta}
+            </Link>
+          ) : (
+            <Link href="/dashboard" className="landing-btn-primary landing-final-btn">
+              {c.ctaDashboard}
+            </Link>
+          )}
+        </div>
       </section>
 
     </div>
