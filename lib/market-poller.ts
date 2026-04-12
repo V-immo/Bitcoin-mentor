@@ -313,6 +313,43 @@ function runSignalEngine(): void {
   } catch { /* stilletjes falen */ }
 }
 
+// --- Accountability partner matching ---
+
+function runPartnerMatching(): void {
+  try {
+    const db = getDb();
+
+    // Vind alle opt-in gebruikers zonder actieve partner
+    const candidates = db.prepare(`
+      SELECT po.user_id,
+        COALESCE((SELECT COUNT(*) FROM quiz_shown WHERE user_id = po.user_id AND correct = 1), 0) as correct_answers
+      FROM partner_opt_in po
+      WHERE po.opted_in = 1
+        AND NOT EXISTS (
+          SELECT 1 FROM partnerships p
+          WHERE (p.user_a = po.user_id OR p.user_b = po.user_id) AND p.status = 'active'
+        )
+      ORDER BY correct_answers ASC
+    `).all() as { user_id: number; correct_answers: number }[];
+
+    // Match pairs op vergelijkbaar niveau (adjacent in gesorteerde lijst)
+    for (let i = 0; i + 1 < candidates.length; i += 2) {
+      const a = candidates[i];
+      const b = candidates[i + 1];
+      // Niveau verschil max 50 correct answers (ca. 1 level)
+      if (Math.abs(a.correct_answers - b.correct_answers) > 50) continue;
+
+      const userA = Math.min(a.user_id, b.user_id);
+      const userB = Math.max(a.user_id, b.user_id);
+
+      db.prepare(`
+        INSERT OR IGNORE INTO partnerships (user_a, user_b, status)
+        VALUES (?, ?, 'active')
+      `).run(userA, userB);
+    }
+  } catch { /* stilletjes falen */ }
+}
+
 // --- Actieve background poller ---
 
 let pollerStarted = false;
@@ -332,6 +369,9 @@ async function pollAll(): Promise<void> {
 
     // Signal engine — genereer Marcus signals na data update
     runSignalEngine();
+
+    // Accountability partner matching — koppel opt-in gebruikers zonder partner
+    runPartnerMatching();
   } catch {
     // stilletjes falen — stale cache blijft geldig
   }

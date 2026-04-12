@@ -138,6 +138,22 @@ function ensureSchema(database: Database.Database) {
       closed_at   TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_signals_status ON marcus_signals(status, created_at);
+
+    CREATE TABLE IF NOT EXISTS partner_opt_in (
+      user_id    INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      opted_in   INTEGER NOT NULL DEFAULT 1,
+      updated_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS partnerships (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_a     INTEGER NOT NULL,
+      user_b     INTEGER NOT NULL,
+      matched_at TEXT    NOT NULL DEFAULT (datetime('now')),
+      status     TEXT    NOT NULL DEFAULT 'active',
+      UNIQUE(user_a, user_b)
+    );
+    CREATE INDEX IF NOT EXISTS idx_partnerships_users ON partnerships(user_a, user_b, status);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen

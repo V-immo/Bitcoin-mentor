@@ -61,6 +61,22 @@ export default function ProfielPage() {
   const [papers, setPapers] = useState<PaperData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Partner state (C4)
+  type PartnerStats = {
+    partnershipId: number;
+    codename: string;
+    matchedAt: string;
+    level: number;
+    streak: number;
+    winRate: number | null;
+    tradeCount: number;
+    active7d: boolean;
+  };
+  const [partnerOptedIn, setPartnerOptedIn] = useState(false);
+  const [partner, setPartner] = useState<PartnerStats | null>(null);
+  const [partnerLoading, setPartnerLoading] = useState(true);
+  const [partnerOptLoading, setPartnerOptLoading] = useState(false);
+
   // Trading plan state
   const [plan, setPlan] = useState<{
     rules: string; risk_per_trade: number; max_daily_loss: number;
@@ -92,6 +108,18 @@ export default function ProfielPage() {
         if (!q.error) setQuiz(q);
         if (planRes && !planRes.error) setPlan(prev => ({ ...prev, ...planRes }));
 
+        // Partner data
+        fetch("/api/me/partner")
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (d) {
+              setPartnerOptedIn(!!d.optedIn);
+              setPartner(d.partner ?? null);
+            }
+          })
+          .catch(() => {})
+          .finally(() => setPartnerLoading(false));
+
         // Haal paper data op voor alle assets
         const paperResults = await Promise.all(
           SCAN_ASSETS.map(a =>
@@ -112,6 +140,28 @@ export default function ProfielPage() {
     }
     load();
   }, []);
+
+  async function togglePartnerOptIn() {
+    setPartnerOptLoading(true);
+    const next = !partnerOptedIn;
+    try {
+      const res = await fetch("/api/me/partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ optIn: next }),
+      });
+      if (res.ok) {
+        setPartnerOptedIn(next);
+        if (!next) setPartner(null);
+      }
+    } catch { /* ignore */ }
+    finally { setPartnerOptLoading(false); }
+  }
+
+  async function endPartnership() {
+    await fetch("/api/me/partner", { method: "DELETE" });
+    setPartner(null);
+  }
 
   async function savePlan(e: React.FormEvent) {
     e.preventDefault();
@@ -249,6 +299,123 @@ export default function ProfielPage() {
 
           {/* ── Trophy Wall ── */}
           <TrophyWall />
+
+          {/* ── Accountability Partner (C4) ── */}
+          {!partnerLoading && (
+            <div className="card" style={{ marginBottom: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <span style={{ fontSize: 20 }}>🤝</span>
+                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>Accountability Partner</div>
+                {partner && (
+                  <span style={{
+                    marginLeft: "auto", fontSize: 11, background: "rgba(34,197,94,0.12)",
+                    border: "1px solid rgba(34,197,94,0.3)", color: "#86efac",
+                    borderRadius: 999, padding: "2px 10px", fontWeight: 600,
+                  }}>Gekoppeld</span>
+                )}
+              </div>
+
+              {!partnerOptedIn && !partner && (
+                <div>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 14px", lineHeight: 1.6 }}>
+                    Marcus koppelt je aan een andere trader op jouw niveau. Je ziet elkaars anonieme statistieken — anoniem, motiverend, eerlijk. Samen groeien jullie sneller.
+                  </p>
+                  <button
+                    onClick={togglePartnerOptIn}
+                    disabled={partnerOptLoading}
+                    style={{
+                      background: "#e91e63", color: "#fff", border: "none",
+                      borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
+                      cursor: partnerOptLoading ? "not-allowed" : "pointer",
+                      opacity: partnerOptLoading ? 0.7 : 1,
+                    }}
+                  >
+                    {partnerOptLoading ? "Even wachten…" : "Koppel me aan een partner"}
+                  </button>
+                </div>
+              )}
+
+              {partnerOptedIn && !partner && (
+                <div>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 12px", lineHeight: 1.5 }}>
+                    ⏳ Marcus is op zoek naar een goede match voor je. Dit kan tot 24 uur duren. Kom later terug!
+                  </p>
+                  <button
+                    onClick={togglePartnerOptIn}
+                    disabled={partnerOptLoading}
+                    style={{
+                      background: "transparent", color: "var(--text-muted)",
+                      border: "1px solid var(--border)", borderRadius: 8,
+                      padding: "7px 14px", fontSize: 12, cursor: "pointer",
+                    }}
+                  >
+                    Afmelden
+                  </button>
+                </div>
+              )}
+
+              {partner && (
+                <div>
+                  {/* Partner avatar + naam */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: "50%",
+                      background: "rgba(233,30,99,0.15)", border: "1px solid rgba(233,30,99,0.3)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 18, fontWeight: 700, color: "#e91e63", flexShrink: 0,
+                    }}>
+                      {partner.codename.slice(0, 1)}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#fce8f0" }}>{partner.codename}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                        Gekoppeld op {new Date(partner.matchedAt).toLocaleDateString("nl-NL")}
+                        {partner.active7d && " · 🟢 actief deze week"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Vergelijking stats */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 14 }}>
+                    {[
+                      { label: "Level", mine: String(quiz?.level ?? 1), theirs: String(partner.level) },
+                      { label: "Streak", mine: `${quiz?.streak ?? 0}d`, theirs: `${partner.streak}d` },
+                      { label: "Win rate", mine: closedTrades.length > 0 ? `${winRate}%` : "—", theirs: partner.winRate != null ? `${partner.winRate}%` : "—" },
+                      { label: "Trades", mine: String(closedTrades.length), theirs: String(partner.tradeCount) },
+                    ].map(({ label, mine, theirs }) => (
+                      <div key={label} style={{
+                        background: "var(--surface-2)", borderRadius: 10, padding: "10px 12px",
+                        border: "1px solid var(--border)",
+                      }}>
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{label}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: "#fce8f0" }}>{mine}</span>
+                          <span style={{ fontSize: 11, color: "var(--text-muted)" }}>vs</span>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: "#e91e63" }}>{theirs}</span>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
+                          <span>jij</span><span>partner</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      onClick={endPartnership}
+                      style={{
+                        background: "transparent", color: "var(--text-muted)",
+                        border: "1px solid var(--border)", borderRadius: 8,
+                        padding: "7px 14px", fontSize: 12, cursor: "pointer",
+                      }}
+                    >
+                      Koppeling verbreken
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ── Brokers link ── */}
           <Link href="/brokers" style={{
