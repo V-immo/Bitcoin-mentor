@@ -19,6 +19,7 @@ const PRIMARY_LINKS = [
 const EXTRA_LINKS = [
   { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
   { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
+  { href: "/brokers",      key: "nav_link_brokers",  icon: "🏦" },
   { href: "/testnet",      key: "more_menu_testnet", icon: "🔬" },
   { href: "/leaderboard",  key: "more_menu_ranking", icon: "🏆" },
 ] as const;

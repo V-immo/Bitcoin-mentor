@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TrophyWall from "@/components/TrophyWall";
@@ -248,6 +249,20 @@ export default function ProfielPage() {
 
           {/* ── Trophy Wall ── */}
           <TrophyWall />
+
+          {/* ── Brokers link ── */}
+          <Link href="/brokers" style={{
+            display: "flex", alignItems: "center", gap: 12,
+            background: "var(--surface)", border: "1px solid var(--border)",
+            borderRadius: 12, padding: "14px 16px", textDecoration: "none",
+          }}>
+            <span style={{ fontSize: 22 }}>🏦</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>Platforms & Brokers</div>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>Waar kun je écht traden? Overzicht van 14 platforms.</div>
+            </div>
+            <span style={{ marginLeft: "auto", color: "var(--text-muted)", fontSize: 14 }}>→</span>
+          </Link>
         </>
       )}
 
