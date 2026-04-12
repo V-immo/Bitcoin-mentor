@@ -16,7 +16,16 @@ function mdToHtml(text: string): string {
     .split("\n").map(l => `<div>${l || "&nbsp;"}</div>`).join("");
 }
 
-// Pagina's waar de zwevende knop NIET getoond wordt
+// Strip HTML/markdown voor TTS (voorlezing)
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ").trim();
+}
+
 const EXCLUDED_PATHS = ["/auth"];
 
 export default function FloatingMarcus() {
@@ -28,14 +37,28 @@ export default function FloatingMarcus() {
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [hasNotification, setHasNotification] = useState(false);
+
+  // Spraak state
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Verberg op uitgesloten pagina's en als niet ingelogd
   const hidden = !session?.user || EXCLUDED_PATHS.some(p => pathname.startsWith(p));
 
-  // Hooks altijd aanroepen (vóór conditional return — React rules of hooks)
+  // Spraak instellingen ophalen
+  useEffect(() => {
+    if (hidden) return;
+    const saved = localStorage.getItem("marcus-voice-enabled");
+    if (saved === "true") setVoiceEnabled(true);
+  }, [hidden]);
+
   useEffect(() => {
     if (hidden) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,18 +69,14 @@ export default function FloatingMarcus() {
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
   }, [open, hidden]);
 
-  // Check of Marcus een bericht klaar heeft (nudge / ochtendgroet)
   useEffect(() => {
     if (hidden || open) return;
     const today = new Date().toISOString().slice(0, 10);
-    const nudgeDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-nudge-dismissed") === today;
-    const greetingDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-greeting-dismissed") === today;
-    const eveningDismissed = typeof window !== "undefined" && localStorage.getItem("marcus-evening-dismissed") === today;
+    const nudgeDismissed = localStorage.getItem("marcus-nudge-dismissed") === today;
+    const greetingDismissed = localStorage.getItem("marcus-greeting-dismissed") === today;
+    const eveningDismissed = localStorage.getItem("marcus-evening-dismissed") === today;
     const hour = new Date().getHours();
-
-    // Avond check (na 16u) of nudge/greeting nog niet gelezen
     if ((hour >= 16 && !eveningDismissed) || !nudgeDismissed || !greetingDismissed) {
-      // Snelle check of er iets is
       fetch("/api/me/nudge")
         .then(r => r.ok ? r.json() : null)
         .then(data => {
@@ -69,10 +88,106 @@ export default function FloatingMarcus() {
     }
   }, [hidden, open]);
 
-  // Notificatie wissen zodra chat opengaat
   useEffect(() => {
     if (open) setHasNotification(false);
   }, [open]);
+
+  // Stop spraak als overlay dicht
+  useEffect(() => {
+    if (!open && typeof window !== "undefined") {
+      window.speechSynthesis?.cancel();
+      setSpeaking(false);
+      recognitionRef.current?.stop();
+      setListening(false);
+    }
+  }, [open]);
+
+  // TTS via ElevenLabs (premium) of browser fallback
+  async function speakText(text: string) {
+    if (!voiceEnabled || typeof window === "undefined") return;
+    stopSpeaking();
+    const clean = stripHtml(text).slice(0, 800);
+    if (!clean) return;
+
+    setSpeaking(true);
+    try {
+      // Probeer ElevenLabs server route
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: clean }),
+      });
+
+      if (res.ok && res.status !== 204 && res.body) {
+        // ElevenLabs audio beschikbaar — speel af via Audio API
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+        audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+        await audio.play();
+        return;
+      }
+    } catch { /* val terug op browser TTS */ }
+
+    // Browser TTS fallback
+    if (!window.speechSynthesis) { setSpeaking(false); return; }
+    const utt = new SpeechSynthesisUtterance(clean);
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      (v.lang.startsWith("nl") || v.lang.startsWith("en")) &&
+      (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("man") ||
+       v.name.toLowerCase().includes("george") || v.name.toLowerCase().includes("daniel") ||
+       v.name.toLowerCase().includes("reed") || v.name.toLowerCase().includes("liam"))
+    ) || voices.find(v => v.lang.startsWith("nl")) || voices[0];
+    if (preferred) utt.voice = preferred;
+    utt.lang = preferred?.lang ?? "nl-NL";
+    utt.rate = 0.92; utt.pitch = 0.85; utt.volume = 1;
+    utt.onstart = () => setSpeaking(true);
+    utt.onend = () => setSpeaking(false);
+    utt.onerror = () => setSpeaking(false);
+    synthRef.current = utt;
+    window.speechSynthesis.speak(utt);
+  }
+
+  function stopSpeaking() {
+    if (typeof window !== "undefined") {
+      window.speechSynthesis?.cancel();
+      setSpeaking(false);
+    }
+  }
+
+  // STT: Microfoon luisteren
+  function startListening() {
+    if (typeof window === "undefined") return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Je browser ondersteunt geen spraakherkenning. Gebruik Chrome of Edge.");
+      return;
+    }
+    stopSpeaking();
+    const recognition = new SpeechRecognition();
+    recognition.lang = "nl-NL";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+    recognition.onerror = () => setListening(false);
+    recognition.onresult = (event: { results: { transcript: string }[][] }) => {
+      const transcript = event.results[0][0].transcript;
+      if (transcript.trim()) send(transcript.trim());
+    };
+    recognitionRef.current = recognition;
+    recognition.start();
+  }
+
+  function toggleVoice() {
+    const next = !voiceEnabled;
+    setVoiceEnabled(next);
+    localStorage.setItem("marcus-voice-enabled", String(next));
+    if (!next) stopSpeaking();
+  }
 
   const send = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
@@ -82,11 +197,13 @@ export default function FloatingMarcus() {
     setInput("");
     setLoading(true);
     setStreaming(true);
+    stopSpeaking();
 
     const placeholder: Message = { role: "assistant", content: "" };
     setMessages(m => [...m, placeholder]);
 
     abortRef.current = new AbortController();
+    let full = "";
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -103,7 +220,6 @@ export default function FloatingMarcus() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let full = "";
 
       while (true) {
         const { done, value } = await reader.read();
@@ -118,17 +234,21 @@ export default function FloatingMarcus() {
       }
     } catch (e: unknown) {
       if ((e as Error)?.name !== "AbortError") {
+        full = "Marcus is even niet beschikbaar. Probeer opnieuw.";
         setMessages(m => {
           const copy = [...m];
-          copy[copy.length - 1] = { role: "assistant", content: "Marcus is even niet beschikbaar. Probeer opnieuw." };
+          copy[copy.length - 1] = { role: "assistant", content: full };
           return copy;
         });
       }
     } finally {
       setLoading(false);
       setStreaming(false);
+      // Spreek het antwoord voor als voice aan staat
+      if (full && voiceEnabled) speakText(full);
     }
-  }, [messages, loading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, loading, voiceEnabled]);
 
   function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -141,24 +261,55 @@ export default function FloatingMarcus() {
 
   return (
     <>
-      {/* Chat overlay */}
       {open && (
         <div className="float-marcus-overlay">
           <div className="float-marcus-header">
             <div className="float-marcus-header-left">
-              <div className="float-marcus-avatar">M</div>
+              <div className={`float-marcus-avatar${speaking ? " speaking" : ""}`}>M</div>
               <div>
                 <div className="float-marcus-name">Marcus</div>
-                <div className="float-marcus-status">{streaming ? "Typt…" : "Online"}</div>
+                <div className="float-marcus-status">
+                  {speaking ? "Spreekt…" : streaming ? "Typt…" : "Online"}
+                </div>
               </div>
             </div>
-            <button className="float-marcus-close" onClick={() => setOpen(false)}>✕</button>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              {/* Voice toggle */}
+              <button
+                onClick={toggleVoice}
+                title={voiceEnabled ? "Stem uitzetten" : "Stem aanzetten"}
+                style={{
+                  background: voiceEnabled ? "rgba(233,30,99,0.15)" : "transparent",
+                  border: `1px solid ${voiceEnabled ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
+                  borderRadius: 8, padding: "4px 8px", cursor: "pointer",
+                  color: voiceEnabled ? "#e91e63" : "var(--text-muted)",
+                  fontSize: 14, lineHeight: 1,
+                }}
+              >
+                {voiceEnabled ? "🔊" : "🔇"}
+              </button>
+              {/* Stop speaking */}
+              {speaking && (
+                <button
+                  onClick={stopSpeaking}
+                  style={{
+                    background: "rgba(233,30,99,0.12)", border: "1px solid rgba(233,30,99,0.3)",
+                    borderRadius: 8, padding: "4px 8px", cursor: "pointer",
+                    color: "#e91e63", fontSize: 12,
+                  }}
+                >
+                  ■ Stop
+                </button>
+              )}
+              <button className="float-marcus-close" onClick={() => setOpen(false)}>✕</button>
+            </div>
           </div>
 
           <div className="float-marcus-messages">
             {messages.length === 0 && (
               <div className="float-marcus-empty">
                 Vraag Marcus alles over trading, de markt of de app.
+                {voiceEnabled && <div style={{ marginTop: 6, fontSize: 11, color: "var(--text-muted)" }}>🎤 Spreek via de microfoonknop</div>}
               </div>
             )}
             {messages.map((m, i) => (
@@ -174,15 +325,31 @@ export default function FloatingMarcus() {
           </div>
 
           <div className="float-marcus-input-row">
+            {/* Microfoon knop */}
+            <button
+              onClick={startListening}
+              disabled={loading || listening}
+              title="Spreek je vraag in"
+              style={{
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                background: listening ? "rgba(233,30,99,0.2)" : "var(--surface)",
+                border: `1px solid ${listening ? "#e91e63" : "var(--border)"}`,
+                cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
+                animation: listening ? "marcus-notify 1.2s ease-in-out infinite" : "none",
+              }}
+            >
+              {listening ? "🎤" : "🎙"}
+            </button>
+
             <textarea
               ref={inputRef}
               className="float-marcus-input"
-              placeholder="Vraag Marcus iets…"
+              placeholder={listening ? "Luisteren…" : "Vraag Marcus iets…"}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
               rows={1}
-              disabled={loading}
+              disabled={loading || listening}
             />
             <button
               className="float-marcus-send"
@@ -214,6 +381,16 @@ export default function FloatingMarcus() {
           }} />
         )}
       </button>
+
+      <style>{`
+        .float-marcus-avatar.speaking {
+          animation: marcus-speaking 1s ease-in-out infinite;
+        }
+        @keyframes marcus-speaking {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(233,30,99,0.4); }
+          50% { box-shadow: 0 0 0 6px rgba(233,30,99,0); }
+        }
+      `}</style>
     </>
   );
 }
