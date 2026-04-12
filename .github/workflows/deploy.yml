@@ -45,16 +45,14 @@ jobs:
             node db/migrate-weekly-review.js || true
             node db/migrate-2fa.js || true
 
-            # Stop PM2 zodat het NIET herstart tijdens de build
-            pm2 stop bitcoin-mentor || true
-
-            # Volledige .next clean — voorkomt ENOENT en stale cache bij elke deploy
+            # .next clean — voorkomt ENOENT en stale cache bij elke deploy
+            # PM2 blijft DRAAIEN tijdens de build zodat de site online blijft
             rm -rf .next
 
-            # Build
+            # Build (oude versie serveert ondertussen nog)
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
-            # Reset restart teller + start PM2
+            # Herstart PM2 nu de build klaar is — downtime: seconden, niet minuten
             pm2 startOrRestart ecosystem.config.js --update-env
             pm2 reset bitcoin-mentor || true
             pm2 save
