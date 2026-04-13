@@ -5,6 +5,7 @@ import MarcusNudge from "@/components/MarcusNudge";
 import DashboardBriefing from "@/components/DashboardBriefing";
 import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
+import CommunitySentiment from "@/components/CommunitySentiment";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
@@ -28,7 +29,10 @@ export default function DashboardPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
           <DashboardBriefing />
-          <MarketOverview compact />
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <CommunitySentiment />
+            <MarketOverview compact />
+          </div>
         </div>
       </div>
     </>

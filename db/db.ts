@@ -190,6 +190,7 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "login_streak", "INTEGER NOT NULL DEFAULT 0");
   addCol("users", "last_streak_date", "TEXT DEFAULT ''");
   addCol("users", "last_greeting_date", "TEXT DEFAULT ''");
+  addCol("users", "last_evening_date", "TEXT DEFAULT ''");
 }
 
 export function getDb(): Database.Database {

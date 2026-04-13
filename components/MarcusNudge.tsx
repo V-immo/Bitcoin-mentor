@@ -13,6 +13,7 @@ export default function MarcusNudge() {
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const [greetingVisible, setGreetingVisible] = useState(false);
   const [eveningVisible, setEveningVisible] = useState(false);
+  const [eveningReview, setEveningReview] = useState<string | null>(null);
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
@@ -21,7 +22,8 @@ export default function MarcusNudge() {
     const nudgeDismissed = localStorage.getItem(DISMISS_KEY) === today;
     const greetingDismissed = localStorage.getItem(GREETING_KEY) === today;
 
-    if (!nudgeDismissed || !greetingDismissed) {
+    const eveningDismissedCheck = localStorage.getItem(EVENING_KEY) === today;
+    if (!nudgeDismissed || !greetingDismissed || !eveningDismissedCheck) {
       fetch("/api/me/nudge")
         .then(r => r.ok ? r.json() : null)
         .then(data => {
@@ -35,14 +37,15 @@ export default function MarcusNudge() {
             setMorningGreeting(data.morningGreeting);
             setGreetingVisible(true);
           }
+          if (data.eveningReview && !eveningDismissedCheck) {
+            setEveningReview(data.eveningReview);
+          }
         })
         .catch(() => {});
     }
 
-    // Evening review check: after 16:00, show once per day
     const hour = new Date().getHours();
-    const eveningDismissed = localStorage.getItem(EVENING_KEY) === today;
-    if (hour >= 16 && !eveningDismissed) {
+    if (hour >= 16 && !eveningDismissedCheck) {
       setEveningVisible(true);
     }
   }, []);
@@ -143,8 +146,8 @@ export default function MarcusNudge() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: "#e91e63", marginBottom: 2 }}>Marcus · Dagafsluiting</div>
             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4, color: "var(--text-secondary, #bf7a99)" }}>
-              Hoe ging je dag? Schrijf het op in je agenda — ook 1 zin helpt.{" "}
-              <a href="/agenda" style={{ color: "#e91e63", fontWeight: 600, textDecoration: "none" }}>Agenda openen →</a>
+              {eveningReview ?? "Hoe ging je dag? Schrijf het op in je agenda — ook 1 zin helpt."}{" "}
+              <a href="/agenda" style={{ color: "#e91e63", fontWeight: 600, textDecoration: "none" }}>Agenda →</a>
             </p>
           </div>
           <button onClick={dismissEvening} style={closeBtn} title="Sluiten">✕</button>

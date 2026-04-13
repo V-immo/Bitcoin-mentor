@@ -49,8 +49,8 @@ export async function GET() {
   const db = getDb();
 
   // Lees EERST de vorige activiteit + streak data, daarna updaten
-  const user = db.prepare("SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date FROM users WHERE id = ?")
-    .get(userId) as { last_login_at: string | null; username: string; login_streak: number; last_streak_date: string | null; last_greeting_date: string | null } | undefined;
+  const user = db.prepare("SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date, last_evening_date FROM users WHERE id = ?")
+    .get(userId) as { last_login_at: string | null; username: string; login_streak: number; last_streak_date: string | null; last_greeting_date: string | null; last_evening_date: string | null } | undefined;
 
   // Bereken nieuwe streak
   const today = new Date().toISOString().slice(0, 10);
@@ -117,21 +117,60 @@ export async function GET() {
     } catch { /* geen greeting als API faalt */ }
   }
 
+
+  // Avondreview: eenmaal per dag na 18u lokale tijd
+  const currentHour = new Date().getUTCHours() + 1; // UTC+1 (CET) benadering
+  const isEvening = currentHour >= 18 || currentHour < 4;
+  const needsEveningReview = isEvening && user?.last_evening_date !== today;
+  let eveningReview: string | null = null;
+
+  if (needsEveningReview && process.env.ANTHROPIC_API_KEY && checkRate(String(userId) + "-eve")) {
+    // Haal paper trade stats op voor vandaag
+    const papers = db.prepare(SELECT history FROM paper_trading WHERE user_id = ?).all(userId) as { history: string }[];
+    type T = { side?: string; pnl?: number; timestamp?: number };
+    let todayTrades: T[] = [];
+    for (const p of papers) {
+      try {
+        const hist = JSON.parse(p.history ?? []) as T[];
+        todayTrades = todayTrades.concat(hist.filter(t => t.timestamp && new Date(t.timestamp).toISOString().slice(0,10) === today));
+      } catch { /* ignore */ }
+    }
+    const todayClosed = todayTrades.filter(t => t.pnl != null);
+    const todayPnl = todayClosed.reduce((s, t) => s + (t.pnl ?? 0), 0);
+    const todayWins = todayClosed.filter(t => (t.pnl ?? 0) > 0).length;
+
+    const tradesSummary = todayClosed.length > 0
+      ? `Vandaag: ${todayClosed.length} trade(s), P&L ${todayPnl >= 0 ? + : }${todayPnl.toFixed(0)} EUR, ${todayWins}/${todayClosed.length} gewonnen.`
+      : Vandaag geen trades gesloten.;
+
+    const client2 = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    try {
+      const msg2 = await client2.messages.create({
+        model: claude-haiku-4-5,
+        max_tokens: 100,
+        system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE avondreview (max 2 zinnen). Eindig de dag bewust: wat ging goed, wat is het focuspunt voor morgen? Wees direct, gebruik je/jij. ${tradesSummary}`,
+        messages: [{ role: user, content: Avondreview Marcus. }],
+      });
+      eveningReview = (msg2.content[0] as { text: string }).text.trim();
+      db.prepare(UPDATE users SET last_evening_date = ? WHERE id = ?).run(today, userId);
+    } catch { /* geen review als API faalt */ }
+  }
+
   // Geen nudge als gebruiker vandaag of gisteren actief was (trade, journal OF sitebezoek)
   const recentlyActive =
     daysSinceLogin <= 1 ||
     (daysSinceTrade !== null && daysSinceTrade <= 1) ||
     (daysSinceJournal !== null && daysSinceJournal <= 1);
   if (recentlyActive) {
-    return Response.json({ nudge: null, active: true, streak: newStreak, morningGreeting });
+    return Response.json({ nudge: null, active: true, streak: newStreak, morningGreeting, eveningReview: eveningReview ?? null });
   }
 
   // Nudge alleen als sitebezoek 2+ kalenderdagen geleden is
   const shouldNudge = daysSinceLogin >= 2;
-  if (!shouldNudge) return Response.json({ nudge: null, morningGreeting });
+  if (!shouldNudge) return Response.json({ nudge: null, morningGreeting, eveningReview: eveningReview ?? null });
 
   if (!checkRate(String(userId))) {
-    return Response.json({ nudge: null, morningGreeting });
+    return Response.json({ nudge: null, morningGreeting, eveningReview: eveningReview ?? null });
   }
 
   // Afwezige dagen op basis van kalenderdatum laatste bezoek
@@ -146,7 +185,7 @@ export async function GET() {
       "Kom terug en check wat er speelt. 5 minuten is genoeg.",
       "Je agenda is leeg. Zelfs op rustige dagen valt er wat te noteren.",
     ];
-    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays, streak: newStreak, morningGreeting });
+    return Response.json({ nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)], inactiveDays, streak: newStreak, morningGreeting, eveningReview: eveningReview ?? null });
   }
 
   const context = neverTraded
@@ -162,5 +201,5 @@ export async function GET() {
   });
 
   const nudge = (msg2.content[0] as { text: string }).text.trim();
-  return Response.json({ nudge, inactiveDays, streak: newStreak, morningGreeting });
+  return Response.json({ nudge, inactiveDays, streak: newStreak, morningGreeting, eveningReview: eveningReview ?? null });
 }
