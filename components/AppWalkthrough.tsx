@@ -7,72 +7,72 @@ const STORAGE_KEY = "walkthrough-v3";
 
 const STEPS = [
   {
-    icon: "👋",
-    title: "Welkom bij Bitcoin Mentor",
-    text: "Marcus is jouw persoonlijke tradingcoach. Klik Volgende om te zien wat de app kan.",
+    icon: "🧠",
+    title: "Welkom — ik ben Marcus",
+    text: "Ik ben jouw persoonlijke tradingcoach. Geen valse beloftes, geen hype. Ik leer je nadenken vóór je handelt. Laten we beginnen.",
     route: null,
     selector: null,
   },
   {
     icon: "📡",
-    title: "Scanner — vind de beste kansen",
-    text: "Elke asset krijgt een score 0–100. Groen = goede setup. Klik op een asset om direct te traden.",
+    title: "De Scanner",
+    text: "Hier zie je welke assets klaar zijn voor een setup. Score 70+ betekent een technisch interessant moment. Klik een asset aan — ik analyseer hem voor je.",
     route: "/scanner",
     selector: "table, .scanner-grid, main > div",
   },
   {
     icon: "📊",
-    title: "Dashboard — jouw startpunt",
-    text: "Je ochtendgroet van Marcus, dagelijkse briefing en marktoverzicht.",
+    title: "Jouw Dashboard",
+    text: "Elke ochtend stuur ik je een persoonlijk bericht en een marktbriefing. Check dit als eerste wanneer je de app opent — het zet je in de juiste mindset.",
     route: "/dashboard",
     selector: ".dash-briefing-card, .dash-layout",
   },
   {
     icon: "📈",
-    title: "Paper Trading — oefen zonder risico",
-    text: "Open een positie met nep-geld, stel stop-loss in en leer de markt kennen.",
+    title: "Paper Trading",
+    text: "Hier handel je met nepgeld. Stel altijd een stop-loss in. Ik controleer na elke trade of je je plan hebt gevolgd — eerlijk en direct.",
     route: "/trade",
     selector: "main, .container-page",
   },
   {
     icon: "🎓",
-    title: "Leren — groei stap voor stap",
-    text: "Dagelijkse quizzes om te groeien van level 1 naar 5. Meer kennis = diepere coaching.",
+    title: "Leren",
+    text: "Dagelijkse quizzes. Groeien van level 1 naar 5. Hoe meer je weet, hoe beter mijn coaching op jou afgestemd is. Doe het elke dag — ook als je weinig tijd hebt.",
     route: "/leren",
     selector: "main, .container-page",
   },
   {
     icon: "📅",
-    title: "Agenda — schrijf je trades op",
-    text: "Log elke dag je trades en emoties. Marcus analyseert patronen en geeft wekelijks review.",
+    title: "De Agenda",
+    text: "Log je trades, je emoties, je gedachten. Ik gebruik dit om patronen te herkennen — wanneer handel je het beste? Wanneer mak je impulsieve beslissingen?",
     route: "/agenda",
     selector: "main, .container-page",
   },
   {
     icon: "📋",
-    title: "Profiel & Tradingplan",
-    text: "Vul je max risico, entry- en exit-regels in. Marcus houdt je er aan.",
+    title: "Jouw Tradingplan",
+    text: "Dit is de basis. Vul je regels in: max risico, entry-condities, exit-condities. Zonder plan ben je aan het gokken — met plan ben je aan het traden.",
     route: "/profiel",
     selector: "main, .container-page",
   },
   {
     icon: "📊",
-    title: "Statistieken & Signalen",
-    text: "Winrate, P&L per dag, gedragspatronen en Marcus-signalen met copy trading.",
+    title: "Stats & Signalen",
+    text: "Je winrate per weekdag, gedragspatronen, revenge-trading detectie. En live signalen die je kunt volgen of analyseren. Kennis van jezelf is het grootste voordeel.",
     route: "/stats",
     selector: "main, .container-page",
   },
   {
     icon: "💬",
-    title: "Marcus — altijd beschikbaar",
-    text: "De roze M-knop rechtsonder. Stel hem een vraag over de markt of jouw trade.",
+    title: "Ik ben altijd bereikbaar",
+    text: "Die roze M-knop rechtsonder — dat ben ik. Vraag me alles over de markt, jouw trade, of je plan. Ik ben er 24/7.",
     route: null,
     selector: ".float-marcus-btn",
   },
   {
-    icon: "🎉",
-    title: "Je bent klaar!",
-    text: "Begin met je tradingplan in Profiel en open je eerste paper trade. Succes!",
+    icon: "🎯",
+    title: "Klaar om te beginnen",
+    text: "Begin bij je tradingplan in Profiel. Daarna je eerste paper trade. Verwacht geen snelle winsten — verwacht groei. Ik ben er bij elke stap.",
     route: null,
     selector: null,
   },
@@ -209,7 +209,15 @@ export default function AppWalkthrough() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ fontSize: 26, flexShrink: 0 }}>{current.icon}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                <div style={{
+                  width: 34, height: 34, borderRadius: "50%",
+                  background: "linear-gradient(135deg, #e91e63, #ff4081)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 16, flexShrink: 0, boxShadow: "0 0 10px rgba(233,30,99,0.4)",
+                }}>M</div>
+                <div style={{ fontSize: 22, flexShrink: 0 }}>{current.icon}</div>
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
                   <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text, #fce8f0)" }}>{current.title}</span>
