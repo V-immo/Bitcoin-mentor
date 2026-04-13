@@ -126,12 +126,12 @@ export async function GET() {
 
   if (needsEveningReview && process.env.ANTHROPIC_API_KEY && checkRate(String(userId) + "-eve")) {
     // Haal paper trade stats op voor vandaag
-    const papers = db.prepare(SELECT history FROM paper_trading WHERE user_id = ?).all(userId) as { history: string }[];
+    const papers = db.prepare("SELECT history FROM paper_trading WHERE user_id = ?").all(userId) as { history: string }[];
     type T = { side?: string; pnl?: number; timestamp?: number };
     let todayTrades: T[] = [];
     for (const p of papers) {
       try {
-        const hist = JSON.parse(p.history ?? []) as T[];
+        const hist = JSON.parse(p.history ?? "[]") as T[];
         todayTrades = todayTrades.concat(hist.filter(t => t.timestamp && new Date(t.timestamp).toISOString().slice(0,10) === today));
       } catch { /* ignore */ }
     }
@@ -152,7 +152,7 @@ export async function GET() {
         messages: [{ role: user, content: Avondreview Marcus. }],
       });
       eveningReview = (msg2.content[0] as { text: string }).text.trim();
-      db.prepare(UPDATE users SET last_evening_date = ? WHERE id = ?).run(today, userId);
+      db.prepare("UPDATE users SET last_evening_date = ? WHERE id = ?").run(today, userId);
     } catch { /* geen review als API faalt */ }
   }
 
