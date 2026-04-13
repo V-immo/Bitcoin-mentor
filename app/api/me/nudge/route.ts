@@ -140,16 +140,16 @@ export async function GET() {
     const todayWins = todayClosed.filter(t => (t.pnl ?? 0) > 0).length;
 
     const tradesSummary = todayClosed.length > 0
-      ? `Vandaag: ${todayClosed.length} trade(s), P&L ${todayPnl >= 0 ? + : }${todayPnl.toFixed(0)} EUR, ${todayWins}/${todayClosed.length} gewonnen.`
-      : Vandaag geen trades gesloten.;
+      ? "Vandaag: " + todayClosed.length + " trade(s), P&L " + (todayPnl >= 0 ? "+" : "") + todayPnl.toFixed(0) + " EUR, " + todayWins + "/" + todayClosed.length + " gewonnen."
+      : "Vandaag geen trades gesloten.";
 
     const client2 = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     try {
       const msg2 = await client2.messages.create({
-        model: claude-haiku-4-5,
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 100,
         system: `Je bent Marcus, een directe tradingcoach. Schrijf een KORTE avondreview (max 2 zinnen). Eindig de dag bewust: wat ging goed, wat is het focuspunt voor morgen? Wees direct, gebruik je/jij. ${tradesSummary}`,
-        messages: [{ role: user, content: Avondreview Marcus. }],
+        messages: [{ role: "user", content: "Avondreview Marcus." }],
       });
       eveningReview = (msg2.content[0] as { text: string }).text.trim();
       db.prepare("UPDATE users SET last_evening_date = ? WHERE id = ?").run(today, userId);
