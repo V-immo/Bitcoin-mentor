@@ -108,7 +108,7 @@ export default function DashboardStats() {
       {cards.map((card, i) => (
         card === null ? (
           <div key={i} style={{
-            background: "var(--surface-1, rgba(255,255,255,0.02))",
+            background: "var(--surface-1)",
             border: "1px solid var(--border)",
             borderRadius: 14, padding: "16px 14px",
             height: 90,
@@ -133,22 +133,22 @@ type CardData = { icon: string; label: string; value: string; sub: string; color
 function StatCard({ card }: { card: CardData }) {
   return (
     <div style={{
-      background: "var(--surface-1, rgba(255,255,255,0.02))",
-      border: "1px solid var(--border, rgba(255,255,255,0.08))",
+      background: "var(--surface-1)",
+      border: "1px solid var(--border)",
       borderRadius: 14, padding: "14px 14px",
       transition: "border-color 0.15s",
     }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = card.color + "55")}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border, rgba(255,255,255,0.08))")}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
     >
       <div style={{ fontSize: 20, marginBottom: 6 }}>{card.icon}</div>
       <div style={{ fontSize: 18, fontWeight: 800, color: card.color, lineHeight: 1.1, marginBottom: 3 }}>
         {card.value}
       </div>
-      <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted, #64748b)", marginBottom: 2 }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", marginBottom: 2 }}>
         {card.label}
       </div>
-      <div style={{ fontSize: 10, color: "var(--text-muted, #64748b)" }}>{card.sub}</div>
+      <div style={{ fontSize: 10, color: "var(--text-muted)" }}>{card.sub}</div>
     </div>
   );
 }

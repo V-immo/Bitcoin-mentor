@@ -3,9 +3,11 @@
 :root {
   --bg: #130610;
   --surface: #1f0d17;
+  --surface-1: #261020;
   --surface-2: #2c1221;
   --text: #fce8f0;
   --text-secondary: #bf7a99;
+  --text-muted: #8a5068;
   --green: #22c55e;
   --orange: #f59e0b;
   --red: #ef4444;
@@ -22,12 +24,16 @@
 [data-theme="light"] {
   --bg: #faf6f0;
   --surface: #f2ebe0;
+  --surface-1: #ede5d8;
   --surface-2: #e8ddd0;
   --text: #2d1a00;
   --text-secondary: #7a5530;
+  --text-muted: #9a7550;
   --border: rgba(160, 100, 20, 0.28);
   --border-hover: rgba(160, 100, 20, 0.60);
   --card-shadow: 0 2px 12px rgba(120, 70, 0, 0.14);
+  --primary: #c2185b;
+  --primary-hover: #ad1457;
   --green: #15803d;
   --red: #b91c1c;
   --orange: #b45309;

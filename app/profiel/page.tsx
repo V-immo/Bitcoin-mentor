@@ -86,6 +86,16 @@ export default function ProfielPage() {
   const [planLoading, setPlanLoading] = useState(false);
   const [planStatus, setPlanStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
+  // Marcus profiel state (M4)
+  const [marcusProfile, setMarcusProfile] = useState({
+    goals: "", trading_style: "", risk_profile: "",
+    strengths: "", weaknesses: "", fears: "",
+    best_time_of_day: "", best_emotions: "", worst_emotions: "",
+    impulse_patterns: "",
+  });
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileStatus, setProfileStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+
   // Password change state
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -107,6 +117,11 @@ export default function ProfielPage() {
         if (!s.error) setSettings(s);
         if (!q.error) setQuiz(q);
         if (planRes && !planRes.error) setPlan(prev => ({ ...prev, ...planRes }));
+
+        // Marcus profiel
+        fetch("/api/me/profile").then(r => r.ok ? r.json() : null).then(p => {
+          if (p) setMarcusProfile(prev => ({ ...prev, ...p }));
+        }).catch(() => {});
 
         // Partner data
         fetch("/api/me/partner")
@@ -140,6 +155,22 @@ export default function ProfielPage() {
     }
     load();
   }, []);
+
+  async function saveMarcusProfile(e: React.FormEvent) {
+    e.preventDefault();
+    setProfileLoading(true);
+    setProfileStatus(null);
+    try {
+      const res = await fetch("/api/me/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(marcusProfile),
+      });
+      if (res.ok) setProfileStatus({ type: "success", msg: "Profiel opgeslagen. Marcus gebruikt dit nu in elke coaching sessie." });
+      else setProfileStatus({ type: "error", msg: "Opslaan mislukt." });
+    } catch { setProfileStatus({ type: "error", msg: "Netwerkfout." }); }
+    finally { setProfileLoading(false); }
+  }
 
   async function togglePartnerOptIn() {
     setPartnerOptLoading(true);
@@ -541,6 +572,108 @@ export default function ProfielPage() {
                   }}
                 >
                   {planLoading ? "Opslaan…" : "Tradingplan opslaan"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* ── Marcus Profiel (M4) ── */}
+          <div className="card">
+            <div style={sectionTitle}>🧠 Marcus Profiel</div>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 16px", lineHeight: 1.5 }}>
+              Hoe beter Marcus jou kent, hoe persoonlijker zijn coaching. Dit profiel wordt geladen bij elk gesprek.
+            </p>
+            <form onSubmit={saveMarcusProfile} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180, ...fieldGroup }}>
+                  <label style={labelStyle}>Handelsstijl</label>
+                  <select
+                    value={marcusProfile.trading_style}
+                    onChange={e => setMarcusProfile(p => ({ ...p, trading_style: e.target.value }))}
+                    style={inputStyle}
+                  >
+                    <option value="">Kies stijl…</option>
+                    <option value="day">Day trading</option>
+                    <option value="swing">Swing trading</option>
+                    <option value="long">Long term</option>
+                    <option value="mixed">Mix van stijlen</option>
+                  </select>
+                </div>
+                <div style={{ flex: 1, minWidth: 180, ...fieldGroup }}>
+                  <label style={labelStyle}>Risicoprofiel</label>
+                  <select
+                    value={marcusProfile.risk_profile}
+                    onChange={e => setMarcusProfile(p => ({ ...p, risk_profile: e.target.value }))}
+                    style={inputStyle}
+                  >
+                    <option value="">Kies profiel…</option>
+                    <option value="conservatief">Conservatief (1% per trade)</option>
+                    <option value="matig">Matig (1–2% per trade)</option>
+                    <option value="agressief">Agressief (2–5% per trade)</option>
+                  </select>
+                </div>
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn tradingdoelen (wat wil ik bereiken?)</label>
+                <textarea rows={2} placeholder="Bijv: Consistent 5% per maand, uiteindelijk full-time trader worden, pensioen opbouwen…"
+                  value={marcusProfile.goals}
+                  onChange={e => setMarcusProfile(p => ({ ...p, goals: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }} />
+              </div>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 200, ...fieldGroup }}>
+                  <label style={labelStyle}>Mijn sterke punten als trader</label>
+                  <textarea rows={2} placeholder="Bijv: Geduldig, goede analyse, kalm onder druk…"
+                    value={marcusProfile.strengths}
+                    onChange={e => setMarcusProfile(p => ({ ...p, strengths: e.target.value }))}
+                    style={{ ...inputStyle, resize: "vertical" }} />
+                </div>
+                <div style={{ flex: 1, minWidth: 200, ...fieldGroup }}>
+                  <label style={labelStyle}>Mijn zwakke punten</label>
+                  <textarea rows={2} placeholder="Bijv: FOMO, te vroeg uitstappen, stop-loss aanpassen…"
+                    value={marcusProfile.weaknesses}
+                    onChange={e => setMarcusProfile(p => ({ ...p, weaknesses: e.target.value }))}
+                    style={{ ...inputStyle, resize: "vertical" }} />
+                </div>
+              </div>
+              <div style={fieldGroup}>
+                <label style={labelStyle}>Mijn angsten bij het traden</label>
+                <textarea rows={2} placeholder="Bijv: Bang om te veel te verliezen, bang om kansen te missen, bang om fout te zitten…"
+                  value={marcusProfile.fears}
+                  onChange={e => setMarcusProfile(p => ({ ...p, fears: e.target.value }))}
+                  style={{ ...inputStyle, resize: "vertical" }} />
+              </div>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180, ...fieldGroup }}>
+                  <label style={labelStyle}>Beste tijd om te traden</label>
+                  <input type="text" placeholder="Bijv: Ochtend 9–12u, avond na 20u…"
+                    value={marcusProfile.best_time_of_day}
+                    onChange={e => setMarcusProfile(p => ({ ...p, best_time_of_day: e.target.value }))}
+                    style={inputStyle} />
+                </div>
+                <div style={{ flex: 1, minWidth: 180, ...fieldGroup }}>
+                  <label style={labelStyle}>Impulspatronen (wanneer doe ik domme trades?)</label>
+                  <input type="text" placeholder="Bijv: Na verlies, laat op avond, als markt snel beweegt…"
+                    value={marcusProfile.impulse_patterns}
+                    onChange={e => setMarcusProfile(p => ({ ...p, impulse_patterns: e.target.value }))}
+                    style={inputStyle} />
+                </div>
+              </div>
+              {profileStatus && (
+                <div style={{
+                  padding: "9px 14px", borderRadius: 8, fontSize: 13,
+                  background: profileStatus.type === "success" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
+                  color: profileStatus.type === "success" ? "#86efac" : "#fca5a5",
+                  border: `1px solid ${profileStatus.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
+                }}>{profileStatus.msg}</div>
+              )}
+              <div>
+                <button type="submit" disabled={profileLoading} style={{
+                  background: "#e91e63", color: "#fff", border: "none",
+                  borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
+                  cursor: profileLoading ? "not-allowed" : "pointer", opacity: profileLoading ? 0.7 : 1,
+                }}>
+                  {profileLoading ? "Opslaan…" : "Profiel opslaan"}
                 </button>
               </div>
             </form>
