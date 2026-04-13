@@ -167,7 +167,7 @@ export default function OnboardingModal() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  overlay: { position: "fixed", inset: 0, zIndex: 9999, background: "rgba(10,3,8,0.9)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", backdropFilter: "blur(6px)" },
+  overlay: { position: "fixed", inset: 0, zIndex: 9100, background: "rgba(10,3,8,0.9)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", backdropFilter: "blur(6px)" },
   card: { position: "relative", width: "100%", maxWidth: "460px", background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.25)", borderRadius: "16px", padding: "32px 28px 24px", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" },
   skipBtn: { position: "absolute", top: "14px", right: "16px", background: "transparent", border: "none", color: "rgba(252,232,240,0.4)", fontSize: "13px", cursor: "pointer", padding: "4px 8px" },
   stepContent: { minHeight: "240px", display: "flex", flexDirection: "column", gap: "14px" },

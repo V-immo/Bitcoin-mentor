@@ -25,7 +25,7 @@ export default function LanguagePicker() {
 
   return (
     <div style={{
-      position: "fixed", inset: 0, zIndex: 9999,
+      position: "fixed", inset: 0, zIndex: 1500,
       background: "#0e0810",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",

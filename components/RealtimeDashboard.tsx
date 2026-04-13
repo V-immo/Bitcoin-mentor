@@ -11,7 +11,6 @@ import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import NewsPanel from "./NewsPanel";
 import MarcusBriefing from "./MarcusBriefing";
 import TradePlanValidator from "./TradePlanValidator";
 
@@ -95,10 +94,10 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "nieuws" | "checklist" | "briefing" | "plan";
+type BottomTab = "paper" | "chat" | "checklist" | "briefing" | "plan";
 
 // Tabs zichtbaar in balk
-const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "checklist", "briefing", "nieuws"];
+const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "checklist", "briefing"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -139,7 +138,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "plan",      label: "Plan Check",         icon: "🎯" },
     { key: "checklist", label: t("nav_checklist"), icon: "✅" },
     { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
-    { key: "nieuws",    label: t("nav_news"),       icon: "📰" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
@@ -934,7 +932,6 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "chat" && <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />}
             {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
             {bottomTab === "briefing" && <MarcusBriefing />}
-            {bottomTab === "nieuws" && <NewsPanel asset={asset} />}
           </div>
         </div>
       </section>

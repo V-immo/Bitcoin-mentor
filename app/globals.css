@@ -7052,7 +7052,7 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   margin-bottom: 20px;
 }
 
-.news-title {
+.news-page-title {
   font-size: 22px;
   font-weight: 700;
   margin: 0 0 4px;

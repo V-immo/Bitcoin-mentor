@@ -40,7 +40,7 @@ export default function NewsPage() {
     <div className="news-page">
       <div className="news-header">
         <div>
-          <h1 className="news-title">📰 Nieuws</h1>
+          <h1 className="news-page-title">📰 Nieuws</h1>
           <p className="news-subtitle">Laatste crypto- en marktnieuws, gefilterd per asset</p>
         </div>
       </div>
