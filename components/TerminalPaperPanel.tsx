@@ -172,6 +172,8 @@ export default function TerminalPaperPanel({
     const [noteInput, setNoteInput] = useState("");
     const [pendingEmotionId, setPendingEmotionId] = useState<string | null>(null);
     const [pendingEmotionSide, setPendingEmotionSide] = useState<"buy" | "sell">("buy");
+    const [complianceMsg, setComplianceMsg] = useState<{ verdict: string; message: string } | null>(null);
+    const [complianceLoading, setComplianceLoading] = useState(false);
     const [zoneWarning, setZoneWarning] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false); // SL/TP + limit verborgen
@@ -396,6 +398,28 @@ export default function TerminalPaperPanel({
         URL.revokeObjectURL(url);
     }
 
+    async function checkCompliance(side: "buy" | "sell", amount: number, price: number) {
+        setComplianceLoading(true);
+        setComplianceMsg(null);
+        const dailyTrades = state.trades.filter(t => {
+            const d = new Date(t.timestamp ?? 0);
+            const today = new Date();
+            return d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
+        }).length;
+        try {
+            const res = await fetch("/api/me/compliance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ asset, side, amount, price, dailyTrades }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.message) setComplianceMsg({ verdict: data.verdict, message: data.message });
+            }
+        } catch { /* ignore */ }
+        setComplianceLoading(false);
+    }
+
     function executeBuy(amount: number, execP: number, type: OrderType = "market") {
         const btcAmount = amount / execP;
         const sl = Number(slInput) > 0 ? Number(slInput) : undefined;
@@ -424,6 +448,7 @@ export default function TerminalPaperPanel({
         slTpLockRef.current = false;
         setPendingEmotionId(newId);
         setPendingEmotionSide("buy");
+        checkCompliance("buy", amount, execP);
     }
 
     function executePartialClose(pct: number) {
@@ -453,6 +478,7 @@ export default function TerminalPaperPanel({
             setPendingEmotionId(newId);
             setPendingEmotionSide("sell");
             setNoteInput("");
+            checkCompliance("sell", closeValue, currentPrice);
         }
     }
 
@@ -579,6 +605,36 @@ export default function TerminalPaperPanel({
             {notification && (
                 <div className={`paper-notification paper-notification-${notification.type}`}>
                     {notification.msg}
+                </div>
+            )}
+
+            {/* Marcus plan compliance verdict */}
+            {(complianceLoading || complianceMsg) && (
+                <div style={{
+                    margin: "8px 0 0",
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    background: complianceLoading ? "rgba(233,30,99,0.06)" :
+                        complianceMsg?.verdict === "ok" ? "rgba(34,197,94,0.08)" :
+                        complianceMsg?.verdict === "bad" ? "rgba(239,68,68,0.08)" :
+                        "rgba(234,179,8,0.08)",
+                    border: complianceLoading ? "1px solid rgba(233,30,99,0.2)" :
+                        complianceMsg?.verdict === "ok" ? "1px solid rgba(34,197,94,0.2)" :
+                        complianceMsg?.verdict === "bad" ? "1px solid rgba(239,68,68,0.2)" :
+                        "1px solid rgba(234,179,8,0.2)",
+                    fontSize: 12,
+                    color: "#e2e8f0",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 8,
+                }}>
+                    <span style={{ fontSize: 14, flexShrink: 0 }}>🧠</span>
+                    <span style={{ lineHeight: 1.5 }}>
+                        {complianceLoading ? "Marcus controleert je handelsplan…" : complianceMsg?.message}
+                    </span>
+                    {!complianceLoading && complianceMsg && (
+                        <button onClick={() => setComplianceMsg(null)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 14, padding: 0, marginLeft: "auto", flexShrink: 0 }}>✕</button>
+                    )}
                 </div>
             )}
 
