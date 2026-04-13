@@ -17,6 +17,12 @@ export default auth((req) => {
     pathname.startsWith("/api/auth") ||
     pathname === "/api/alerts/check" ||
     pathname === "/api/briefing" ||
+    pathname.startsWith("/api/market-scan") ||
+    pathname.startsWith("/api/sentiment") ||
+    pathname.startsWith("/api/community") ||
+    pathname.startsWith("/api/news") ||
+    pathname.startsWith("/api/price") ||
+    pathname.startsWith("/api/btc") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon");
 
