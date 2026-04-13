@@ -58,6 +58,13 @@ export default function AgendaPage() {
   const [weeklyLoading, setWeeklyLoading] = useState(false);
   const [weeklyIsNew, setWeeklyIsNew] = useState(false);
   const [weeklyWeekStart, setWeeklyWeekStart] = useState<string | null>(null);
+  const [patterns, setPatterns] = useState<{
+    winrateByDay: { label: string; wins: number; total: number; winrate: number | null }[];
+    revenge: { revengeDays: number; totalDaysTraded: number; revengeRatio: number; recentExamples: string[] };
+    bestDay: { label: string; winrate: number } | null;
+    worstDay: { label: string; winrate: number } | null;
+    totalTrades: number;
+  } | null>(null);
   const weeklyFetched = useRef(false);
 
   const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
@@ -104,6 +111,14 @@ export default function AgendaPage() {
       setTradesByDate(data.tradesByDate ?? {});
     } catch { /* ignore */ }
     setLoading(false);
+    // Load behaviour patterns (all-time, no month filter)
+    try {
+      const pRes = await fetch("/api/me/patterns");
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        setPatterns(pData);
+      }
+    } catch { /* ignore */ }
   }, [monthKey]);
 
   useEffect(() => { load(); }, [load]);
@@ -387,6 +402,91 @@ export default function AgendaPage() {
               </div>
             </div>
           </div>
+
+          {/* Gedragspatronen kaart */}
+          {patterns && patterns.totalTrades >= 3 && (
+            <div style={styles.statsCard}>
+              <div style={styles.statsTitle}>🧠 Gedragspatronen</div>
+              {/* Winrate per dag van de week */}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
+                  Winrate per weekdag
+                </div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  {patterns.winrateByDay.map(d => (
+                    <div key={d.label} style={{ flex: 1, textAlign: "center" }}>
+                      <div style={{
+                        height: 40,
+                        background: d.winrate == null ? "rgba(255,255,255,0.04)" :
+                          d.winrate >= 60 ? `rgba(34,197,94,${Math.min(0.9, d.winrate / 100)})` :
+                          d.winrate >= 40 ? `rgba(234,179,8,${Math.min(0.8, d.winrate / 100)})` :
+                          `rgba(239,68,68,${Math.min(0.9, (100 - d.winrate) / 100)})`,
+                        borderRadius: 6,
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                        paddingBottom: 3,
+                        marginBottom: 4,
+                        position: "relative",
+                        overflow: "hidden",
+                      }}>
+                        {d.winrate != null && (
+                          <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{d.winrate}%</span>
+                        )}
+                        {d.winrate == null && (
+                          <span style={{ fontSize: 9, color: "#64748b" }}>-</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#94a3b8" }}>{d.label}</div>
+                      <div style={{ fontSize: 9, color: "#64748b" }}>{d.total > 0 ? `${d.total}x` : ""}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Beste / slechtste dag */}
+              {(patterns.bestDay || patterns.worstDay) && (
+                <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                  {patterns.bestDay && (
+                    <div style={{ flex: 1, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "8px 10px" }}>
+                      <div style={{ fontSize: 10, color: "#64748b", marginBottom: 2 }}>Beste dag</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#22c55e" }}>{patterns.bestDay.label}</div>
+                      <div style={{ fontSize: 11, color: "#22c55e" }}>{patterns.bestDay.winrate}% win</div>
+                    </div>
+                  )}
+                  {patterns.worstDay && patterns.worstDay.label !== patterns.bestDay?.label && (
+                    <div style={{ flex: 1, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 10px" }}>
+                      <div style={{ fontSize: 10, color: "#64748b", marginBottom: 2 }}>Slechtste dag</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#ef4444" }}>{patterns.worstDay.label}</div>
+                      <div style={{ fontSize: 11, color: "#ef4444" }}>{patterns.worstDay.winrate}% win</div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Revenge trading */}
+              {patterns.revenge.totalDaysTraded >= 5 && (
+                <div style={{
+                  background: patterns.revenge.revengeRatio >= 20
+                    ? "rgba(239,68,68,0.08)"
+                    : "rgba(34,197,94,0.06)",
+                  border: `1px solid ${patterns.revenge.revengeRatio >= 20 ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.2)"}`,
+                  borderRadius: 8, padding: "10px 12px",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                    <span style={{ fontSize: 14 }}>{patterns.revenge.revengeRatio >= 20 ? "⚠️" : "✅"}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: patterns.revenge.revengeRatio >= 20 ? "#ef4444" : "#22c55e" }}>
+                      Revenge trading
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                    {patterns.revenge.revengeRatio >= 20
+                      ? `Gedetecteerd op ${patterns.revenge.revengeDays} van ${patterns.revenge.totalDaysTraded} handelsdagen (${patterns.revenge.revengeRatio}%). Pas op voor impulsieve re-entries na verlies.`
+                      : `Onder controle — slechts ${patterns.revenge.revengeRatio}% van de handelsdagen.`
+                    }
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Dag detail / editor */}
           {selectedDate ? (
