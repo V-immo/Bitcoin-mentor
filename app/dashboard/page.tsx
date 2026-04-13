@@ -6,6 +6,7 @@ import DashboardBriefing from "@/components/DashboardBriefing";
 import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
 import CommunitySentiment from "@/components/CommunitySentiment";
+import CommunityScoreboard from "@/components/CommunityScoreboard";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
@@ -31,6 +32,7 @@ export default function DashboardPage() {
           <DashboardBriefing />
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <CommunitySentiment />
+            <CommunityScoreboard />
             <MarketOverview compact />
           </div>
         </div>

@@ -23,6 +23,7 @@ export default auth((req) => {
     pathname.startsWith("/api/news") ||
     pathname.startsWith("/api/price") ||
     pathname.startsWith("/api/btc") ||
+    pathname.startsWith("/api/community") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon");
 
