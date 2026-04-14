@@ -649,39 +649,255 @@ MARGE & LEVERAGE:
 - Liquidatie: als je verlies je marge opeet, sluit het platform je positie automatisch
 - Margin call: waarschuwing dat je marge bijna op is — bijstorten of sluiten
 
-PLATFORM-SPECIFIEKE KENNIS:
+PLATFORM-SPECIFIEKE KENNIS — VOLLEDIG EN GEDETAILLEERD:
 
-eToro:
-- CFD voor aandelen/crypto/indices: geen minimumbedrag per se, maar leverage bepaalt marge
-- Futures (FUT-label): OIL.WTI.MAY26 = Micro WTI Crude Oil mei 2026, puntwaarde $100/punt, marge ~$1.700+
-- "Puntwaarde $100" = elke $1 prijsbeweging = $100 winst/verlies per contract
-- "Blootstelling" = totale waarde; "Marge" = wat echt van je account gaat
-- "Storten om te openen" = saldo te laag voor vereiste marge
-- Tickers: USOIL (olie), GOLD (goud), SILVER (zilver), SPY500 (S&P), NSDQ100 (NASDAQ)
-- Stop loss en take profit in EUR/USD bedrag, niet in percentage (eToro rekent het om)
-- Copytrading: anderen automatisch volgen met eigen bedrag
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ETORO — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is eToro: gereguleerde broker (CySEC, FCA). Geschikt voor beginners. App + web.
+Beschikbare instrumenten: CFDs op crypto, aandelen, indices, grondstoffen. Ook echte aandelen (geen leverage). Futures (beperkt).
+Account types: Retail (standaard), Professional (hogere leverage, minder bescherming)
 
-Bitvavo (NL exchange — echte crypto, geen leverage):
-- Spot only: je koopt echte crypto. Geen leverage. Geen futures.
-- Minimumbedrag: €5 per trade
-- Maker/taker fees: 0.03% / 0.06% tot 0.25% afhankelijk van volume
-- IBAN: Euro storten via iDEAL of bankoverschrijving
-- API koppeling in Bitcoin Mentor: geeft Marcus zicht op je portefeuille
+STORTEN OP ETORO:
+- Creditcard, bankoverschrijving, PayPal, Skrill
+- Minimale storting: $50 (afhankelijk van land, soms $200)
+- Valuta: USD (eToro rekent automatisch om van EUR)
+- Stortingskosten: gratis bij bankoverschrijving, klein percentage bij kaart
 
-Binance (internationale exchange):
-- Spot + Futures (perps) + Margin trading
-- USDT-M futures: afgerekend in USDT, meest gebruikt
-- Funding rate: elke 8 uur betaald tussen longs en shorts (perps)
-- Liquidatie risico bij hoge leverage — pas op
+HOE ORDERS PLAATSEN OP ETORO:
+1. Zoek het asset (zie zoektermen hieronder)
+2. Klik op "Trade"
+3. Kies: Kopen (long) of Verkopen (short, alleen CFD)
+4. Vul in: bedrag in USD/EUR
+5. Stel in: Stop Loss (in USD/EUR verlies — eToro rekent de prijs uit)
+6. Stel in: Take Profit (in USD/EUR winst)
+7. Controleer: Leverage (aanpasbaar), Marge, Blootstelling
+8. Klik "Positie openen"
 
-Bybit:
-- Vergelijkbaar met Binance. Sterk in derivatives.
-- API koppeling in Bitcoin Mentor voor live portfolio
+ETORO INTERFACE BEGRIPPEN:
+- "Blootstelling" = totale waarde van de positie (leverage × marge)
+- "Marge" = wat je écht inlegt van je saldo
+- "Storten om te openen" = je saldo is te laag voor de vereiste marge — je moet bijstorten
+- "Puntwaarde" = hoeveel winst/verlies per $1 prijsbeweging (bijv. $100/punt bij olie futures)
+- "Overnachtingskosten" = dagelijkse kosten voor het openhouden van een leveraged positie
+- "Spread" = verschil koop/verkoopprijs — dit is de fee bij CFDs
+- Stop Loss en Take Profit: voer een BEDRAG in (bijv. €10 verlies), eToro berekent de prijs zelf
 
-TradingView (geen exchange, alleen grafieken):
-- Charts en technische analyse tool
-- Tickers: BTCUSDT, XAUUSD, USOIL, SPY, QQQ, etc.
-- Paper trading mogelijk maar niet gekoppeld aan Bitcoin Mentor
+LEVERAGE OP ETORO PER ASSET (retail):
+- Crypto: max 2x
+- Aandelen: max 5x
+- Indices: max 10x
+- Grondstoffen (goud, olie): max 10x
+- Forex: max 30x
+
+ETORO ASSETS — EXACTE ZOEKTERMEN EN NAMEN:
+
+OLIE:
+→ Zoek: "crude" of "oil" of "USOIL"
+→ Klik op: "Oil - WTI Crude" met label CFD
+→ NIET: OD7F, WisdomTree, iPath, ETF, ETC — dat zijn fondsen
+→ Futures variant (alleen grote rekeningen): zoek "OIL.WTI" → label FUT → marge ~$1.700
+→ Menu: Markets → Commodities → Energy
+
+GOUD:
+→ Zoek: "gold" of "GOLD"
+→ Klik op: "Gold" met label CFD
+→ NIET: VanEck, iShares, Sprott, PHAU — ETF/ETC varianten
+→ Menu: Markets → Commodities → Metals → Gold
+
+ZILVER:
+→ Zoek: "silver"
+→ Klik op: "Silver" met label CFD
+→ Menu: Markets → Commodities → Metals
+
+AARDGAS:
+→ Zoek: "natural gas" of "NATGAS"
+→ Klik op: "Natural Gas" met label CFD
+
+S&P 500:
+→ Zoek: "SPX" of "S&P"
+→ Klik op: "S&P 500" met label INDEX of CFD
+→ NIET de SPY ETF kiezen
+
+NASDAQ 100:
+→ Zoek: "NASDAQ" of "NDX"
+→ Klik op: "NASDAQ 100" met label INDEX
+
+DOW JONES:
+→ Zoek: "DJI" of "DOW"
+→ Klik op: "Dow Jones" met label INDEX
+
+AANDELEN op eToro:
+→ Zoek exacte ticker: NVDA, AAPL, TSLA, MSFT, GOOGL, META, AMZN, AMD, NFLX, PLTR
+→ Klik op de juiste naam — let op "CFD" vs "Echte aandelen" (geen leverage bij echte)
+→ Echte aandelen: geen leverage, je bezit het aandeel
+→ CFD aandelen: leverage mogelijk, je bezit het niet
+
+CRYPTO op eToro:
+→ Zoek: BTC, ETH, SOL, XRP, ADA, DOGE, LINK, MATIC, DOT, etc.
+→ eToro crypto = SPOT, geen leverage (voor retail)
+→ Je bezit de crypto echt (bewaard door eToro)
+→ Opname naar wallet mogelijk via eToro Money wallet
+
+ETORO COPYTRADING:
+- Ga naar: Discover → Kopieer traders
+- Kies een trader op basis van winst, risico, periode
+- Minimale investering: $200 per gekopieerde trader
+- Alles wordt automatisch gekopieerd (proportioneel)
+- Marcus tip: kijk naar risicoscore en drawdown, niet alleen winst
+
+ETORO VIRTUAL PORTFOLIO (paper trading):
+- Elke account heeft een virtueel portfolio van $100.000
+- Oefenen zonder echt geld — zelfde interface als echte trades
+- Handig om eToro te leren zonder risico
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BITVAVO — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Bitvavo: Nederlandse crypto exchange. Gereguleerd (DNB). Enkel spot crypto — geen leverage, geen futures.
+Geschikt voor: Nederlanders/Belgen die echt crypto willen kopen en bezitten.
+
+STORTEN OP BITVAVO:
+- iDEAL (NL) — snelst, gratis, direct beschikbaar
+- Bankoverschrijving SEPA — 1-2 werkdagen
+- Minimale storting: €1
+- Geen stortingskosten bij iDEAL
+
+HOE KOPEN OP BITVAVO:
+1. Ga naar "Handelen"
+2. Zoek het crypto (bijv. BTC, ETH, SOL)
+3. Kies marktorder (direct) of limietorder (op prijs)
+4. Vul het bedrag in (minimum €5)
+5. Bevestig
+
+BITVAVO ASSETS:
+→ BTC, ETH, SOL, XRP, ADA, DOGE, LINK, MATIC, DOT, AVAX, etc.
+→ Meer dan 300 crypto's beschikbaar
+→ Alles in EUR (niet USD)
+→ Geen aandelen, geen olie, geen goud — alleen crypto
+
+BITVAVO FEES:
+- Maker: 0.03% (limietorder die niet direct wordt gevuld)
+- Taker: 0.06% (marktorder, direct gevuld)
+- Fee daalt bij hoger handelsvolume
+- Geen opname/stortingskosten voor iDEAL
+
+BITVAVO STAKING:
+- Sommige crypto's kun je staken voor rente
+- Bijv. ETH staking: ~3-4% per jaar
+- Geen lock-up periode bij Bitvavo (flexibel)
+
+BITVAVO VEILIGHEID:
+- 2FA verplicht (sterk aanbevolen)
+- Cold storage voor het meeste vermogen
+- Gereguleerd door DNB (De Nederlandsche Bank)
+- Verzekerd tot €100.000 via ICF (Cyprus Investor Compensation Fund)
+
+API KOPPELING IN BITCOIN MENTOR:
+- Ga naar Bitvavo → Instellingen → API → Maak API key aan
+- Rechten: "Lezen" is genoeg voor Marcus (geen handelstoegang nodig)
+- Voer key + secret in bij Bitcoin Mentor Instellingen
+- Marcus ziet dan live je saldo en posities
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BINANCE — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Binance: 's werelds grootste crypto exchange. Spot + futures + margin.
+Let op: Binance.com is niet meer beschikbaar in België/NL — gebruik Binance.com via VPN of kijk naar alternatieven.
+
+BINANCE SPOT TRADING:
+→ Zoek het paar: BTCUSDT, ETHUSDT, SOLUSDT, etc.
+→ Marktorder = direct, limietorder = op jouw prijs
+→ Minimum: ~$5–10 equivalent
+→ Fees: 0.1% standaard, 0.075% met BNB korting
+
+HOE FUTURES OPENEN OP BINANCE:
+1. Ga naar: Futures → USDⓈ-M Futures
+2. Zoek het paar (bijv. BTCUSDT)
+3. Kies leverage (begin met max 3–5x)
+4. Kies: Isolated Margin (veiliger) of Cross Margin (riskanter)
+5. Stel stop loss in via "TP/SL" knop
+6. Koop (long) of Verkoop (short)
+
+BINANCE BEGRIPPEN:
+- USDⓈ-M: afgerekend in USDT (meest gebruikt)
+- COIN-M: afgerekend in BTC/ETH (voor gevorderden)
+- Isolated Margin: alleen ingelegde marge kan verloren gaan
+- Cross Margin: volledig saldo is marge (meer risico)
+- Funding rate: elke 8u betaling tussen longs en shorts
+- Mark Price: fair value prijs voor liquidatieberekening (verschilt van last price)
+
+BINANCE LIQUIDATIE VERMIJDEN:
+- Gebruik isolated margin
+- Max 3–5x leverage voor beginners
+- Stel altijd stop loss in
+- Houd extra marge aan (20–30% buffer)
+
+BINANCE ASSETS (futures):
+→ BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, BNBUSDT, ADAUSDT, DOGEUSDT, etc.
+→ Meer dan 300 perpetual futures pairs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BYBIT — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Bybit: grote crypto exchange, sterk in derivatives. Beschikbaar in EU (met beperkingen).
+
+HOE FUTURES OP BYBIT:
+1. Ga naar: Derivatives → USDT Perpetual
+2. Zoek het paar (BTCUSDT, ETHUSDT, etc.)
+3. Kies leverage (begin 3–5x)
+4. Stel stop loss + take profit in
+5. Koop of verkoop
+
+BYBIT VS BINANCE:
+- Bybit: betere UI voor futures, lagere fees bij hogere volumes
+- Binance: meer liquiditeit, meer assets, beter voor spot
+- Beide: vergelijkbare liquidatieregels en risico's
+
+BYBIT FEES:
+- Maker: 0.01% (limietorder)
+- Taker: 0.06% (marktorder)
+
+BYBIT ASSETS:
+→ BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, etc.
+→ Meer dan 200 perpetual pairs
+
+API IN BITCOIN MENTOR:
+- Bybit → Account → API Management → Maak key aan
+- Rechten: Read-only voor Marcus (geen handel nodig)
+- Voer in bij Bitcoin Mentor Instellingen
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TRADINGVIEW — ANALYSE TOOL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is TradingView: geen exchange, alleen charts en analyse. Gratis basisversie.
+
+TICKERS OP TRADINGVIEW:
+- BTC: BTCUSDT (Binance) of BTCUSD (Coinbase)
+- ETH: ETHUSDT
+- Olie: USOIL of CL1! (futures)
+- Goud: XAUUSD of GC1! (futures)
+- Zilver: XAGUSD
+- S&P 500: SPX of SPY
+- NASDAQ: NDX of QQQ
+- Aandelen: NVDA, AAPL, TSLA, etc. (direct zoeken)
+
+HANDIGE TRADINGVIEW FUNCTIES:
+- Alerts instellen: klik op prijs → "Add Alert"
+- Meerdere tijdframes tegelijk: Multi-layout
+- Indicatoren: zoek RSI, MACD, EMA, Bollinger Bands
+- Paper trading: Broker simulator ingebouwd (niet gekoppeld aan Bitcoin Mentor)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ANDERE BROKERS (via /brokers pagina in Bitcoin Mentor)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEGIRO: aandelen en ETFs kopen. Geen crypto, geen CFDs. Laagste fees voor aandelen.
+Trade Republic: aandelen + crypto. Geen leverage. Goedkoop, goede app.
+XTB: CFD broker, vergelijkbaar met eToro. Sterk in forex en indices.
+Capital.com: CFD broker, goede educatieve tools.
+Kraken: crypto exchange, vergelijkbaar met Binance. Beschikbaar in EU.
+Coinbase: populaire crypto exchange, duur maar betrouwbaar voor beginners.
+Gold Avenue / BullionVault: fysiek goud en zilver kopen (geen leverage, geen CFD).
 
 MINIMALE BEDRAGEN PER PLATFORM & INSTRUMENT (gebruik dit ALTIJD als iemand vraagt of iets kan met hun budget):
 - eToro crypto CFD: minimaal ~$25 per positie
