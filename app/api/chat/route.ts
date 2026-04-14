@@ -12,6 +12,8 @@ import {
   type GlobalMetrics,
   type FundingData,
 } from "@/lib/market-poller";
+import { webSearch, needsWebSearch, buildSearchQuery } from "@/lib/web-search";
+import { getCachedOnChainData, formatOnChainForMarcus } from "@/lib/onchain";
 
 // Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -262,11 +264,21 @@ ${lines.join("\n")}`;
     });
   }
 
-  const [fearGreed, globalMetrics, fundingRates] = await Promise.all([
+  const lastUserMsg = messages.filter(m => m.role === "user").slice(-1)[0]?.content ?? "";
+
+  const [fearGreed, globalMetrics, fundingRates, onChainData] = await Promise.all([
     getCachedFearGreed(),
     getCachedGlobalMetrics(),
     getCachedFundingRates(),
+    getCachedOnChainData(),
   ]);
+
+  // Web search — alleen als de vraag actuele informatie vereist
+  let webSearchContext = "";
+  if (needsWebSearch(lastUserMsg) && process.env.TAVILY_API_KEY) {
+    const query = buildSearchQuery(lastUserMsg, appContext.asset);
+    webSearchContext = await webSearch(query);
+  }
   const marketSummary = getMarketSummary();
 
   // Haal open posities van de gebruiker op voor trade-coaching
@@ -387,7 +399,6 @@ ${lines.join("\n")}`;
     try {
       const db = getDb();
       // Bouw zoekterm op basis van user bericht + zwakke punten
-      const lastUserMsg = messages.filter(m => m.role === "user").slice(-1)[0]?.content ?? "";
       const searchText = (lastUserMsg + " " + weakTopics.join(" ")).toLowerCase();
 
       // Haal 3 meest relevante lessen op via tag matching
@@ -660,6 +671,12 @@ VEELGESTELDE VRAGEN:
 - "Wat is een future die verloopt?" → op de vervaldatum sluit eToro de positie automatisch. Je hebt de winst/verlies op dat moment.
 - "Leverage verhogen/verlagen" → op eToro kun je dit aanpassen in het ordervenster voor CFDs
 - "Wat is funding rate?" → vergoeding die longs aan shorts betalen (of omgekeerd) bij perpetuals, elke 8u
+
+${onChainData ? formatOnChainForMarcus(onChainData) : "On-chain data tijdelijk niet beschikbaar."}
+
+${webSearchContext ? `ACTUELE WEB RESEARCH (Marcus heeft zojuist gezocht voor deze vraag):
+${webSearchContext}
+Marcus vermeldt altijd de bron als hij web research gebruikt en integreert het in zijn advies.` : ""}
 
 MARKTOVERZICHT ALLE ASSETS (voor vergelijking):
 ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de scanner pagina even te openen."}
