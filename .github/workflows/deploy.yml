@@ -45,11 +45,11 @@ jobs:
             node db/migrate-weekly-review.js || true
             node db/migrate-2fa.js || true
 
-            # .next clean — voorkomt ENOENT en stale cache bij elke deploy
-            # PM2 blijft DRAAIEN tijdens de build zodat de site online blijft
-            rm -rf .next
+            # Alleen lock file verwijderen — oude .next blijft actief tijdens build
+            # zodat de site online blijft terwijl de nieuwe versie gebouwd wordt
+            rm -f .next/lock
 
-            # Build (oude versie serveert ondertussen nog)
+            # Build overschrijft .next in-place — site blijft beschikbaar
             NODE_OPTIONS='--max-old-space-size=1400' npm run build
 
             # Herstart PM2 nu de build klaar is — downtime: seconden, niet minuten
