@@ -15,6 +15,7 @@ import MarcusBriefing from "./MarcusBriefing";
 import TradePlanValidator from "./TradePlanValidator";
 import PreMarketRitual from "./PreMarketRitual";
 import PriceAlerts from "./PriceAlerts";
+import CorrelationView from "./CorrelationView";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -96,10 +97,10 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "checklist" | "briefing" | "plan" | "ritual" | "alerts";
+type BottomTab = "paper" | "chat" | "checklist" | "briefing" | "plan" | "ritual" | "alerts" | "correlatie";
 
 // Tabs zichtbaar in balk
-const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "ritual", "alerts", "checklist", "briefing"];
+const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "ritual", "alerts", "correlatie", "checklist", "briefing"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -139,7 +140,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "paper",     label: t("tab_trade"),      icon: "📊" },
     { key: "plan",      label: "Plan Check",         icon: "🎯" },
     { key: "ritual",    label: "Ritueel",            icon: "🌅" },
-    { key: "alerts",    label: "Alerts",             icon: "🔔" },
+    { key: "alerts",     label: "Alerts",             icon: "🔔" },
+    { key: "correlatie", label: "Correlatie",         icon: "📡" },
     { key: "checklist", label: t("nav_checklist"), icon: "✅" },
     { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
   ];
@@ -992,7 +994,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             {bottomTab === "chat" && <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />}
             {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
             {bottomTab === "ritual" && <PreMarketRitual asset={asset} />}
-            {bottomTab === "alerts" && <PriceAlerts currentAsset={asset} currentPrice={chartPrice > 0 ? chartPrice : undefined} />}
+            {bottomTab === "alerts"     && <PriceAlerts currentAsset={asset} currentPrice={chartPrice > 0 ? chartPrice : undefined} />}
+            {bottomTab === "correlatie" && <CorrelationView currentAsset={asset} />}
             {bottomTab === "briefing" && <MarcusBriefing />}
           </div>
         </div>

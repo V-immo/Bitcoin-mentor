@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
   const marketContext = [
     btc ? `BTC: $${btc.price.toLocaleString("en-US")} (${btc.change24h >= 0 ? "+" : ""}${btc.change24h.toFixed(1)}% 24u) | trend: ${btc.trend} | RSI: ${btc.rsi.toFixed(0)} | score: ${btc.score}/100` : "",
     fearGreed ? `Fear & Greed: ${fearGreed}` : "",
-    globalMetrics ? `Totale marktcap: $${(globalMetrics.totalMarketCapUsd / 1e12).toFixed(2)}T | BTC dominantie: ${globalMetrics.btcDominance.toFixed(1)}%` : "",
+    globalMetrics ? `Totale marktcap: ${globalMetrics.totalMarketCap} | BTC dominantie: ${globalMetrics.btcDominance}` : "",
     focusAsset && focusAsset.symbol !== "BTCUSDT" ? `${focusAsset.symbol.replace("USDT","")}: $${focusAsset.price.toLocaleString("en-US")} | trend: ${focusAsset.trend} | score: ${focusAsset.score}/100` : "",
   ].filter(Boolean).join("\n");
 
