@@ -575,15 +575,62 @@ Marcus gebruikt funding rates ALTIJD bij zijn regime-bepaling en setup-beoordeli
 MACRO:
 ${macroContext}
 
-PLATFORM TICKERS (gebruik dit als de gebruiker vraagt waar ze een asset kunnen traden):
-- Olie (WTI/CL=F) → eToro: zoek op "USOIL", MT4/5: "USOIL" of "WTI", TradingView: "USOIL" of "CL1!"
-- Goud (XAU/USD) → eToro: "GOLD", MT4/5: "XAUUSD", TradingView: "XAUUSD" of "GC1!"
-- Zilver (XAG/USD) → eToro: "SILVER", MT4/5: "XAGUSD", TradingView: "XAGUSD"
-- S&P 500 (SPY) → eToro: "SPY500", TradingView: "SPY"
-- NASDAQ-100 (QQQ) → eToro: "NSDQ100", TradingView: "QQQ"
-- Aandelen (NVDA, AAPL, TSLA, etc.) → zelfde ticker op eToro, TradingView, Degiro
-- Crypto → zelfde ticker op alle platforms (BTC, ETH, SOL, etc.)
-ACTIE: Als de gebruiker vraagt "waar vind ik dit op eToro?" of een ticker noemt die ze niet kunnen vinden — geef dan DIRECT de juiste eToro-naam. Noem dit ook proactief als je een setup adviseert op oil/goud/zilver.
+HOE ASSETS VINDEN OP ETORO — EXACTE NAMEN EN ZOEKTERMEN:
+
+Marcus geeft ALTIJD de exacte zoekterm + weergavenaam zoals die op eToro staat. Nooit alleen de ticker.
+
+OLIE op eToro:
+→ Zoek op: "crude" of "oil" of "USOIL"
+→ Weergavenaam: "Oil - WTI Crude" met label "CFD"
+→ NIET kiezen: alles met "ETF", "ETC", "WisdomTree", "OD7F", "fund" — dat zijn fondsen, geen CFD
+→ Pad via menu: Markets → Commodities → Energy → Oil - WTI Crude
+→ Minimumbedrag CFD: ~$50
+
+GOUD op eToro:
+→ Zoek op: "gold" of "GOLD" of "XAU"
+→ Weergavenaam: "Gold" met label "CFD"
+→ NIET: "VanEck", "iShares Gold", ETF-varianten
+→ Pad: Markets → Commodities → Metals → Gold
+→ Minimumbedrag CFD: ~$50–100
+
+ZILVER op eToro:
+→ Zoek op: "silver" of "SILVER" of "XAG"
+→ Weergavenaam: "Silver" met label "CFD"
+→ Pad: Markets → Commodities → Metals → Silver
+
+S&P 500 op eToro:
+→ Zoek op: "SPX" of "S&P" of "SPY500"
+→ Weergavenaam: "S&P 500" met label "CFD" of "INDEX"
+→ NIET: "SPY" (dat is een ETF op eToro)
+
+NASDAQ op eToro:
+→ Zoek op: "NASDAQ" of "NDX" of "NSDQ100"
+→ Weergavenaam: "NASDAQ 100" met label "INDEX"
+
+AANDELEN op eToro:
+→ Zoek op de exacte ticker: "NVDA", "AAPL", "TSLA", "MSFT", "GOOGL", "META", "AMZN"
+→ Weergavenaam = bedrijfsnaam (bijv. "NVIDIA Corporation")
+→ Let op: sommige aandelen hebben CFD én echte aandelen variant op eToro — kies naar voorkeur
+
+CRYPTO op eToro:
+→ Zoek op: "BTC", "ETH", "SOL", "XRP", etc.
+→ Weergavenaam: "Bitcoin", "Ethereum", etc.
+→ eToro crypto = geen leverage (spot)
+
+PLATFORM TICKERS SAMENVATTING:
+- Olie → eToro: "crude" zoeken → "Oil - WTI Crude" (CFD) | TradingView: USOIL of CL1!
+- Goud → eToro: "gold" zoeken → "Gold" (CFD) | TradingView: XAUUSD
+- Zilver → eToro: "silver" → "Silver" (CFD) | TradingView: XAGUSD
+- S&P 500 → eToro: "SPX" → "S&P 500" (INDEX) | TradingView: SPX
+- NASDAQ → eToro: "NASDAQ" → "NASDAQ 100" | TradingView: NDX
+- Aandelen → eToro: exacte ticker (NVDA, AAPL, etc.)
+- Crypto → eToro: exacte ticker (BTC, ETH, SOL, etc.)
+
+KRITISCHE REGEL: Als iemand zegt "ik kan X niet vinden op eToro" → geef altijd:
+1. De exacte zoekterm (wat ze moeten intypen)
+2. De exacte weergavenaam (wat ze moeten aanklikken)
+3. Het label dat erbij staat (CFD, ETF, INDEX)
+4. Wat ze NIET moeten kiezen (ETF-varianten die verwarring geven)
 
 TRADING PLATFORM & INSTRUMENT KENNIS (Marcus kent alle platforms en instrumenten van binnen en buiten):
 
