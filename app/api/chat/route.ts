@@ -1225,6 +1225,161 @@ VEELGESTELDE VRAGEN:
 - "Leverage verhogen/verlagen" → op eToro kun je dit aanpassen in het ordervenster voor CFDs
 - "Wat is funding rate?" → vergoeding die longs aan shorts betalen (of omgekeerd) bij perpetuals, elke 8u
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BELASTING & REGELGEVING — CRYPTO IN NEDERLAND EN BELGIË
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BELANGRIJK: Marcus geeft fiscale uitleg op basis van bekende regels. Raadpleeg bij grote bedragen altijd een belastingadviseur.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEDERLAND — BOX 3 VERMOGENSBELASTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOE WERKT BOX 3:
+- Crypto valt in Box 3: vermogensrendementsheffing
+- Geen belasting op gerealiseerde winst — je betaalt op de WAARDE van je bezit op 1 januari
+- Peildatum: 1 januari van het belastingjaar (dus BTC prijs op 1 jan telt)
+- Het maakt niet uit wanneer je koopt of verkoopt — alleen de waarde op 1 jan is relevant
+
+BOX 3 VRIJSTELLING (2024/2025):
+- Heffingsvrij vermogen: €57.000 per persoon (2024)
+- Fiscale partners: €114.000 samen
+- Alleen vermogen BOVEN de vrijstelling is belastbaar
+
+BOX 3 BEREKENING (2024):
+- Forfaitair rendement: ca. 6.04% over vermogen boven vrijstelling (dit is een aanname, geen werkelijk rendement)
+- Belastingtarief: 36% over dat forfaitaire rendement
+- Voorbeeld: €100.000 crypto op 1 jan → (€100.000 - €57.000) × 6.04% × 36% = ~€935 belasting
+- Je betaalt dus zelfs als je VERLIES hebt gemaakt dat jaar — het gaat om de waarde op 1 jan
+
+WAT TELT MEE IN BOX 3:
+- Crypto op exchanges (Bitvavo, Binance, Coinbase, eToro, etc.)
+- Crypto in eigen wallets (MetaMask, Ledger, etc.)
+- DeFi posities (liquidity pools, lending)
+- NFTs (marktwaarde)
+- Staking saldo's
+→ Alles bij elkaar optellen op 1 januari
+
+WAT IS GEEN BELASTBAAR EVENT IN NL:
+- Crypto kopen → geen event, telt mee in box 3
+- Crypto verkopen → geen direct event (minder bezit = lagere box 3 volgende jaar)
+- Crypto-naar-crypto ruilen (BTC → ETH) → geen event in box 3
+- Verliezen → niet aftrekbaar in box 3
+
+STAKING & MINING IN NEDERLAND:
+- Staking rewards: onduidelijke behandeling — sommige belastingadviseurs zien het als Box 1 inkomen (belastbaar als ontvangen), anderen als Box 3 bezit
+- Mining: als bijverdienste → Box 1 of "resultaat overige werkzaamheden" — belastbaar als inkomen
+- DeFi yield: vergelijkbaar met staking — onduidelijk, conservatief is Box 1 inkomen
+
+AANGIFTE INKOMSTENBELASTING (NL):
+- Deadline: 1 mei van het jaar ná het belastingjaar (bijv. aangifte 2024 → voor 1 mei 2025)
+- Uitstel aanvragen: tot 1 september mogelijk
+- Aangifte invullen: "Bezittingen" → "Overige bezittingen" → vul crypto waarde in op 1 jan
+- Belastingdienst controleert steeds vaker crypto: exchanges moeten gegevens doorgeven
+- Buitenlandse exchanges (Binance, Bybit, etc.) ook melden → informatieplicht
+
+PRAKTISCH ADVIES BOX 3:
+- Leg je crypto saldo vast op 1 januari elke jaar (screenshot of export)
+- Gebruik tools zoals Koinly, Blockpit of CoinTracker voor automatisch overzicht
+- Als je grote bedragen hebt vlak voor 1 jan → overweeg timing van verkopen
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BELGIË — CRYPTO BELASTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOE WERKT HET IN BELGIË (ANDERS DAN NL!):
+België heeft géén box 3 systeem. Crypto belasting hangt af van HOE je handelt:
+
+SCENARIO 1 — NORMAAL BEHEER (meest voorkomend):
+- Definitie: je koopt crypto als langetermijn investering, niet speculatief
+- Belasting: GEEN belasting op winst
+- Voorwaarden: langetermijn horizon, niet te frequent handelen, geen professionele kennis
+- Voorbeeld: je koopt BTC, houdt 2 jaar aan, verkoopt met winst → niet belastbaar
+
+SCENARIO 2 — SPECULATIEF (frequent traden):
+- Definitie: frequent kopen en verkopen, korte termijn, actief speculeren
+- Belasting: 33% op netto meerwaarde (divers inkomen)
+- Aangifte: in de aangifte personenbelasting onder "diverse inkomsten"
+- Verliezen: wel aftrekbaar van andere diverse inkomsten
+
+SCENARIO 3 — PROFESSIONEEL (beroepsactiviteit):
+- Definitie: je handelt als hoofdactiviteit of bijberoep
+- Belasting: progressief tarief (25%–50%) als beroepsinkomen
+- Sociale bijdragen ook verschuldigd (zelfstandige)
+
+GRENS NORMAAL vs SPECULATIEF (GRIJZE ZONE):
+De Belgische belastingdienst kijkt naar:
+- Frequentie: dagelijks/wekelijks traden = eerder speculatief
+- Bedragen: grote bedragen met leverage = eerder speculatief
+- Expertise: kennis van charts/technische analyse = eerder professioneel
+- Intentie: lange termijn vs korte termijn visie
+- Leverage gebruik: leverage = bijna altijd speculatief
+→ Bij twijfel: raadpleeg een Belgische belastingadviseur
+
+BELASTBARE EVENTS IN BELGIË:
+- Crypto verkopen naar fiat (EUR) → mogelijk belastbaar event
+- Crypto-naar-crypto ruilen → bij speculatief handelen = belastbaar event
+- Staking rewards ontvangen → mogelijk diverse inkomsten
+- Crypto ontvangen als betaling → belastbaar als inkomen
+
+AANGIFTE BELGIE:
+- Aangifte personenbelasting: vak "Diverse inkomsten"
+- Code 1440 / 2440: meerwaarden op speculatieve transacties
+- Deadline: normaal eind juni/begin juli (jaarlijks verschil)
+
+TOOLS VOOR BELGISCHE AANGIFTE:
+- Koinly: exporteert transactieoverzicht per asset per jaar
+- Blockpit: goede BE/NL ondersteuning
+- CoinTracking: uitgebreid maar complexer
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MiCA — MARKETS IN CRYPTO-ASSETS (EU REGELGEVING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WAT IS MiCA:
+- Europese verordening volledig van kracht per december 2024
+- Reguleert crypto exchanges, wallet providers en stablecoins in de hele EU
+- Doel: consumentenbescherming, marktintegriteit, financiële stabiliteit
+
+WAT VERANDERT ER VOOR TRADERS:
+- Exchanges die in EU opereren moeten vergund zijn (CASP — Crypto Asset Service Provider)
+- Betere bescherming: exchanges moeten kapitaalvereisten aanhouden, klantentegoeden scheiden
+- Transparantie: exchanges moeten whitepaper publiceren voor elk genoteerd token
+- Kleine exchanges zonder vergunning worden verboden of vertrekken uit EU
+
+STABLECOINS ONDER MiCA:
+- E-Money Tokens (EMTs): stablecoins gekoppeld aan 1 munt (bijv. USDC in EUR)
+- Asset-Referenced Tokens (ARTs): gekoppeld aan basket van assets
+- Limieten op grote stablecoins: max €200 miljoen/dag transacties als ze niet EMA-vergund zijn
+- USDT (Tether): nog onduidelijk — Tether heeft geen EU vergunning → risico van delisting op EU exchanges
+
+MiCA VOOR DEFI EN NFTs:
+- DeFi: grotendeels buiten MiCA scope (gedecentraliseerd = geen centrale partij om te reguleren)
+- NFTs: grotendeels buiten scope, tenzij ze meer op financiële instrumenten lijken
+
+PRAKTISCHE IMPACT:
+- Exchanges zoals Bitvavo, Bitpanda zijn al vergund of in proces → veilig
+- Sommige exchanges kunnen USDT delisten in EU → gebruik USDC als alternatief
+- Betere consumentenbescherming → hogere drempel, maar veiliger voor jou
+- KYC/AML strenger → exchanges vragen meer verificatie
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRYPTO BELASTING TOOLS (aanbevolen)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Koinly (koinly.io): populairste tool voor NL/BE. Importeer via CSV of API key van exchange. Genereert Box 3 rapport voor NL en transactieoverzicht voor BE. Gratis tot 25 transacties.
+- Blockpit (blockpit.io): sterke EU-focus, goede NL/BE ondersteuning, duidelijke rapporten.
+- CoinTracking (cointracking.info): uitgebreid, geschikt voor grote portefeuilles.
+- Belastingdienst tool: Belastingdienst.nl heeft zelf info over crypto aangifte (zoek: "crypto aangifte belastingdienst 2024").
+
+HOE IMPORTEREN IN KOINLY:
+1. Ga naar exchange → exporteer transactiegeschiedenis (CSV)
+2. Upload in Koinly
+3. Koinly berekent je saldo per 1 jan automatisch
+4. Exporteer rapport voor je aangifte
+
+VEELGESTELDE VRAGEN BELASTING:
+- "Moet ik belasting betalen als ik verlies heb?" → NL: ja, box 3 kijkt naar waarde op 1 jan, niet naar winst/verlies | BE: nee, bij verlies is er geen meerwaarde
+- "Is crypto-naar-crypto ruilen belastbaar?" → NL: niet direct (box 3) | BE: ja als speculatief handelen
+- "Staking rewards aangeven?" → NL: onduidelijk, conservatief aanpak = Box 1 inkomen | BE: diverse inkomsten als speculatief
+- "Buitenlandse exchange melden?" → NL: ja, informatieplicht. Belastingdienst vraagt exchanges steeds vaker om gegevens.
+- "Wat als ik niets heb aangegeven?" → Niet ideaal maar herstelbaar. Doe vrijwillig aangifte (inkeer) voor controle. Boetes zijn lager bij zelfmelding.
+
 ${onChainData ? formatOnChainForMarcus(onChainData) : "On-chain data tijdelijk niet beschikbaar."}
 
 ${webSearchContext ? `ACTUELE WEB RESEARCH (Marcus heeft zojuist gezocht voor deze vraag):
