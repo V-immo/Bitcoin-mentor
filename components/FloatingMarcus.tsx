@@ -6,6 +6,17 @@ import { useSession } from "next-auth/react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
+type NudgeData = {
+  nudge: string | null;
+  morningGreeting: string | null;
+  eveningReview: string | null;
+  weeklyReport: string | null;
+  distressAlert: string | null;
+  isDistressed: boolean;
+  streak: number;
+  active: boolean;
+};
+
 function escape(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -37,6 +48,8 @@ export default function FloatingMarcus() {
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [hasNotification, setHasNotification] = useState(false);
+  const [nudgeData, setNudgeData] = useState<NudgeData | null>(null);
+  const [isDistressedNotif, setIsDistressedNotif] = useState(false);
 
   // Spraak state
   const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -69,24 +82,63 @@ export default function FloatingMarcus() {
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
   }, [open, hidden]);
 
+  // Fetch nudge data voor notificatie-badge (als overlay gesloten is)
   useEffect(() => {
     if (hidden || open) return;
     const today = new Date().toISOString().slice(0, 10);
-    const nudgeDismissed = localStorage.getItem("marcus-nudge-dismissed") === today;
-    const greetingDismissed = localStorage.getItem("marcus-greeting-dismissed") === today;
-    const eveningDismissed = localStorage.getItem("marcus-evening-dismissed") === today;
-    const hour = new Date().getHours();
-    if ((hour >= 16 && !eveningDismissed) || !nudgeDismissed || !greetingDismissed) {
-      fetch("/api/me/nudge")
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (!data) return;
-          const hasMsg = (data.nudge && !nudgeDismissed) || (data.morningGreeting && !greetingDismissed) || (hour >= 16 && !eveningDismissed);
-          setHasNotification(!!hasMsg);
-        })
-        .catch(() => {});
-    }
+    const weekKey = `week${Math.floor(Date.now() / (7 * 86400000))}`;
+    fetch("/api/me/nudge")
+      .then(r => r.ok ? r.json() : null)
+      .then((data: NudgeData | null) => {
+        if (!data) return;
+        setNudgeData(data);
+        const nudgeDismissed   = localStorage.getItem("marcus-nudge-dismissed") === today;
+        const morningDismissed = localStorage.getItem("marcus-morning-dismissed") === today;
+        const eveningDismissed = localStorage.getItem("marcus-evening-dismissed") === today;
+        const weeklyDismissed  = localStorage.getItem("marcus-weekly-dismissed") === weekKey;
+        const hasMsg =
+          !!data.distressAlert ||
+          (!!data.weeklyReport  && !weeklyDismissed)  ||
+          (!!data.eveningReview && !eveningDismissed)  ||
+          (!!data.morningGreeting && !morningDismissed) ||
+          (!!data.nudge && !nudgeDismissed);
+        setHasNotification(hasMsg);
+        setIsDistressedNotif(!!data.isDistressed);
+      })
+      .catch(() => {});
   }, [hidden, open]);
+
+  // Proactief bericht tonen als overlay opent met lege chat
+  useEffect(() => {
+    if (!open || messages.length > 0 || !nudgeData) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const weekKey = `week${Math.floor(Date.now() / (7 * 86400000))}`;
+
+    let text: string | null = null;
+    let type = "";
+
+    if (nudgeData.distressAlert) {
+      text = nudgeData.distressAlert; type = "distress";
+    } else if (nudgeData.weeklyReport && localStorage.getItem("marcus-weekly-dismissed") !== weekKey) {
+      text = nudgeData.weeklyReport; type = "weekly";
+    } else if (nudgeData.eveningReview && localStorage.getItem("marcus-evening-dismissed") !== today) {
+      text = nudgeData.eveningReview; type = "evening";
+    } else if (nudgeData.morningGreeting && localStorage.getItem("marcus-morning-dismissed") !== today) {
+      text = nudgeData.morningGreeting; type = "morning";
+    } else if (nudgeData.nudge && localStorage.getItem("marcus-nudge-dismissed") !== today) {
+      text = nudgeData.nudge; type = "nudge";
+    }
+
+    if (!text) return;
+
+    setMessages([{ role: "assistant", content: text }]);
+    if (type === "evening")  localStorage.setItem("marcus-evening-dismissed",  today);
+    if (type === "morning")  localStorage.setItem("marcus-morning-dismissed",  today);
+    if (type === "weekly")   localStorage.setItem("marcus-weekly-dismissed",   weekKey);
+    if (type === "nudge")    localStorage.setItem("marcus-nudge-dismissed",    today);
+    // distress: nooit dismissen — toon elke keer opnieuw
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     if (open) setHasNotification(false);
@@ -374,10 +426,13 @@ export default function FloatingMarcus() {
           <span style={{
             position: "absolute", top: 2, right: 2,
             width: 12, height: 12, borderRadius: "50%",
-            background: "#fff",
-            boxShadow: "0 0 6px 2px rgba(233,30,99,0.8)",
+            background: isDistressedNotif ? "#e91e63" : "#fff",
+            boxShadow: isDistressedNotif
+              ? "0 0 0 0 rgba(233,30,99,0.7)"
+              : "0 0 6px 2px rgba(233,30,99,0.8)",
             border: "2px solid #e91e63",
             display: "block",
+            animation: isDistressedNotif ? "marcus-distress 1.2s ease-in-out infinite" : "none",
           }} />
         )}
       </button>
@@ -389,6 +444,11 @@ export default function FloatingMarcus() {
         @keyframes marcus-speaking {
           0%, 100% { box-shadow: 0 0 0 0 rgba(233,30,99,0.4); }
           50% { box-shadow: 0 0 0 6px rgba(233,30,99,0); }
+        }
+        @keyframes marcus-distress {
+          0%   { box-shadow: 0 0 0 0 rgba(233,30,99,0.8); }
+          70%  { box-shadow: 0 0 0 8px rgba(233,30,99,0); }
+          100% { box-shadow: 0 0 0 0 rgba(233,30,99,0); }
         }
       `}</style>
     </>
