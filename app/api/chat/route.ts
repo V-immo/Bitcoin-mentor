@@ -291,13 +291,12 @@ ${lines.join("\n")}`;
       ).all(userId) as { asset: string; cash: number; position: string; starting_balance: number }[];
       const openTrades = papers
         .map(p => { try { return { asset: p.asset, cash: p.cash, pos: JSON.parse(p.position), start: p.starting_balance }; } catch { return null; } })
-        .filter(Boolean) as { asset: string; cash: number; pos: { entryPrice?: number; avgEntry?: number; openBtc?: number; side?: string; stopLoss?: number; realizedPnl?: number }; start: number }[];
+        .filter(Boolean) as { asset: string; cash: number; pos: { avgEntry?: number; openBtc?: number; activeSL?: number; activeTP?: number; realizedPnl?: number }; start: number }[];
       if (openTrades.length > 0) {
         openPositionsContext = openTrades.map(t => {
           const scanEntry = sharedScanCache.data?.find(s => s.symbol === t.asset);
           const livePrice = scanEntry?.price ?? 0;
-          // DB slaat instapprijs op als avgEntry of entryPrice
-          const entryPrice = t.pos.avgEntry ?? t.pos.entryPrice ?? 0;
+          const entryPrice = t.pos.avgEntry ?? 0;
           const pnl = livePrice > 0 && t.pos.openBtc && entryPrice > 0
             ? ((livePrice - entryPrice) * t.pos.openBtc).toFixed(2)
             : "onbekend";
@@ -305,7 +304,9 @@ ${lines.join("\n")}`;
             ? (((livePrice - entryPrice) / entryPrice) * 100).toFixed(2)
             : "?";
           const pnlSign = parseFloat(pnl) >= 0 ? "+" : "";
-          return `- ${t.asset}: instap $${entryPrice > 0 ? entryPrice.toFixed(2) : "?"}, hoeveelheid ${t.pos.openBtc?.toFixed(6) ?? "?"}, huidige prijs $${livePrice > 0 ? livePrice.toFixed(2) : "?"}, P&L ${pnlSign}€${pnl} (${pnlSign}${pnlPct}%), stop-loss $${t.pos.stopLoss?.toFixed(2) ?? "NIET INGESTELD — Marcus moet hierop wijzen!"}`;
+          const slText = t.pos.activeSL ? `$${t.pos.activeSL.toFixed(2)}` : "⚠️ NIET INGESTELD — Marcus moet dit direct benoemen!";
+          const tpText = t.pos.activeTP ? `$${t.pos.activeTP.toFixed(2)}` : "niet ingesteld";
+          return `- ${t.asset.replace("USDT","")}: instap $${entryPrice > 0 ? entryPrice.toFixed(2) : "?"}, ${t.pos.openBtc?.toFixed(6) ?? "?"} BTC, live $${livePrice > 0 ? livePrice.toFixed(2) : "?"}, P&L ${pnlSign}€${pnl} (${pnlSign}${pnlPct}%), SL: ${slText}, TP: ${tpText}`;
         }).join("\n");
       }
     } catch { /* ignore */ }
@@ -505,7 +506,7 @@ JE PERSOONLIJKHEID:
 - Je bent ASSERTIEF. Je geeft DIRECTE instructies — geen "misschien", geen "zou kunnen", geen "je kunt overwegen". Jij beslist als coach: "Dit doe je zo." "Stop nu." "Wacht op dit niveau." Geen eindeloos wikken en wegen.
 - Je praat direct en eerlijk. Als een setup slecht is, zeg je dat keihard: "Deze trade doe je niet. Hier is waarom." Geen zachte landing.
 - Je bent de coach — de gebruiker volgt jouw lead, niet andersom. Je vraagt niet om toestemming voor je mening.
-- Je bent toegankelijk maar professioneel — geen straattaal, geen "yo", "bro", "man", "kerel". Dat hoort niet bij wie je bent.
+- ABSOLUUT VERBODEN — gebruik NOOIT deze woorden: "yo", "bro", "man", "kerel", "gast", "maat", "hé man", "ey". Dit zijn harde grenzen. Niet één keer, niet als grap, niet als uitzondering. Als je dit toch doet is je karakter gebroken.
 - Je gebruikt normale spreektaal: "luister", "ok", "wacht even", "eerlijk gezegd" — maar altijd volwassen en respectvol.
 - Je erkent emoties kort en gaat dan meteen naar de oplossing: "Snap het. Maar hier is wat je nu doet:"
 - Je hebt STERKE MENINGEN. "Eerlijk gezegd hou ik niet van die trade — te vroeg, te veel risico." Je bent geen ja-knikker.
