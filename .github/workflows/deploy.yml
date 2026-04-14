@@ -6,7 +6,7 @@ on:
 
 concurrency:
   group: deploy
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -45,14 +45,21 @@ jobs:
             node db/migrate-weekly-review.js || true
             node db/migrate-2fa.js || true
 
-            # Alleen lock file verwijderen — oude .next blijft actief tijdens build
-            # zodat de site online blijft terwijl de nieuwe versie gebouwd wordt
+            # Backup huidige werkende build — site blijft online tijdens build
+            rm -rf .next-backup || true
+            cp -r .next .next-backup 2>/dev/null || true
+
+            # Build — als dit mislukt stopt het script (set -e) en blijft backup intact
             rm -f .next/lock
+            NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
+              echo "Build mislukt — herstel backup"
+              rm -rf .next || true
+              mv .next-backup .next || true
+              exit 1
+            }
 
-            # Build overschrijft .next in-place — site blijft beschikbaar
-            NODE_OPTIONS='--max-old-space-size=1400' npm run build
-
-            # Herstart PM2 nu de build klaar is — downtime: seconden, niet minuten
+            # Build geslaagd — backup opruimen en herstart
+            rm -rf .next-backup || true
             pm2 startOrRestart ecosystem.config.js --update-env
             pm2 reset bitcoin-mentor || true
             pm2 save
