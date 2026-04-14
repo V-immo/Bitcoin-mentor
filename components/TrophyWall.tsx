@@ -59,7 +59,7 @@ export default function TrophyWall() {
     fetch("/api/me/achievements")
       .then(r => r.ok ? r.json() : null)
       .then((d: AchievementsData | null) => {
-        if (!d || d.error) return;
+        if (!d) return;
         setData(d);
 
         // Detecteer nieuw verdiende badges
