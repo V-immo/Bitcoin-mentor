@@ -205,6 +205,21 @@ export default function FloatingMarcus() {
       text = nudgeData.nudge; type = "nudge";
     }
 
+    // Nieuw: welkomstbericht voor gloednieuwe gebruikers (nog nooit een bericht gehad)
+    if (!text && !localStorage.getItem("marcus-first-message-shown")) {
+      text = `Hoi! Ik ben **Marcus**, jouw persoonlijke trading coach. 👋
+
+Ik begeleid je stap voor stap — van je eerste trade tot een consistente strategie.
+
+**Waar begin je?**
+1. 🎯 **Kies je tradingstijl** in /profiel — zo pas ik mijn coaching direct op jou aan
+2. 📋 **Vul je tradingplan in** — max risico per trade, max dagverlies. Zonder dit is het gokken
+3. 🎓 **Doe je eerste quiz** in /leren — ik leer je niveau kennen en pas alles aan
+
+Stel me gerust een vraag — over Bitcoin, trading strategie, of hoe je moet beginnen. Ik ben er altijd.`;
+      type = "welcome";
+    }
+
     if (!text) return;
 
     setMessages([{ role: "assistant", content: text }]);
@@ -212,6 +227,7 @@ export default function FloatingMarcus() {
     if (type === "morning")  localStorage.setItem("marcus-morning-dismissed",  today);
     if (type === "weekly")   localStorage.setItem("marcus-weekly-dismissed",   weekKey);
     if (type === "nudge")    localStorage.setItem("marcus-nudge-dismissed",    today);
+    if (type === "welcome")  localStorage.setItem("marcus-first-message-shown", "true");
     // distress: nooit dismissen — toon elke keer opnieuw
 
     // Auto-voorlezen als voice aan staat
