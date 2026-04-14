@@ -147,6 +147,15 @@ function ensureSchema(database: Database.Database) {
     );
     CREATE INDEX IF NOT EXISTS idx_chat_history_user ON marcus_chat_history(user_id);
 
+    CREATE TABLE IF NOT EXISTS marcus_chat_sessions (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      messages   TEXT    NOT NULL DEFAULT '[]',
+      summary    TEXT    NOT NULL DEFAULT '',
+      created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_chat_sessions_user ON marcus_chat_sessions(user_id, created_at);
+
     CREATE TABLE IF NOT EXISTS partner_opt_in (
       user_id    INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
       opted_in   INTEGER NOT NULL DEFAULT 1,

@@ -59,6 +59,12 @@ export default function FloatingMarcus() {
   // Trade debrief — triggered via custom DOM event vanuit TerminalPaperPanel
   const [pendingDebrief, setPendingDebrief] = useState<string | null>(null);
 
+  // Chat sessies (geschiedenis)
+  type ChatSession = { id: number; summary: string; messageCount: number; createdAt: string };
+  const [showSessions, setShowSessions] = useState(false);
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -463,6 +469,52 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, loading, voiceEnabled]);
 
+  // Nieuwe chat starten — huidige chat archiveren
+  async function newChat() {
+    if (messages.length === 0) return;
+    try {
+      await fetch("/api/me/chat-history/archive", { method: "POST" });
+    } catch { /* offline — toch wissen */ }
+    setMessages([]);
+    try { localStorage.setItem("marcus-chat-history", "[]"); } catch { /* */ }
+    setShowSessions(false);
+  }
+
+  // Sessies laden voor het geschiedenispaneel
+  async function loadSessions() {
+    setSessionsLoading(true);
+    try {
+      const r = await fetch("/api/me/chat-history/sessions");
+      const d = await r.json() as { sessions: ChatSession[] };
+      setSessions(d.sessions ?? []);
+    } catch { /* */ } finally {
+      setSessionsLoading(false);
+    }
+  }
+
+  // Sessie herstellen — laadt oude berichten terug als actieve chat
+  async function restoreSession(id: number) {
+    try {
+      const r = await fetch("/api/me/chat-history/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const d = await r.json() as { messages: Message[] };
+      if (d.messages?.length > 0) {
+        setMessages(d.messages);
+        try { localStorage.setItem("marcus-chat-history", JSON.stringify(d.messages.slice(-30))); } catch { /* */ }
+        // Sync naar actieve chat op server
+        fetch("/api/me/chat-history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: d.messages }),
+        }).catch(() => {});
+      }
+    } catch { /* */ }
+    setShowSessions(false);
+  }
+
   function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -492,6 +544,34 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               </div>
             </div>
             <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              {/* Nieuwe chat */}
+              {messages.length > 0 && (
+                <button
+                  onClick={newChat}
+                  title="Nieuwe chat starten (huidige wordt opgeslagen)"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 8, padding: "4px 8px", cursor: "pointer",
+                    color: "var(--text-muted)", fontSize: 13, lineHeight: 1,
+                  }}
+                >
+                  ✏️
+                </button>
+              )}
+              {/* Geschiedenis */}
+              <button
+                onClick={() => { setShowSessions(v => { if (!v) loadSessions(); return !v; }); }}
+                title="Vorige gesprekken"
+                style={{
+                  background: showSessions ? "rgba(233,30,99,0.12)" : "transparent",
+                  border: `1px solid ${showSessions ? "rgba(233,30,99,0.3)" : "rgba(255,255,255,0.1)"}`,
+                  borderRadius: 8, padding: "4px 8px", cursor: "pointer",
+                  color: showSessions ? "#e91e63" : "var(--text-muted)", fontSize: 13, lineHeight: 1,
+                }}
+              >
+                📂
+              </button>
               {/* Voice toggle */}
               <button
                 onClick={toggleVoice}
@@ -522,6 +602,48 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               <button className="float-marcus-close" onClick={() => setOpen(false)}>✕</button>
             </div>
           </div>
+
+          {/* Vorige gesprekken paneel */}
+          {showSessions && (
+            <div style={{
+              borderBottom: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(0,0,0,0.2)",
+              maxHeight: 220, overflowY: "auto",
+            }}>
+              <div style={{ padding: "8px 14px 4px", fontSize: 11, color: "var(--text-muted)", fontWeight: 600, letterSpacing: "0.04em" }}>
+                VORIGE GESPREKKEN
+              </div>
+              {sessionsLoading && (
+                <div style={{ padding: "12px 14px", fontSize: 12, color: "var(--text-muted)" }}>Laden…</div>
+              )}
+              {!sessionsLoading && sessions.length === 0 && (
+                <div style={{ padding: "12px 14px", fontSize: 12, color: "var(--text-muted)" }}>Geen opgeslagen gesprekken.</div>
+              )}
+              {sessions.map(s => {
+                const date = new Date(s.createdAt + (s.createdAt.includes("T") ? "" : "T00:00:00"));
+                const label = date.toLocaleDateString("nl-BE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => restoreSession(s.id)}
+                    style={{
+                      width: "100%", textAlign: "left", background: "transparent",
+                      border: "none", borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      padding: "8px 14px", cursor: "pointer", display: "flex",
+                      flexDirection: "column", gap: 2,
+                    }}
+                  >
+                    <div style={{ fontSize: 12, color: "var(--text)", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>
+                      {s.summary || "Gesprek zonder tekst"}
+                    </div>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)" }}>
+                      {label} · {s.messageCount} berichten
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="float-marcus-messages">
             {messages.length === 0 && (
