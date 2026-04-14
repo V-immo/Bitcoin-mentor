@@ -43,14 +43,7 @@ export default function FloatingMarcus() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const saved = localStorage.getItem("marcus-chat-history");
-      if (saved) return JSON.parse(saved) as Message[];
-    } catch { /* leeg */ }
-    return [];
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
@@ -79,9 +72,20 @@ export default function FloatingMarcus() {
     if (saved === "true") setVoiceEnabled(true);
   }, [hidden]);
 
+  // Laad history uit localStorage na mount (niet in useState — SSR hydration fix)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("marcus-chat-history");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Message[];
+        if (parsed.length > 0) setMessages(parsed);
+      }
+    } catch { /* leeg */ }
+  }, []);
+
   // Sla laatste 30 berichten op in localStorage
   useEffect(() => {
-    if (typeof window === "undefined" || messages.length === 0) return;
+    if (messages.length === 0) return;
     try {
       localStorage.setItem("marcus-chat-history", JSON.stringify(messages.slice(-30)));
     } catch { /* quota */ }
