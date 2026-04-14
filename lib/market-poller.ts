@@ -8,8 +8,10 @@
 import { sharedScanCache } from "./scan-cache";
 import { calculateRsi } from "./market";
 import { getDb } from "@/db/db";
+import { SCAN_ASSETS } from "./assets";
 
-const POLL_INTERVAL = 30 * 60 * 1000; // 30 minuten
+const POLL_INTERVAL       = 30 * 60 * 1000; // 30 minuten (externe data)
+const CRYPTO_POLL_INTERVAL =  5 * 60 * 1000; //  5 minuten (alle crypto assets)
 const EXT_TTL       = 35 * 60 * 1000; // 35 min — iets ruimer dan poll interval
 
 type Cached<T> = { data: T; ts: number } | null;
@@ -139,14 +141,97 @@ export async function getCachedFundingRates(): Promise<FundingData[]> {
   return data;
 }
 
-// --- BTC snapshot poller (vult sharedScanCache voor nudge/chat/market-stats) ---
+// --- Alle crypto assets poller (vult sharedScanCache voor alle 12 Binance assets) ---
 
 type BinanceTicker24h = {
+  symbol: string;
   lastPrice: string;
   priceChangePercent: string;
+  markPrice?: string;
 };
 
 type BinanceKlineRow = [number, string, string, string, string, string, number, ...unknown[]];
+
+const CRYPTO_SYMBOLS = SCAN_ASSETS
+  .filter(a => a.source === "binance")
+  .map(a => a.symbol);
+
+async function fetchAllCryptoSnapshots(): Promise<void> {
+  try {
+    // Batch 24h ticker voor alle crypto assets + klines voor BTC/ETH/SOL (voor RSI)
+    const symbolsJson = `["${CRYPTO_SYMBOLS.join('","')}"]`;
+    const [batchRes, ...klineResults] = await Promise.allSettled([
+      fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${encodeURIComponent(symbolsJson)}`, { cache: "no-store" }),
+      ...["BTCUSDT", "ETHUSDT", "SOLUSDT"].map(sym =>
+        fetch(`https://api.binance.com/api/v3/klines?symbol=${sym}&interval=1h&limit=100`, { cache: "no-store" })
+          .then(r => r.ok ? r.json() : [])
+      ),
+    ]);
+
+    if (batchRes.status !== "fulfilled" || !batchRes.value.ok) return;
+    const tickers = await batchRes.value.json() as BinanceTicker24h[];
+
+    const klineMap = new Map<string, BinanceKlineRow[]>();
+    const klSymbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+    for (let i = 0; i < klSymbols.length; i++) {
+      const r = klineResults[i];
+      if (r.status === "fulfilled") klineMap.set(klSymbols[i], r.value as BinanceKlineRow[]);
+    }
+
+    const now = Date.now();
+    const existing = [...(sharedScanCache.data ?? [])];
+
+    for (const ticker of tickers) {
+      const price = parseFloat(ticker.lastPrice);
+      const change24h = parseFloat(ticker.priceChangePercent);
+      if (!isFinite(price) || price <= 0) continue;
+
+      const assetDef = SCAN_ASSETS.find(a => a.symbol === ticker.symbol);
+      if (!assetDef) continue;
+
+      let rsi = 50;
+      let trend = "zijwaarts";
+      let score = 50;
+
+      const klines = klineMap.get(ticker.symbol);
+      if (klines && klines.length >= 20) {
+        const candles = klines.map(row => ({
+          openTime: Number(row[0]), open: Number(row[1]),
+          high: Number(row[2]), low: Number(row[3]),
+          close: Number(row[4]), volume: Number(row[5]), closeTime: Number(row[6]),
+        }));
+        try { rsi = calculateRsi(candles, 14); } catch { /* ignore */ }
+        const closes = candles.map(c => c.close);
+        if (closes.length >= 50) {
+          const ma20 = closes.slice(-20).reduce((a, b) => a + b, 0) / 20;
+          const ma50 = closes.slice(-50).reduce((a, b) => a + b, 0) / 50;
+          trend = ma20 > ma50 * 1.01 ? "omhoog" : ma20 < ma50 * 0.99 ? "omlaag" : "zijwaarts";
+        }
+        score = 50;
+        if (rsi < 35) score += 15; else if (rsi < 50) score += 8;
+        else if (rsi > 70) score -= 15; else if (rsi > 60) score -= 5;
+        if (trend === "omhoog") score += 12; else if (trend === "omlaag") score -= 12;
+        score = Math.max(0, Math.min(100, Math.round(score)));
+      }
+
+      const color: "green" | "yellow" | "red" = score >= 60 ? "green" : score >= 40 ? "yellow" : "red";
+      const signal = rsi > 70 ? "Overkocht" : rsi < 30 ? "Oververkocht" : trend === "omhoog" ? "Bullish" : trend === "omlaag" ? "Bearish" : "Neutraal";
+
+      const entry = {
+        symbol: assetDef.symbol, name: assetDef.name, ticker: assetDef.ticker,
+        type: assetDef.type, emoji: assetDef.emoji,
+        price, change24h, score, color, signal, trend, rsi,
+      };
+
+      const idx = existing.findIndex(e => e.symbol === ticker.symbol);
+      if (idx >= 0) existing[idx] = entry;
+      else existing.push(entry);
+    }
+
+    sharedScanCache.data = existing;
+    sharedScanCache.ts = now;
+  } catch { /* stilletjes falen */ }
+}
 
 async function fetchBtcSnapshot(): Promise<void> {
   try {
@@ -360,12 +445,10 @@ async function pollAll(): Promise<void> {
       fetchFearAndGreed(),
       fetchGlobalMetrics(),
       fetchFundingRates(),
-      fetchBtcSnapshot(),
     ]);
     if (fg.status === "fulfilled") cachedFearGreed    = { data: fg.value, ts: Date.now() };
     if (gm.status === "fulfilled") cachedGlobalMetrics = { data: gm.value, ts: Date.now() };
     if (fr.status === "fulfilled") cachedFunding      = { data: fr.value, ts: Date.now() };
-    // btcSnapshot werkt direct op sharedScanCache, geen return value nodig
 
     // Signal engine — genereer Marcus signals na data update
     runSignalEngine();
@@ -385,9 +468,13 @@ export function startPoller(): void {
   if (pollerStarted) return;
   pollerStarted = true;
 
-  // Direct eerste run zodat cache gevuld is bij opstart
+  // Direct eerste run: eerst alle crypto assets, dan externe data
+  fetchAllCryptoSnapshots();
   pollAll();
 
-  // Daarna elke 30 minuten — ongeacht of er gebruikers actief zijn
+  // Crypto prijzen elke 5 minuten — 24/7 alle sessies (Aziatisch, Europees, VS)
+  setInterval(fetchAllCryptoSnapshots, CRYPTO_POLL_INTERVAL);
+
+  // Externe data (FearGreed, CoinGecko, funding) elke 30 minuten
   setInterval(pollAll, POLL_INTERVAL);
 }
