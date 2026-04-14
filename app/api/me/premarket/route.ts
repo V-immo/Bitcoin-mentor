@@ -34,6 +34,11 @@ export async function POST(request: NextRequest) {
   const cached = dailyCache.get(cacheKey);
   if (cached) return Response.json({ focus: cached.focus, cached: true });
 
+  // Increment premarket_count (eenmalig per dag — alleen bij eerste call)
+  try {
+    getDb().prepare("UPDATE users SET premarket_count = COALESCE(premarket_count, 0) + 1 WHERE id = ?").run(userId);
+  } catch { /* kolom bestaat nog niet — migratie draait later */ }
+
   if (!checkRate(String(userId))) {
     return Response.json({ error: "Even wachten, probeer straks opnieuw." }, { status: 429 });
   }
@@ -80,7 +85,7 @@ export async function POST(request: NextRequest) {
 
   const marketContext = [
     btc ? `BTC: $${btc.price.toLocaleString("en-US")} (${btc.change24h >= 0 ? "+" : ""}${btc.change24h.toFixed(1)}% 24u) | trend: ${btc.trend} | RSI: ${btc.rsi.toFixed(0)} | score: ${btc.score}/100` : "",
-    fearGreed ? `Fear & Greed: ${fearGreed.value}/100 — ${fearGreed.label}` : "",
+    fearGreed ? `Fear & Greed: ${fearGreed}` : "",
     globalMetrics ? `Totale marktcap: $${(globalMetrics.totalMarketCapUsd / 1e12).toFixed(2)}T | BTC dominantie: ${globalMetrics.btcDominance.toFixed(1)}%` : "",
     focusAsset && focusAsset.symbol !== "BTCUSDT" ? `${focusAsset.symbol.replace("USDT","")}: $${focusAsset.price.toLocaleString("en-US")} | trend: ${focusAsset.trend} | score: ${focusAsset.score}/100` : "",
   ].filter(Boolean).join("\n");
