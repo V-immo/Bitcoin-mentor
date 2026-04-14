@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import EconomicCalendar from "@/components/EconomicCalendar";
 
 const EMOTIONS = [
   { value: 1, label: "😨", desc: "Angstig" },
@@ -225,6 +226,8 @@ export default function AgendaPage() {
   const selectedEntry = selectedDate ? entryMap[selectedDate] : null;
   const selectedTrades = selectedDate ? tradesByDate[selectedDate] : null;
 
+  const [agendaTab, setAgendaTab] = useState<"journaal" | "kalender">("journaal");
+
   return (
     <div style={styles.wrap}>
       {/* Header */}
@@ -233,9 +236,31 @@ export default function AgendaPage() {
           <h1 style={styles.title}>📅 Trading Agenda</h1>
           <p style={styles.subtitle}>Log je trades, emoties en notities per dag</p>
         </div>
+        {/* Tab switcher */}
+        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+          {(["journaal", "kalender"] as const).map(t => (
+            <button key={t} onClick={() => setAgendaTab(t)} style={{
+              padding: "7px 18px", borderRadius: 99, cursor: "pointer",
+              fontSize: 13, fontWeight: 600,
+              border: `1px solid ${agendaTab === t ? "#e91e63" : "rgba(255,255,255,0.12)"}`,
+              background: agendaTab === t ? "rgba(233,30,99,0.15)" : "transparent",
+              color: agendaTab === t ? "#e91e63" : "#64748b",
+              transition: "all 0.15s",
+            }}>
+              {t === "journaal" ? "📓 Journaal" : "🌍 Economisch"}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div style={styles.layout}>
+      {/* Economische kalender tab */}
+      {agendaTab === "kalender" && (
+        <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 16px 40px" }}>
+          <EconomicCalendar />
+        </div>
+      )}
+
+      {agendaTab === "journaal" && <div style={styles.layout}>
         {/* Kalender */}
         <div style={styles.calCard}>
           {/* Maand navigatie */}
@@ -692,7 +717,7 @@ export default function AgendaPage() {
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
       {loading && (
         <div style={styles.loadOverlay}>Laden…</div>
