@@ -34,7 +34,7 @@ export default function FirstSteps() {
     }
 
     Promise.all([
-      fetch("/api/me/settings").then(r => r.ok ? r.json() : {}),
+      fetch("/api/me/settings").then(r => r.ok ? r.json() as Promise<{ tradingMode?: string }> : {}),
       fetch("/api/me/trading-plan").then(r => r.ok ? r.json() : null),
       fetch("/api/me/quiz").then(r => r.ok ? r.json() : { xp: 0, history: [] }),
       fetch("/api/me/paper?asset=BTCUSDT").then(r => r.ok ? r.json() : { history: "[]" }),
