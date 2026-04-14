@@ -46,6 +46,15 @@ type ApiPosition = {
     activeTP?: number;
 } | null;
 
+export type TradeCloseDetail = {
+    pnl: number;
+    entryPrice: number;
+    exitPrice: number;
+    asset: string;
+    reason: "manual" | "sl" | "tp";
+    btcAmount: number;
+};
+
 type Props = {
     currentPrice: number;
     status: string;
@@ -479,6 +488,10 @@ export default function TerminalPaperPanel({
             setPendingEmotionSide("sell");
             setNoteInput("");
             checkCompliance("sell", closeValue, currentPrice);
+            // Fire Marcus auto-debrief event
+            window.dispatchEvent(new CustomEvent("marcus-trade-debrief", {
+                detail: { pnl, entryPrice: state.avgEntry, exitPrice: currentPrice, asset, reason: "manual", btcAmount: closeBtc } satisfies TradeCloseDetail,
+            }));
         }
     }
 
@@ -486,6 +499,8 @@ export default function TerminalPaperPanel({
         if (state.openBtc <= 0 || currentPrice <= 0) return;
         const valueNow = state.openBtc * currentPrice;
         const pnl = (currentPrice - state.avgEntry) * state.openBtc;
+        const entrySnap = state.avgEntry;
+        const btcSnap = state.openBtc;
         const newId = crypto.randomUUID();
         const noteText = reason === "sl" ? "🛑 Stop Loss triggered" : "🎯 Take Profit triggered";
         setState((prev) => ({
@@ -508,6 +523,10 @@ export default function TerminalPaperPanel({
             reason === "sl" ? t("paper_sltp_triggered_sl") : t("paper_sltp_triggered_tp"),
             reason === "sl" ? "danger" : "success"
         );
+        // Fire Marcus auto-debrief event
+        window.dispatchEvent(new CustomEvent("marcus-trade-debrief", {
+            detail: { pnl, entryPrice: entrySnap, exitPrice: currentPrice, asset, reason, btcAmount: btcSnap } satisfies TradeCloseDetail,
+        }));
     }
 
     function requestBuy(force = false) {

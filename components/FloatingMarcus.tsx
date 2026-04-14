@@ -56,6 +56,9 @@ export default function FloatingMarcus() {
   const [listening, setListening] = useState(false);
   const [speaking, setSpeaking] = useState(false);
 
+  // Trade debrief — triggered via custom DOM event vanuit TerminalPaperPanel
+  const [pendingDebrief, setPendingDebrief] = useState<string | null>(null);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -176,6 +179,46 @@ export default function FloatingMarcus() {
       setListening(false);
     }
   }, [open]);
+
+  // Luister naar trade-close events van TerminalPaperPanel
+  useEffect(() => {
+    if (hidden) return;
+    function handleTradeDebrief(e: Event) {
+      const { pnl, entryPrice, exitPrice, asset, reason, btcAmount } = (e as CustomEvent).detail as {
+        pnl: number; entryPrice: number; exitPrice: number;
+        asset: string; reason: "manual" | "sl" | "tp"; btcAmount: number;
+      };
+      const ticker = asset.replace("USDT", "").replace("EUR", "");
+      const pnlSign = pnl >= 0 ? "+" : "-";
+      const pnlAbs = Math.abs(pnl).toFixed(2);
+      const reasonText = reason === "sl" ? "Stop Loss geraakt 🛑" : reason === "tp" ? "Take Profit geraakt 🎯" : "handmatig gesloten";
+      const entryFmt = entryPrice.toLocaleString("en-US", { maximumFractionDigits: 0 });
+      const exitFmt  = exitPrice.toLocaleString("en-US", { maximumFractionDigits: 0 });
+      const btcFmt   = btcAmount.toFixed(6);
+      const msg = `[TRADE GESLOTEN — DEBRIEF GEVRAAGD]
+Asset: ${ticker}
+Positie: ${btcFmt} ${ticker}
+Entry: $${entryFmt} → Exit: $${exitFmt}
+Reden: ${reasonText}
+P&L: ${pnlSign}€${pnlAbs}
+
+Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is mijn concrete volgende stap?`;
+      setPendingDebrief(msg);
+      setOpen(true);
+    }
+    window.addEventListener("marcus-trade-debrief", handleTradeDebrief);
+    return () => window.removeEventListener("marcus-trade-debrief", handleTradeDebrief);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
+
+  // Auto-verstuur debrief zodra Marcus open staat en niet bezig is
+  useEffect(() => {
+    if (!open || !pendingDebrief || loading) return;
+    const msg = pendingDebrief;
+    setPendingDebrief(null);
+    send(msg);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, pendingDebrief, loading]);
 
   // TTS via ElevenLabs (premium) of browser fallback
   async function speakText(text: string) {
