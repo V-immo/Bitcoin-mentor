@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import MarcusBriefing from "./MarcusBriefing";
 import TradePlanValidator from "./TradePlanValidator";
+import PreMarketRitual from "./PreMarketRitual";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -94,10 +95,10 @@ async function fetchFuturesData(symbol: string) {
   }
 }
 
-type BottomTab = "paper" | "chat" | "checklist" | "briefing" | "plan";
+type BottomTab = "paper" | "chat" | "checklist" | "briefing" | "plan" | "ritual";
 
 // Tabs zichtbaar in balk
-const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "checklist", "briefing"];
+const PRIMARY_TABS: BottomTab[] = ["paper", "plan", "ritual", "checklist", "briefing"];
 
 export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT" }: Props) {
   const { t, lang } = useLanguage();
@@ -136,6 +137,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     { key: "chat",      label: t("nav_marcus_ai"), icon: "👤", mobileOnly: true },
     { key: "paper",     label: t("tab_trade"),      icon: "📊" },
     { key: "plan",      label: "Plan Check",         icon: "🎯" },
+    { key: "ritual",    label: "Ritueel",            icon: "🌅" },
     { key: "checklist", label: t("nav_checklist"), icon: "✅" },
     { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
   ];
@@ -987,6 +989,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             )}
             {bottomTab === "chat" && <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />}
             {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
+            {bottomTab === "ritual" && <PreMarketRitual asset={asset} />}
             {bottomTab === "briefing" && <MarcusBriefing />}
           </div>
         </div>
