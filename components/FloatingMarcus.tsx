@@ -76,35 +76,36 @@ export default function FloatingMarcus() {
     if (saved === "true") setVoiceEnabled(true);
   }, [hidden]);
 
-  // Laad history van server (cross-device) met localStorage als fallback
+  // Laad history: localStorage DIRECT (synchroon), daarna server als die meer heeft
   useEffect(() => {
     if (hidden) return;
+    // Stap 1: localStorage direct inladen — geen wachttijd, geen lege chat
+    let localMessages: Message[] = [];
+    try {
+      const saved = localStorage.getItem("marcus-chat-history");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Message[];
+        if (parsed.length > 0) {
+          localMessages = parsed;
+          setMessages(parsed);
+        }
+      }
+    } catch { /* leeg */ }
+
+    // Stap 2: server checken — overschrijf alleen als server meer berichten heeft (andere devices)
     fetch("/api/me/chat-history")
       .then(r => r.ok ? r.json() : null)
       .then((d: { messages?: Message[] } | null) => {
-        if (d?.messages && d.messages.length > 0) {
-          setMessages(d.messages);
-        } else {
-          // Fallback: localStorage (migratie voor bestaande users)
+        const serverMsgs = d?.messages ?? [];
+        if (serverMsgs.length > localMessages.length) {
+          setMessages(serverMsgs);
+          // Sync naar localStorage zodat volgende keer direct beschikbaar
           try {
-            const saved = localStorage.getItem("marcus-chat-history");
-            if (saved) {
-              const parsed = JSON.parse(saved) as Message[];
-              if (parsed.length > 0) setMessages(parsed);
-            }
-          } catch { /* leeg */ }
+            localStorage.setItem("marcus-chat-history", JSON.stringify(serverMsgs.slice(-30)));
+          } catch { /* quota */ }
         }
       })
-      .catch(() => {
-        // Offline fallback: localStorage
-        try {
-          const saved = localStorage.getItem("marcus-chat-history");
-          if (saved) {
-            const parsed = JSON.parse(saved) as Message[];
-            if (parsed.length > 0) setMessages(parsed);
-          }
-        } catch { /* leeg */ }
-      });
+      .catch(() => { /* server offline, localStorage is al geladen */ });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden]);
 
