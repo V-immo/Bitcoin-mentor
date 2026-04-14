@@ -158,6 +158,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [lastRefresh, setLastRefresh] = useState("");
   const [livePrice, setLivePrice] = useState<number>(initialData.price);
   const [priceFlash, setPriceFlash] = useState<"" | "flash-up" | "flash-down">("");
+  const [bitvavoEurPrice, setBitvavoEurPrice] = useState<number | null>(null);
   const prevPriceRef = useRef<number>(initialData.price);
   const [change24h, setChange24h] = useState<number>(0);
   const [activeInterval, setActiveInterval] = useState<ViewMode>(isFinnhubAsset(initialAsset) ? "1d" : "4h");
@@ -430,6 +431,26 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, isBinance]);
+
+  // Bitvavo publieke prijs — geen API key nodig, elke 30s gepolld
+  useEffect(() => {
+    const market = BITVAVO_MAP[asset];
+    if (!market) { setBitvavoEurPrice(null); return; }
+    let cancelled = false;
+    async function fetchBitvavoPrice() {
+      try {
+        const res = await fetch(`https://api.bitvavo.com/v2/ticker/price?market=${market}`);
+        if (!res.ok || cancelled) return;
+        const data = await res.json() as { price?: string };
+        const p = parseFloat(data.price ?? "0");
+        if (p > 0 && !cancelled) setBitvavoEurPrice(p);
+      } catch { /* ignore */ }
+    }
+    fetchBitvavoPrice();
+    const iv = setInterval(fetchBitvavoPrice, 30_000);
+    return () => { cancelled = true; clearInterval(iv); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asset]);
 
   // Kline WebSocket — live candles (Binance) met auto-reconnect
   const wsInterval: Interval = activeInterval === "multi" ? (isBinance ? "4h" : "1h") : activeInterval;
@@ -720,7 +741,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
             <span className="asset-select-caret">▾</span>
           </button>
           <div>
-            <div className={`terminal-topbar-price${priceFlash ? ` ${priceFlash}` : ""}`}>{fmtCurrency(chartPrice, asset)}</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+              <div className={`terminal-topbar-price${priceFlash ? ` ${priceFlash}` : ""}`}>{fmtCurrency(chartPrice, asset)}</div>
+              {bitvavoEurPrice && (
+                <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500 }}>
+                  Bitvavo €{bitvavoEurPrice.toLocaleString("nl-NL", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </span>
+              )}
+            </div>
             <div className="terminal-topbar-meta">
               <span className={`terminal-change-badge${change24h >= 0 ? " pos" : " neg"}`}>
                 {change24h >= 0 ? "▲" : "▼"} {Math.abs(change24h).toFixed(2)}%
