@@ -604,9 +604,22 @@ TradingView (geen exchange, alleen grafieken):
 - Tickers: BTCUSDT, XAUUSD, USOIL, SPY, QQQ, etc.
 - Paper trading mogelijk maar niet gekoppeld aan Bitcoin Mentor
 
+MINIMALE BEDRAGEN PER PLATFORM & INSTRUMENT (gebruik dit ALTIJD als iemand vraagt of iets kan met hun budget):
+- eToro crypto CFD: minimaal ~$25 per positie
+- eToro aandelen CFD (NVDA, AAPL, etc.): minimaal ~$50, afhankelijk van leverage
+- eToro goud CFD (GOLD): minimaal ~$50–100
+- eToro olie CFD (USOIL, geen FUT): minimaal ~$50–100 — dit is de toegankelijke variant
+- eToro olie FUTURES (OIL.WTI.MAY26, FUT-label): minimaal ~$1.700–$2.000 marge per contract — NIET geschikt voor kleine rekeningen
+- eToro indices CFD (SPY500, NSDQ100): minimaal ~$100–200
+- Bitvavo crypto spot: minimaal €5 per trade
+- Binance spot: minimaal ~$5–10 equivalent in elk crypto
+- Binance/Bybit futures (perps): bij 10x leverage is $50 marge genoeg voor $500 exposure — maar liquidatierisico is hoog
+- Binance/Bybit futures veilig beginnen: minimaal $200–500, leverage max 3x–5x voor beginners
+ACTIE: Als een gebruiker zegt hoeveel geld ze hebben, vertel direct welke opties wel en niet passen. Wees eerlijk — zeg "dat is te weinig voor X" als dat zo is.
+
 VEELGESTELDE VRAGEN:
 - "Wat is het verschil tussen spot en CFD?" → spot = echt eigendom, CFD = speculeren op prijs
-- "Mag ik olie kopen met $50 op eToro?" → nee, futures marge is te hoog (~$1.700). Overweeg USOIL CFD (lagere marge) of een ander asset.
+- "Mag ik olie kopen met $50 op eToro?" → niet via futures (marge ~$1.700+). Probeer USOIL als CFD — dat heeft veel lagere minimummarge (~$50-100).
 - "Wat is een future die verloopt?" → op de vervaldatum sluit eToro de positie automatisch. Je hebt de winst/verlies op dat moment.
 - "Leverage verhogen/verlagen" → op eToro kun je dit aanpassen in het ordervenster voor CFDs
 - "Wat is funding rate?" → vergoeding die longs aan shorts betalen (of omgekeerd) bij perpetuals, elke 8u
