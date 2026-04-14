@@ -557,10 +557,22 @@ export default function TerminalPaperPanel({
 
     function saveNote() {
         if (!pendingNoteId || !noteInput.trim()) { setPendingNoteId(null); return; }
+        const noteTrade = state.trades.find(t => t.id === pendingNoteId);
         setState((prev) => ({
             ...prev,
             trades: prev.trades.map(t => t.id === pendingNoteId ? { ...t, note: noteInput.trim() } : t),
         }));
+        // Auto-save naar trade journal
+        const today = new Date().toISOString().slice(0, 10);
+        fetch("/api/me/journal", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                date: today,
+                note: noteInput.trim(),
+                emotion: noteTrade?.emotion ?? 3,
+            }),
+        }).catch(() => {});
         setPendingNoteId(null);
         setNoteInput("");
     }
@@ -1282,28 +1294,43 @@ export default function TerminalPaperPanel({
             )}
 
             {/* === JOURNAL === */}
-            {pendingNoteId && (
-                <div className="terminal-journal-prompt">
-                    <div className="terminal-mini-label" style={{ marginBottom: 6 }}>
-                        {t("paper_journal_prompt")}
+            {pendingNoteId && (() => {
+                const jTrade = state.trades.find(t => t.id === pendingNoteId);
+                const pnl = jTrade?.pnl ?? 0;
+                const marcusQ = pnl > 0
+                    ? "Wat deed je goed hier? Welke setup werkte?"
+                    : pnl < 0
+                    ? "Wat leerde je van dit verlies? Wat doe je anders?"
+                    : "Wat nam je mee uit deze positie?";
+                return (
+                    <div className="terminal-journal-prompt">
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                            <div style={{
+                                width: 22, height: 22, borderRadius: "50%",
+                                background: "rgba(233,30,99,0.15)",
+                                border: "1px solid rgba(233,30,99,0.4)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontSize: 11, fontWeight: 700, color: "#e91e63", flexShrink: 0,
+                            }}>M</div>
+                            <span style={{ fontSize: 12, color: "var(--text-secondary)", fontStyle: "italic" }}>
+                                {marcusQ}
+                            </span>
+                        </div>
+                        <textarea
+                            className="terminal-journal-textarea"
+                            value={noteInput}
+                            onChange={(e) => setNoteInput(e.target.value)}
+                            placeholder={t("paper_journal_placeholder")}
+                            rows={3}
+                            autoFocus
+                        />
+                        <div className="terminal-paper-actions" style={{ marginTop: 6 }}>
+                            <button className="terminal-btn terminal-btn-muted" onClick={() => setPendingNoteId(null)}>{t("paper_journal_skip")}</button>
+                            <button className="terminal-btn terminal-btn-primary" onClick={saveNote}>{t("paper_journal_save")}</button>
+                        </div>
                     </div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8 }}>
-                        {t("paper_journal_desc")}
-                    </div>
-                    <textarea
-                        className="terminal-journal-textarea"
-                        value={noteInput}
-                        onChange={(e) => setNoteInput(e.target.value)}
-                        placeholder={t("paper_journal_placeholder")}
-                        rows={3}
-                        autoFocus
-                    />
-                    <div className="terminal-paper-actions" style={{ marginTop: 6 }}>
-                        <button className="terminal-btn terminal-btn-muted" onClick={() => setPendingNoteId(null)}>{t("paper_journal_skip")}</button>
-                        <button className="terminal-btn terminal-btn-primary" onClick={saveNote}>{t("paper_journal_save")}</button>
-                    </div>
-                </div>
-            )}
+                );
+            })()}
 
             {/* === STATS === */}
             {closedCount > 0 && (
