@@ -546,6 +546,34 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     }
   }, [livePrice]);
 
+  // Marcus proactief bij significante marktbewegingen
+  const sessionBasePriceRef = useRef<number>(0);
+  const marcusMoveAlertedRef = useRef(false);
+  useEffect(() => {
+    if (livePrice <= 0) return;
+    // Sla eerste prijs op als sessie-baseline
+    if (sessionBasePriceRef.current === 0) {
+      sessionBasePriceRef.current = livePrice;
+      return;
+    }
+    if (marcusMoveAlertedRef.current) return;
+    const base = sessionBasePriceRef.current;
+    const changePct = ((livePrice - base) / base) * 100;
+    // Trigger bij 2%+ beweging (of 3%+ voor een meer urgent bericht)
+    if (Math.abs(changePct) >= 2) {
+      marcusMoveAlertedRef.current = true;
+      window.dispatchEvent(new CustomEvent("marcus-market-move", {
+        detail: { asset, changePct, price: livePrice },
+      }));
+    }
+  }, [livePrice, asset]);
+
+  // Reset market-alert bij asset wissel
+  useEffect(() => {
+    sessionBasePriceRef.current = 0;
+    marcusMoveAlertedRef.current = false;
+  }, [asset]);
+
   const chartPrice = useMemo(() => livePrice || signal.price, [livePrice, signal.price]);
   const visibleCandles = useMemo(() => candleMap[activeInterval === "multi" ? "1d" : activeInterval] || [], [candleMap, activeInterval]);
   const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval) ?? TIMEFRAMES[0];

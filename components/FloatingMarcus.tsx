@@ -104,9 +104,9 @@ export default function FloatingMarcus() {
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
   }, [open, hidden]);
 
-  // Fetch nudge data voor notificatie-badge (als overlay gesloten is)
+  // Fetch nudge data — ook als overlay open is (voor auto-open logica)
   useEffect(() => {
-    if (hidden || open) return;
+    if (hidden) return;
     const today = new Date().toISOString().slice(0, 10);
     const weekKey = `week${Math.floor(Date.now() / (7 * 86400000))}`;
     fetch("/api/me/nudge")
@@ -124,11 +124,26 @@ export default function FloatingMarcus() {
           (!!data.eveningReview && !eveningDismissed)  ||
           (!!data.morningGreeting && !morningDismissed) ||
           (!!data.nudge && !nudgeDismissed);
-        setHasNotification(hasMsg);
-        setIsDistressedNotif(!!data.isDistressed);
+        if (!open) {
+          setHasNotification(hasMsg);
+          setIsDistressedNotif(!!data.isDistressed);
+        }
+
+        // Auto-open bij distress: altijd, direct
+        if (data.isDistressed && !open) {
+          setTimeout(() => setOpen(true), 1200);
+          return;
+        }
+
+        // Auto-open bij morning greeting als nog niet gezien vandaag
+        if (data.morningGreeting && !morningDismissed && !open) {
+          setTimeout(() => setOpen(true), 4000);
+          return;
+        }
       })
       .catch(() => {});
-  }, [hidden, open]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
 
   // Proactief bericht tonen als overlay opent met lege chat
   useEffect(() => {
@@ -219,6 +234,25 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
     send(msg);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, pendingDebrief, loading]);
+
+  // Luister naar significante marktbewegingen van het dashboard
+  useEffect(() => {
+    if (hidden) return;
+    function handleMarketMove(e: Event) {
+      const { asset, changePct, price } = (e as CustomEvent).detail as {
+        asset: string; changePct: number; price: number;
+      };
+      const ticker = asset.replace("USDT", "").replace("EUR", "");
+      const dir = changePct > 0 ? "gestegen" : "gedaald";
+      const abs = Math.abs(changePct).toFixed(1);
+      const msg = `[LIVE MARKTBEWEGING GEDETECTEERD]\n${ticker} is ${Math.abs(changePct) >= 3 ? "explosief " : ""}${dir} met ${abs}% — nu $${price.toLocaleString("en-US", { maximumFractionDigits: 0 })}.\n\nWat betekent dit en moet ik iets doen?`;
+      setPendingDebrief(msg);
+      setOpen(true);
+    }
+    window.addEventListener("marcus-market-move", handleMarketMove);
+    return () => window.removeEventListener("marcus-market-move", handleMarketMove);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
 
   // TTS via ElevenLabs (premium) of browser fallback
   async function speakText(text: string) {
@@ -388,8 +422,13 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               <div className={`float-marcus-avatar${speaking ? " speaking" : ""}`}>M</div>
               <div>
                 <div className="float-marcus-name">Marcus</div>
-                <div className="float-marcus-status">
-                  {speaking ? "Spreekt…" : streaming ? "Typt…" : "Online"}
+                <div className="float-marcus-status" style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  {speaking
+                    ? <><span className="marcus-sound-dots"><span /><span /><span /><span /></span> Spreekt</>
+                    : streaming
+                      ? <><span className="marcus-typing-dots" style={{ display: "inline-flex" }}><span /><span /><span /></span> Typt</>
+                      : "Online"
+                  }
                 </div>
               </div>
             </div>
@@ -435,7 +474,9 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
             {messages.map((m, i) => (
               <div key={i} className={`float-marcus-msg float-marcus-msg-${m.role}`}>
                 {m.role === "assistant" ? (
-                  <span dangerouslySetInnerHTML={{ __html: mdToHtml(m.content) || "▋" }} />
+                  m.content === "" && streaming && i === messages.length - 1
+                    ? <span className="marcus-typing-dots"><span /><span /><span /></span>
+                    : <span dangerouslySetInnerHTML={{ __html: mdToHtml(m.content) }} />
                 ) : (
                   m.content
                 )}
@@ -484,13 +525,19 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
 
       {/* Zwevende knop */}
       <button
-        className={`float-marcus-btn${open ? " active" : hasNotification ? " notify" : ""}`}
+        className={`float-marcus-btn${open ? " active" : speaking ? " speaking" : hasNotification ? " notify" : ""}`}
         onClick={() => setOpen(v => !v)}
-        title={hasNotification ? "Marcus heeft een bericht voor je" : "Vraag Marcus"}
+        title={speaking ? "Marcus spreekt…" : hasNotification ? "Marcus heeft een bericht voor je" : "Vraag Marcus"}
         aria-label="Marcus openen"
       >
         M
-        {hasNotification && !open && (
+        {/* Sound wave dots — zichtbaar als Marcus spreekt en chat gesloten is */}
+        {speaking && !open && (
+          <span className="marcus-btn-sound">
+            <span /><span /><span /><span />
+          </span>
+        )}
+        {hasNotification && !open && !speaking && (
           <span style={{
             position: "absolute", top: 2, right: 2,
             width: 12, height: 12, borderRadius: "50%",
@@ -506,13 +553,90 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
       </button>
 
       <style>{`
+        /* Avatar pulse tijdens spreken */
         .float-marcus-avatar.speaking {
           animation: marcus-speaking 1s ease-in-out infinite;
         }
         @keyframes marcus-speaking {
           0%, 100% { box-shadow: 0 0 0 0 rgba(233,30,99,0.4); }
-          50% { box-shadow: 0 0 0 6px rgba(233,30,99,0); }
+          50% { box-shadow: 0 0 0 8px rgba(233,30,99,0); }
         }
+
+        /* Floating button — spreading rings tijdens spreken */
+        .float-marcus-btn.speaking {
+          animation: marcus-btn-speak 1.4s ease-in-out infinite;
+          background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) !important;
+        }
+        @keyframes marcus-btn-speak {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(233,30,99,0.6), 0 4px 20px rgba(233,30,99,0.4); }
+          50% { box-shadow: 0 0 0 10px rgba(233,30,99,0), 0 4px 20px rgba(233,30,99,0.4); }
+        }
+
+        /* Sound wave balletjes op de button */
+        .marcus-btn-sound {
+          position: absolute;
+          bottom: -14px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 3px;
+          align-items: flex-end;
+          height: 12px;
+        }
+        .marcus-btn-sound span {
+          width: 3px;
+          border-radius: 2px;
+          background: #e91e63;
+          animation: marcus-wave 0.8s ease-in-out infinite;
+        }
+        .marcus-btn-sound span:nth-child(1) { animation-delay: 0s;    height: 5px; }
+        .marcus-btn-sound span:nth-child(2) { animation-delay: 0.15s; height: 10px; }
+        .marcus-btn-sound span:nth-child(3) { animation-delay: 0.3s;  height: 7px; }
+        .marcus-btn-sound span:nth-child(4) { animation-delay: 0.45s; height: 4px; }
+        @keyframes marcus-wave {
+          0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
+          50%       { transform: scaleY(1);   opacity: 1; }
+        }
+
+        /* Sound wave in header status */
+        .marcus-sound-dots {
+          display: inline-flex;
+          align-items: flex-end;
+          gap: 2px;
+          height: 12px;
+        }
+        .marcus-sound-dots span {
+          width: 3px;
+          border-radius: 2px;
+          background: #e91e63;
+          animation: marcus-wave 0.7s ease-in-out infinite;
+        }
+        .marcus-sound-dots span:nth-child(1) { animation-delay: 0s;    height: 4px; }
+        .marcus-sound-dots span:nth-child(2) { animation-delay: 0.12s; height: 8px; }
+        .marcus-sound-dots span:nth-child(3) { animation-delay: 0.24s; height: 6px; }
+        .marcus-sound-dots span:nth-child(4) { animation-delay: 0.36s; height: 3px; }
+
+        /* Typing dots (3 springende bolletjes) */
+        .marcus-typing-dots {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .marcus-typing-dots span {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: rgba(233,30,99,0.8);
+          animation: marcus-bounce 1.2s ease-in-out infinite;
+        }
+        .marcus-typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .marcus-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .marcus-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes marcus-bounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+          30% { transform: translateY(-5px); opacity: 1; }
+        }
+
         @keyframes marcus-distress {
           0%   { box-shadow: 0 0 0 0 rgba(233,30,99,0.8); }
           70%  { box-shadow: 0 0 0 8px rgba(233,30,99,0); }
