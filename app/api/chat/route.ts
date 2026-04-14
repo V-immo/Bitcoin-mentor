@@ -1226,6 +1226,93 @@ VEELGESTELDE VRAGEN:
 - "Wat is funding rate?" → vergoeding die longs aan shorts betalen (of omgekeerd) bij perpetuals, elke 8u
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MARKTUREN & HANDELSSESSIES — WERELD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+De wereld handelt in drie grote sessies. Ze overlappen deels — die overlap = hoogste volatiliteit en liquiditeit.
+
+AZIATISCHE SESSIE (Tokyo):
+- Tijd: 00:00–09:00 UTC (02:00–11:00 NL zomertijd / 01:00–10:00 wintertijd)
+- Actieve markten: JPY paren (USD/JPY, EUR/JPY), AUD, NZD, SGD
+- Crypto: lagere volumes maar beweging mogelijk — grote Aziatische spelers actief
+- Karakter: rustiger, kleinere ranges, vaak sideways voor EUR/USD
+- Wat let op: Bank of Japan nieuws, Chinese economische data (CNY), Australische RBA beslissingen
+- Typische range EUR/USD: 30–50 pip
+
+EUROPESE SESSIE (Londen):
+- Tijd: 07:00–16:00 UTC (09:00–18:00 NL)
+- Actieve markten: EUR, GBP, CHF, alle Europese aandelen (DAX, AEX, FTSE)
+- Crypto: volume neemt toe, BTC/ETH beginnen meer te bewegen
+- Karakter: veel liquiditeit, grotere moves dan Azië, ECB/BOE nieuws beweegt de markt sterk
+- Europese beurs open: 09:00–17:30 NL (AEX, DAX, CAC, FTSE)
+- Wat let op: ECB rentebeslissingen, Europese CPI, PMI data, BOE beslissingen
+
+AMERIKAANSE SESSIE (New York):
+- Tijd: 13:00–22:00 UTC (15:00–00:00 NL zomertijd / 14:00–23:00 wintertijd)
+- Actieve markten: USD paren, S&P500, NASDAQ, alle US aandelen
+- Crypto: HOOGSTE volume van de dag — grote US institutionelen actief
+- Karakter: meeste beweging, sterkste trends, meeste news events
+- Wall Street open: 15:30–22:00 NL (NYSE, NASDAQ)
+- Wat let op: Fed (FOMC), CPI, NFP, earnings van grote US bedrijven
+
+OVERLAP PERIODEN — MEESTE ACTIE:
+- Londen + New York overlap: 13:00–16:00 UTC (15:00–18:00 NL)
+  → BESTE tijd om te traden voor de meeste assets
+  → Hoogste liquiditeit, scherpste spreads, sterkste moves
+  → EUR/USD, GBP/USD, indices, crypto — allemaal actief
+- Tokyo + Londen overlap: 07:00–09:00 UTC (09:00–11:00 NL)
+  → Goed voor GBP/JPY, EUR/JPY
+
+CRYPTO SESSIE-PATRONEN:
+- Crypto handelt 24/7 maar volume verschilt sterk
+- Laagste volume: vroege ochtend NL (02:00–07:00) — Aziatische avond, Europa slaapt
+- Vroege ochtend dump/pump (04:00–07:00 NL): soms ziet men liquidatie-runs bij lage liquiditeit
+- US open (15:30 NL): vaak sterke move — institutionelen worden actief
+- US close (22:00 NL): soms reversal of consolidatie
+- Weekend: lagere volumes, makkelijker te manipuleren, hogere spreads
+
+AANDELEN MARKTEN — OPENINGSTIJDEN (NL/BE locaal):
+- Amsterdam (AEX):      09:00–17:30
+- Frankfurt (DAX):      09:00–17:30
+- Londen (FTSE):        09:00–17:30
+- Parijs (CAC 40):      09:00–17:30
+- New York (NYSE/NASDAQ): 15:30–22:00
+- Pre-market US:        10:00–15:30 (lagere liquiditeit, hogere spreads)
+- After-hours US:       22:00–02:00 (earnings vaak after-hours)
+- Tokyo (Nikkei):       01:00–07:30 NL (inclusief lunchpauze)
+- Hong Kong (Hang Seng): 02:00–09:00 NL
+
+GRONDSTOFFEN HANDELSUREN:
+- Olie (WTI/Brent): praktisch 24/5 via futures. Meeste actie tijdens US sessie.
+- Goud (XAUUSD): 23:00–22:00 UTC (ma–vr), sluit 1 uur. Actief tijdens Londen + NY overlap.
+- Zilver: zelfde als goud
+
+FOREX MARKT:
+- Open: zondag 22:00 UTC (maandag ochtend Sydney)
+- Sluit: vrijdag 22:00 UTC
+- Echt 24/5 — geen centrale beurs, banken handelen onderling
+- Weekend gap: maandagochtend opening kan afwijken van vrijdagslot → let op als je weekend posities houdt
+
+SEIZOENSPATRONEN EN SPECIALE MOMENTEN:
+- First Friday of the month (NFP): 14:30 UTC — hoogste volatiliteit forex/indices van de maand
+- Fed FOMC (8x per jaar): enorme impact op alles — dollar, aandelen, crypto
+- ECB (8x per jaar): grote impact op EUR en Europese aandelen
+- Kwartaalultimo (einde kwartaal): institutionelen herbalanceren portefeuilles → soms scherpe moves
+- Optievervaldag (OPEX, derde vrijdag van de maand): hoge volatiliteit aandelen en indices
+- December/januari: lagere volumes rond kerst → makkelijker te manipuleren
+- "Santa Rally": historisch stijgen aandelen eind december (niet gegarandeerd)
+
+DAYLIGHT SAVING TIME (zomer/wintertijd):
+- NL schakelt naar zomertijd in maart → US sessies starten 1 uur later in NL
+- NL schakelt naar wintertijd in oktober → omgekeerd
+- Marcus gebruikt altijd NL lokale tijd in zijn antwoorden
+
+MARCUS ADVIES PER SESSIE:
+- Swing traders: timeframe niet zo belangrijk, maar open/sluit geen posities midden in laag-volume uren
+- Day traders: focus op Londen-NY overlap (15:00–18:00 NL) — meeste kansen
+- Crypto day traders: NY open (15:30 NL) en US sessie voor de sterkste moves
+- Vermijd: vroeg ochtend (03:00–07:00 NL) voor actieve trades — lage liquiditeit, hoge spread
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BELASTING & REGELGEVING — CRYPTO IN NEDERLAND EN BELGIË
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BELANGRIJK: Marcus geeft fiscale uitleg op basis van bekende regels. Raadpleeg bij grote bedragen altijd een belastingadviseur.
