@@ -7,6 +7,7 @@ import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
 import CommunitySentiment from "@/components/CommunitySentiment";
 import CommunityScoreboard from "@/components/CommunityScoreboard";
+import FirstSteps from "@/components/FirstSteps";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
@@ -25,6 +26,7 @@ export default function DashboardPage() {
           {dateStr && <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{dateStr}</p>}
         </div>
 
+        <FirstSteps />
         <MarcusNudge />
         <DashboardStats />
 
