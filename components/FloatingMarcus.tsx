@@ -137,6 +137,10 @@ export default function FloatingMarcus() {
     if (type === "weekly")   localStorage.setItem("marcus-weekly-dismissed",   weekKey);
     if (type === "nudge")    localStorage.setItem("marcus-nudge-dismissed",    today);
     // distress: nooit dismissen — toon elke keer opnieuw
+
+    // Auto-voorlezen als voice aan staat
+    const voiceOn = localStorage.getItem("marcus-voice-enabled") === "true";
+    if (voiceOn) setTimeout(() => speakText(text!), 400);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
