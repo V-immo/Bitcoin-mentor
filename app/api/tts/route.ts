@@ -1,15 +1,16 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 
-// ElevenLabs voice ID voor Marcus — diepe mannenstem
-// Default: "onwK4e9ZLuTAKqWW03F9" (Daniel) of "N2lVS1w4EtoT3dr4eOWO" (Callum)
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "onwK4e9ZLuTAKqWW03F9";
+// ElevenLabs voice ID voor Marcus — diepe warme mannenstem
+// George (JBFqnCBsd6RMkjVDRZzb) — autoritair, warm, uitstekend in Dutch met multilingual model
+// Alternatief via env: ELEVENLABS_VOICE_ID overschrijven
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "JBFqnCBsd6RMkjVDRZzb";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user) return new Response("Unauthorized", { status: 401 });
 
-  const { text } = await request.json().catch(() => ({ text: "" }));
+  const { text, lang } = await request.json().catch(() => ({ text: "", lang: "nl" }));
   if (!text?.trim()) return new Response("No text", { status: 400 });
 
   const apiKey = process.env.ELEVENLABS_API_KEY;
@@ -18,6 +19,10 @@ export async function POST(request: NextRequest) {
   if (!apiKey) {
     return new Response(null, { status: 204 });
   }
+
+  // eleven_multilingual_v2 — beste model voor Nederlands en andere talen
+  // Detecteert taal automatisch uit de tekst, geen accent problemen
+  const model = (lang === "en") ? "eleven_turbo_v2_5" : "eleven_multilingual_v2";
 
   try {
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`, {
@@ -29,8 +34,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         text: text.slice(0, 800),
-        model_id: "eleven_turbo_v2_5",
-        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.1, use_speaker_boost: true },
+        model_id: model,
+        voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.25, use_speaker_boost: true },
       }),
     });
 

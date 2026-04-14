@@ -168,10 +168,12 @@ export default function FloatingMarcus() {
     setSpeaking(true);
     try {
       // Probeer ElevenLabs server route
+      // Taal detecteren uit HTML lang attribuut (nl/en)
+      const lang = document.documentElement.lang?.startsWith("en") ? "en" : "nl";
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: clean }),
+        body: JSON.stringify({ text: clean, lang }),
       });
 
       if (res.ok && res.status !== 204 && res.body) {
