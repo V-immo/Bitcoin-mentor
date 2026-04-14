@@ -14,7 +14,30 @@ interface JournalEntry {
   date: string;
   note: string | null;
   emotion: number;
+  what_went_well: string | null;
+  what_went_wrong: string | null;
+  lessons: string | null;
+  tags: string[];
+  marcus_reflection: string | null;
 }
+
+const TAGS = [
+  { id: "fomo",       label: "FOMO",          color: "#ef4444" },
+  { id: "discipline", label: "Discipline ✓",  color: "#22c55e" },
+  { id: "goed-setup", label: "Goede setup",   color: "#22c55e" },
+  { id: "te-vroeg",   label: "Te vroeg in",   color: "#f59e0b" },
+  { id: "te-laat",    label: "Te laat in",    color: "#f59e0b" },
+  { id: "slechte-exit", label: "Slechte exit", color: "#ef4444" },
+  { id: "revenge",    label: "Revenge trade", color: "#ef4444" },
+  { id: "geduldig",   label: "Geduldig",      color: "#22c55e" },
+  { id: "overtraded", label: "Overtraded",    color: "#ef4444" },
+  { id: "news-trade", label: "News trade",    color: "#a78bfa" },
+  { id: "trend-follow", label: "Trend follow", color: "#38bdf8" },
+  { id: "sl-geraakt", label: "SL geraakt",    color: "#94a3b8" },
+  { id: "tp-geraakt", label: "TP geraakt",    color: "#22c55e" },
+  { id: "plan-gevolgd", label: "Plan gevolgd", color: "#22c55e" },
+  { id: "plan-genegeerd", label: "Plan genegeerd", color: "#ef4444" },
+];
 
 interface TradeDay {
   pnl: number;
@@ -48,6 +71,11 @@ export default function AgendaPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [emotion, setEmotion] = useState(3);
+  const [whatWentWell, setWhatWentWell] = useState("");
+  const [whatWentWrong, setWhatWentWrong] = useState("");
+  const [lessons, setLessons] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [marcusReflection, setMarcusReflection] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [marcusAnalysis, setMarcusAnalysis] = useState<string | null>(null);
@@ -140,17 +168,42 @@ export default function AgendaPage() {
     const entry = entries.find(e => e.date === dateStr);
     setNote(entry?.note ?? "");
     setEmotion(entry?.emotion ?? 3);
+    setWhatWentWell(entry?.what_went_well ?? "");
+    setWhatWentWrong(entry?.what_went_wrong ?? "");
+    setLessons(entry?.lessons ?? "");
+    setSelectedTags(entry?.tags ?? []);
+    setMarcusReflection(entry?.marcus_reflection ?? null);
+  }
+
+  function toggleTag(tagId: string) {
+    setSelectedTags(prev =>
+      prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+    );
   }
 
   async function save() {
     if (!selectedDate) return;
     setSaving(true);
     try {
-      await fetch("/api/me/journal", {
+      const tradeSummary = selectedDate && tradesByDate[selectedDate]
+        ? `${tradesByDate[selectedDate].count} trades, P&L €${tradesByDate[selectedDate].pnl.toFixed(2)}, assets: ${tradesByDate[selectedDate].assets.join(", ")}`
+        : "";
+      const res = await fetch("/api/me/journal", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: selectedDate, note, emotion }),
+        body: JSON.stringify({
+          date: selectedDate, note, emotion,
+          what_went_well: whatWentWell,
+          what_went_wrong: whatWentWrong,
+          lessons,
+          tags: selectedTags,
+          tradeSummary,
+        }),
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.marcus_reflection) setMarcusReflection(data.marcus_reflection);
+      }
       await load();
     } catch { /* ignore */ }
     setSaving(false);
@@ -517,7 +570,7 @@ export default function AgendaPage() {
               {/* Emotie */}
               <div style={{ marginBottom: 14 }}>
                 <div style={styles.fieldLabel}>Hoe voelde je je?</div>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {EMOTIONS.map(e => (
                     <button
                       key={e.value}
@@ -529,20 +582,78 @@ export default function AgendaPage() {
                         border: `1px solid ${emotion === e.value ? "#e91e63" : "rgba(233,30,99,0.2)"}`,
                       }}
                     >
-                      {e.label}
+                      <span>{e.label}</span>
+                      <span style={{ fontSize: 9, display: "block", color: "#94a3b8", marginTop: 1 }}>{e.desc}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Notitie */}
+              {/* Tags */}
               <div style={{ marginBottom: 14 }}>
-                <div style={styles.fieldLabel}>Notitie</div>
+                <div style={styles.fieldLabel}>Tags</div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {TAGS.map(tag => {
+                    const active = selectedTags.includes(tag.id);
+                    return (
+                      <button
+                        key={tag.id}
+                        onClick={() => toggleTag(tag.id)}
+                        style={{
+                          fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 20,
+                          cursor: "pointer", transition: "all 0.15s",
+                          background: active ? `${tag.color}22` : "rgba(255,255,255,0.04)",
+                          border: `1px solid ${active ? tag.color : "rgba(255,255,255,0.1)"}`,
+                          color: active ? tag.color : "#64748b",
+                        }}
+                      >
+                        {tag.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Structurele reflectie */}
+              <div style={{ marginBottom: 14 }}>
+                <div style={styles.fieldLabel}>✅ Wat ging goed?</div>
+                <textarea
+                  value={whatWentWell}
+                  onChange={e => setWhatWentWell(e.target.value)}
+                  placeholder="Setup herkend, discipline gehouden, plan gevolgd…"
+                  rows={2}
+                  style={styles.textarea}
+                />
+              </div>
+              <div style={{ marginBottom: 14 }}>
+                <div style={styles.fieldLabel}>❌ Wat kon beter?</div>
+                <textarea
+                  value={whatWentWrong}
+                  onChange={e => setWhatWentWrong(e.target.value)}
+                  placeholder="Te vroeg ingestapt, SL niet gezet, FOMO…"
+                  rows={2}
+                  style={styles.textarea}
+                />
+              </div>
+              <div style={{ marginBottom: 14 }}>
+                <div style={styles.fieldLabel}>💡 Leerpunten</div>
+                <textarea
+                  value={lessons}
+                  onChange={e => setLessons(e.target.value)}
+                  placeholder="Wat neem ik mee naar morgen?"
+                  rows={2}
+                  style={styles.textarea}
+                />
+              </div>
+
+              {/* Vrije notitie */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={styles.fieldLabel}>📝 Extra notitie</div>
                 <textarea
                   value={note}
                   onChange={e => setNote(e.target.value)}
-                  placeholder="Wat ging goed? Wat leer je van vandaag?"
-                  rows={4}
+                  placeholder="Vrije ruimte — gedachten, marktobservaties…"
+                  rows={2}
                   style={styles.textarea}
                 />
               </div>
@@ -552,14 +663,31 @@ export default function AgendaPage() {
                 disabled={saving}
                 style={styles.saveBtn}
               >
-                {saving ? "Opslaan…" : "💾 Opslaan"}
+                {saving ? "Opslaan + Marcus denkt na…" : "💾 Opslaan"}
               </button>
+
+              {/* Marcus reflectievraag */}
+              {marcusReflection && (
+                <div style={{
+                  marginTop: 14,
+                  background: "linear-gradient(135deg, rgba(233,30,99,0.1) 0%, rgba(233,30,99,0.03) 100%)",
+                  border: "1px solid rgba(233,30,99,0.35)",
+                  borderRadius: 12, padding: "12px 14px",
+                }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#e91e63", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Marcus vraagt
+                  </div>
+                  <div style={{ fontSize: 14, color: "var(--text-primary, #fce8f0)", lineHeight: 1.6, fontStyle: "italic" }}>
+                    &ldquo;{marcusReflection}&rdquo;
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div style={styles.emptyState}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>👆</div>
               <p style={{ color: "#64748b", fontSize: 14, margin: 0 }}>
-                Klik op een dag om je notitie en emotie in te vullen
+                Klik op een dag om je journal in te vullen
               </p>
             </div>
           )}
@@ -603,7 +731,7 @@ const styles: Record<string, React.CSSProperties> = {
   dayCardTitle: { fontWeight: 700, fontSize: 15, color: "var(--text-primary, #fce8f0)", marginBottom: 14, textTransform: "capitalize" },
   tradeSum: { background: "rgba(233,30,99,0.06)", border: "1px solid rgba(233,30,99,0.15)", borderRadius: 10, padding: "10px 14px", marginBottom: 14 },
   fieldLabel: { fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, fontWeight: 600 },
-  emoBtn: { width: 40, height: 40, borderRadius: 8, fontSize: 20, cursor: "pointer", transition: "all 0.15s" },
+  emoBtn: { minWidth: 52, padding: "6px 4px", borderRadius: 8, fontSize: 18, cursor: "pointer", transition: "all 0.15s", textAlign: "center" as const, lineHeight: 1 },
   textarea: { width: "100%", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 10, padding: "10px 12px", color: "var(--text-primary, #fce8f0)", fontSize: 14, resize: "vertical", outline: "none", fontFamily: "inherit", boxSizing: "border-box" },
   saveBtn: { width: "100%", background: "#e91e63", border: "none", color: "#fff", borderRadius: 10, padding: "12px 0", fontSize: 15, fontWeight: 700, cursor: "pointer" },
   emptyState: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.15)", borderRadius: 16, padding: "40px 20px", textAlign: "center" },

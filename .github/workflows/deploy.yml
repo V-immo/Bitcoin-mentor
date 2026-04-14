@@ -44,6 +44,7 @@ jobs:
             node db/migrate-journal.js || true
             node db/migrate-weekly-review.js || true
             node db/migrate-2fa.js || true
+            node db/migrate-journal-v2.js || true
 
             # Backup huidige werkende build — site blijft online tijdens build
             rm -rf .next-backup || true
