@@ -239,7 +239,7 @@ export async function GET() {
 
   const daysSinceTrade   = daysSince(lastTradeDate);
   const daysSinceJournal = daysSince(lastJournal?.last ?? null);
-  const daysSinceLogin   = calendarDaysSince(user?.last_streak_date ?? null) ?? 0;
+  const daysSinceLogin   = calendarDaysSince(user?.last_login_at ?? null) ?? 0;
   const btcSummary       = getBtcSummary();
 
   const client = process.env.ANTHROPIC_API_KEY
