@@ -9,6 +9,10 @@ type BriefingData = {
   createdAt?: string;
 };
 
+type UserSettings = {
+  trading_mode?: string;
+};
+
 function markdownToHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -23,6 +27,7 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
   const [data, setData] = useState<BriefingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const [tradingMode, setTradingMode] = useState<string>("swing");
 
   useEffect(() => {
     fetch("/api/briefing")
@@ -30,6 +35,11 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
       .then(d => { if (d) setData(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
+    // Haal trading mode op voor juiste titel
+    fetch("/api/me/settings")
+      .then(r => r.ok ? r.json() : null)
+      .then((s: UserSettings | null) => { if (s?.trading_mode) setTradingMode(s.trading_mode); })
+      .catch(() => {});
   }, []);
 
   if (loading) return (
@@ -43,7 +53,7 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
       <div style={{ fontSize: 28, marginBottom: 10 }}>💡</div>
       <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>Nog geen briefing vandaag</div>
       <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-        Marcus genereert elke ochtend om 08:00 een dagelijkse swing briefing.<br />
+        Marcus genereert elke ochtend om 08:00 een dagelijkse briefing.<br />
         Kom later terug of vraag het aan Marcus via de chat.
       </div>
     </div>
@@ -61,7 +71,9 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div className="marcus-avatar-m" style={{ width: 28, height: 28, fontSize: 14, flexShrink: 0 }}>M</div>
           <div>
-            <div className="marcus-briefing-title">Dagelijkse Swing Briefing</div>
+            <div className="marcus-briefing-title">
+              {tradingMode === "day" ? "Dagelijkse Day Trading Briefing" : tradingMode === "scalp" ? "Dagelijkse Scalping Briefing" : "Dagelijkse Swing Briefing"}
+            </div>
             <div className="marcus-briefing-meta">
               {data.date}{timeStr ? ` · ${timeStr}` : ""}
               {data.assets?.length > 0 && (

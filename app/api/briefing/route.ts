@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
   const client = new Anthropic({ apiKey });
 
-  const prompt = `Je bent Marcus, een ervaren swing trader coach. Schrijf de dagelijkse swing trading briefing voor vandaag (${today}).
+  const prompt = `Je bent Marcus, een ervaren trading coach. Schrijf de dagelijkse trading briefing voor vandaag (${today}).
 
 MARKTDATA VAN DIT MOMENT:
 ${scanSummary || "Geen scandata beschikbaar."}
@@ -107,7 +107,7 @@ ${scanSummary || "Geen scandata beschikbaar."}
 Fear & Greed Index: ${fearGreed}
 
 JOUW TAAK:
-Schrijf een concrete, actiegericht swing trading briefing. Geen bullshit, geen vage algemeenheden.
+Schrijf een concrete, actiegericht briefing die bruikbaar is voor zowel day traders als swing traders. Geen bullshit, geen vage algemeenheden.
 
 STRUCTUUR (volg dit exact):
 
@@ -115,19 +115,18 @@ STRUCTUUR (volg dit exact):
 [1-2 zinnen over het algemene marktsentiment. Bull/bear/sideways? Veilig of voorzichtig?]
 
 🎯 SETUP VAN DE DAG
-[Kies de 1-2 BESTE swing setups uit de scan. Geef voor elke setup:]
+[Kies de 1-2 BESTE setups uit de scan. Geef voor elke setup:]
 Asset: [naam + ticker]
 Koopzone: $X – $Y
 Stop-loss: $Z
 Target: $A (R:R ~1:X)
-Waarom: [2-3 zinnen: trend, RSI, structuur, Wyckoff-fase]
-Bijbelse wijsheid die past: [optioneel, max 1 zin]
+Waarom: [2-3 zinnen: trend, RSI, structuur, momentum]
 
 ⚠️ ASSETS OM TE VERMIJDEN
 [1-3 assets die rood staan of gevaarlijk zijn, kort waarom]
 
 📌 JOUW TAAK VANDAAG
-[1 concrete actie voor de gebruiker: grafiek bekijken op timeframe X, laagje instappen als prijs Y raakt, etc.]
+[1 concrete actie voor de gebruiker: grafiek bekijken, level bewaken, alert instellen, etc.]
 
 Schrijf als Marcus — direct, menselijk, niet als rapport. Max 300 woorden.`;
 

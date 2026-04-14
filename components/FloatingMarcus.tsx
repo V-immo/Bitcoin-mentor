@@ -62,6 +62,7 @@ export default function FloatingMarcus() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -75,29 +76,60 @@ export default function FloatingMarcus() {
     if (saved === "true") setVoiceEnabled(true);
   }, [hidden]);
 
-  // Laad history uit localStorage na mount (niet in useState — SSR hydration fix)
+  // Laad history van server (cross-device) met localStorage als fallback
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("marcus-chat-history");
-      if (saved) {
-        const parsed = JSON.parse(saved) as Message[];
-        if (parsed.length > 0) setMessages(parsed);
-      }
-    } catch { /* leeg */ }
-  }, []);
+    if (hidden) return;
+    fetch("/api/me/chat-history")
+      .then(r => r.ok ? r.json() : null)
+      .then((d: { messages?: Message[] } | null) => {
+        if (d?.messages && d.messages.length > 0) {
+          setMessages(d.messages);
+        } else {
+          // Fallback: localStorage (migratie voor bestaande users)
+          try {
+            const saved = localStorage.getItem("marcus-chat-history");
+            if (saved) {
+              const parsed = JSON.parse(saved) as Message[];
+              if (parsed.length > 0) setMessages(parsed);
+            }
+          } catch { /* leeg */ }
+        }
+      })
+      .catch(() => {
+        // Offline fallback: localStorage
+        try {
+          const saved = localStorage.getItem("marcus-chat-history");
+          if (saved) {
+            const parsed = JSON.parse(saved) as Message[];
+            if (parsed.length > 0) setMessages(parsed);
+          }
+        } catch { /* leeg */ }
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
 
-  // Sla laatste 30 berichten op in localStorage
+  // Sla laatste 30 berichten op — server (cross-device) + localStorage (fallback)
   useEffect(() => {
     if (messages.length === 0) return;
+    // localStorage altijd
     try {
       localStorage.setItem("marcus-chat-history", JSON.stringify(messages.slice(-30)));
     } catch { /* quota */ }
+    // Server debounced (niet bij elke token tijdens streaming)
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => {
+      fetch("/api/me/chat-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: messages.slice(-30) }),
+      }).catch(() => {});
+    }, 2000);
   }, [messages]);
 
   useEffect(() => {
     if (hidden) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streaming, hidden]);
+  }, [messages, streaming, hidden, open]);
 
   useEffect(() => {
     if (hidden) return;
@@ -267,6 +299,18 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
     return () => window.removeEventListener("marcus-price-alert", handlePriceAlert);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden]);
+
+  // Leren-opdracht: check localStorage voor prompt vanuit MarcusCurriculum
+  useEffect(() => {
+    if (hidden) return;
+    const prompt = localStorage.getItem("btcmentor-marcus-prompt");
+    if (prompt) {
+      localStorage.removeItem("btcmentor-marcus-prompt");
+      setPendingDebrief(prompt);
+      setOpen(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden, pathname]);
 
   // TTS via ElevenLabs (premium) of browser fallback
   async function speakText(text: string) {
