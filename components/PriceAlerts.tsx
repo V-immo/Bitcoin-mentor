@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useSession } from "next-auth/react";
 
@@ -21,8 +20,17 @@ type Props = {
   currentPrice?: number;
 };
 
+// Snelknoppen relatief aan huidige prijs
+const QUICK_OFFSETS = [
+  { label: "-10%", pct: -10, color: "#ef4444" },
+  { label: "-5%",  pct: -5,  color: "#f97316" },
+  { label: "-2%",  pct: -2,  color: "#eab308" },
+  { label: "+2%",  pct: 2,   color: "#84cc16" },
+  { label: "+5%",  pct: 5,   color: "#22c55e" },
+  { label: "+10%", pct: 10,  color: "#10b981" },
+];
+
 export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
-  const { t } = useLanguage();
   const { data: session } = useSession();
   const userEmail = (session?.user as { email?: string })?.email ?? "";
 
@@ -35,8 +43,13 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
   // Form state
   const [formAsset, setFormAsset] = useState(currentAsset ?? "BTCUSDT");
   const [formCondition, setFormCondition] = useState<"above" | "below">("below");
-  const [formPrice, setFormPrice] = useState(currentPrice ? String(Math.round(currentPrice * 0.95)) : "");
-  const [formEmail, setFormEmail] = useState(userEmail);
+  const [formPrice, setFormPrice] = useState(
+    currentPrice ? String(Math.round(currentPrice * 0.95)) : ""
+  );
+  const [formEmail, setFormEmail] = useState("");
+
+  // Bijhouden welke alerts we al aan Marcus hebben gemeld (voorkom hermelding)
+  const reportedAlertsRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     if (currentAsset) setFormAsset(currentAsset);
@@ -50,6 +63,37 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
     loadAlerts();
   }, []);
 
+  // Polling: check elke 60s of er recent getriggerde alerts zijn → open Marcus
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/me/alerts/recent");
+        if (!res.ok) return;
+        const data = await res.json() as { recent: { id: number; asset: string; condition: "above" | "below"; target_price: number }[] };
+        for (const a of data.recent ?? []) {
+          if (reportedAlertsRef.current.has(a.id)) continue;
+          reportedAlertsRef.current.add(a.id);
+
+          // Dispatch marcus event zodat FloatingMarcus opent met commentaar
+          const ticker = a.asset.replace("USDT", "").replace("EUR", "");
+          const dir = a.condition === "above" ? "gestegen boven" : "gedaald onder";
+          window.dispatchEvent(new CustomEvent("marcus-price-alert", {
+            detail: {
+              asset: a.asset,
+              condition: a.condition,
+              targetPrice: a.target_price,
+              message: `[PRIJSALERT GETRIGGERD]\n${ticker} is ${dir} $${a.target_price.toLocaleString("en-US")}.\n\nWat is jouw analyse nu — setup of gevaar?`,
+            },
+          }));
+        }
+      } catch { /* ignore */ }
+    };
+
+    poll(); // direct bij mount
+    const iv = setInterval(poll, 60_000);
+    return () => clearInterval(iv);
+  }, []);
+
   async function loadAlerts() {
     setLoading(true);
     try {
@@ -58,25 +102,29 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         const data = await res.json();
         setAlerts(data.alerts ?? []);
       }
-    } catch {
-      // ignore
-    } finally {
-      setLoading(false);
-    }
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
   }
 
-  async function addAlert(e: React.FormEvent) {
+  function setQuickPrice(pct: number) {
+    if (!currentPrice) return;
+    const price = currentPrice * (1 + pct / 100);
+    setFormPrice(String(Math.round(price * 100) / 100));
+    setFormCondition(pct < 0 ? "below" : "above");
+  }
+
+  const addAlert = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     const price = parseFloat(formPrice);
     if (isNaN(price) || price <= 0) {
-      setError(t("alert_invalid_price"));
+      setError("Voer een geldige prijs in.");
       return;
     }
-    if (!formEmail.includes("@")) {
-      setError(t("alert_invalid_email"));
+    if (formEmail && !formEmail.includes("@")) {
+      setError("Voer een geldig e-mailadres in.");
       return;
     }
 
@@ -94,22 +142,21 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? t("alert_save_error"));
+        setError(data.error ?? "Opslaan mislukt.");
       } else {
-        setSuccess(t("alert_saved"));
+        setSuccess("✓ Alert aangemaakt");
         await loadAlerts();
-        // Reset prijs veld
         setFormPrice("");
+        setTimeout(() => setSuccess(""), 3000);
       }
     } catch {
-      setError(t("alert_save_error"));
+      setError("Verbindingsfout.");
     } finally {
       setSaving(false);
     }
-  }
+  }, [formAsset, formCondition, formPrice, formEmail]);
 
   async function deleteAlert(id: number) {
-    // Optimistisch verwijderen uit UI
     setAlerts(prev => prev.filter(a => a.id !== id));
     try {
       await fetch("/api/me/alerts", {
@@ -117,148 +164,243 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-    } catch {
-      // ignore — UI is al bijgewerkt
-    }
-    // Altijd herladen van server
+    } catch { /* ignore */ }
     await loadAlerts();
   }
 
   const assetDef = SCAN_ASSETS.find(a => a.symbol === formAsset);
+  const currency = assetDef?.currency ?? "USD";
+  const activeCount = alerts.filter(a => a.active).length;
 
   return (
-    <div className="terminal-side-card" style={{ padding: 16 }}>
+    <div style={{
+      background: "var(--surface, #1f0d17)",
+      border: "1px solid rgba(233,30,99,0.2)",
+      borderRadius: 16,
+      overflow: "hidden",
+    }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-        <span style={{ fontSize: 20 }}>🔔</span>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{t("alert_title")}</div>
-          <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>{t("alert_subtitle")}</div>
+      <div style={{
+        padding: "14px 18px",
+        background: "linear-gradient(135deg, rgba(233,30,99,0.1) 0%, transparent 60%)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 20 }}>🔔</span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+              Prijsalerts
+            </div>
+            <div style={{ fontSize: 11, color: "#64748b" }}>
+              {activeCount} actief — Marcus waarschuwt je bij trigger
+            </div>
+          </div>
         </div>
+        {currentPrice && (
+          <div style={{ fontSize: 12, color: "#64748b", textAlign: "right" }}>
+            <div style={{ fontSize: 10, marginBottom: 1 }}>Nu</div>
+            <div style={{ fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+              ${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Formulier */}
-      <form onSubmit={addAlert} style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-        {/* Asset */}
-        <div>
-          <div className="terminal-label" style={{ marginBottom: 4 }}>{t("alert_asset")}</div>
-          <select
-            value={formAsset}
-            onChange={e => setFormAsset(e.target.value)}
-            style={{
-              width: "100%", background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--border)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
-            }}
-          >
-            {SCAN_ASSETS.map(a => (
-              <option key={a.symbol} value={a.symbol}>
-                {a.emoji} {a.name} ({a.ticker})
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* Form */}
+      <div style={{ padding: "14px 18px" }}>
+        {/* Snelknoppen */}
+        {currentPrice && (
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}>
+              Snel instellen (huidige prijs: ${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 0 })})
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {QUICK_OFFSETS.map(o => (
+                <button
+                  key={o.label}
+                  onClick={() => setQuickPrice(o.pct)}
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: `1px solid ${o.color}40`,
+                    borderRadius: 7,
+                    padding: "4px 10px",
+                    fontSize: 12,
+                    color: o.color,
+                    cursor: "pointer",
+                    fontWeight: 600,
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {o.label}
+                  {currentPrice && (
+                    <span style={{ marginLeft: 4, fontSize: 10, opacity: 0.7, fontWeight: 400 }}>
+                      ${Math.round(currentPrice * (1 + o.pct / 100)).toLocaleString("en-US")}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Conditie + Prijs */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 8 }}>
+        <form onSubmit={addAlert} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {/* Asset */}
           <div>
-            <div className="terminal-label" style={{ marginBottom: 4 }}>{t("alert_condition")}</div>
+            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Asset</div>
             <select
-              value={formCondition}
-              onChange={e => setFormCondition(e.target.value as "above" | "below")}
+              value={formAsset}
+              onChange={e => setFormAsset(e.target.value)}
               style={{
-                width: "100%", background: "var(--surface)", color: "var(--text)",
-                border: "1px solid var(--border)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
+                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
               }}
             >
-              <option value="below">📉 {t("alert_below")}</option>
-              <option value="above">📈 {t("alert_above")}</option>
+              {SCAN_ASSETS.map(a => (
+                <option key={a.symbol} value={a.symbol} style={{ background: "#1f0d17" }}>
+                  {a.emoji} {a.name} ({a.ticker})
+                </option>
+              ))}
             </select>
           </div>
+
+          {/* Conditie + Prijs */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 8 }}>
+            <div>
+              <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Conditie</div>
+              <select
+                value={formCondition}
+                onChange={e => setFormCondition(e.target.value as "above" | "below")}
+                style={{
+                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                  border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
+                }}
+              >
+                <option value="below" style={{ background: "#1f0d17" }}>📉 Daalt onder</option>
+                <option value="above" style={{ background: "#1f0d17" }}>📈 Stijgt boven</option>
+              </select>
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Prijs ({currency})</div>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={formPrice}
+                onChange={e => setFormPrice(e.target.value)}
+                placeholder={currentPrice ? String(Math.round(currentPrice * 0.95)) : "50000"}
+                style={{
+                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                  border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* E-mail (optioneel) */}
           <div>
-            <div className="terminal-label" style={{ marginBottom: 4 }}>
-              {t("alert_target_price")} {assetDef?.currency ?? "USD"}
+            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>
+              E-mail notificatie <span style={{ opacity: 0.5 }}>(optioneel)</span>
             </div>
             <input
-              type="number"
-              min="0"
-              step="any"
-              value={formPrice}
-              onChange={e => setFormPrice(e.target.value)}
-              placeholder={currentPrice ? String(Math.round(currentPrice * 0.95)) : "50000"}
+              type="email"
+              value={formEmail}
+              onChange={e => setFormEmail(e.target.value)}
+              placeholder="leeglaten = alleen Marcus-melding"
               style={{
-                width: "100%", background: "var(--surface)", color: "var(--text)",
-                border: "1px solid var(--border)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
+                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
                 boxSizing: "border-box",
               }}
             />
           </div>
-        </div>
 
-        {/* Email */}
-        <div>
-          <div className="terminal-label" style={{ marginBottom: 4 }}>{t("alert_email")}</div>
-          <input
-            type="email"
-            value={formEmail}
-            onChange={e => setFormEmail(e.target.value)}
-            placeholder="jouw@email.com"
+          {error && (
+            <div style={{ color: "#ef4444", fontSize: 12, padding: "6px 10px", background: "rgba(239,68,68,0.1)", borderRadius: 6 }}>
+              {error}
+            </div>
+          )}
+          {success && (
+            <div style={{ color: "#22c55e", fontSize: 12, padding: "6px 10px", background: "rgba(34,197,94,0.1)", borderRadius: 6 }}>
+              {success}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={saving || !formPrice}
             style={{
-              width: "100%", background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--border)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
-              boxSizing: "border-box",
+              width: "100%",
+              background: formPrice ? "#e91e63" : "rgba(255,255,255,0.05)",
+              border: `1px solid ${formPrice ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
+              borderRadius: 10, padding: "11px 0",
+              color: formPrice ? "#fff" : "#475569",
+              fontSize: 14, fontWeight: 700,
+              cursor: formPrice ? "pointer" : "default",
+              transition: "all 0.2s",
             }}
-          />
-        </div>
-
-        {error && <div style={{ color: "#ef4444", fontSize: 12 }}>{error}</div>}
-        {success && <div style={{ color: "#26c57c", fontSize: 12 }}>{success}</div>}
-
-        <button
-          type="submit"
-          disabled={saving}
-          className="terminal-btn terminal-btn-primary"
-          style={{ width: "100%", padding: "10px", fontSize: 13 }}
-        >
-          {saving ? "..." : `🔔 ${t("alert_add_btn")}`}
-        </button>
-      </form>
+          >
+            {saving ? "Opslaan…" : "🔔 Alert aanmaken"}
+          </button>
+        </form>
+      </div>
 
       {/* Bestaande alerts */}
-      <div>
-        <div className="terminal-label" style={{ marginBottom: 8 }}>
-          {t("alert_active_title")} ({alerts.filter(a => a.active).length})
+      <div style={{ padding: "0 18px 16px" }}>
+        <div style={{
+          fontSize: 11, fontWeight: 700, color: "#64748b",
+          textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8,
+        }}>
+          Actieve alerts ({activeCount})
         </div>
+
         {loading ? (
-          <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>...</div>
+          <div style={{ color: "#64748b", fontSize: 12 }}>Laden…</div>
         ) : alerts.length === 0 ? (
-          <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("alert_empty")}</div>
+          <div style={{ color: "#475569", fontSize: 12, fontStyle: "italic" }}>
+            Nog geen alerts ingesteld.
+          </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {alerts.map(alert => {
               const def = SCAN_ASSETS.find(a => a.symbol === alert.asset);
+              const isAbove = alert.condition === "above";
+              const recentlyTriggered = alert.last_triggered_at
+                ? Date.now() - new Date(alert.last_triggered_at).getTime() < 5 * 60_000
+                : false;
+
               return (
                 <div
                   key={alert.id}
                   style={{
-                    background: "var(--surface)", border: "1px solid var(--border)",
-                    borderRadius: 8, padding: "10px 12px",
+                    background: recentlyTriggered
+                      ? "rgba(233,30,99,0.08)"
+                      : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${recentlyTriggered ? "rgba(233,30,99,0.3)" : "rgba(255,255,255,0.07)"}`,
+                    borderRadius: 10,
+                    padding: "10px 12px",
                     display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>
-                      {def?.emoji ?? ""} {def?.name ?? alert.asset}
-                      {" "}
-                      <span style={{ color: alert.condition === "below" ? "#ef4444" : "#26c57c" }}>
-                        {alert.condition === "below" ? "< " : "> "}
-                        {alert.target_price.toLocaleString("nl-NL", { maximumFractionDigits: 2 })}
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary, #fce8f0)" }}>
+                      {def?.emoji ?? ""} {def?.ticker ?? alert.asset}{" "}
+                      <span style={{ color: isAbove ? "#22c55e" : "#ef4444" }}>
+                        {isAbove ? "↑ boven" : "↓ onder"}{" "}
+                        ${alert.target_price.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                       </span>
+                      {recentlyTriggered && (
+                        <span style={{ marginLeft: 6, fontSize: 10, color: "#e91e63", fontWeight: 700 }}>
+                          🔔 GETRIGGERD
+                        </span>
+                      )}
                     </div>
-                    <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 2 }}>
-                      → {alert.email}
+                    <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>
+                      {alert.email ? `📧 ${alert.email}` : "📱 In-app melding"}
                       {alert.last_triggered_at && (
                         <span style={{ marginLeft: 6, color: "#f59e0b" }}>
-                          ✓ {new Date(alert.last_triggered_at).toLocaleDateString("nl-NL")}
+                          · {new Date(alert.last_triggered_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                         </span>
                       )}
                     </div>
@@ -266,8 +408,13 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                   <button
                     onClick={() => deleteAlert(alert.id)}
                     style={{
-                      background: "none", border: "1px solid var(--border)", borderRadius: 6,
-                      color: "var(--text-secondary)", cursor: "pointer", padding: "3px 8px", fontSize: 11,
+                      background: "none",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#64748b",
+                      cursor: "pointer",
+                      padding: "3px 8px",
+                      fontSize: 11,
                       flexShrink: 0,
                     }}
                   >

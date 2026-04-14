@@ -254,6 +254,20 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden]);
 
+  // Luister naar getriggerde prijsalerts
+  useEffect(() => {
+    if (hidden) return;
+    function handlePriceAlert(e: Event) {
+      const { message } = (e as CustomEvent).detail as { message: string };
+      if (!message) return;
+      setPendingDebrief(message);
+      setOpen(true);
+    }
+    window.addEventListener("marcus-price-alert", handlePriceAlert);
+    return () => window.removeEventListener("marcus-price-alert", handlePriceAlert);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
+
   // TTS via ElevenLabs (premium) of browser fallback
   async function speakText(text: string) {
     if (!voiceEnabled || typeof window === "undefined") return;

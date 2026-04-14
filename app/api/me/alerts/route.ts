@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
   const userId = parseInt((session.user as { id?: string }).id ?? "0");
 
   const body = await request.json().catch(() => null);
-  if (!body?.asset || !body?.condition || !body?.targetPrice || !body?.email) {
-    return Response.json({ error: "asset, condition, targetPrice en email zijn verplicht" }, { status: 400 });
+  if (!body?.asset || !body?.condition || !body?.targetPrice) {
+    return Response.json({ error: "asset, condition en targetPrice zijn verplicht" }, { status: 400 });
   }
   if (!["above", "below"].includes(body.condition)) {
     return Response.json({ error: "condition moet 'above' of 'below' zijn" }, { status: 400 });
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   const result = db.prepare(
     "INSERT INTO price_alerts (user_id, asset, condition, target_price, email) VALUES (?, ?, ?, ?, ?)"
-  ).run(userId, body.asset, body.condition, body.targetPrice, body.email);
+  ).run(userId, body.asset, body.condition, body.targetPrice, body.email ?? "");
 
   return Response.json({ ok: true, id: result.lastInsertRowid });
 }
