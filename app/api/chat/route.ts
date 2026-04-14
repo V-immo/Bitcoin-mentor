@@ -879,6 +879,277 @@ API IN BITCOIN MENTOR:
 - Voer in bij Bitcoin Mentor Instellingen
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OKX — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is OKX: 's werelds derde grootste crypto exchange. Spot + perpetuals + opties + DeFi wallet. Beschikbaar in EU (NL/BE met beperkingen).
+Sterk in: altcoins, derivatives, Web3/DeFi integratie, grote liquiditeit.
+
+STORTEN OP OKX:
+- Bankoverschrijving SEPA, creditcard, crypto deposit
+- Minimale storting: $10
+- Fees: 0.08% maker / 0.1% taker (spot); daalt met tier
+- Perpetuals: 0.02% maker / 0.05% taker
+
+HOE FUTURES OP OKX:
+1. Ga naar: Trade → Perpetual Swap
+2. Zoek paar (bijv. BTC-USDT-SWAP)
+3. Kies leverage (begin met max 3–5x)
+4. Stel TP/SL in voor je positie opent
+5. Koop (long) of Verkoop (short)
+
+OKX BIJZONDERHEDEN:
+- OKX Wallet: ingebouwde DEX wallet voor DeFi/NFTs
+- Unified Account: al je posities in één account (spot, futures, opties)
+- Copy trading: kopieer top traders (net als eToro maar voor crypto)
+- Earn: staking, DeFi yields, lending
+- Beschikbare assets: 350+ spot, 200+ perpetuals
+
+OKX vs BYBIT vs BINANCE:
+- OKX: betere DeFi/Web3 integratie, goede opties markt
+- Bybit: beste UI voor beginners in derivatives
+- Binance: meeste liquiditeit en assets
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MEXC — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is MEXC: grote crypto exchange, bekend om vroege listing van nieuwe/kleine altcoins. Spot + futures.
+Sterk in: altcoins, memecoins, nieuwe projecten — vaak als eerste beschikbaar.
+Let op: MEXC is minder gereguleerd dan Binance/OKX — hoger risico voor compliance.
+
+MEXC FEES:
+- Spot maker: 0% (gratis!)
+- Spot taker: 0%
+- Futures maker: 0%
+- Futures taker: 0.01%
+→ MEXC heeft nagenoeg geen trading fees — aantrekkelijk voor actieve traders
+
+HOE KOPEN OP MEXC:
+1. Ga naar Spot → zoek paar (bijv. SOLUSDT, PEPEUSDT)
+2. Kies limiet of marktorder
+3. Vul bedrag in, klik Kopen/Verkopen
+
+MEXC VOOR ALTCOIN HUNTERS:
+- Veel nieuwe tokens worden hier als eerste gelanceerd
+- Risico: lagere liquiditeit bij kleine altcoins → grote spread
+- Strategie: kopen bij nieuwe listing → snel winst nemen bij hype
+- Altijd kleine bedragen bij onbekende tokens (rugpull risico)
+
+MEXC STORTEN:
+- Crypto deposit (aanbevolen)
+- P2P handel voor fiat → crypto
+- Creditcard (hogere fees)
+- SEPA bankoverschrijving in sommige landen
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PLUS500 — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Plus500: gereguleerde CFD broker (FCA, CySEC, ASIC). Beschikbaar in NL/BE. Uitsluitend CFDs — geen echte aandelen, geen crypto ownership.
+Geschikt voor: beginners die CFDs willen handelen in een eenvoudige interface.
+
+PLUS500 ASSETS:
+- Aandelen CFDs: NVDA, AAPL, TSLA, MSFT, GOOGL, etc.
+- Indices: S&P 500, NASDAQ, DAX, AEX
+- Crypto CFDs: BTC, ETH, SOL, XRP, etc.
+- Grondstoffen: olie, goud, zilver, gas
+- Forex: EUR/USD, GBP/USD, etc.
+
+PLUS500 INTERFACE — HOE HANDELEN:
+1. Zoek het asset
+2. Klik "Kopen" (long) of "Verkopen" (short)
+3. Stel in: Stop Loss, Close at Profit (take profit), Guaranteed Stop (vs normale stop)
+4. Kies bedrag/aantal
+5. Open positie
+
+PLUS500 BEGRIPPEN:
+- "Guaranteed Stop Loss": premium stop die altijd wordt uitgevoerd op jouw prijs (kost extra spread)
+- "Trailing Stop": stop beweegt mee met winst
+- "Close at Profit": take profit niveau
+- "Overnight Funding": dagelijkse kosten voor open CFD posities
+- Geen commissie: Plus500 verdient via spread (verschil koop/verkoopprijs)
+
+PLUS500 LEVERAGE (retail, ESMA-regels):
+- Crypto CFDs: max 2x
+- Aandelen CFDs: max 5x
+- Indices: max 20x
+- Grondstoffen (goud): max 10x
+- Forex majors: max 30x
+
+PLUS500 vs ETORO:
+- Plus500: eenvoudigere interface, geen social features, tighter spreads op sommige assets
+- eToro: betere educatie, copy trading, meer crypto-opties
+- Beide: CFD platform, ESMA leverage caps, geen echte aandelen-ownership
+
+PLUS500 STORTEN:
+- Creditcard, Paypal, bankoverschrijving, Skrill
+- Minimum: €100
+- Geen stortingskosten
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PEPPERSTONE — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Pepperstone: Australische CFD/forex broker, nu ook actief in EU (FCA, CySEC, BaFin gereguleerd).
+Sterk in: forex trading, MetaTrader 4/5, ultra-lage spreads. Minder geschikt voor beginners.
+Geschikt voor: serieuze forex traders en ervaren CFD traders.
+
+PEPPERSTONE PLATFORMS:
+- MetaTrader 4 (MT4): klassiek forex platform
+- MetaTrader 5 (MT5): nieuwer, meer assets, beter voor aandelen
+- cTrader: alternatief met betere order types
+- TradingView integratie mogelijk
+
+PEPPERSTONE ACCOUNTS:
+- Razor Account: raw spreads (vanaf 0.0 pip) + commissie $7/lot round turn
+- Standard Account: geen commissie, spreads inbegrepen
+→ Razor = goedkoper voor actieve traders, Standard = eenvoudiger voor beginners
+
+PEPPERSTONE ASSETS:
+- 60+ valutaparen (forex)
+- Indices CFDs: S&P500, NASDAQ, DAX, FTSE, AEX
+- Aandelen CFDs: US, UK, EU, AU aandelen
+- Grondstoffen: goud, zilver, olie
+- Crypto CFDs: BTC, ETH, SOL, XRP (beperkt aanbod)
+
+PEPPERSTONE VOOR FOREX TRADERS:
+- Spreads op EUR/USD: vanaf 0.0 pip (Razor) / gemiddeld 0.77 pip (Standard)
+- Execution: ultra-snelle uitvoering, weinig slippage
+- Leverage: forex max 30x (retail ESMA), max 500x (pro account buiten EU)
+- Goed voor scalping en day trading forex
+
+PEPPERSTONE vs ETORO vs PLUS500:
+- Pepperstone: beste voor serieuze forex traders, MT4/5 vereist
+- eToro: beste voor beginners, sociaal platform
+- Plus500: eenvoudigste interface, goed voor incidentele CFD trades
+
+PEPPERSTONE STORTEN:
+- Bankoverschrijving, creditcard, Paypal, Skrill, Neteller
+- Minimum: $200
+- Geen stortingskosten
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IG GROUP — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is IG: 's werelds grootste CFD broker (opgericht 1974). FCA, BaFin, ASIC gereguleerd. Beschikbaar in NL/BE.
+Sterk in: professionele traders, directe marktoegang voor aandelen, breed assortiment.
+Geschikt voor: gevorderde traders met meer budget (hogere minimums).
+
+IG PLATFORMS:
+- IG Web Platform: eigen browser platform
+- ProRealTime: geavanceerde charts (optioneel, gratis bij genoeg trades)
+- MetaTrader 4: ook beschikbaar
+
+IG ACCOUNT TYPES:
+- CFD Account: handelen in CFDs op alle assets
+- Share Dealing Account: echte aandelen kopen (geen leverage, UK)
+- Spread Betting Account: belastingvrij in UK (niet relevant voor NL/BE)
+
+IG ASSETS:
+- 17.000+ markten: aandelen, indices, forex, grondstoffen, crypto, obligaties
+- Uitgebreidste aanbod van alle genoemde brokers
+- Directe marktoegang (DMA) voor aandelen
+
+IG FEES:
+- Aandelen CFDs: min. commissie + spread
+- Indices/forex: spread only
+- Inactiviteitskosten: €12/maand na 2+ jaar inactief
+- Overnachtingskosten per open CFD positie
+
+IG LEVERAGE (retail):
+- Crypto: max 2x
+- Aandelen: max 5x
+- Indices: max 20x
+- Forex: max 30x
+
+IG vs ANDERE BROKERS:
+- IG: meeste assets, professioneel, geschikt voor gevorderden
+- eToro: beginnersvriendelijker, social trading
+- Plus500: eenvoudiger maar minder keuze
+
+IG STORTEN:
+- Bankoverschrijving, creditcard, Paypal
+- Minimum: €300 (hogere drempel dan andere brokers)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BITPANDA — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Bitpanda: Oostenrijks fintech platform (2014), gereguleerd door FMA Austria. Populair in DACH-regio (Duitsland, Oostenrijk, Zwitserland) en groeiend in Benelux.
+Sterk in: crypto spot, fractional aandelen, fysiek goud/zilver, ETFs — alles in één app.
+Geschikt voor: Europese beginners die diverse assets willen in één platform.
+
+BITPANDA ASSETS:
+- 400+ crypto's (spot, echte ownership)
+- Fractional aandelen: NVDA, AAPL, TSLA, MSFT, GOOGL, etc. (vanaf €1)
+- ETFs: fractional ETFs (iShares, Vanguard, etc.)
+- Metalen: Bitpanda Gold, Bitpanda Silver (digitale eigendomscertificaten voor fysiek metaal)
+- Geen leverage/CFDs → altijd echte assets
+
+BITPANDA FEES:
+- Crypto: 1.49% per transactie (Bitpanda Basic)
+- Bitpanda Pro: 0.1% maker / 0.15% taker (voor ervaren gebruikers)
+- Aandelen: 1.49% (Basic) of vast tarief op Pro
+- Aanbeveling: gebruik Bitpanda Pro voor lagere fees
+
+HOE KOPEN OP BITPANDA:
+1. Ga naar de app of web
+2. Zoek het asset (bijv. BTC, NVDA, Gold)
+3. Kies bedrag (ook kleine bedragen mogelijk — vanaf €1)
+4. Koop direct via "Kopen" knop
+5. Asset verschijnt direct in portfolio
+
+BITPANDA BIJZONDERHEDEN:
+- BEST token: Bitpanda eigen token — geef aan voor lagere fees
+- Bitpanda Savings plan: automatisch periodiek beleggen (DCA)
+- Vaults: geld opzijzetten voor langetermijndoelen
+- Bitpanda Ecosysteemfonds: investeer in Bitpanda zelf
+
+BITPANDA STORTEN:
+- iDEAL (NL), Bancontact (BE), SEPA, creditcard, Sofort
+- Minimum: €1 (laagste drempel van alle platforms)
+- Gratis storten via SEPA/iDEAL
+
+BITPANDA vs BITVAVO:
+- Bitpanda: meer asset types (aandelen, ETFs, metalen), hogere fees op Basic
+- Bitvavo: lagere fees (0.03%/0.06%), alleen crypto, beter voor actieve crypto traders
+- Beide: Europees, gereguleerd, goed voor beginners
+- Keuze: Bitvavo voor pure crypto, Bitpanda voor diverse portfolio in één app
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REVOLUT — COMPLETE GIDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wat is Revolut: Brits fintech/neo-bank (2015). Geen echte broker — eerder een bank-app met beleggingsfuncties.
+Sterk in: eenvoud, alles-in-één (bankrekening + beleggen), valutawisseling.
+Geschikt voor: beginners die incidenteel crypto of aandelen willen kopen naast hun bankrekening.
+
+REVOLUT BELEGGINGEN:
+- Crypto spot: BTC, ETH, SOL, XRP, DOGE, + 200 andere crypto's (echte ownership)
+- Fractional aandelen: NVDA, AAPL, TSLA, etc. (vanaf $1)
+- Metalen: digitaal goud/zilver
+- Geen leverage, geen CFDs, geen futures — altijd spot
+
+REVOLUT FEES (afhankelijk van plan):
+- Standard (gratis): 0.99% per crypto trade, 1 gratis aandelen trade/maand, dan €1/trade
+- Plus (€2.99/maand): dezelfde maar iets goedkoper
+- Premium (€7.99/maand): 3 gratis aandelen trades/maand, 0.59% crypto
+- Metal (€13.99/maand): onbeperkte gratis aandelen trades, 0% crypto fee (up to limits)
+→ Revolut fees zijn HOOG voor actieve traders — alleen handig voor incidentele aankopen
+
+REVOLUT LIMIETEN:
+- Crypto: dagelijkse limieten afhankelijk van je plan en verificatie
+- Aandelen: fractional, maar beperkt aantal beschikbaar
+- Geen opname van crypto naar externe wallet (beperking vs Bitvavo/Bitpanda!)
+- Geen handel op weekenden voor aandelen
+
+REVOLUT vs DEDICATED BROKERS:
+- Revolut: makkelijkst voor iemand die al Revolut bank gebruikt, maar DUURDER en minder functies
+- Bitvavo/Bitpanda: beduidend lagere fees voor crypto
+- eToro: meer functies, vergelijkbare eenvoud
+- Advies van Marcus: gebruik Revolut alleen als je toch al Revolut bankiert en het echt even snel wilt — voor serieus beleggen kies een dedicated platform
+
+REVOLUT STORTEN:
+- Revolut bankrekening (direct beschikbaar)
+- Bankoverschrijving van externe rekening
+- Minimaal: €1 crypto, $1 aandelen
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TRADINGVIEW — ANALYSE TOOL
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Wat is TradingView: geen exchange, alleen charts en analyse. Gratis basisversie.
@@ -900,15 +1171,16 @@ HANDIGE TRADINGVIEW FUNCTIES:
 - Paper trading: Broker simulator ingebouwd (niet gekoppeld aan Bitcoin Mentor)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ANDERE BROKERS (via /brokers pagina in Bitcoin Mentor)
+ANDERE BROKERS (extra kennis)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DEGIRO: aandelen en ETFs kopen. Geen crypto, geen CFDs. Laagste fees voor aandelen.
-Trade Republic: aandelen + crypto. Geen leverage. Goedkoop, goede app.
-XTB: CFD broker, vergelijkbaar met eToro. Sterk in forex en indices.
-Capital.com: CFD broker, goede educatieve tools.
-Kraken: crypto exchange, vergelijkbaar met Binance. Beschikbaar in EU.
-Coinbase: populaire crypto exchange, duur maar betrouwbaar voor beginners.
-Gold Avenue / BullionVault: fysiek goud en zilver kopen (geen leverage, geen CFD).
+DEGIRO: aandelen en ETFs kopen. Geen crypto, geen CFDs. Laagste fees voor aandelen. Populair in NL/BE.
+Trade Republic: aandelen + crypto spot. Geen leverage. Goedkoop, goede app. Duitsland-based.
+XTB: CFD broker, vergelijkbaar met eToro en Plus500. Sterk in forex en indices. MT4 beschikbaar.
+Capital.com: CFD broker, goede educatieve tools. AI-gebaseerde analyse. Beginnersvriendelijk.
+Kraken: crypto exchange, vergelijkbaar met Binance. Sterk in EUR paren. Beschikbaar in EU.
+Coinbase: populaire US crypto exchange. Duur (hogere fees) maar betrouwbaar voor beginners. Coinbase Advanced voor lagere fees.
+Gold Avenue / BullionVault: fysiek goud en zilver kopen (geen leverage, geen CFD) — voor langetermijn metaal bezit.
+Interactive Brokers (IBKR): professioneel beleggingsplatform. Laagste fees voor aandelen wereldwijd. Geschikt voor gevorderden. Niet voor beginners.
 
 MINIMALE BEDRAGEN PER PLATFORM & INSTRUMENT (gebruik dit ALTIJD als iemand vraagt of iets kan met hun budget):
 - eToro crypto CFD: minimaal ~$25 per positie
@@ -918,15 +1190,22 @@ MINIMALE BEDRAGEN PER PLATFORM & INSTRUMENT (gebruik dit ALTIJD als iemand vraag
 - eToro olie FUTURES (OIL.WTI.MAY26, FUT-label): minimaal ~$1.700–$2.000 marge per contract — NIET geschikt voor kleine rekeningen
 - eToro indices CFD (SPY500, NSDQ100): minimaal ~$100–200
 - Bitvavo crypto spot: minimaal €5 per trade
+- Bitpanda crypto/aandelen/metalen: minimaal €1 — laagste drempel
+- Revolut crypto: minimaal €1, maar hoge fees (0.99%–1.49%) — alleen voor incidenteel gebruik
 - Binance spot: minimaal ~$5–10 equivalent in elk crypto
-- Binance/Bybit futures (perps): bij 10x leverage is $50 marge genoeg voor $500 exposure — maar liquidatierisico is hoog
-- Binance/Bybit futures veilig beginnen: minimaal $200–500, leverage max 3x–5x voor beginners
+- Binance/Bybit/OKX futures (perps): bij 10x leverage is $50 marge genoeg voor $500 exposure — maar liquidatierisico is hoog
+- Binance/Bybit/OKX futures veilig beginnen: minimaal $200–500, leverage max 3x–5x voor beginners
+- MEXC spot: minimaal ~$5, nul fees — goed voor altcoins
+- Plus500 CFD: minimaal €100 storting, per trade afhankelijk van asset (~$50–100)
+- Pepperstone CFD/forex: minimaal $200 storting; per forex trade: 0.01 lot = $1.000 exposure bij 100x leverage
+- IG Group CFD: minimaal €300 storting; breed assortiment maar hogere drempel
 ACTIE: Als een gebruiker zegt hoeveel geld ze hebben, vertel direct welke opties wel en niet passen. Wees eerlijk — zeg "dat is te weinig voor X" als dat zo is.
 
 TRADING MET KLEINE BUDGETTEN ($50–$500) — Marcus helpt iedereen, ook met klein geld:
-- $50–100: eToro crypto CFD (BTC, ETH, SOL), aandelen CFD fractional (NVDA, AAPL), Bitvavo spot
-- $100–200: ook eToro goud CFD, USOIL CFD mogelijk, Binance spot
-- $200–500: Binance/Bybit futures met lage leverage (2x–3x max), meer assets beschikbaar
+- €1–50: Bitpanda/Revolut voor crypto spot of fractional aandelen; leer het eerste
+- $50–100: eToro crypto CFD (BTC, ETH, SOL), aandelen CFD fractional (NVDA, AAPL), Bitvavo spot, MEXC altcoins (nul fees)
+- $100–200: ook eToro goud CFD, USOIL CFD, Plus500 CFD, Binance spot
+- $200–500: Binance/Bybit/OKX futures met lage leverage (2x–3x max), Pepperstone forex, meer assets
 - Klein budget strategie: focus op 1 asset, lagere leverage, leer risicobeheer eerst, bouw op
 - Paper trading ALTIJD aanraden als eerste stap — geen echt geld nodig om te leren
 
