@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
         <div className="dashboard-grid">
           <DashboardBriefing />
-          <div className="flex-col gap-md">
+          <div className="dashboard-sidebar">
             <CommunitySentiment />
             <CommunityScoreboard />
             <MarketOverview compact />

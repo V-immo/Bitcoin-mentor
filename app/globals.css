@@ -7594,34 +7594,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .skeleton-title { height: 20px; width: 60%; border-radius: 4px; }
 .skeleton-circle { border-radius: 50%; }
 
-/* ── Utility classes (inline style replacement) ── */
-
-.text-xs  { font-size: 11px; }
-.text-sm  { font-size: 12px; }
-.text-base { font-size: 13px; }
-.text-md  { font-size: 14px; }
-.text-lg  { font-size: 16px; }
-.text-xl  { font-size: 18px; }
-.text-2xl { font-size: 22px; }
-
-.fw-500 { font-weight: 500; }
-.fw-600 { font-weight: 600; }
-.fw-700 { font-weight: 700; }
-.fw-800 { font-weight: 800; }
-
-.flex { display: flex; }
-.flex-col { display: flex; flex-direction: column; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-xs { gap: var(--space-xs); }
-.gap-sm { gap: var(--space-sm); }
-.gap-md { gap: var(--space-md); }
-
-.color-secondary { color: var(--text-secondary); }
-.color-muted { color: var(--text-muted); }
-.color-green { color: var(--green); }
-.color-red { color: var(--red); }
-.color-primary { color: var(--primary); }
+/* ── Dashboard sidebar column ── */
+.dashboard-sidebar { display: flex; flex-direction: column; gap: var(--space-md); }
 
 /* Shared broker panel loading */
 .broker-loading {
