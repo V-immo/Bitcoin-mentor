@@ -79,7 +79,19 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: var(--card-shadow, none);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-hover);
+}
+[data-theme="light"] .card {
+  box-shadow: 0 2px 12px rgba(100, 55, 0, 0.12);
+}
+[data-theme="light"] .card:hover {
+  box-shadow: 0 8px 24px rgba(100, 55, 0, 0.18);
 }
 
 .value-sm {
@@ -6285,10 +6297,35 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   gap: 48px;
   align-items: center;
   padding: 64px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+/* Floating gradient orb behind hero */
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(233,30,99,0.12) 0%, transparent 70%);
+  animation: float 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-30px, 20px) scale(1.05); }
 }
 @media (max-width: 860px) {
   .landing-hero { grid-template-columns: 1fr; padding: 40px 0 48px; }
   .landing-preview { display: none; }
+}
+/* Hero stagger entrance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
 }
 .landing-badge {
   display: inline-block;
@@ -6300,6 +6337,7 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding: 5px 14px;
   border-radius: var(--radius-pill);
   margin-bottom: 20px;
+  animation: slideUp 0.5s ease-out both;
 }
 .landing-title {
   font-size: clamp(32px, 5vw, 52px);
@@ -6307,6 +6345,7 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   line-height: 1.15;
   color: var(--text);
   margin: 0 0 20px;
+  animation: slideUp 0.5s ease-out 0.1s both;
 }
 .landing-title-accent { color: var(--primary); }
 .landing-subtitle {
@@ -6315,8 +6354,9 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   line-height: 1.6;
   margin: 0 0 32px;
   max-width: 480px;
+  animation: slideUp 0.5s ease-out 0.2s both;
 }
-.landing-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.landing-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; animation: slideUp 0.5s ease-out 0.3s both; }
 .landing-btn-primary {
   background: var(--primary);
   color: #fff;
@@ -6351,6 +6391,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: slideUp 0.6s ease-out 0.4s both;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.landing-preview:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 72px rgba(0,0,0,0.5);
 }
 .landing-preview-bar {
   display: flex; align-items: center; gap: 6px;
@@ -6383,6 +6429,23 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding: 10px 12px; font-size: 12px; color: var(--text); line-height: 1.5;
 }
 
+/* Scroll-triggered section fade-in (progressive enhancement) */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  .landing-stats-bar,
+  .landing-usps,
+  .landing-testimonials,
+  .landing-steps,
+  .landing-final-cta {
+    animation: fadeInUp linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+}
+
 /* Stats bar */
 .landing-stats-bar {
   display: flex;
@@ -6400,7 +6463,7 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   gap: 4px;
 }
 .landing-stat-icon { color: var(--primary); opacity: 0.7; }
-.landing-stat-value { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.landing-stat-value { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .landing-stat-label { font-size: 12px; color: var(--text-secondary); }
 @media (max-width: 500px) { .landing-stats-bar { gap: 20px; } .landing-stat-value { font-size: 18px; } }
 
@@ -6421,6 +6484,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.landing-testimonial-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 .landing-testimonial-quote {
   font-size: 14px;
@@ -6456,9 +6525,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px 20px;
-  transition: border-color 0.15s;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.landing-usp-card:hover { border-color: var(--border-hover); }
+.landing-usp-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
 .landing-usp-icon { font-size: 28px; margin-bottom: 12px; }
 .landing-usp-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
 .landing-usp-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
@@ -7612,3 +7685,80 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .dashboard-date { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); align-items: start; }
 @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+/* ══════════════════════════════════════════
+   GLOBAL POLISH — Focus, Animations, Depth
+   ══════════════════════════════════════════ */
+
+/* ── Focus states (accessibility) ── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ── Button active feedback ── */
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.landing-btn-primary:active { transform: scale(0.97); }
+.landing-btn-ghost:active { transform: scale(0.97); }
+
+/* ── Smooth page content entrance ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.app-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ── Nav dropdown entrance ── */
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.app-nav-dropdown {
+  animation: dropdownIn 0.15s ease-out;
+}
+
+/* ── Nav active link accent (overwrites base active) ── */
+
+/* ── Mobile nav overlay fade ── */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.nav-mobile-overlay {
+  animation: overlayFadeIn 0.2s ease-out;
+}
+@keyframes drawerSlideIn {
+  from { transform: translateX(100%); }
+  to   { transform: none; }
+}
+.nav-mobile-drawer {
+  animation: drawerSlideIn 0.25s ease-out;
+}
+
+/* ── Dashboard stat cards accent top border ── */
+.dashboard-page .card {
+  border-top: 2px solid transparent;
+  background-image: linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, var(--primary), var(--deep-rose));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* ── Marcus nudge pulse dot ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(1.3); }
+}
+.marcus-pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
