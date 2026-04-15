@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "@/lib/toast";
 
 export default function GoalTracker() {
   const { t, lang } = useLanguage();
@@ -85,15 +86,18 @@ export default function GoalTracker() {
     loadPaperData();
   }, []);
 
-  function saveGoal() {
+  async function saveGoal() {
     const val = parseFloat(inputVal);
     if (!isNaN(val) && val > 0) {
       setGoal(val);
-      fetch("/api/me/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ goal: val }),
-      }).catch(() => {});
+      try {
+        const r = await fetch("/api/me/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ goal: val }),
+        });
+        if (!r.ok) toast("Doel opslaan mislukt.", "error");
+      } catch { toast("Verbindingsfout.", "error"); }
     }
     setEditGoal(false);
   }

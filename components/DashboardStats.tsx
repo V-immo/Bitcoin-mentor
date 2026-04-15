@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SCAN_ASSETS } from "@/lib/assets";
+import { toast } from "@/lib/toast";
 
 type Stats = {
   loginStreak: number;
@@ -50,7 +51,7 @@ export default function DashboardStats() {
           openPositions: openPos,
           journalCount: journalRes?.entries?.length ?? 0,
         });
-      } catch { /* silently fail */ }
+      } catch { toast("Statistieken laden mislukt.", "error"); }
     }
     load();
   }, []);

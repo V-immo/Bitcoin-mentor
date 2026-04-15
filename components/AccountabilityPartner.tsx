@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "@/lib/toast";
 
 type PartnerData = {
   optedIn: boolean;
@@ -51,7 +52,8 @@ export default function AccountabilityPartner() {
         body: JSON.stringify({ optIn: newOptIn }),
       });
       if (r.ok) setData(d => d ? { ...d, optedIn: newOptIn, partner: newOptIn ? d.partner : null } : d);
-    } catch { /* */ } finally { setActing(false); }
+      else toast("Opslaan mislukt. Probeer opnieuw.", "error");
+    } catch { toast("Verbindingsfout.", "error"); } finally { setActing(false); }
   }
 
   async function endPartnership() {
@@ -60,7 +62,8 @@ export default function AccountabilityPartner() {
     try {
       const r = await fetch("/api/me/partner", { method: "DELETE" });
       if (r.ok) setData(d => d ? { ...d, partner: null } : d);
-    } catch { /* */ } finally { setActing(false); }
+      else toast("Verwijderen mislukt. Probeer opnieuw.", "error");
+    } catch { toast("Verbindingsfout.", "error"); } finally { setActing(false); }
   }
 
   function askMarcus() {

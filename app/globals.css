@@ -7431,3 +7431,8 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 }
 .pattern-stat-chip-val { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .pattern-stat-chip-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

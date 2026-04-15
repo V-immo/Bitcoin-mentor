@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "@/lib/toast";
 
 const CHECKLIST = [
   { id: "market",  icon: "📊", label: "BTC trend & marktoverzicht bekeken" },
@@ -69,8 +70,10 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
         setFocus(data.focus ?? null);
         setDone(true);
         persist(checked, true, data.focus ?? null);
+      } else {
+        toast("Ritual opslaan mislukt. Probeer opnieuw.", "error");
       }
-    } catch { /* ignore */ }
+    } catch { toast("Verbindingsfout.", "error"); }
     setLoading(false);
   }
 

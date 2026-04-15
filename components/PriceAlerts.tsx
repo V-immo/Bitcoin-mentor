@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useSession } from "next-auth/react";
+import { toast } from "@/lib/toast";
 
 type Alert = {
   id: number;
@@ -159,13 +160,17 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
   async function deleteAlert(id: number) {
     setAlerts(prev => prev.filter(a => a.id !== id));
     try {
-      await fetch("/api/me/alerts", {
+      const res = await fetch("/api/me/alerts", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-    } catch { /* ignore */ }
-    await loadAlerts();
+      if (!res.ok) toast("Alert verwijderen mislukt.", "error");
+    } catch {
+      toast("Verbindingsfout.", "error");
+    } finally {
+      await loadAlerts();
+    }
   }
 
   const assetDef = SCAN_ASSETS.find(a => a.symbol === formAsset);
