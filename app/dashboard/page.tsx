@@ -20,19 +20,19 @@ export default function DashboardPage() {
   return (
     <>
       <OnboardingModal />
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "16px 20px 48px" }}>
-        <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", margin: 0 }}>Dashboard</h1>
-          {dateStr && <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{dateStr}</p>}
+      <div className="dashboard-page">
+        <div className="dashboard-header">
+          <h1 className="dashboard-title">Dashboard</h1>
+          {dateStr && <p className="dashboard-date">{dateStr}</p>}
         </div>
 
         <FirstSteps />
         <MarcusNudge />
         <DashboardStats />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
+        <div className="dashboard-grid">
           <DashboardBriefing />
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="flex-col gap-md">
             <CommunitySentiment />
             <CommunityScoreboard />
             <MarketOverview compact />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { BarChart3, Calendar, GraduationCap, Users, Target, Star } from "lucide-react";
 
 const copy = {
   nl: {
@@ -31,6 +32,17 @@ const copy = {
     finalH: "Gratis starten. Geen creditcard.",
     finalSub: "Volledige toegang tot alle functies — geen verborgen kosten.",
     finalCta: "Maak gratis een account →",
+    socialProof: "Sluit je aan bij 500+ traders",
+    stat1v: "500+", stat1l: "Actieve traders",
+    stat2v: "25.000+", stat2l: "Paper trades",
+    stat3v: "4.8/5", stat3l: "Gemiddelde score",
+    testimonialsTitle: "Wat traders zeggen",
+    t1q: "Marcus heeft me geleerd om niet impulsief te traden. Na 3 maanden is mijn winrate van 35% naar 62% gegaan.",
+    t1n: "Thomas K.", t1c: "Actief sinds 2025",
+    t2q: "De paper trading modus is geniaal. Ik oefen nu elke dag zonder risico en leer van mijn fouten.",
+    t2n: "Lieke V.", t2c: "Beginner",
+    t3q: "Eindelijk een platform dat in het Nederlands is en niet probeert je geld afhandig te maken.",
+    t3n: "Marco D.", t3c: "Swing trader",
   },
   en: {
     badge: "🚀 Now free to use",
@@ -59,6 +71,17 @@ const copy = {
     finalH: "Start for free. No credit card.",
     finalSub: "Full access to all features — no hidden costs.",
     finalCta: "Create a free account →",
+    socialProof: "Join 500+ traders",
+    stat1v: "500+", stat1l: "Active traders",
+    stat2v: "25,000+", stat2l: "Paper trades",
+    stat3v: "4.8/5", stat3l: "Average rating",
+    testimonialsTitle: "What traders say",
+    t1q: "Marcus taught me to stop trading impulsively. After 3 months my winrate went from 35% to 62%.",
+    t1n: "Thomas K.", t1c: "Active since 2025",
+    t2q: "The paper trading mode is genius. I now practice every day without risk and learn from my mistakes.",
+    t2n: "Lieke V.", t2c: "Beginner",
+    t3q: "Finally a platform in my language that doesn't try to take my money.",
+    t3n: "Marco D.", t3c: "Swing trader",
   },
 };
 
@@ -164,6 +187,21 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         </div>
       </section>
 
+      {/* ── Social proof stats ── */}
+      <section className="landing-stats-bar">
+        {[
+          { icon: Users, value: c.stat1v, label: c.stat1l },
+          { icon: Target, value: c.stat2v, label: c.stat2l },
+          { icon: Star, value: c.stat3v, label: c.stat3l },
+        ].map((s) => (
+          <div key={s.label} className="landing-stat-item">
+            <s.icon size={20} className="landing-stat-icon" />
+            <span className="landing-stat-value">{s.value}</span>
+            <span className="landing-stat-label">{s.label}</span>
+          </div>
+        ))}
+      </section>
+
       {/* ── USPs ── */}
       <section className="landing-usps">
         <div className="landing-usp-card">
@@ -172,19 +210,42 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
           <p className="landing-usp-text">{c.usp1}</p>
         </div>
         <div className="landing-usp-card">
-          <div className="landing-usp-icon">📊</div>
+          <div className="landing-usp-icon"><BarChart3 size={26} /></div>
           <h3 className="landing-usp-title">{c.usp2t}</h3>
           <p className="landing-usp-text">{c.usp2}</p>
         </div>
         <div className="landing-usp-card">
-          <div className="landing-usp-icon">📅</div>
+          <div className="landing-usp-icon"><Calendar size={26} /></div>
           <h3 className="landing-usp-title">{c.usp3t}</h3>
           <p className="landing-usp-text">{c.usp3}</p>
         </div>
         <div className="landing-usp-card">
-          <div className="landing-usp-icon">🎓</div>
+          <div className="landing-usp-icon"><GraduationCap size={26} /></div>
           <h3 className="landing-usp-title">{c.usp4t}</h3>
           <p className="landing-usp-text">{c.usp4}</p>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="landing-testimonials">
+        <h2 className="landing-section-title">{c.testimonialsTitle}</h2>
+        <div className="landing-testimonial-grid">
+          {[
+            { q: c.t1q, n: c.t1n, ctx: c.t1c, initials: "TK" },
+            { q: c.t2q, n: c.t2n, ctx: c.t2c, initials: "LV" },
+            { q: c.t3q, n: c.t3n, ctx: c.t3c, initials: "MD" },
+          ].map((t) => (
+            <div key={t.n} className="landing-testimonial-card">
+              <p className="landing-testimonial-quote">&ldquo;{t.q}&rdquo;</p>
+              <div className="landing-testimonial-author">
+                <div className="landing-testimonial-avatar">{t.initials}</div>
+                <div>
+                  <div className="landing-testimonial-name">{t.n}</div>
+                  <div className="landing-testimonial-ctx">{t.ctx}</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

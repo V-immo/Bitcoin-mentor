@@ -3,31 +3,39 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ComponentType } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import {
+  Home, GraduationCap, Newspaper, Radar, TrendingUp, User,
+  Calendar, BarChart3, Building2, FlaskConical, Trophy,
+  Settings, HelpCircle, ShieldCheck, LogOut, Sun, Moon, Flame, X,
+  type LucideProps,
+} from "lucide-react";
 
-const PRIMARY_LINKS = [
-  { href: "/dashboard", key: "nav_link_dashboard", icon: "🏠" },
-  { href: "/leren",     key: "nav_link_learn",     icon: "🎓" },
-  { href: "/nieuws",    key: "nav_link_news",      icon: "📰" },
-  { href: "/scanner",   key: "nav_link_scanner",   icon: "📡" },
-  { href: "/trade",     key: "nav_link_trade",     icon: "📈" },
-  { href: "/profiel",   key: "nav_link_profile",   icon: "👤" },
-] as const;
+type NavIcon = ComponentType<LucideProps>;
 
-const EXTRA_LINKS = [
-  { href: "/agenda",       key: "nav_link_agenda",   icon: "📅" },
-  { href: "/stats",        key: "nav_link_stats",    icon: "📊" },
-  { href: "/brokers",      key: "nav_link_brokers",  icon: "🏦" },
-  { href: "/testnet",      key: "more_menu_testnet", icon: "🔬" },
-  { href: "/leaderboard",  key: "more_menu_ranking", icon: "🏆" },
-] as const;
+const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
+  { href: "/dashboard", key: "nav_link_dashboard", Icon: Home },
+  { href: "/leren",     key: "nav_link_learn",     Icon: GraduationCap },
+  { href: "/nieuws",    key: "nav_link_news",      Icon: Newspaper },
+  { href: "/scanner",   key: "nav_link_scanner",   Icon: Radar },
+  { href: "/trade",     key: "nav_link_trade",     Icon: TrendingUp },
+  { href: "/profiel",   key: "nav_link_profile",   Icon: User },
+];
 
-const ACCOUNT_LINKS = [
-  { href: "/instellingen", key: "nav_link_settings", icon: "⚙️" },
-  { href: "/help",         key: "nav_link_help",     icon: "❓" },
-] as const;
+const EXTRA_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
+  { href: "/agenda",       key: "nav_link_agenda",   Icon: Calendar },
+  { href: "/stats",        key: "nav_link_stats",    Icon: BarChart3 },
+  { href: "/brokers",      key: "nav_link_brokers",  Icon: Building2 },
+  { href: "/testnet",      key: "more_menu_testnet", Icon: FlaskConical },
+  { href: "/leaderboard",  key: "more_menu_ranking", Icon: Trophy },
+];
+
+const ACCOUNT_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
+  { href: "/instellingen", key: "nav_link_settings", Icon: Settings },
+  { href: "/help",         key: "nav_link_help",     Icon: HelpCircle },
+];
 
 export default function Nav() {
   const pathname = usePathname();
@@ -85,7 +93,7 @@ export default function Nav() {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
               <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
-                <span className="app-nav-icon">{l.icon}</span>
+                <l.Icon size={17} className="app-nav-icon" />
                 <span className="app-nav-label">{rl(l.key)}</span>
               </Link>
             );
@@ -97,7 +105,7 @@ export default function Nav() {
               className={`app-nav-link app-nav-account-btn${accountActive || dropOpen ? " active" : ""}`}
               onClick={() => setDropOpen(v => !v)}
             >
-              <span className="app-nav-icon">⚙️</span>
+              <Settings size={17} className="app-nav-icon" />
               <span className="app-nav-label">
                 {username} {dropOpen ? "▴" : "▾"}
               </span>
@@ -109,7 +117,7 @@ export default function Nav() {
                   const active = pathname === l.href || pathname.startsWith(l.href + "/");
                   return (
                     <Link key={l.href} href={l.href} className={`app-nav-dd-item${active ? " active" : ""}`}>
-                      <span>{l.icon}</span>
+                      <l.Icon size={15} />
                       <span>{rl(l.key)}</span>
                     </Link>
                   );
@@ -119,14 +127,14 @@ export default function Nav() {
                   const active = pathname === l.href || pathname.startsWith(l.href + "/");
                   return (
                     <Link key={l.href} href={l.href} className={`app-nav-dd-item${active ? " active" : ""}`}>
-                      <span>{l.icon}</span>
+                      <l.Icon size={15} />
                       <span>{rl(l.key)}</span>
                     </Link>
                   );
                 })}
                 {isAdmin && (
                   <Link href="/admin" className={`app-nav-dd-item app-nav-dd-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
-                    <span>🛡️</span>
+                    <ShieldCheck size={15} />
                     <span>Admin</span>
                   </Link>
                 )}
@@ -135,7 +143,7 @@ export default function Nav() {
                   className="app-nav-dd-item app-nav-dd-logout"
                   onClick={async () => { await signOut({ redirect: false }); window.location.href = "/"; }}
                 >
-                  <span>🚪</span>
+                  <LogOut size={15} />
                   <span>{t("nav_logout")}</span>
                 </button>
               </div>
@@ -145,7 +153,7 @@ export default function Nav() {
           {/* Streak badge */}
           {streak >= 2 && (
             <div className="nav-streak-badge" title={`${streak} dagen op rij actief`}>
-              🔥 <span>{streak}</span>
+              <Flame size={14} /> <span>{streak}</span>
             </div>
           )}
 
@@ -155,7 +163,7 @@ export default function Nav() {
             title={theme === "dark" ? "Lichtmodus" : "Donkermodus"}
             className="app-nav-link app-nav-theme-btn"
           >
-            <span className="app-nav-icon">{theme === "dark" ? "☀️" : "🌙"}</span>
+            {theme === "dark" ? <Sun size={17} className="app-nav-icon" /> : <Moon size={17} className="app-nav-icon" />}
           </button>
         </div>
 
@@ -177,11 +185,13 @@ export default function Nav() {
               <button
                 onClick={toggleTheme}
                 title={theme === "dark" ? "Licht" : "Donker"}
-                style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, padding: "0 4px", lineHeight: 1 }}
+                className="nav-mobile-icon-btn"
               >
-                {theme === "dark" ? "☀️" : "🌙"}
+                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
               </button>
-              <button className="nav-mobile-close" onClick={() => setMenuOpen(false)}>✕</button>
+              <button className="nav-mobile-close" onClick={() => setMenuOpen(false)}>
+                <X size={18} />
+              </button>
             </div>
 
             {session?.user && (
@@ -189,7 +199,7 @@ export default function Nav() {
                 <span className="nav-mobile-username">{session.user.name}</span>
                 {isAdmin && <span className="app-nav-badge-admin">Admin</span>}
                 {streak >= 2 && (
-                  <span className="nav-streak-badge" title={`${streak} dagen op rij`}>🔥 {streak}</span>
+                  <span className="nav-streak-badge" title={`${streak} dagen op rij`}><Flame size={14} /> {streak}</span>
                 )}
               </div>
             )}
@@ -200,7 +210,7 @@ export default function Nav() {
                 const active = pathname === l.href || pathname.startsWith(l.href + "/");
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
-                    <span className="nav-mobile-link-icon">{l.icon}</span>
+                    <l.Icon size={18} className="nav-mobile-link-icon" />
                     <span>{rl(l.key)}</span>
                   </Link>
                 );
@@ -211,7 +221,7 @@ export default function Nav() {
                 const active = pathname === l.href;
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
-                    <span className="nav-mobile-link-icon">{l.icon}</span>
+                    <l.Icon size={18} className="nav-mobile-link-icon" />
                     <span>{rl(l.key)}</span>
                   </Link>
                 );
@@ -222,14 +232,14 @@ export default function Nav() {
                 const active = pathname === l.href || pathname.startsWith(l.href + "/");
                 return (
                   <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " active" : ""}`}>
-                    <span className="nav-mobile-link-icon">{l.icon}</span>
+                    <l.Icon size={18} className="nav-mobile-link-icon" />
                     <span>{rl(l.key)}</span>
                   </Link>
                 );
               })}
               {isAdmin && (
                 <Link href="/admin" className={`nav-mobile-link nav-mobile-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
-                  <span className="nav-mobile-link-icon">🛡️</span>
+                  <ShieldCheck size={18} className="nav-mobile-link-icon" />
                   <span>Admin</span>
                 </Link>
               )}

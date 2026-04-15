@@ -124,7 +124,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
 
   // Laden
   if (loading) {
-    return <div style={{ padding: 16, color: "var(--text-secondary)", fontSize: 13 }}>Bitvavo laden…</div>;
+    return <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}><div className="skeleton" style={{ height: 18, width: "40%" }} /><div className="skeleton" style={{ height: 14 }} /><div className="skeleton" style={{ height: 14, width: "70%" }} /></div>;
   }
 
   // Niet gekoppeld

@@ -35,7 +35,12 @@ export default function DashboardTopPicks() {
 
   if (loading) return (
     <div className="dash-picks-wrap">
-      <div className="dash-picks-loading">Markt laden…</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "12px 0" }}>
+        <div className="skeleton" style={{ height: 16, width: "35%" }} />
+        <div className="skeleton" style={{ height: 48 }} />
+        <div className="skeleton" style={{ height: 48 }} />
+        <div className="skeleton" style={{ height: 48 }} />
+      </div>
     </div>
   );
 

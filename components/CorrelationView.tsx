@@ -93,8 +93,9 @@ export default function CorrelationView({ currentAsset = "BTCUSDT" }: Props) {
 
   if (loading) {
     return (
-      <div style={{ padding: "24px 18px", color: "#64748b", fontSize: 13, textAlign: "center" }}>
-        Marktdata laden…
+      <div style={{ padding: "24px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="skeleton" style={{ height: 18, width: "40%" }} />
+        <div className="skeleton" style={{ height: 80 }} />
       </div>
     );
   }

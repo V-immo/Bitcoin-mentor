@@ -96,8 +96,9 @@ export default function EconomicCalendar() {
 
   if (loading) {
     return (
-      <div style={{ padding: "32px 20px", textAlign: "center", color: "#64748b", fontSize: 13 }}>
-        Kalenderdata laden…
+      <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="skeleton" style={{ height: 18, width: "45%" }} />
+        {[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ height: 44 }} />)}
       </div>
     );
   }
