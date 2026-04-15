@@ -23,21 +23,21 @@ interface JournalEntry {
 }
 
 const TAGS = [
-  { id: "fomo",       label: "FOMO",          color: "#ef4444" },
-  { id: "discipline", label: "Discipline ✓",  color: "#22c55e" },
-  { id: "goed-setup", label: "Goede setup",   color: "#22c55e" },
-  { id: "te-vroeg",   label: "Te vroeg in",   color: "#f59e0b" },
-  { id: "te-laat",    label: "Te laat in",    color: "#f59e0b" },
-  { id: "slechte-exit", label: "Slechte exit", color: "#ef4444" },
-  { id: "revenge",    label: "Revenge trade", color: "#ef4444" },
-  { id: "geduldig",   label: "Geduldig",      color: "#22c55e" },
-  { id: "overtraded", label: "Overtraded",    color: "#ef4444" },
+  { id: "fomo",       label: "FOMO",          color: "var(--red)" },
+  { id: "discipline", label: "Discipline ✓",  color: "var(--green)" },
+  { id: "goed-setup", label: "Goede setup",   color: "var(--green)" },
+  { id: "te-vroeg",   label: "Te vroeg in",   color: "var(--orange)" },
+  { id: "te-laat",    label: "Te laat in",    color: "var(--orange)" },
+  { id: "slechte-exit", label: "Slechte exit", color: "var(--red)" },
+  { id: "revenge",    label: "Revenge trade", color: "var(--red)" },
+  { id: "geduldig",   label: "Geduldig",      color: "var(--green)" },
+  { id: "overtraded", label: "Overtraded",    color: "var(--red)" },
   { id: "news-trade", label: "News trade",    color: "#a78bfa" },
   { id: "trend-follow", label: "Trend follow", color: "#38bdf8" },
-  { id: "sl-geraakt", label: "SL geraakt",    color: "#94a3b8" },
-  { id: "tp-geraakt", label: "TP geraakt",    color: "#22c55e" },
-  { id: "plan-gevolgd", label: "Plan gevolgd", color: "#22c55e" },
-  { id: "plan-genegeerd", label: "Plan genegeerd", color: "#ef4444" },
+  { id: "sl-geraakt", label: "SL geraakt",    color: "var(--text-muted)" },
+  { id: "tp-geraakt", label: "TP geraakt",    color: "var(--green)" },
+  { id: "plan-gevolgd", label: "Plan gevolgd", color: "var(--green)" },
+  { id: "plan-genegeerd", label: "Plan genegeerd", color: "var(--red)" },
 ];
 
 interface TradeDay {
@@ -242,9 +242,9 @@ export default function AgendaPage() {
             <button key={t} onClick={() => setAgendaTab(t)} style={{
               padding: "7px 18px", borderRadius: 99, cursor: "pointer",
               fontSize: 13, fontWeight: 600,
-              border: `1px solid ${agendaTab === t ? "#e91e63" : "rgba(255,255,255,0.12)"}`,
-              background: agendaTab === t ? "rgba(233,30,99,0.15)" : "transparent",
-              color: agendaTab === t ? "#e91e63" : "#64748b",
+              border: `1px solid ${agendaTab === t ? "var(--primary)" : "rgba(255,255,255,0.12)"}`,
+              background: agendaTab === t ? "color-mix(in srgb, var(--primary) 15%, transparent)" : "transparent",
+              color: agendaTab === t ? "var(--primary)" : "var(--text-muted)",
               transition: "all 0.15s",
             }}>
               {t === "journaal" ? "📓 Journaal" : "🌍 Economisch"}
@@ -292,21 +292,21 @@ export default function AgendaPage() {
               const isFuture = dateStr > todayStr;
 
               let bg = "transparent";
-              let border = "1px solid rgba(233,30,99,0.1)";
+              let border = "1px solid color-mix(in srgb, var(--primary) 10%, transparent)";
               if (trades) {
                 bg = trades.pnl > 0
-                  ? "rgba(34,197,94,0.15)"
+                  ? "color-mix(in srgb, var(--green) 15%, transparent)"
                   : trades.pnl < 0
-                    ? "rgba(239,68,68,0.15)"
-                    : "rgba(100,116,139,0.15)";
+                    ? "color-mix(in srgb, var(--red) 15%, transparent)"
+                    : "color-mix(in srgb, var(--text-muted) 15%, transparent)";
                 border = trades.pnl > 0
-                  ? "1px solid rgba(34,197,94,0.3)"
+                  ? "1px solid color-mix(in srgb, var(--green) 30%, transparent)"
                   : trades.pnl < 0
-                    ? "1px solid rgba(239,68,68,0.3)"
-                    : "1px solid rgba(100,116,139,0.3)";
+                    ? "1px solid color-mix(in srgb, var(--red) 30%, transparent)"
+                    : "1px solid color-mix(in srgb, var(--text-muted) 30%, transparent)";
               }
-              if (isSelected) border = "2px solid #e91e63";
-              if (isToday && !isSelected) border = "2px solid rgba(233,30,99,0.5)";
+              if (isSelected) border = "2px solid var(--primary)";
+              if (isToday && !isSelected) border = "2px solid color-mix(in srgb, var(--primary) 50%, transparent)";
 
               return (
                 <div
@@ -323,13 +323,13 @@ export default function AgendaPage() {
                 >
                   <span style={{
                     ...styles.dayNum,
-                    color: isToday ? "#e91e63" : undefined,
+                    color: isToday ? "var(--primary)" : undefined,
                     fontWeight: isToday ? 700 : undefined,
                   }}>{day}</span>
                   {trades && (
                     <span style={{
                       fontSize: 9,
-                      color: trades.pnl > 0 ? "#22c55e" : trades.pnl < 0 ? "#ef4444" : "#94a3b8",
+                      color: trades.pnl > 0 ? "var(--green)" : trades.pnl < 0 ? "var(--red)" : "var(--text-muted)",
                       lineHeight: 1,
                     }}>
                       {trades.pnl > 0 ? "+" : ""}{trades.pnl.toFixed(0)}
@@ -347,9 +347,9 @@ export default function AgendaPage() {
 
           {/* Legenda */}
           <div style={styles.legend}>
-            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "rgba(34,197,94,0.4)" }} /> Winst</span>
-            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "rgba(239,68,68,0.4)" }} /> Verlies</span>
-            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "rgba(100,116,139,0.4)" }} /> Break-even</span>
+            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "color-mix(in srgb, var(--green) 40%, transparent)" }} /> Winst</span>
+            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "color-mix(in srgb, var(--red) 40%, transparent)" }} /> Verlies</span>
+            <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "color-mix(in srgb, var(--text-muted) 40%, transparent)" }} /> Break-even</span>
           </div>
         </div>
 
@@ -360,7 +360,7 @@ export default function AgendaPage() {
           {(weeklyLoading || weeklyReview) && (
             <div style={{
               ...styles.marcusCard,
-              border: weeklyIsNew ? "1px solid rgba(233,30,99,0.5)" : "1px solid rgba(233,30,99,0.2)",
+              border: weeklyIsNew ? "1px solid color-mix(in srgb, var(--primary) 50%, transparent)" : "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -368,7 +368,7 @@ export default function AgendaPage() {
                   <div>
                     <span style={styles.statsTitle}>Wekelijkse review</span>
                     {weeklyWeekStart && (
-                      <div style={{ fontSize: 11, color: "#64748b", marginTop: 1 }}>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>
                         Week van {new Date(weeklyWeekStart + "T12:00:00").toLocaleDateString("nl-NL", { day: "numeric", month: "long" })}
                       </div>
                     )}
@@ -376,23 +376,23 @@ export default function AgendaPage() {
                 </div>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   {weeklyIsNew && (
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#e91e63", background: "rgba(233,30,99,0.15)", borderRadius: 6, padding: "2px 7px" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "var(--primary)", background: "color-mix(in srgb, var(--primary) 15%, transparent)", borderRadius: 6, padding: "2px 7px" }}>
                       NIEUW
                     </span>
                   )}
                   <button
                     onClick={() => fetchWeeklyReview(true)}
                     disabled={weeklyLoading}
-                    style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 14, padding: 4 }}
+                    style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 14, padding: 4 }}
                     title="Vernieuwen"
                   >↻</button>
                 </div>
               </div>
 
               {weeklyLoading ? (
-                <div style={{ color: "#e91e63", fontSize: 13, padding: "8px 0" }}>Marcus schrijft je review…</div>
+                <div style={{ color: "var(--primary)", fontSize: 13, padding: "8px 0" }}>Marcus schrijft je review…</div>
               ) : weeklyReview ? (
-                <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text-primary, #fce8f0)", whiteSpace: "pre-wrap" }}>
+                <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text)", whiteSpace: "pre-wrap" }}>
                   {weeklyReview}
                 </div>
               ) : null}
@@ -410,9 +410,9 @@ export default function AgendaPage() {
                 onClick={fetchMarcusAnalysis}
                 disabled={marcusLoading}
                 style={{
-                  background: "rgba(233,30,99,0.15)",
-                  border: "1px solid rgba(233,30,99,0.3)",
-                  color: "#e91e63",
+                  background: "color-mix(in srgb, var(--primary) 15%, transparent)",
+                  border: "1px solid color-mix(in srgb, var(--primary) 30%, transparent)",
+                  color: "var(--primary)",
                   borderRadius: 8,
                   padding: "5px 12px",
                   fontSize: 12,
@@ -429,14 +429,14 @@ export default function AgendaPage() {
               <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
                 <span style={styles.marcusStat}>{marcusStats.tradeDays} handelsdagen</span>
                 <span style={styles.marcusStat}>{marcusStats.totalTrades} trades</span>
-                <span style={{ ...styles.marcusStat, color: marcusStats.totalPnl >= 0 ? "#22c55e" : "#ef4444" }}>
+                <span style={{ ...styles.marcusStat, color: marcusStats.totalPnl >= 0 ? "var(--green)" : "var(--red)" }}>
                   {marcusStats.totalPnl >= 0 ? "+" : ""}€{marcusStats.totalPnl.toFixed(0)}
                 </span>
               </div>
             )}
 
             {marcusLoading && (
-              <div style={{ color: "#e91e63", fontSize: 13, padding: "12px 0", textAlign: "center" }}>
+              <div style={{ color: "var(--primary)", fontSize: 13, padding: "12px 0", textAlign: "center" }}>
                 <span style={{ display: "inline-block", animation: "pulse 1.5s ease-in-out infinite" }}>
                   Marcus bestudeert je patronen…
                 </span>
@@ -444,13 +444,13 @@ export default function AgendaPage() {
             )}
 
             {!marcusLoading && marcusAnalysis && (
-              <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text-primary, #fce8f0)", whiteSpace: "pre-wrap" }}>
+              <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--text)", whiteSpace: "pre-wrap" }}>
                 {marcusAnalysis}
               </div>
             )}
 
             {!marcusLoading && !marcusAnalysis && (
-              <p style={{ color: "#64748b", fontSize: 13, margin: 0 }}>
+              <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
                 Klik op &ldquo;Analyseer&rdquo; en Marcus bekijkt je trades, emoties en notities van de laatste 60 dagen.
               </p>
             )}
@@ -462,7 +462,7 @@ export default function AgendaPage() {
             <div style={styles.statsGrid}>
               <div style={styles.statItem}>
                 <span style={styles.statLabel}>Totaal P&L</span>
-                <span style={{ ...styles.statValue, color: totalPnl >= 0 ? "#22c55e" : "#ef4444" }}>
+                <span style={{ ...styles.statValue, color: totalPnl >= 0 ? "var(--green)" : "var(--red)" }}>
                   {totalPnl >= 0 ? "+" : ""}€{totalPnl.toFixed(2)}
                 </span>
               </div>
@@ -487,7 +487,7 @@ export default function AgendaPage() {
               <div style={styles.statsTitle}>🧠 Gedragspatronen</div>
               {/* Winrate per dag van de week */}
               <div style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
+                <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
                   Winrate per weekdag
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
@@ -496,9 +496,9 @@ export default function AgendaPage() {
                       <div style={{
                         height: 40,
                         background: d.winrate == null ? "rgba(255,255,255,0.04)" :
-                          d.winrate >= 60 ? `rgba(34,197,94,${Math.min(0.9, d.winrate / 100)})` :
-                          d.winrate >= 40 ? `rgba(234,179,8,${Math.min(0.8, d.winrate / 100)})` :
-                          `rgba(239,68,68,${Math.min(0.9, (100 - d.winrate) / 100)})`,
+                          d.winrate >= 60 ? `color-mix(in srgb, var(--green) ${Math.min(90, d.winrate)}%, transparent)` :
+                          d.winrate >= 40 ? `color-mix(in srgb, var(--orange) ${Math.min(80, d.winrate)}%, transparent)` :
+                          `color-mix(in srgb, var(--red) ${Math.min(90, 100 - d.winrate)}%, transparent)`,
                         borderRadius: 6,
                         display: "flex",
                         alignItems: "flex-end",
@@ -509,14 +509,14 @@ export default function AgendaPage() {
                         overflow: "hidden",
                       }}>
                         {d.winrate != null && (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{d.winrate}%</span>
+                          <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text)" }}>{d.winrate}%</span>
                         )}
                         {d.winrate == null && (
-                          <span style={{ fontSize: 9, color: "#64748b" }}>-</span>
+                          <span style={{ fontSize: 9, color: "var(--text-muted)" }}>-</span>
                         )}
                       </div>
-                      <div style={{ fontSize: 10, color: "#94a3b8" }}>{d.label}</div>
-                      <div style={{ fontSize: 9, color: "#64748b" }}>{d.total > 0 ? `${d.total}x` : ""}</div>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)" }}>{d.label}</div>
+                      <div style={{ fontSize: 9, color: "var(--text-muted)" }}>{d.total > 0 ? `${d.total}x` : ""}</div>
                     </div>
                   ))}
                 </div>
@@ -525,17 +525,17 @@ export default function AgendaPage() {
               {(patterns.bestDay || patterns.worstDay) && (
                 <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
                   {patterns.bestDay && (
-                    <div style={{ flex: 1, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "8px 10px" }}>
-                      <div style={{ fontSize: 10, color: "#64748b", marginBottom: 2 }}>Beste dag</div>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: "#22c55e" }}>{patterns.bestDay.label}</div>
-                      <div style={{ fontSize: 11, color: "#22c55e" }}>{patterns.bestDay.winrate}% win</div>
+                    <div style={{ flex: 1, background: "color-mix(in srgb, var(--green) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 20%, transparent)", borderRadius: 8, padding: "8px 10px" }}>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 2 }}>Beste dag</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--green)" }}>{patterns.bestDay.label}</div>
+                      <div style={{ fontSize: 11, color: "var(--green)" }}>{patterns.bestDay.winrate}% win</div>
                     </div>
                   )}
                   {patterns.worstDay && patterns.worstDay.label !== patterns.bestDay?.label && (
-                    <div style={{ flex: 1, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 10px" }}>
-                      <div style={{ fontSize: 10, color: "#64748b", marginBottom: 2 }}>Slechtste dag</div>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: "#ef4444" }}>{patterns.worstDay.label}</div>
-                      <div style={{ fontSize: 11, color: "#ef4444" }}>{patterns.worstDay.winrate}% win</div>
+                    <div style={{ flex: 1, background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 20%, transparent)", borderRadius: 8, padding: "8px 10px" }}>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 2 }}>Slechtste dag</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)" }}>{patterns.worstDay.label}</div>
+                      <div style={{ fontSize: 11, color: "var(--red)" }}>{patterns.worstDay.winrate}% win</div>
                     </div>
                   )}
                 </div>
@@ -544,18 +544,18 @@ export default function AgendaPage() {
               {patterns.revenge.totalDaysTraded >= 5 && (
                 <div style={{
                   background: patterns.revenge.revengeRatio >= 20
-                    ? "rgba(239,68,68,0.08)"
-                    : "rgba(34,197,94,0.06)",
-                  border: `1px solid ${patterns.revenge.revengeRatio >= 20 ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.2)"}`,
+                    ? "color-mix(in srgb, var(--red) 8%, transparent)"
+                    : "color-mix(in srgb, var(--green) 6%, transparent)",
+                  border: `1px solid ${patterns.revenge.revengeRatio >= 20 ? "color-mix(in srgb, var(--red) 25%, transparent)" : "color-mix(in srgb, var(--green) 20%, transparent)"}`,
                   borderRadius: 8, padding: "10px 12px",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                     <span style={{ fontSize: 14 }}>{patterns.revenge.revengeRatio >= 20 ? "⚠️" : "✅"}</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: patterns.revenge.revengeRatio >= 20 ? "#ef4444" : "#22c55e" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: patterns.revenge.revengeRatio >= 20 ? "var(--red)" : "var(--green)" }}>
                       Revenge trading
                     </span>
                   </div>
-                  <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
                     {patterns.revenge.revengeRatio >= 20
                       ? `Gedetecteerd op ${patterns.revenge.revengeDays} van ${patterns.revenge.totalDaysTraded} handelsdagen (${patterns.revenge.revengeRatio}%). Pas op voor impulsieve re-entries na verlies.`
                       : `Onder controle — slechts ${patterns.revenge.revengeRatio}% van de handelsdagen.`
@@ -577,19 +577,19 @@ export default function AgendaPage() {
               {selectedTrades ? (
                 <div style={styles.tradeSum}>
                   <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                    <span style={{ color: "#94a3b8", fontSize: 13 }}>
+                    <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
                       {selectedTrades.count} trade{selectedTrades.count !== 1 ? "s" : ""}
                     </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: selectedTrades.pnl >= 0 ? "#22c55e" : "#ef4444" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: selectedTrades.pnl >= 0 ? "var(--green)" : "var(--red)" }}>
                       {selectedTrades.pnl >= 0 ? "+" : ""}€{selectedTrades.pnl.toFixed(2)}
                     </span>
-                    <span style={{ color: "#94a3b8", fontSize: 12 }}>
+                    <span style={{ color: "var(--text-muted)", fontSize: 12 }}>
                       {selectedTrades.assets.join(", ")}
                     </span>
                   </div>
                 </div>
               ) : (
-                <p style={{ color: "#64748b", fontSize: 13, margin: "0 0 12px" }}>Geen trades op deze dag</p>
+                <p style={{ color: "var(--text-muted)", fontSize: 13, margin: "0 0 12px" }}>Geen trades op deze dag</p>
               )}
 
               {/* Emotie */}
@@ -603,12 +603,12 @@ export default function AgendaPage() {
                       onClick={() => setEmotion(e.value)}
                       style={{
                         ...styles.emoBtn,
-                        background: emotion === e.value ? "rgba(233,30,99,0.2)" : "transparent",
-                        border: `1px solid ${emotion === e.value ? "#e91e63" : "rgba(233,30,99,0.2)"}`,
+                        background: emotion === e.value ? "color-mix(in srgb, var(--primary) 20%, transparent)" : "transparent",
+                        border: `1px solid ${emotion === e.value ? "var(--primary)" : "color-mix(in srgb, var(--primary) 20%, transparent)"}`,
                       }}
                     >
                       <span>{e.label}</span>
-                      <span style={{ fontSize: 9, display: "block", color: "#94a3b8", marginTop: 1 }}>{e.desc}</span>
+                      <span style={{ fontSize: 9, display: "block", color: "var(--text-muted)", marginTop: 1 }}>{e.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -629,7 +629,7 @@ export default function AgendaPage() {
                           cursor: "pointer", transition: "all 0.15s",
                           background: active ? `${tag.color}22` : "rgba(255,255,255,0.04)",
                           border: `1px solid ${active ? tag.color : "rgba(255,255,255,0.1)"}`,
-                          color: active ? tag.color : "#64748b",
+                          color: active ? tag.color : "var(--text-muted)",
                         }}
                       >
                         {tag.label}
@@ -695,14 +695,14 @@ export default function AgendaPage() {
               {marcusReflection && (
                 <div style={{
                   marginTop: 14,
-                  background: "linear-gradient(135deg, rgba(233,30,99,0.1) 0%, rgba(233,30,99,0.03) 100%)",
-                  border: "1px solid rgba(233,30,99,0.35)",
+                  background: "linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent) 0%, color-mix(in srgb, var(--primary) 3%, transparent) 100%)",
+                  border: "1px solid color-mix(in srgb, var(--primary) 35%, transparent)",
                   borderRadius: 12, padding: "12px 14px",
                 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#e91e63", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--primary)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Marcus vraagt
                   </div>
-                  <div style={{ fontSize: 14, color: "var(--text-primary, #fce8f0)", lineHeight: 1.6, fontStyle: "italic" }}>
+                  <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.6, fontStyle: "italic" }}>
                     &ldquo;{marcusReflection}&rdquo;
                   </div>
                 </div>
@@ -711,7 +711,7 @@ export default function AgendaPage() {
           ) : (
             <div style={styles.emptyState}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>👆</div>
-              <p style={{ color: "#64748b", fontSize: 14, margin: 0 }}>
+              <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
                 Klik op een dag om je journal in te vullen
               </p>
             </div>
@@ -729,36 +729,36 @@ export default function AgendaPage() {
 const styles: Record<string, React.CSSProperties> = {
   wrap: { maxWidth: 1100, margin: "0 auto", padding: "24px 16px", position: "relative" },
   header: { marginBottom: 24 },
-  title: { margin: 0, fontSize: 24, fontWeight: 800, color: "var(--text-primary, #fce8f0)" },
+  title: { margin: 0, fontSize: 24, fontWeight: 800, color: "var(--text)" },
   subtitle: { margin: "4px 0 0", color: "var(--text-muted, #94a3b8)", fontSize: 14 },
   layout: { display: "grid", gridTemplateColumns: "1fr 360px", gap: 20, alignItems: "start" },
-  calCard: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
+  calCard: { background: "var(--surface)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
   calNav: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
-  navBtn: { background: "rgba(233,30,99,0.1)", border: "1px solid rgba(233,30,99,0.25)", color: "#e91e63", borderRadius: 8, width: 36, height: 36, fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
-  calTitle: { fontWeight: 700, fontSize: 18, color: "var(--text-primary, #fce8f0)" },
+  navBtn: { background: "rgba(233,30,99,0.1)", border: "1px solid rgba(233,30,99,0.25)", color: "var(--primary)", borderRadius: 8, width: 36, height: 36, fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
+  calTitle: { fontWeight: 700, fontSize: 18, color: "var(--text)" },
   calGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 },
-  dayHeader: { textAlign: "center", fontSize: 11, fontWeight: 600, color: "#64748b", padding: "4px 0", textTransform: "uppercase" },
+  dayHeader: { textAlign: "center", fontSize: 11, fontWeight: 600, color: "var(--text-muted)", padding: "4px 0", textTransform: "uppercase" },
   dayCell: { borderRadius: 8, padding: "6px 4px", minHeight: 56, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 2, transition: "all 0.15s" },
-  dayNum: { fontSize: 13, color: "var(--text-primary, #fce8f0)", lineHeight: 1 },
+  dayNum: { fontSize: 13, color: "var(--text)", lineHeight: 1 },
   legend: { display: "flex", gap: 16, marginTop: 14, justifyContent: "center" },
-  legendItem: { display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#64748b" },
+  legendItem: { display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-muted)" },
   legendDot: { width: 10, height: 10, borderRadius: "50%", display: "inline-block" },
   rightCol: { display: "flex", flexDirection: "column", gap: 16 },
-  marcusCard: { background: "linear-gradient(135deg, rgba(233,30,99,0.08) 0%, var(--surface, #1f0d17) 60%)", border: "1px solid rgba(233,30,99,0.3)", borderRadius: 16, padding: 20 },
-  marcusStat: { fontSize: 12, color: "#94a3b8", background: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "2px 8px" },
-  statsCard: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
-  statsTitle: { fontWeight: 700, fontSize: 15, color: "var(--text-primary, #fce8f0)", marginBottom: 14 },
+  marcusCard: { background: "linear-gradient(135deg, rgba(233,30,99,0.08) 0%, var(--surface) 60%)", border: "1px solid rgba(233,30,99,0.3)", borderRadius: 16, padding: 20 },
+  marcusStat: { fontSize: 12, color: "var(--text-muted)", background: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "2px 8px" },
+  statsCard: { background: "var(--surface)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
+  statsTitle: { fontWeight: 700, fontSize: 15, color: "var(--text)", marginBottom: 14 },
   statsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 },
   statItem: { display: "flex", flexDirection: "column", gap: 2 },
-  statLabel: { fontSize: 11, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" },
-  statValue: { fontSize: 20, fontWeight: 800, color: "var(--text-primary, #fce8f0)" },
-  dayCard: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
-  dayCardTitle: { fontWeight: 700, fontSize: 15, color: "var(--text-primary, #fce8f0)", marginBottom: 14, textTransform: "capitalize" },
+  statLabel: { fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" },
+  statValue: { fontSize: 20, fontWeight: 800, color: "var(--text)" },
+  dayCard: { background: "var(--surface)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
+  dayCardTitle: { fontWeight: 700, fontSize: 15, color: "var(--text)", marginBottom: 14, textTransform: "capitalize" },
   tradeSum: { background: "rgba(233,30,99,0.06)", border: "1px solid rgba(233,30,99,0.15)", borderRadius: 10, padding: "10px 14px", marginBottom: 14 },
-  fieldLabel: { fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, fontWeight: 600 },
+  fieldLabel: { fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, fontWeight: 600 },
   emoBtn: { minWidth: 52, padding: "6px 4px", borderRadius: 8, fontSize: 18, cursor: "pointer", transition: "all 0.15s", textAlign: "center" as const, lineHeight: 1 },
-  textarea: { width: "100%", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 10, padding: "10px 12px", color: "var(--text-primary, #fce8f0)", fontSize: 14, resize: "vertical", outline: "none", fontFamily: "inherit", boxSizing: "border-box" },
-  saveBtn: { width: "100%", background: "#e91e63", border: "none", color: "#fff", borderRadius: 10, padding: "12px 0", fontSize: 15, fontWeight: 700, cursor: "pointer" },
-  emptyState: { background: "var(--surface, #1f0d17)", border: "1px solid rgba(233,30,99,0.15)", borderRadius: 16, padding: "40px 20px", textAlign: "center" },
-  loadOverlay: { position: "fixed", bottom: 20, right: 20, background: "rgba(233,30,99,0.15)", border: "1px solid rgba(233,30,99,0.3)", borderRadius: 8, padding: "8px 16px", color: "#e91e63", fontSize: 13 },
+  textarea: { width: "100%", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 10, padding: "10px 12px", color: "var(--text)", fontSize: 14, resize: "vertical", outline: "none", fontFamily: "inherit", boxSizing: "border-box" },
+  saveBtn: { width: "100%", background: "var(--primary)", border: "none", color: "var(--text)", borderRadius: 10, padding: "12px 0", fontSize: 15, fontWeight: 700, cursor: "pointer" },
+  emptyState: { background: "var(--surface)", border: "1px solid rgba(233,30,99,0.15)", borderRadius: 16, padding: "40px 20px", textAlign: "center" },
+  loadOverlay: { position: "fixed", bottom: 20, right: 20, background: "rgba(233,30,99,0.15)", border: "1px solid rgba(233,30,99,0.3)", borderRadius: 8, padding: "8px 16px", color: "var(--primary)", fontSize: 13 },
 };

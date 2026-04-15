@@ -86,8 +86,8 @@ export default function MarcusNudge() {
             fontSize: 16, flexShrink: 0,
           }}>🌅</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#e91e63", marginBottom: 3 }}>Marcus · Goedemorgen</div>
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: "var(--text-primary, #fce8f0)" }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 3 }}>Marcus · Goedemorgen</div>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: "var(--text)" }}>
               {morningGreeting}
             </p>
           </div>
@@ -111,17 +111,17 @@ export default function MarcusNudge() {
           }}>🧠</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#e91e63" }}>Marcus</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--primary)" }}>Marcus</span>
               {inactiveDays >= 2 && (
                 <span style={{
-                  fontSize: 10, fontWeight: 600, color: "#94a3b8",
+                  fontSize: 10, fontWeight: 600, color: "var(--text-muted)",
                   background: "rgba(148,163,184,0.1)", borderRadius: 4, padding: "1px 6px",
                 }}>
                   {inactiveDays} dagen inactief
                 </span>
               )}
             </div>
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--text-primary, #fce8f0)" }}>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--text)" }}>
               {nudge}
             </p>
           </div>
@@ -144,10 +144,10 @@ export default function MarcusNudge() {
             fontSize: 16, flexShrink: 0,
           }}>🌙</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#e91e63", marginBottom: 2 }}>Marcus · Dagafsluiting</div>
-            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4, color: "var(--text-secondary, #bf7a99)" }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 2 }}>Marcus · Dagafsluiting</div>
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4, color: "var(--text-secondary)" }}>
               {eveningReview ?? "Hoe ging je dag? Schrijf het op in je agenda — ook 1 zin helpt."}{" "}
-              <a href="/agenda" style={{ color: "#e91e63", fontWeight: 600, textDecoration: "none" }}>Agenda →</a>
+              <a href="/agenda" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>Agenda →</a>
             </p>
           </div>
           <button onClick={dismissEvening} style={closeBtn} title="Sluiten">✕</button>
@@ -160,6 +160,6 @@ export default function MarcusNudge() {
 const closeBtn: React.CSSProperties = {
   position: "absolute", top: 10, right: 10,
   background: "none", border: "none",
-  color: "#64748b", cursor: "pointer", fontSize: 16, lineHeight: "1",
+  color: "var(--text-muted)", cursor: "pointer", fontSize: 16, lineHeight: "1",
   padding: 4,
 };

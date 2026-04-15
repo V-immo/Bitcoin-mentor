@@ -46,7 +46,7 @@ export default function CommunityScoreboard() {
           <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>Community — anoniem</div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: data.globalWinRate >= 50 ? "#22d47a" : "#f05252" }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: data.globalWinRate >= 50 ? "var(--green)" : "#f05252" }}>
             {data.globalWinRate}%
           </div>
           <div style={{ fontSize: 11, color: "var(--text-muted)" }}>globale winrate</div>
@@ -58,7 +58,7 @@ export default function CommunityScoreboard() {
         {[
           { label: "Trades", value: String(data.totalTrades) },
           { label: "24u trades", value: String(data.trades24h) },
-          { label: "24u P&L", value: `${data.pnl24h >= 0 ? "+" : ""}€${Math.abs(data.pnl24h)}`, color: data.pnl24h >= 0 ? "#22d47a" : "#f05252" },
+          { label: "24u P&L", value: `${data.pnl24h >= 0 ? "+" : ""}€${Math.abs(data.pnl24h)}`, color: data.pnl24h >= 0 ? "var(--green)" : "#f05252" },
           { label: "Best streak", value: `${data.bestStreak}x` },
         ].map(item => (
           <div key={item.label} style={{
@@ -94,13 +94,13 @@ export default function CommunityScoreboard() {
                   {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`}
                 </div>
                 <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{t.codename}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: t.winRate >= 60 ? "#22d47a" : t.winRate >= 40 ? "#f0a500" : "#f05252" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: t.winRate >= 60 ? "var(--green)" : t.winRate >= 40 ? "#f0a500" : "#f05252" }}>
                   {t.winRate}%
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-muted)", width: 60, textAlign: "right" }}>
                   {t.totalTrades} trades
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: t.totalPnl >= 0 ? "#22d47a" : "#f05252", width: 64, textAlign: "right" }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: t.totalPnl >= 0 ? "var(--green)" : "#f05252", width: 64, textAlign: "right" }}>
                   {t.totalPnl >= 0 ? "+" : ""}€{Math.abs(t.totalPnl)}
                 </div>
               </div>

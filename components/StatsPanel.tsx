@@ -150,7 +150,7 @@ export default function StatsPanel() {
                         <span className="terminal-stats-subtitle" style={{ margin: 0 }}>Equity curve</span>
                         <span style={{
                             fontSize: 13, fontWeight: 700,
-                            color: equityPoints[equityPoints.length - 1].value >= startingBalance ? "#22c55e" : "#ef4444",
+                            color: equityPoints[equityPoints.length - 1].value >= startingBalance ? "var(--green)" : "var(--red)",
                         }}>
                             {equityPoints[equityPoints.length - 1].value >= startingBalance ? "+" : ""}
                             €{(equityPoints[equityPoints.length - 1].value - startingBalance).toFixed(0)}
@@ -177,11 +177,11 @@ export default function StatsPanel() {
                                             className="terminal-stats-day-bar"
                                             style={{
                                                 width: `${Math.round((Math.abs(data.pnl) / maxAbs) * 100)}%`,
-                                                background: isPos ? "#26c57c" : "#ef4444",
+                                                background: isPos ? "var(--green)" : "var(--red)",
                                             }}
                                         />
                                     </div>
-                                    <span className="terminal-stats-day-val" style={{ color: isPos ? "#26c57c" : "#ef4444" }}>
+                                    <span className="terminal-stats-day-val" style={{ color: isPos ? "var(--green)" : "var(--red)" }}>
                                         {isPos ? "+" : ""}€{data.pnl.toFixed(0)}
                                     </span>
                                     <span className="terminal-stats-day-count">{data.count}×</span>
@@ -203,7 +203,7 @@ export default function StatsPanel() {
                                 <div key={assetName} className="terminal-stats-asset-row">
                                     <span className="terminal-stats-asset-name">{assetName}</span>
                                     <span className="terminal-stats-asset-wr">{winrate}% {t("stats_panel_winrate")}</span>
-                                    <span className="terminal-stats-asset-pnl" style={{ color: isPos ? "#26c57c" : "#ef4444" }}>
+                                    <span className="terminal-stats-asset-pnl" style={{ color: isPos ? "var(--green)" : "var(--red)" }}>
                                         {isPos ? "+" : ""}€{data.pnl.toFixed(0)}
                                     </span>
                                 </div>
@@ -222,7 +222,7 @@ export default function StatsPanel() {
                         return (
                             <div style={{
                                 background: "rgba(233,30,99,0.07)", border: "1px solid rgba(233,30,99,0.2)",
-                                borderRadius: 8, padding: "8px 12px", marginBottom: 10, fontSize: 12, color: "#e8d5e0", lineHeight: 1.6,
+                                borderRadius: 8, padding: "8px 12px", marginBottom: 10, fontSize: 12, color: "var(--text)", lineHeight: 1.6,
                             }}>
                                 🧠 {lang === "en"
                                     ? <>Best: {bestEmo?.emoji} <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (avg +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Worst: {worstEmo?.emoji} <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (avg −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
@@ -247,9 +247,9 @@ export default function StatsPanel() {
                                         <span style={{ fontSize: 16, flexShrink: 0 }}>{e.emoji}</span>
                                         <span style={{ width: 68, color: "var(--text-secondary)", flexShrink: 0 }}>{t(e.labelKey)}</span>
                                         <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 3, height: 6, overflow: "hidden" }}>
-                                            <div style={{ width: `${barW}%`, height: "100%", background: isPos ? "#26c57c" : "#ef4444", borderRadius: 3 }} />
+                                            <div style={{ width: `${barW}%`, height: "100%", background: isPos ? "var(--green)" : "var(--red)", borderRadius: 3 }} />
                                         </div>
-                                        <span style={{ width: 52, textAlign: "right", fontWeight: 700, color: isPos ? "#26c57c" : "#ef4444", flexShrink: 0 }}>
+                                        <span style={{ width: 52, textAlign: "right", fontWeight: 700, color: isPos ? "var(--green)" : "var(--red)", flexShrink: 0 }}>
                                             {isPos ? "+" : ""}€{avg.toFixed(0)}
                                         </span>
                                         <span style={{ width: 32, textAlign: "right", color: "var(--text-secondary)", fontSize: 11, flexShrink: 0 }}>

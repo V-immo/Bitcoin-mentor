@@ -85,7 +85,7 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
 
   return (
     <div style={{
-      background: "var(--surface, #1f0d17)",
+      background: "var(--surface)",
       border: `1px solid ${done ? "rgba(34,197,94,0.35)" : "rgba(233,30,99,0.2)"}`,
       borderRadius: 16,
       overflow: "hidden",
@@ -102,10 +102,10 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 20 }}>{done ? "✅" : "🌅"}</span>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Pre-market ritueel
             </div>
-            <div style={{ fontSize: 11, color: "#64748b" }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
               {done ? "Voltooid — veel succes vandaag" : `${checkedCount}/${total} items`}
             </div>
           </div>
@@ -120,11 +120,11 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
             }}>
               <div style={{
                 height: "100%", width: `${pct}%`,
-                background: allChecked ? "#22c55e" : "#e91e63",
+                background: allChecked ? "var(--green)" : "var(--primary)",
                 borderRadius: 3, transition: "width 0.3s ease",
               }} />
             </div>
-            <span style={{ fontSize: 11, color: "#64748b", minWidth: 30 }}>{pct}%</span>
+            <span style={{ fontSize: 11, color: "var(--text-muted)", minWidth: 30 }}>{pct}%</span>
           </div>
         )}
       </div>
@@ -151,16 +151,16 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
                   {/* Checkbox */}
                   <div style={{
                     width: 18, height: 18, borderRadius: 5, flexShrink: 0,
-                    background: isChecked ? "#22c55e" : "transparent",
-                    border: `2px solid ${isChecked ? "#22c55e" : "rgba(255,255,255,0.2)"}`,
+                    background: isChecked ? "var(--green)" : "transparent",
+                    border: `2px solid ${isChecked ? "var(--green)" : "rgba(255,255,255,0.2)"}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.15s",
                   }}>
-                    {isChecked && <span style={{ fontSize: 11, color: "#fff", lineHeight: 1 }}>✓</span>}
+                    {isChecked && <span style={{ fontSize: 11, color: "var(--text)", lineHeight: 1 }}>✓</span>}
                   </div>
                   <span style={{ fontSize: 13, lineHeight: 1.4 }}>
                     {item.icon} {" "}
-                    <span style={{ color: isChecked ? "#22c55e" : "var(--text-primary, #fce8f0)", textDecoration: isChecked ? "line-through" : "none", opacity: isChecked ? 0.7 : 1 }}>
+                    <span style={{ color: isChecked ? "var(--green)" : "var(--text)", textDecoration: isChecked ? "line-through" : "none", opacity: isChecked ? 0.7 : 1 }}>
                       {item.label}
                     </span>
                   </span>
@@ -175,10 +175,10 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
             disabled={!allChecked || loading}
             style={{
               width: "100%", marginTop: 14,
-              background: allChecked ? "#e91e63" : "rgba(255,255,255,0.05)",
-              border: `1px solid ${allChecked ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
+              background: allChecked ? "var(--primary)" : "rgba(255,255,255,0.05)",
+              border: `1px solid ${allChecked ? "var(--primary)" : "rgba(255,255,255,0.1)"}`,
               borderRadius: 10, padding: "11px 0",
-              color: allChecked ? "#fff" : "#475569",
+              color: allChecked ? "#fff" : "var(--text-muted)",
               fontSize: 14, fontWeight: 700, cursor: allChecked ? "pointer" : "default",
               transition: "all 0.2s",
             }}
@@ -197,14 +197,14 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
             borderRadius: 12, padding: "14px 16px",
           }}>
             <div style={{
-              fontSize: 11, fontWeight: 700, color: "#e91e63",
+              fontSize: 11, fontWeight: 700, color: "var(--primary)",
               textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8,
             }}>
               Marcus — dagfocus
             </div>
             <div style={{
               fontSize: 13, lineHeight: 1.65,
-              color: "var(--text-primary, #fce8f0)", whiteSpace: "pre-wrap",
+              color: "var(--text)", whiteSpace: "pre-wrap",
             }}>
               {focus}
             </div>
@@ -220,7 +220,7 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
             }}
             style={{
               marginTop: 10, background: "none", border: "none",
-              color: "#475569", fontSize: 12, cursor: "pointer", padding: 0,
+              color: "var(--text-muted)", fontSize: 12, cursor: "pointer", padding: 0,
             }}
           >
             ↺ Opnieuw

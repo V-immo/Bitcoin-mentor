@@ -77,7 +77,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
     setError("");
   }
 
-  const verdictColor = result?.verdict === "GOED" ? "#22c55e" : result?.verdict === "AANPASSEN" ? "#f59e0b" : "#ef4444";
+  const verdictColor = result?.verdict === "GOED" ? "var(--green)" : result?.verdict === "AANPASSEN" ? "var(--orange)" : "var(--red)";
   const verdictIcon = result?.verdict === "GOED" ? "✅" : result?.verdict === "AANPASSEN" ? "⚠️" : "❌";
   const verdictLabel = result?.verdict === "GOED" ? "GOED PLAN" : result?.verdict === "AANPASSEN" ? "AANPASSEN" : "NIET DOEN";
 
@@ -134,15 +134,15 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
                 border: `1px solid ${stat.ok ? "#22c55e33" : "#ef444433"}`,
               }}>
                 <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>{stat.label}</div>
-                <div style={{ fontWeight: 700, fontSize: 14, color: stat.ok ? "#22c55e" : "#ef4444" }}>{stat.value}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: stat.ok ? "var(--green)" : "var(--red)" }}>{stat.value}</div>
               </div>
             ))}
           </div>
 
           {/* Feedback cards */}
           {[
-            { icon: "💪", label: "STERK", value: result.sterk, color: "#22c55e" },
-            { icon: "⚠️", label: "ZWAK",  value: result.zwak,  color: "#f59e0b" },
+            { icon: "💪", label: "STERK", value: result.sterk, color: "var(--green)" },
+            { icon: "⚠️", label: "ZWAK",  value: result.zwak,  color: "var(--orange)" },
             { icon: "💡", label: "TIP",   value: result.tip,   color: "#3b82f6" },
           ].map(item => (
             <div key={item.label} style={{
@@ -183,9 +183,9 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
                 style={{
                   flex: 1, padding: "9px 0", borderRadius: 8, fontWeight: 700,
                   fontSize: 13, cursor: "pointer", border: "1.5px solid",
-                  borderColor: side === s ? (s === "long" ? "#22c55e" : "#ef4444") : "var(--border)",
+                  borderColor: side === s ? (s === "long" ? "var(--green)" : "var(--red)") : "var(--border)",
                   background: side === s ? (s === "long" ? "#22c55e22" : "#ef444422") : "var(--surface-2)",
-                  color: side === s ? (s === "long" ? "#22c55e" : "#ef4444") : "var(--text-secondary)",
+                  color: side === s ? (s === "long" ? "var(--green)" : "var(--red)") : "var(--text-secondary)",
                   transition: "all 0.15s",
                 }}
               >
@@ -229,7 +229,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
               borderRadius: 8, padding: "8px 12px", marginBottom: 10,
             }}>
               <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Live R/R preview<Tip text="Verhouding winst/verlies. Minimaal 1:2 is ideaal — voor elke €1 risico minstens €2 winst." /></span>
-              <span style={{ fontWeight: 700, fontSize: 14, color: rrOk ? "#22c55e" : "#ef4444" }}>
+              <span style={{ fontWeight: 700, fontSize: 14, color: rrOk ? "var(--green)" : "var(--red)" }}>
                 1:{liveRR} {rrOk ? "✓" : "✗"}
               </span>
             </div>
@@ -253,7 +253,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
           </div>
 
           {error && (
-            <div style={{ color: "#ef4444", fontSize: 12, marginBottom: 8, padding: "8px 10px", background: "#ef444411", borderRadius: 6 }}>
+            <div style={{ color: "var(--red)", fontSize: 12, marginBottom: 8, padding: "8px 10px", background: "#ef444411", borderRadius: 6 }}>
               {error}
             </div>
           )}

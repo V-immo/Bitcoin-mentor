@@ -308,11 +308,11 @@ export default function AdminUsersPage() {
                       <span title={new Date(u.last_login_at).toLocaleString()}>
                         {days === 0 ? "Today" : days === 1 ? "Yesterday" : days !== null ? `${days}d ago` : "—"}
                         {isInactive && days !== null && (
-                          <span style={{ marginLeft: 5, fontSize: 10, color: "#f59e0b", verticalAlign: "middle" }}>●</span>
+                          <span style={{ marginLeft: 5, fontSize: 10, color: "var(--orange)", verticalAlign: "middle" }}>●</span>
                         )}
                       </span>
                     ) : (
-                      <span style={{ color: "#ef4444", fontSize: 12 }}>Never</span>
+                      <span style={{ color: "var(--red)", fontSize: 12 }}>Never</span>
                     )}
                   </td>
                   <td>

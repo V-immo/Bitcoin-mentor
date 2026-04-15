@@ -294,7 +294,7 @@ export default function ResourceQuiz({
                     width: "100%",
                     padding: "12px 0",
                     background: "var(--accent)",
-                    color: "#fff",
+                    color: "var(--text)",
                     border: "none",
                     borderRadius: 10,
                     cursor: "pointer",
@@ -349,7 +349,7 @@ export default function ResourceQuiz({
               style={{
                 padding: "12px 36px",
                 background: "var(--accent)",
-                color: "#fff",
+                color: "var(--text)",
                 border: "none",
                 borderRadius: 10,
                 cursor: "pointer",

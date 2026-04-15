@@ -109,7 +109,7 @@ export default function FirstSteps() {
 
   return (
     <div style={{
-      background: "var(--surface, #1f0d17)",
+      background: "var(--surface)",
       border: "1px solid rgba(233,30,99,0.25)",
       borderRadius: 16, overflow: "hidden",
       marginBottom: 20,
@@ -126,20 +126,20 @@ export default function FirstSteps() {
             width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
             background: "rgba(233,30,99,0.15)", border: "2px solid rgba(233,30,99,0.3)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16, fontWeight: 800, color: "#e91e63",
+            fontSize: 16, fontWeight: 800, color: "var(--primary)",
           }}>M</div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Eerste stappen met Marcus
             </div>
-            <div style={{ fontSize: 11, color: "#64748b", marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>
               {doneCount}/{total} voltooid · doe dit eerst voor de beste ervaring
             </div>
           </div>
         </div>
         <button
           onClick={dismiss}
-          style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 18, lineHeight: 1, padding: 4 }}
+          style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 18, lineHeight: 1, padding: 4 }}
           title="Verbergen"
         >×</button>
       </div>
@@ -161,7 +161,7 @@ export default function FirstSteps() {
           display: "flex", gap: 8, alignItems: "flex-start",
         }}>
           <span style={{ fontSize: 14, flexShrink: 0 }}>🤖</span>
-          <p style={{ margin: 0, fontSize: 12, color: "var(--text-primary, #fce8f0)", lineHeight: 1.6 }}>
+          <p style={{ margin: 0, fontSize: 12, color: "var(--text)", lineHeight: 1.6 }}>
             {doneCount === 0
               ? `Begin met "${nextStep.title}" — dat is stap 1. Zonder dit kan ik je niet goed coachen.`
               : doneCount === 1
@@ -206,7 +206,7 @@ export default function FirstSteps() {
               border: `1px solid ${step.done ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.1)"}`,
               fontSize: step.done ? 14 : 12,
               fontWeight: 700,
-              color: step.done ? "#22c55e" : "#64748b",
+              color: step.done ? "var(--green)" : "var(--text-muted)",
             }}>
               {step.done ? "✓" : i + 1}
             </div>
@@ -216,13 +216,13 @@ export default function FirstSteps() {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
                 fontSize: 13, fontWeight: 600,
-                color: step.done ? "#64748b" : "var(--text-primary, #fce8f0)",
+                color: step.done ? "var(--text-muted)" : "var(--text)",
                 textDecoration: step.done ? "line-through" : "none",
               }}>
                 {step.title}
               </div>
               {!step.done && (
-                <div style={{ fontSize: 11, color: "#64748b", marginTop: 1 }}>
+                <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>
                   {step.desc}
                 </div>
               )}
@@ -230,7 +230,7 @@ export default function FirstSteps() {
 
             {!step.done && i === steps.findIndex(s => !s.done) && (
               <span style={{
-                fontSize: 11, fontWeight: 700, color: "#e91e63",
+                fontSize: 11, fontWeight: 700, color: "var(--primary)",
                 flexShrink: 0, whiteSpace: "nowrap",
               }}>
                 {step.action}

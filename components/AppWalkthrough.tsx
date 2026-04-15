@@ -186,7 +186,7 @@ export default function AppWalkthrough() {
               width: highlightRect.width + PAD * 2,
               height: highlightRect.height + PAD * 2,
               borderRadius: 14,
-              border: "2px solid #e91e63",
+              border: "2px solid var(--primary)",
               boxShadow: "0 0 0 1px rgba(233,30,99,0.3), 0 0 16px 4px rgba(233,30,99,0.55), 0 0 40px 10px rgba(233,30,99,0.3)",
               pointerEvents: "none",
               zIndex: 9998,
@@ -221,23 +221,23 @@ export default function AppWalkthrough() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
                   <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text, #fce8f0)" }}>{current.title}</span>
-                  <span style={{ fontSize: 11, color: "var(--text-muted, #64748b)" }}>{step! + 1}/{STEPS.length}</span>
+                  <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{step! + 1}/{STEPS.length}</span>
                 </div>
-                <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary, #bf7a99)", lineHeight: 1.45 }}>
+                <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.45 }}>
                   {current.text}
                 </p>
               </div>
 
               <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
-                <button onClick={skip} style={{ fontSize: 12, color: "var(--text-muted, #64748b)", background: "none", border: "none", cursor: "pointer", padding: "6px 8px", whiteSpace: "nowrap" }}>
+                <button onClick={skip} style={{ fontSize: 12, color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: "6px 8px", whiteSpace: "nowrap" }}>
                   Overslaan
                 </button>
                 {step! > 0 && (
-                  <button onClick={() => goTo(step! - 1)} style={{ fontSize: 13, padding: "7px 14px", borderRadius: 8, background: "rgba(233,30,99,0.1)", color: "#e91e63", border: "1px solid rgba(233,30,99,0.3)", cursor: "pointer", fontWeight: 500, whiteSpace: "nowrap" }}>
+                  <button onClick={() => goTo(step! - 1)} style={{ fontSize: 13, padding: "7px 14px", borderRadius: 8, background: "rgba(233,30,99,0.1)", color: "var(--primary)", border: "1px solid rgba(233,30,99,0.3)", cursor: "pointer", fontWeight: 500, whiteSpace: "nowrap" }}>
                     ← Terug
                   </button>
                 )}
-                <button onClick={() => goTo(step! + 1)} style={{ fontSize: 13, padding: "7px 18px", borderRadius: 8, background: "#e91e63", color: "#fff", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
+                <button onClick={() => goTo(step! + 1)} style={{ fontSize: 13, padding: "7px 18px", borderRadius: 8, background: "var(--primary)", color: "var(--text)", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
                   {step === STEPS.length - 1 ? "Klaar 🎉" : "Volgende →"}
                 </button>
               </div>

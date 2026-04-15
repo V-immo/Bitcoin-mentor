@@ -18,7 +18,7 @@ type PartnerData = {
 };
 
 const LEVEL_LABELS = ["", "Beginner", "Lerende", "Bewuste Trader", "Gedisciplineerde", "Pro"];
-const LEVEL_COLORS = ["", "#64748b", "#3b82f6", "#f59e0b", "#e91e63", "#a78bfa"];
+const LEVEL_COLORS = ["", "var(--text-muted)", "#3b82f6", "var(--orange)", "var(--primary)", "#a78bfa"];
 
 function matchedAgo(dateStr: string): string {
   const d = new Date(dateStr);
@@ -112,7 +112,7 @@ export default function AccountabilityPartner() {
             cursor: acting ? "default" : "pointer",
             border: `1px solid ${optedIn ? "rgba(239,68,68,0.4)" : "rgba(167,139,250,0.4)"}`,
             background: optedIn ? "rgba(239,68,68,0.08)" : "rgba(167,139,250,0.12)",
-            color: optedIn ? "#ef4444" : "#a78bfa",
+            color: optedIn ? "var(--red)" : "#a78bfa",
             opacity: acting ? 0.6 : 1, transition: "all 0.15s",
           }}
         >
@@ -187,7 +187,7 @@ export default function AccountabilityPartner() {
                 </div>
                 <div style={{
                   fontSize: 11, fontWeight: 700,
-                  color: partner.active7d ? "#22c55e" : "#64748b",
+                  color: partner.active7d ? "var(--green)" : "var(--text-muted)",
                   background: partner.active7d ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.04)",
                   padding: "3px 10px", borderRadius: 99,
                   border: `1px solid ${partner.active7d ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.08)"}`,
@@ -200,8 +200,8 @@ export default function AccountabilityPartner() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 14 }}>
                 {[
                   { label: "Level", value: LEVEL_LABELS[partner.level] ?? `${partner.level}`, color: LEVEL_COLORS[partner.level] },
-                  { label: "Streak", value: `${partner.streak}d`, color: "#f59e0b" },
-                  { label: "Winrate", value: partner.winRate !== null ? `${partner.winRate}%` : "—", color: partner.winRate !== null && partner.winRate >= 50 ? "#22c55e" : "#ef4444" },
+                  { label: "Streak", value: `${partner.streak}d`, color: "var(--orange)" },
+                  { label: "Winrate", value: partner.winRate !== null ? `${partner.winRate}%` : "—", color: partner.winRate !== null && partner.winRate >= 50 ? "var(--green)" : "var(--red)" },
                   { label: "Trades", value: String(partner.tradeCount), color: "var(--text)" },
                 ].map(s => (
                   <div key={s.label} style={{
@@ -222,7 +222,7 @@ export default function AccountabilityPartner() {
                   style={{
                     flex: 1, padding: "8px 12px", borderRadius: 10, cursor: "pointer",
                     background: "rgba(233,30,99,0.12)", border: "1px solid rgba(233,30,99,0.25)",
-                    color: "#e91e63", fontSize: 12, fontWeight: 600,
+                    color: "var(--primary)", fontSize: 12, fontWeight: 600,
                   }}
                 >
                   🤖 Vergelijk met Marcus

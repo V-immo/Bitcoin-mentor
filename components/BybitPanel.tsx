@@ -117,13 +117,13 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
   if (!connected) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ marginBottom: 10, fontWeight: 600, color: "#e5d4e7" }}>💛 Bybit Live Trading</div>
+        <div style={{ marginBottom: 10, fontWeight: 600, color: "var(--text)" }}>💛 Bybit Live Trading</div>
         <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
           Koppel je Bybit API key in{" "}
           <a href="/instellingen" style={{ color: "var(--accent)", textDecoration: "none" }}>Instellingen</a>{" "}
           om live te handelen via Bybit.
         </div>
-        <div style={{ fontSize: 12, color: "#6b7280", background: "var(--surface-2)", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", background: "var(--surface-2)", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
           <strong style={{ color: "var(--text-secondary)" }}>Hoe werkt het?</strong><br />
           1. Ga naar <strong>bybit.com</strong> → Account → API Management<br />
           2. Maak een API key aan met alleen Spot Trading<br />
@@ -137,8 +137,8 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
   if (!symbol) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ fontWeight: 600, color: "#e5d4e7", marginBottom: 8 }}>💛 Bybit Live Trading</div>
-        <div style={{ fontSize: 13, color: "#f59e0b", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 8, padding: "10px 12px" }}>
+        <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>💛 Bybit Live Trading</div>
+        <div style={{ fontSize: 13, color: "var(--orange)", background: "color-mix(in srgb, var(--orange) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--orange) 25%, transparent)", borderRadius: 8, padding: "10px 12px" }}>
           ⚠️ <strong>{asset}</strong> is niet beschikbaar als USDT-paar op Bybit Spot.<br />
           Kies een crypto asset (BTC, ETH, SOL…) voor live trading.
         </div>
@@ -150,19 +150,19 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
     <div style={{ padding: "12px 0" }}>
 
       {/* Waarschuwing echte USDT */}
-      <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 8, padding: "8px 12px", marginBottom: 14, fontSize: 12, color: "#fca5a5" }}>
+      <div style={{ background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 25%, transparent)", borderRadius: 8, padding: "8px 12px", marginBottom: 14, fontSize: 12, color: "var(--red)" }}>
         ⚠️ <strong>ECHTE USDT</strong> — dit zijn geen testorders. Handel verantwoord.
       </div>
 
       {/* Balances */}
       <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
         <div style={{ background: "var(--surface-2)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>USDT</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>${usdtBalance.toFixed(2)}</div>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>USDT</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>${usdtBalance.toFixed(2)}</div>
         </div>
         <div style={{ background: "var(--surface-2)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>{ticker}</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>{coinBalance.toFixed(6)}</div>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>{ticker}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>{coinBalance.toFixed(6)}</div>
         </div>
         <button
           style={{ background: "none", border: "1px solid var(--border)", borderRadius: 8, padding: "0 12px", cursor: "pointer", color: "var(--text-secondary)", fontSize: 14 }}
@@ -181,9 +181,9 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
               flex: 1, padding: "8px 0", borderRadius: 8, fontWeight: 700, fontSize: 13,
               border: "none", cursor: "pointer",
               background: side === s
-                ? (s === "Buy" ? "#26c57c" : "#ef4444")
+                ? (s === "Buy" ? "var(--green)" : "var(--red)")
                 : "var(--surface-2)",
-              color: side === s ? "#fff" : "var(--text-secondary)",
+              color: side === s ? "var(--text)" : "var(--text-secondary)",
             }}
           >
             {s === "Buy" ? "🟢 KOOP" : "🔴 VERKOOP"}
@@ -234,12 +234,12 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
 
       {/* Koers preview */}
       {currentPrice > 0 && parseFloat(amount) > 0 && (
-        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 10 }}>
           {side === "Buy"
             ? `≈ ${(parseFloat(amount) / currentPrice).toFixed(6)} ${ticker}`
             : `≈ $${(parseFloat(amount) * currentPrice).toFixed(2)} USDT`
           }
-          <span style={{ color: "#4b5563", marginLeft: 4 }}>(indicatief · marktorder)</span>
+          <span style={{ color: "var(--text-muted)", marginLeft: 4 }}>(indicatief · marktorder)</span>
         </div>
       )}
 
@@ -247,7 +247,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
       {!confirm ? (
         <button
           className="terminal-btn terminal-btn-primary"
-          style={{ width: "100%", marginBottom: 10, background: side === "Buy" ? "#26c57c" : "#ef4444", color: "#fff" }}
+          style={{ width: "100%", marginBottom: 10, background: side === "Buy" ? "var(--green)" : "var(--red)", color: "var(--text)" }}
           onClick={() => setConfirm(true)}
           disabled={!parseFloat(amount) || parseFloat(amount) <= 0}
         >
@@ -257,11 +257,11 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
           }
         </button>
       ) : (
-        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.4)", borderRadius: 8, padding: "12px 14px", marginBottom: 10 }}>
-          <div style={{ fontWeight: 700, color: "#fca5a5", fontSize: 13, marginBottom: 8 }}>
+        <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 40%, transparent)", borderRadius: 8, padding: "12px 14px", marginBottom: 10 }}>
+          <div style={{ fontWeight: 700, color: "var(--red)", fontSize: 13, marginBottom: 8 }}>
             ⚠️ Bevestig — ECHTE USDT
           </div>
-          <div style={{ fontSize: 12, color: "#e5d4e7", marginBottom: 10 }}>
+          <div style={{ fontSize: 12, color: "var(--text)", marginBottom: 10 }}>
             {side === "Buy"
               ? `Je staat op het punt $${amount} USDT te gebruiken om ${ticker} te kopen op Bybit.`
               : `Je staat op het punt ${amount} ${ticker} te verkopen op Bybit.`
@@ -276,7 +276,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
             </button>
             <button
               className="terminal-btn terminal-btn-primary"
-              style={{ flex: 1, background: side === "Buy" ? "#26c57c" : "#ef4444", color: "#fff" }}
+              style={{ flex: 1, background: side === "Buy" ? "var(--green)" : "var(--red)", color: "var(--text)" }}
               onClick={placeOrder}
               disabled={placing}
             >
@@ -288,7 +288,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
 
       {/* Fout */}
       {orderError && (
-        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "#ef4444" }}>
+        <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "var(--red)" }}>
           ❌ {orderError}
         </div>
       )}
@@ -297,15 +297,15 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
       {lastOrder && (
         <div style={{
           background: lastOrder.orderStatus === "Filled"
-            ? "rgba(38,197,124,0.1)"
+            ? "color-mix(in srgb, var(--green) 10%, transparent)"
             : lastOrder.orderStatus === "Cancelled"
-              ? "rgba(239,68,68,0.08)"
-              : "rgba(245,158,11,0.08)",
-          border: `1px solid ${lastOrder.orderStatus === "Filled" ? "rgba(38,197,124,0.25)" : lastOrder.orderStatus === "Cancelled" ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`,
+              ? "color-mix(in srgb, var(--red) 8%, transparent)"
+              : "color-mix(in srgb, var(--orange) 8%, transparent)",
+          border: `1px solid ${lastOrder.orderStatus === "Filled" ? "color-mix(in srgb, var(--green) 25%, transparent)" : lastOrder.orderStatus === "Cancelled" ? "color-mix(in srgb, var(--red) 25%, transparent)" : "color-mix(in srgb, var(--orange) 25%, transparent)"}`,
           borderRadius: 8, padding: "10px 14px", fontSize: 13
         }}>
           <div style={{
-            color: lastOrder.orderStatus === "Filled" ? "#26c57c" : lastOrder.orderStatus === "Cancelled" ? "#ef4444" : "#f59e0b",
+            color: lastOrder.orderStatus === "Filled" ? "var(--green)" : lastOrder.orderStatus === "Cancelled" ? "var(--red)" : "var(--orange)",
             fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", gap: 6
           }}>
             {lastOrder.orderStatus === "Filled"
@@ -313,25 +313,25 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
               : lastOrder.orderStatus === "Cancelled"
                 ? "❌ Order geannuleerd"
                 : polling ? "⏳ Wacht op uitvoering…" : "🕐 Order geplaatst"}
-            {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "#f59e0b" }}>live update…</span>}
+            {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "var(--orange)" }}>live update…</span>}
           </div>
-          <div style={{ color: lastOrder.orderStatus === "Filled" ? "#86efac" : "#e5d4e7" }}>
+          <div style={{ color: lastOrder.orderStatus === "Filled" ? "var(--green)" : "var(--text)" }}>
             {lastOrder.side?.toUpperCase()} {lastOrder.cumExecQty ?? lastOrder.qty ?? "?"} {ticker}
             {lastOrder.cumExecValue && parseFloat(lastOrder.cumExecValue) > 0
               ? ` voor $${parseFloat(lastOrder.cumExecValue).toFixed(2)}`
               : ""
             }
             {lastOrder.avgPrice && parseFloat(lastOrder.avgPrice) > 0 && (
-              <span style={{ color: "#6b7280", marginLeft: 6 }}>@ ${parseFloat(lastOrder.avgPrice).toLocaleString("en-US")}</span>
+              <span style={{ color: "var(--text-muted)", marginLeft: 6 }}>@ ${parseFloat(lastOrder.avgPrice).toLocaleString("en-US")}</span>
             )}
           </div>
-          <div style={{ color: "#6b7280", fontSize: 11, marginTop: 2 }}>
+          <div style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 2 }}>
             Order {lastOrder.orderId?.slice(0, 8)}… — status: <strong style={{ color: "var(--text-secondary)" }}>{lastOrder.orderStatus}</strong>
           </div>
         </div>
       )}
 
-      <div style={{ fontSize: 11, color: "#4b5563", marginTop: 10, textAlign: "center" }}>
+      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 10, textAlign: "center" }}>
         💛 Live trading via Bybit Spot · {symbol}
       </div>
     </div>

@@ -121,8 +121,8 @@ export default function MarketOverview({ compact }: { compact?: boolean }) {
               borderRadius: 12,
               fontSize: 12,
               fontWeight: activeGroup === g.key ? 700 : 400,
-              background: activeGroup === g.key ? "#e91e63" : "#2a1a28",
-              color: activeGroup === g.key ? "#fff" : "#bf7a99",
+              background: activeGroup === g.key ? "var(--primary)" : "var(--surface-1)",
+              color: activeGroup === g.key ? "#fff" : "var(--text-secondary)",
               border: "none",
               cursor: "pointer",
             }}
@@ -142,10 +142,10 @@ export default function MarketOverview({ compact }: { compact?: boolean }) {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #2a1a28" }}>
-              <th style={{ padding: "5px 6px", textAlign: "left",  color: "#bf7a99", fontWeight: 600 }}>Asset</th>
-              <th style={{ padding: "5px 6px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("market_overview_price")}</th>
-              <th style={{ padding: "5px 6px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("market_overview_change")}</th>
-              <th style={{ padding: "5px 6px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}></th>
+              <th style={{ padding: "5px 6px", textAlign: "left",  color: "var(--text-secondary)", fontWeight: 600 }}>Asset</th>
+              <th style={{ padding: "5px 6px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600 }}>{t("market_overview_price")}</th>
+              <th style={{ padding: "5px 6px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600 }}>{t("market_overview_change")}</th>
+              <th style={{ padding: "5px 6px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600 }}></th>
             </tr>
           </thead>
           <tbody>
@@ -154,7 +154,7 @@ export default function MarketOverview({ compact }: { compact?: boolean }) {
                 <tr key={i} style={{ borderBottom: "1px solid #1a0f18" }}>
                   {[180, 80, 60, 50].map((w, j) => (
                     <td key={j} style={{ padding: "9px 6px" }}>
-                      <div style={{ height: 11, width: w, borderRadius: 5, background: "#2a1a28", animation: "pulse 1.4s ease-in-out infinite" }} />
+                      <div style={{ height: 11, width: w, borderRadius: 5, background: "var(--surface-1)", animation: "pulse 1.4s ease-in-out infinite" }} />
                     </td>
                   ))}
                 </tr>
@@ -168,22 +168,22 @@ export default function MarketOverview({ compact }: { compact?: boolean }) {
                   <tr key={asset.symbol} style={{ borderBottom: "1px solid #1a0f18" }}>
                     <td style={{ padding: "9px 6px" }}>
                       <span style={{ marginRight: 6 }}>{asset.emoji}</span>
-                      <span style={{ fontWeight: 500, color: "#e8d5e0" }}>{asset.name}</span>
-                      <span style={{ marginLeft: 5, fontSize: 10, color: "#6b7280" }}>{asset.ticker}</span>
+                      <span style={{ fontWeight: 500, color: "var(--text)" }}>{asset.name}</span>
+                      <span style={{ marginLeft: 5, fontSize: 10, color: "var(--text-muted)" }}>{asset.ticker}</span>
                     </td>
-                    <td style={{ padding: "9px 6px", textAlign: "right", fontWeight: 600, color: "#e5d4e7", fontVariantNumeric: "tabular-nums" }}>
-                      {pd ? fmtPrice(pd.price, asset) : <span style={{ color: "#3d2a3b" }}>—</span>}
+                    <td style={{ padding: "9px 6px", textAlign: "right", fontWeight: 600, color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>
+                      {pd ? fmtPrice(pd.price, asset) : <span style={{ color: "var(--surface-1)" }}>—</span>}
                     </td>
                     <td style={{ padding: "9px 6px", textAlign: "right", fontWeight: 700, fontVariantNumeric: "tabular-nums",
-                      color: isPos ? "#26c57c" : isNeg ? "#ef4444" : "#bf7a99" }}>
+                      color: isPos ? "var(--green)" : isNeg ? "var(--red)" : "var(--text-secondary)" }}>
                       {change !== null
                         ? `${isPos ? "+" : ""}${change.toFixed(2)}%`
-                        : <span style={{ color: "#3d2a3b" }}>—</span>}
+                        : <span style={{ color: "var(--surface-1)" }}>—</span>}
                     </td>
                     <td style={{ padding: "9px 6px", textAlign: "right" }}>
                       <Link
                         href={`/trade?asset=${asset.symbol}`}
-                        style={{ fontSize: 11, color: "#e91e63", textDecoration: "none", fontWeight: 600 }}
+                        style={{ fontSize: 11, color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}
                       >
                         {t("market_overview_trade")} →
                       </Link>

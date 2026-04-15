@@ -346,7 +346,7 @@ export default function TerminalPaperPanel({
     const sparkPath = sparkPoints.length > 1
         ? sparkPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")
         : null;
-    const sparkColor = totalPnl >= 0 ? "#26c57c" : "#ef4444";
+    const sparkColor = totalPnl >= 0 ? "var(--green)" : "var(--red)";
 
     const goalPct = goal && state.startCapital > 0
         ? Math.min(100, ((totalBalance - state.startCapital) / (goal - state.startCapital)) * 100)
@@ -645,16 +645,16 @@ export default function TerminalPaperPanel({
                     margin: "8px 0 0",
                     padding: "10px 14px",
                     borderRadius: 10,
-                    background: complianceLoading ? "rgba(233,30,99,0.06)" :
-                        complianceMsg?.verdict === "ok" ? "rgba(34,197,94,0.08)" :
-                        complianceMsg?.verdict === "bad" ? "rgba(239,68,68,0.08)" :
-                        "rgba(234,179,8,0.08)",
-                    border: complianceLoading ? "1px solid rgba(233,30,99,0.2)" :
-                        complianceMsg?.verdict === "ok" ? "1px solid rgba(34,197,94,0.2)" :
-                        complianceMsg?.verdict === "bad" ? "1px solid rgba(239,68,68,0.2)" :
-                        "1px solid rgba(234,179,8,0.2)",
+                    background: complianceLoading ? "color-mix(in srgb, var(--primary) 6%, transparent)" :
+                        complianceMsg?.verdict === "ok" ? "color-mix(in srgb, var(--green) 8%, transparent)" :
+                        complianceMsg?.verdict === "bad" ? "color-mix(in srgb, var(--red) 8%, transparent)" :
+                        "color-mix(in srgb, var(--orange) 8%, transparent)",
+                    border: complianceLoading ? "1px solid color-mix(in srgb, var(--primary) 20%, transparent)" :
+                        complianceMsg?.verdict === "ok" ? "1px solid color-mix(in srgb, var(--green) 20%, transparent)" :
+                        complianceMsg?.verdict === "bad" ? "1px solid color-mix(in srgb, var(--red) 20%, transparent)" :
+                        "1px solid color-mix(in srgb, var(--orange) 20%, transparent)",
                     fontSize: 12,
-                    color: "#e2e8f0",
+                    color: "var(--text)",
                     display: "flex",
                     alignItems: "flex-start",
                     gap: 8,
@@ -664,7 +664,7 @@ export default function TerminalPaperPanel({
                         {complianceLoading ? "Marcus controleert je handelsplan…" : complianceMsg?.message}
                     </span>
                     {!complianceLoading && complianceMsg && (
-                        <button onClick={() => setComplianceMsg(null)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 14, padding: 0, marginLeft: "auto", flexShrink: 0 }}>✕</button>
+                        <button onClick={() => setComplianceMsg(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 14, padding: 0, marginLeft: "auto", flexShrink: 0 }}>✕</button>
                     )}
                 </div>
             )}
@@ -674,7 +674,7 @@ export default function TerminalPaperPanel({
                 <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span className="terminal-label">{t("paper_label")}</span>
-                        <span className="paper-balance-display" style={{ color: totalPnl >= 0 ? "#26c57c" : "#ef4444" }}>
+                        <span className="paper-balance-display" style={{ color: totalPnl >= 0 ? "var(--green)" : "var(--red)" }}>
                             {eur(totalBalance)}
                         </span>
                         <span className={`paper-pnl-badge ${totalPnl >= 0 ? "pos" : "neg"}`}>
@@ -689,7 +689,7 @@ export default function TerminalPaperPanel({
                     <div style={{ display: "flex", gap: 12, marginTop: 3, fontSize: 11, color: "var(--text-secondary)" }}>
                         <span>Cash: <strong style={{ color: "var(--text)" }}>{eur(state.cash)}</strong></span>
                         {state.openBtc > 0 && (
-                            <span style={{ color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                            <span style={{ color: unrealized >= 0 ? "var(--green)" : "var(--red)" }}>
                                 Open: {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
                             </span>
                         )}
@@ -823,7 +823,7 @@ export default function TerminalPaperPanel({
                                             placeholder={t("paper_limit_price_placeholder")}
                                         />
                                         {Number(limitPrice) > 0 && currentPrice > 0 && Number(limitPrice) > currentPrice && (
-                                            <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 4 }}>
+                                            <div style={{ fontSize: 11, color: "var(--orange)", marginTop: 4 }}>
                                                 {t("paper_limit_above_market")}
                                             </div>
                                         )}
@@ -862,18 +862,18 @@ export default function TerminalPaperPanel({
                                     {eur(buyAmtNum)}
                                 </span>
                                 {" → "}
-                                <span style={{ fontWeight: 700, color: "#26c57c" }}>
+                                <span style={{ fontWeight: 700, color: "var(--green)" }}>
                                     {previewBtc.toFixed(6)} {assetTicker}
                                 </span>
                                 {" @ "}
                                 <span>${Math.round(execPrice > 0 ? execPrice : currentPrice).toLocaleString("en-US")}</span>
                                 {Number(slInput) > 0 && (
-                                    <span style={{ color: "#ef4444", marginLeft: 6 }}>
+                                    <span style={{ color: "var(--red)", marginLeft: 6 }}>
                                         · SL ${Math.round(Number(slInput)).toLocaleString("en-US")}
                                     </span>
                                 )}
                                 {Number(tpInput) > 0 && (
-                                    <span style={{ color: "#26c57c", marginLeft: 6 }}>
+                                    <span style={{ color: "var(--green)", marginLeft: 6 }}>
                                         · TP ${Math.round(Number(tpInput)).toLocaleString("en-US")}
                                     </span>
                                 )}
@@ -940,7 +940,7 @@ export default function TerminalPaperPanel({
                                                 key={pct}
                                                 className={`paper-close-btn${sellPct === pct ? " full" : ""}${pct === 100 ? " full" : ""}`}
                                                 onClick={() => setSellPct(pct)}
-                                                style={sellPct === pct ? { borderColor: "#ef4444", background: "rgba(239,68,68,0.18)" } : {}}
+                                                style={sellPct === pct ? { borderColor: "var(--red)", background: "color-mix(in srgb, var(--red) 18%, transparent)" } : {}}
                                             >
                                                 {pct}%
                                             </button>
@@ -953,11 +953,11 @@ export default function TerminalPaperPanel({
                                             {sellBtc.toFixed(6)} {assetTicker}
                                         </span>
                                         {" → "}
-                                        <span style={{ fontWeight: 700, color: "#ef4444" }}>
+                                        <span style={{ fontWeight: 700, color: "var(--red)" }}>
                                             {eur(sellValue)}
                                         </span>
                                         {" · P&L: "}
-                                        <span style={{ fontWeight: 700, color: sellPnl >= 0 ? "#26c57c" : "#ef4444" }}>
+                                        <span style={{ fontWeight: 700, color: sellPnl >= 0 ? "var(--green)" : "var(--red)" }}>
                                             {sellPnl >= 0 ? "+" : ""}{eur(sellPnl)}
                                         </span>
                                     </div>
@@ -1011,7 +1011,7 @@ export default function TerminalPaperPanel({
                 <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
                     {confirmReset ? (
                         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                            <span style={{ fontSize: 11, color: "#ef4444" }}>{t("paper_confirm_reset")}</span>
+                            <span style={{ fontSize: 11, color: "var(--red)" }}>{t("paper_confirm_reset")}</span>
                             <button className="terminal-btn terminal-btn-danger" style={{ fontSize: 11 }} onClick={resetAccount}>{t("paper_reset_confirm_btn")}</button>
                             <button className="terminal-btn terminal-btn-muted" style={{ fontSize: 11 }} onClick={() => setConfirmReset(false)}>✕</button>
                         </div>
@@ -1029,7 +1029,7 @@ export default function TerminalPaperPanel({
 
             {/* === PENDING LIMIT ORDER === */}
             {pendingLimitOrder && (
-                <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "#f59e0b55" }}>
+                <div className="terminal-zone-warning" style={{ marginBottom: 8, borderColor: "color-mix(in srgb, var(--orange) 33%, transparent)" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: 12 }}>
                             {t("paper_limit_pending")} ${Math.round(pendingLimitOrder.price).toLocaleString("en-US")}
@@ -1037,7 +1037,7 @@ export default function TerminalPaperPanel({
                         </span>
                         <button
                             onClick={() => setPendingLimitOrder(null)}
-                            style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 12 }}
+                            style={{ background: "none", border: "none", color: "var(--red)", cursor: "pointer", fontSize: 12 }}
                         >
                             {t("paper_limit_cancel")} ✕
                         </button>
@@ -1056,7 +1056,7 @@ export default function TerminalPaperPanel({
                                 {state.openBtc.toFixed(6)}
                             </span>
                         </div>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: unrealized >= 0 ? "#26c57c" : "#ef4444" }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: unrealized >= 0 ? "var(--green)" : "var(--red)" }}>
                             {unrealized >= 0 ? "+" : ""}{eur(unrealized)}
                         </span>
                     </div>
@@ -1076,7 +1076,7 @@ export default function TerminalPaperPanel({
                         </div>
                         <div className="paper-position-metric">
                             <div className="paper-position-metric-label">{t("paper_position_roi")}</div>
-                            <div className="paper-position-metric-value" style={{ color: roiPct >= 0 ? "#26c57c" : "#ef4444" }}>
+                            <div className="paper-position-metric-value" style={{ color: roiPct >= 0 ? "var(--green)" : "var(--red)" }}>
                                 {roiPct >= 0 ? "+" : ""}{roiPct.toFixed(2)}%
                             </div>
                         </div>
@@ -1089,7 +1089,7 @@ export default function TerminalPaperPanel({
                     {/* SL/TP status pills */}
                     <div className="paper-sltp-row">
                         <div className={`paper-sltp-pill${state.activeSL ? " sl-active" : ""}`}>
-                            <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 10 }}>SL</span>
+                            <span style={{ color: "var(--red)", fontWeight: 700, fontSize: 10 }}>SL</span>
                             <span>
                                 {state.activeSL
                                     ? `$${Math.round(state.activeSL).toLocaleString("en-US")}`
@@ -1097,7 +1097,7 @@ export default function TerminalPaperPanel({
                             </span>
                         </div>
                         <div className={`paper-sltp-pill${state.activeTP ? " tp-active" : ""}`}>
-                            <span style={{ color: "#26c57c", fontWeight: 700, fontSize: 10 }}>TP</span>
+                            <span style={{ color: "var(--green)", fontWeight: 700, fontSize: 10 }}>TP</span>
                             <span>
                                 {state.activeTP
                                     ? `$${Math.round(state.activeTP).toLocaleString("en-US")}`
@@ -1169,7 +1169,7 @@ export default function TerminalPaperPanel({
                     display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999,
                 }}>
                     <div style={{
-                        background: "var(--bg-card, #1a1f2e)", border: "1px solid var(--border, #2a3040)",
+                        background: "var(--surface)", border: "1px solid var(--surface-1)",
                         borderRadius: 12, padding: 24, width: "min(380px, 90vw)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
                     }}>
                         <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>
@@ -1212,7 +1212,7 @@ export default function TerminalPaperPanel({
                                         {Number(slInput) > 0 && (
                                             <tr>
                                                 <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>Stop Loss</td>
-                                                <td style={{ textAlign: "right", fontWeight: 600, color: "#ef4444" }}>
+                                                <td style={{ textAlign: "right", fontWeight: 600, color: "var(--red)" }}>
                                                     ${Math.round(Number(slInput)).toLocaleString("en-US")}
                                                 </td>
                                             </tr>
@@ -1220,7 +1220,7 @@ export default function TerminalPaperPanel({
                                         {Number(tpInput) > 0 && (
                                             <tr>
                                                 <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>Take Profit</td>
-                                                <td style={{ textAlign: "right", fontWeight: 600, color: "#26c57c" }}>
+                                                <td style={{ textAlign: "right", fontWeight: 600, color: "var(--green)" }}>
                                                     ${Math.round(Number(tpInput)).toLocaleString("en-US")}
                                                 </td>
                                             </tr>
@@ -1243,7 +1243,7 @@ export default function TerminalPaperPanel({
                                         </tr>
                                         <tr>
                                             <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>P/L</td>
-                                            <td style={{ textAlign: "right", fontWeight: 700, color: unrealized * confirmPct >= 0 ? "#26c57c" : "#ef4444" }}>
+                                            <td style={{ textAlign: "right", fontWeight: 700, color: unrealized * confirmPct >= 0 ? "var(--green)" : "var(--red)" }}>
                                                 {(unrealized * confirmPct) >= 0 ? "+" : ""}{eur(unrealized * confirmPct)}
                                             </td>
                                         </tr>
@@ -1287,16 +1287,16 @@ export default function TerminalPaperPanel({
                                 title={e.label}
                                 onClick={() => saveEmotion(pendingEmotionId, e.value)}
                                 style={{
-                                    background: "rgba(233,30,99,0.08)",
-                                    border: "1px solid rgba(233,30,99,0.2)",
+                                    background: "color-mix(in srgb, var(--primary) 8%, transparent)",
+                                    border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
                                     borderRadius: 10,
                                     width: 44, height: 44,
                                     fontSize: 22, cursor: "pointer",
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                     transition: "all 0.15s",
                                 }}
-                                onMouseEnter={e2 => { e2.currentTarget.style.background = "rgba(233,30,99,0.2)"; e2.currentTarget.style.transform = "scale(1.15)"; }}
-                                onMouseLeave={e2 => { e2.currentTarget.style.background = "rgba(233,30,99,0.08)"; e2.currentTarget.style.transform = "scale(1)"; }}
+                                onMouseEnter={e2 => { e2.currentTarget.style.background = "color-mix(in srgb, var(--primary) 20%, transparent)"; e2.currentTarget.style.transform = "scale(1.15)"; }}
+                                onMouseLeave={e2 => { e2.currentTarget.style.background = "color-mix(in srgb, var(--primary) 8%, transparent)"; e2.currentTarget.style.transform = "scale(1)"; }}
                             >
                                 {e.emoji}
                             </button>
@@ -1326,10 +1326,10 @@ export default function TerminalPaperPanel({
                         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                             <div style={{
                                 width: 22, height: 22, borderRadius: "50%",
-                                background: "rgba(233,30,99,0.15)",
-                                border: "1px solid rgba(233,30,99,0.4)",
+                                background: "color-mix(in srgb, var(--primary) 15%, transparent)",
+                                border: "1px solid color-mix(in srgb, var(--primary) 40%, transparent)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                fontSize: 11, fontWeight: 700, color: "#e91e63", flexShrink: 0,
+                                fontSize: 11, fontWeight: 700, color: "var(--primary)", flexShrink: 0,
                             }}>M</div>
                             <span style={{ fontSize: 12, color: "var(--text-secondary)", fontStyle: "italic" }}>
                                 {marcusQ}
@@ -1356,42 +1356,42 @@ export default function TerminalPaperPanel({
                 <div className="terminal-progress-grid" style={{ marginTop: 12 }}>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_winrate")}</span>
-                        <span className="terminal-progress-value" style={{ color: winrate >= 50 ? "#26c57c" : "#ef4444" }}>
+                        <span className="terminal-progress-value" style={{ color: winrate >= 50 ? "var(--green)" : "var(--red)" }}>
                             {winrate.toFixed(0)}%
                         </span>
                         <span className="terminal-progress-sub">{winCount}W / {lossCount}L</span>
                     </div>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_total_pl")}</span>
-                        <span className="terminal-progress-value" style={{ color: state.realizedPnl >= 0 ? "#26c57c" : "#ef4444" }}>
+                        <span className="terminal-progress-value" style={{ color: state.realizedPnl >= 0 ? "var(--green)" : "var(--red)" }}>
                             {eur(state.realizedPnl)}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_closed")}</span>
                     </div>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_avg_win")}</span>
-                        <span className="terminal-progress-value" style={{ color: "#26c57c" }}>
+                        <span className="terminal-progress-value" style={{ color: "var(--green)" }}>
                             {avgWin > 0 ? eur(avgWin) : "—"}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_per_win")}</span>
                     </div>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_avg_loss")}</span>
-                        <span className="terminal-progress-value" style={{ color: "#ef4444" }}>
+                        <span className="terminal-progress-value" style={{ color: "var(--red)" }}>
                             {avgLoss < 0 ? eur(avgLoss) : "—"}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_per_loss")}</span>
                     </div>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_streak")}</span>
-                        <span className="terminal-progress-value" style={{ color: streakType === "win" ? "#26c57c" : streakType === "loss" ? "#ef4444" : "#8b95ad" }}>
+                        <span className="terminal-progress-value" style={{ color: streakType === "win" ? "var(--green)" : streakType === "loss" ? "var(--red)" : "var(--text-muted)" }}>
                             {currentStreak > 0 ? `${currentStreak}× ${streakType === "win" ? "🔥" : "❄️"}` : "—"}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_streak_sub")}</span>
                     </div>
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_best")}</span>
-                        <span className="terminal-progress-value" style={{ color: "#26c57c" }}>
+                        <span className="terminal-progress-value" style={{ color: "var(--green)" }}>
                             {bestTrade ? eur(bestTrade.pnl || 0) : "—"}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_worst_prefix")} {worstTrade ? eur(worstTrade.pnl || 0) : "—"}</span>
@@ -1443,17 +1443,17 @@ export default function TerminalPaperPanel({
                                             <td style={{ color: "var(--text-secondary)" }}>{trade.time}</td>
                                             <td>
                                                 <span style={{
-                                                    color: trade.side === "buy" ? "#26c57c" : "#ef4444",
+                                                    color: trade.side === "buy" ? "var(--green)" : "var(--red)",
                                                     fontWeight: 700,
                                                     fontSize: 11,
                                                 }}>
                                                     {trade.side === "buy" ? "BUY" : "SELL"}
                                                 </span>
                                                 {trade.orderType === "limit" && (
-                                                    <span style={{ fontSize: 9, color: "#8b95ad", marginLeft: 3 }}>LMT</span>
+                                                    <span style={{ fontSize: 9, color: "var(--text-muted)", marginLeft: 3 }}>LMT</span>
                                                 )}
                                                 {trade.closePct && (
-                                                    <span style={{ fontSize: 9, color: "#8b95ad", marginLeft: 3 }}>
+                                                    <span style={{ fontSize: 9, color: "var(--text-muted)", marginLeft: 3 }}>
                                                         {Math.round(trade.closePct * 100)}%
                                                     </span>
                                                 )}
@@ -1469,7 +1469,7 @@ export default function TerminalPaperPanel({
                                             <td style={{ textAlign: "right" }}>{eur(trade.amountEur)}</td>
                                             <td style={{ textAlign: "right" }}>
                                                 {typeof trade.pnl === "number" ? (
-                                                    <span style={{ color: trade.pnl >= 0 ? "#26c57c" : "#ef4444", fontWeight: 700 }}>
+                                                    <span style={{ color: trade.pnl >= 0 ? "var(--green)" : "var(--red)", fontWeight: 700 }}>
                                                         {trade.pnl >= 0 ? "+" : ""}{eur(trade.pnl)}
                                                     </span>
                                                 ) : "—"}

@@ -76,14 +76,14 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
   if (!connected) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ marginBottom: 10, fontWeight: 600, color: "#e5d4e7" }}>🔬 Binance Testnet</div>
+        <div style={{ marginBottom: 10, fontWeight: 600, color: "var(--text)" }}>🔬 Binance Testnet</div>
         <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
           Koppel je Binance Testnet API keys in{" "}
-          <a href="/instellingen" style={{ color: "#e91e63", textDecoration: "none" }}>Instellingen</a>{" "}
+          <a href="/instellingen" style={{ color: "var(--primary)", textDecoration: "none" }}>Instellingen</a>{" "}
           om echte orders te oefenen met gratis testgeld.
         </div>
-        <div style={{ fontSize: 12, color: "#6b7280", background: "#1a0f18", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
-          <strong style={{ color: "#bf7a99" }}>Hoe werkt het?</strong><br />
+        <div style={{ fontSize: 12, color: "var(--text-muted)", background: "var(--surface)", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
+          <strong style={{ color: "var(--text-secondary)" }}>Hoe werkt het?</strong><br />
           1. Ga naar <strong>testnet.binance.vision</strong><br />
           2. Log in met GitHub → maak API keys<br />
           3. Vul de keys in bij Instellingen → Binance Testnet<br />
@@ -97,16 +97,16 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
     <div style={{ padding: "12px 0" }}>
       {/* Balances */}
       <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
-        <div style={{ background: "#1a0f18", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>USDT</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>${usdtBalance.toFixed(2)}</div>
+        <div style={{ background: "var(--surface)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>USDT</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>${usdtBalance.toFixed(2)}</div>
         </div>
-        <div style={{ background: "#1a0f18", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>{ticker}</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>{coinBalance.toFixed(6)}</div>
+        <div style={{ background: "var(--surface)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>{ticker}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>{coinBalance.toFixed(6)}</div>
         </div>
         <button
-          style={{ background: "none", border: "1px solid #3d2a3b", borderRadius: 8, padding: "0 12px", cursor: "pointer", color: "#bf7a99", fontSize: 14 }}
+          style={{ background: "none", border: "1px solid #3d2a3b", borderRadius: 8, padding: "0 12px", cursor: "pointer", color: "var(--text-secondary)", fontSize: 14 }}
           onClick={fetchBalance}
         >↻</button>
       </div>
@@ -121,9 +121,9 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
               flex: 1, padding: "8px 0", borderRadius: 8, fontWeight: 700, fontSize: 13,
               border: "none", cursor: "pointer",
               background: side === s
-                ? (s === "BUY" ? "#26c57c" : "#ef4444")
-                : "#2a1a28",
-              color: side === s ? "#fff" : "#bf7a99",
+                ? (s === "BUY" ? "var(--green)" : "var(--red)")
+                : "var(--surface-1)",
+              color: side === s ? "#fff" : "var(--text-secondary)",
             }}
           >
             {s === "BUY" ? "🟢 KOOP" : "🔴 VERKOOP"}
@@ -133,7 +133,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
 
       {/* Bedrag */}
       <div style={{ marginBottom: 10 }}>
-        <label style={{ fontSize: 11, color: "#bf7a99", display: "block", marginBottom: 4 }}>
+        <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>
           {side === "BUY" ? "Bedrag in USDT" : `Hoeveelheid ${ticker}`}
         </label>
         <div style={{ display: "flex", gap: 6 }}>
@@ -141,7 +141,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
             type="number"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            style={{ flex: 1, background: "#1a0f18", border: "1px solid #3d2a3b", borderRadius: 8, padding: "8px 12px", color: "#e5d4e7", fontSize: 14 }}
+            style={{ flex: 1, background: "var(--surface)", border: "1px solid #3d2a3b", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
           />
           {side === "BUY" && (
             <div style={{ display: "flex", gap: 4 }}>
@@ -149,7 +149,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
                 <button
                   key={pct}
                   onClick={() => setAmount((usdtBalance * pct / 100).toFixed(2))}
-                  style={{ background: "#2a1a28", border: "1px solid #3d2a3b", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "#bf7a99", cursor: "pointer" }}
+                  style={{ background: "var(--surface-1)", border: "1px solid #3d2a3b", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "var(--text-secondary)", cursor: "pointer" }}
                 >
                   {pct}%
                 </button>
@@ -161,7 +161,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
 
       {/* Koers preview */}
       {currentPrice > 0 && side === "BUY" && parseFloat(amount) > 0 && (
-        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 10 }}>
           ≈ {(parseFloat(amount) / currentPrice).toFixed(6)} {ticker} @ ${currentPrice.toLocaleString("en-US")}
         </div>
       )}
@@ -178,7 +178,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
 
       {/* Fout */}
       {orderError && (
-        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "#ef4444" }}>
+        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "var(--red)" }}>
           ❌ {orderError}
         </div>
       )}
@@ -186,16 +186,16 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
       {/* Succesbericht */}
       {lastOrder && (
         <div style={{ background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>
-          <div style={{ color: "#26c57c", fontWeight: 600, marginBottom: 4 }}>✅ Order geplaatst!</div>
-          <div style={{ color: "#86efac" }}>
+          <div style={{ color: "var(--green)", fontWeight: 600, marginBottom: 4 }}>✅ Order geplaatst!</div>
+          <div style={{ color: "var(--green)" }}>
             {lastOrder.side} {parseFloat(lastOrder.executedQty ?? "0").toFixed(6)} {ticker}
             {" "}voor ${parseFloat(lastOrder.cummulativeQuoteQty ?? "0").toFixed(2)}
           </div>
-          <div style={{ color: "#6b7280", fontSize: 11, marginTop: 2 }}>Order #{lastOrder.orderId} — {lastOrder.status}</div>
+          <div style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 2 }}>Order #{lastOrder.orderId} — {lastOrder.status}</div>
         </div>
       )}
 
-      <div style={{ fontSize: 11, color: "#3d2a3b", marginTop: 10, textAlign: "center" }}>
+      <div style={{ fontSize: 11, color: "var(--surface-1)", marginTop: 10, textAlign: "center" }}>
         🔬 Dit zijn testnet orders — geen echt geld
       </div>
     </div>

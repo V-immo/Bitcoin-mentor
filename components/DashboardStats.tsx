@@ -62,7 +62,7 @@ export default function DashboardStats() {
       label: "Login streak",
       value: `${stats.loginStreak} dagen`,
       sub: stats.loginStreak >= 7 ? "Week streak! 🏅" : stats.loginStreak >= 3 ? "Goed bezig" : "Log elke dag in",
-      color: "#f97316",
+      color: "var(--orange)",
       href: null,
     },
     {
@@ -78,7 +78,7 @@ export default function DashboardStats() {
       label: "Paper P&L",
       value: stats.totalPnl === 0 ? "€0" : `${stats.totalPnl >= 0 ? "+" : ""}€${Math.abs(stats.totalPnl).toFixed(0)}`,
       sub: `${stats.closedTrades} trades · ${stats.winRate}% winrate`,
-      color: stats.totalPnl >= 0 ? "#22d47a" : "#f05252",
+      color: stats.totalPnl >= 0 ? "var(--green)" : "var(--red)",
       href: "/trade",
     },
     {
@@ -86,7 +86,7 @@ export default function DashboardStats() {
       label: "Open posities",
       value: String(stats.openPositions),
       sub: stats.openPositions > 0 ? "Actief in de markt" : "Geen open trades",
-      color: "#e91e63",
+      color: "var(--primary)",
       href: "/trade",
     },
     {

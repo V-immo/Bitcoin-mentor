@@ -216,9 +216,9 @@ export default function TradingChart({
   const showMACDRef = useRef(showMACD);
   showMACDRef.current = showMACD;
 
-  const BG   = isLight ? "#f2ebe0" : "#0e0810";
-  const GRID = isLight ? "rgba(160,100,20,0.10)" : "#1a0f18";
-  const TEXT = isLight ? "#7a5530" : "#bf7a99";
+  const BG   = isLight ? "#f2ebe0" : "var(--bg)";
+  const GRID = isLight ? "rgba(160,100,20,0.10)" : "var(--surface)";
+  const TEXT = isLight ? "#7a5530" : "var(--text-secondary)";
 
   // Herinitialiseer chart als thema wisselt
   useEffect(() => { setChartInitKey(k => k + 1); }, [theme]);
@@ -256,14 +256,14 @@ export default function TradingChart({
       const chart = createChart(mainRef.current, { ...commonLayout, width: containerW, height });
 
       const candleSeries = chart.addSeries(CandlestickSeries, {
-        upColor: "#26c57c", downColor: "#ef4444",
-        borderUpColor: "#26c57c", borderDownColor: "#ef4444",
-        wickUpColor: "#26c57c", wickDownColor: "#ef4444",
+        upColor: "var(--green)", downColor: "var(--red)",
+        borderUpColor: "var(--green)", borderDownColor: "var(--red)",
+        wickUpColor: "var(--green)", wickDownColor: "var(--red)",
       });
 
       // Line series (alternative view to candlestick)
       const lineSeries = chart.addSeries(LineSeries, {
-        color: "#e91e63",
+        color: "var(--primary)",
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: true,
@@ -278,11 +278,11 @@ export default function TradingChart({
       chart.priceScale("volume").applyOptions({ scaleMargins: { top: 0.80, bottom: 0 } });
 
       const ma20Series = chart.addSeries(LineSeries, {
-        color: "#f59e0b", lineWidth: 1, priceLineVisible: false, lastValueVisible: true,
+        color: "var(--orange)", lineWidth: 1, priceLineVisible: false, lastValueVisible: true,
         title: "MA20",
       });
       const ma50Series = chart.addSeries(LineSeries, {
-        color: "#e91e63", lineWidth: 1, priceLineVisible: false, lastValueVisible: true,
+        color: "var(--primary)", lineWidth: 1, priceLineVisible: false, lastValueVisible: true,
         title: "MA50",
       });
 
@@ -292,7 +292,7 @@ export default function TradingChart({
         title: "BB↑",
       });
       const bbMiddleSeries = chart.addSeries(LineSeries, {
-        color: "#f59e0b", lineWidth: 1, priceLineVisible: false, lastValueVisible: false,
+        color: "var(--orange)", lineWidth: 1, priceLineVisible: false, lastValueVisible: false,
         title: "BB mid", lineStyle: LineStyle.Dashed,
       });
       const bbLowerSeries = chart.addSeries(LineSeries, {
@@ -319,7 +319,7 @@ export default function TradingChart({
       });
 
       const rsiSeries = rsiChart.addSeries(LineSeries, {
-        color: "#e91e63", lineWidth: 1, priceLineVisible: false, lastValueVisible: true, title: "RSI",
+        color: "var(--primary)", lineWidth: 1, priceLineVisible: false, lastValueVisible: true, title: "RSI",
       });
       rsiSeries.createPriceLine({ price: 70, color: "#ef444466", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "70" });
       rsiSeries.createPriceLine({ price: 50, color: "#ffffff22", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: false, title: "" });
@@ -350,7 +350,7 @@ export default function TradingChart({
           color: "#3b82f6", lineWidth: 1, priceLineVisible: false, lastValueVisible: true, title: "MACD",
         });
         macdSignalSeries = macdChart.addSeries(LineSeries, {
-          color: "#e91e63", lineWidth: 1, priceLineVisible: false, lastValueVisible: true, title: "Signal",
+          color: "var(--primary)", lineWidth: 1, priceLineVisible: false, lastValueVisible: true, title: "Signal",
         });
         macdHistSeries = macdChart.addSeries(HistogramSeries, {
           priceLineVisible: false, lastValueVisible: false,
@@ -407,10 +407,10 @@ export default function TradingChart({
 
       // Zones
       if (mode === "analysis" && entryZoneLow > 0) {
-        candleSeries.createPriceLine({ price: stopLoss, color: "#ef4444", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Stop" });
-        candleSeries.createPriceLine({ price: entryZoneLow, color: "#26c57c", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Entry ↓" });
-        candleSeries.createPriceLine({ price: entryZoneHigh, color: "#26c57c", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Entry ↑" });
-        candleSeries.createPriceLine({ price: resistanceZoneLow, color: "#6b7280", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Resistance" });
+        candleSeries.createPriceLine({ price: stopLoss, color: "var(--red)", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Stop" });
+        candleSeries.createPriceLine({ price: entryZoneLow, color: "var(--green)", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Entry ↓" });
+        candleSeries.createPriceLine({ price: entryZoneHigh, color: "var(--green)", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Entry ↑" });
+        candleSeries.createPriceLine({ price: resistanceZoneLow, color: "var(--text-muted)", lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "Resistance" });
       }
 
       priceLineRef.current = candleSeries.createPriceLine({
@@ -563,8 +563,8 @@ export default function TradingChart({
       {!compact && (
         <div className="market-chart-topbar">
           <div className="market-chart-chip">{isFast ? t("chart_live_label") : t("chart_analysis_label")}</div>
-          <div className="market-chart-chip" style={{ color: "#f59e0b" }}>── MA20</div>
-          <div className="market-chart-chip" style={{ color: "#e91e63" }}>── MA50</div>
+          <div className="market-chart-chip" style={{ color: "var(--orange)" }}>── MA20</div>
+          <div className="market-chart-chip" style={{ color: "var(--primary)" }}>── MA50</div>
           {showBB && <div className="market-chart-chip" style={{ color: "#3b82f6" }}>── BB(20)</div>}
           {showMACD && <div className="market-chart-chip" style={{ color: "#3b82f6" }}>── MACD(12,26,9)</div>}
           <div className="market-chart-chip">{t("chart_drag_hint")}</div>
@@ -608,23 +608,23 @@ export default function TradingChart({
       {!compact && !isFast && (
         <div className="market-chart-legend">
           <div className="market-chart-legend-item">
-            <span className="market-chart-legend-dot" style={{ background: "#26c57c" }} />
+            <span className="market-chart-legend-dot" style={{ background: "var(--green)" }} />
             <span>{t("chart_buy_zone_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
-            <span className="market-chart-legend-dot" style={{ background: "#ef4444" }} />
+            <span className="market-chart-legend-dot" style={{ background: "var(--red)" }} />
             <span>{t("chart_stoploss_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
-            <span className="market-chart-legend-dot" style={{ background: "#6b7280" }} />
+            <span className="market-chart-legend-dot" style={{ background: "var(--text-muted)" }} />
             <span>{t("chart_resistance_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
-            <span className="market-chart-legend-dot" style={{ background: "#f59e0b" }} />
+            <span className="market-chart-legend-dot" style={{ background: "var(--orange)" }} />
             <span>{t("chart_ma20_desc")}</span>
           </div>
           <div className="market-chart-legend-item">
-            <span className="market-chart-legend-dot" style={{ background: "#e91e63" }} />
+            <span className="market-chart-legend-dot" style={{ background: "var(--primary)" }} />
             <span>{t("chart_ma50_desc")}</span>
           </div>
           {showBB && (
@@ -662,7 +662,7 @@ export default function TradingChart({
             const half = (range.to - range.from) / 4;
             ts.setVisibleLogicalRange({ from: mid - half, to: mid + half });
           }}
-          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "#2a1a28", color: "#bf7a99" }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "var(--surface-1)", color: "var(--text-secondary)" }}
           title="Zoom in"
         >+</button>
         <button
@@ -675,7 +675,7 @@ export default function TradingChart({
             const half = (range.to - range.from);
             ts.setVisibleLogicalRange({ from: mid - half, to: mid + half });
           }}
-          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "#2a1a28", color: "#bf7a99" }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, background: "var(--surface-1)", color: "var(--text-secondary)" }}
           title="Zoom out"
         >−</button>
         <button
@@ -685,7 +685,7 @@ export default function TradingChart({
             rsiChartRef.current?.timeScale().fitContent();
             macdChartRef.current?.timeScale().fitContent();
           }}
-          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "#2a1a28", color: "#bf7a99" }}
+          style={{ padding: "3px 12px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "var(--surface-1)", color: "var(--text-secondary)" }}
           title="Fit all"
         >⤢ fit</button>
       </div>

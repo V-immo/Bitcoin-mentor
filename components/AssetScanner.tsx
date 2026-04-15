@@ -23,7 +23,7 @@ function Sparkline({ candles, livePrice }: { candles: { close: number }[]; liveP
     return `${x},${y}`;
   }).join(" ");
   const isUp = closes[closes.length - 1] >= closes[0];
-  const color = isUp ? "#22d47a" : "#f05252";
+  const color = isUp ? "var(--green)" : "var(--red)";
   return (
     <svg width={w} height={h} style={{ display: "block", width: "100%" }} viewBox={`0 0 ${w} ${h}`}>
       <defs>
@@ -53,12 +53,12 @@ type MarketStats = {
 
 function fgColor(fg: string): string {
   const val = parseInt(fg);
-  if (isNaN(val)) return "#94a3b8";
-  if (val >= 75) return "#f59e0b";
-  if (val >= 55) return "#22d47a";
-  if (val >= 45) return "#94a3b8";
-  if (val >= 25) return "#f59e0b";
-  return "#f05252";
+  if (isNaN(val)) return "var(--text-muted)";
+  if (val >= 75) return "var(--orange)";
+  if (val >= 55) return "var(--green)";
+  if (val >= 45) return "var(--text-muted)";
+  if (val >= 25) return "var(--orange)";
+  return "var(--red)";
 }
 
 function fgLabel(fg: string): string {
@@ -180,7 +180,7 @@ export default function AssetScanner() {
             <span className="dash-stat-value">
               ${fmt(stats.btcPrice)}
               {stats.btcChange != null && (
-                <span style={{ color: stats.btcChange >= 0 ? "#22d47a" : "#f05252", marginLeft: 6, fontSize: 11 }}>
+                <span style={{ color: stats.btcChange >= 0 ? "var(--green)" : "var(--red)", marginLeft: 6, fontSize: 11 }}>
                   {stats.btcChange >= 0 ? "+" : ""}{stats.btcChange.toFixed(2)}%
                 </span>
               )}
@@ -204,7 +204,7 @@ export default function AssetScanner() {
               {stats.globalMetrics.totalMarketCap}
               {stats.globalMetrics.marketCapChange24h && stats.globalMetrics.marketCapChange24h !== "onbekend" && (
                 <span style={{
-                  color: stats.globalMetrics.marketCapChange24h.startsWith("-") ? "#f05252" : "#22d47a",
+                  color: stats.globalMetrics.marketCapChange24h.startsWith("-") ? "var(--red)" : "var(--green)",
                   marginLeft: 6, fontSize: 11
                 }}>
                   {stats.globalMetrics.marketCapChange24h.startsWith("-") ? "" : "+"}{stats.globalMetrics.marketCapChange24h}
@@ -219,9 +219,9 @@ export default function AssetScanner() {
           <div className="dash-stat-pill dash-signals-pill">
             <span className="dash-stat-label">Signalen</span>
             <span className="dash-stat-value" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: "#22d47a" }}>🟢 {counts.green}</span>
-              <span style={{ color: "#f59e0b" }}>🟡 {counts.yellow}</span>
-              <span style={{ color: "#f05252" }}>🔴 {counts.red}</span>
+              <span style={{ color: "var(--green)" }}>🟢 {counts.green}</span>
+              <span style={{ color: "var(--orange)" }}>🟡 {counts.yellow}</span>
+              <span style={{ color: "var(--red)" }}>🔴 {counts.red}</span>
             </span>
           </div>
         )}

@@ -275,13 +275,13 @@ export default function ProfielPage() {
           {username.slice(0, 1).toUpperCase()}
         </div>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: "#fce8f0" }}>{username}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "var(--text)" }}>{username}</div>
           <span
             style={{
               display: "inline-block",
               background: role === "admin" ? "rgba(233,30,99,0.18)" : "rgba(255,255,255,0.07)",
               border: `1px solid ${role === "admin" ? "rgba(233,30,99,0.4)" : "rgba(255,255,255,0.12)"}`,
-              color: role === "admin" ? "#e91e63" : "#bf7a99",
+              color: role === "admin" ? "var(--primary)" : "var(--text-secondary)",
               borderRadius: 999,
               padding: "2px 12px",
               fontSize: 12,
@@ -340,7 +340,7 @@ export default function ProfielPage() {
                 {partner && (
                   <span style={{
                     marginLeft: "auto", fontSize: 11, background: "rgba(34,197,94,0.12)",
-                    border: "1px solid rgba(34,197,94,0.3)", color: "#86efac",
+                    border: "1px solid rgba(34,197,94,0.3)", color: "var(--green)",
                     borderRadius: 999, padding: "2px 10px", fontWeight: 600,
                   }}>Gekoppeld</span>
                 )}
@@ -355,7 +355,7 @@ export default function ProfielPage() {
                     onClick={togglePartnerOptIn}
                     disabled={partnerOptLoading}
                     style={{
-                      background: "#e91e63", color: "#fff", border: "none",
+                      background: "var(--primary)", color: "var(--text)", border: "none",
                       borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
                       cursor: partnerOptLoading ? "not-allowed" : "pointer",
                       opacity: partnerOptLoading ? 0.7 : 1,
@@ -393,12 +393,12 @@ export default function ProfielPage() {
                       width: 44, height: 44, borderRadius: "50%",
                       background: "rgba(233,30,99,0.15)", border: "1px solid rgba(233,30,99,0.3)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 18, fontWeight: 700, color: "#e91e63", flexShrink: 0,
+                      fontSize: 18, fontWeight: 700, color: "var(--primary)", flexShrink: 0,
                     }}>
                       {partner.codename.slice(0, 1)}
                     </div>
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#fce8f0" }}>{partner.codename}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{partner.codename}</div>
                       <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                         Gekoppeld op {new Date(partner.matchedAt).toLocaleDateString("nl-NL")}
                         {partner.active7d && " · 🟢 actief deze week"}
@@ -420,9 +420,9 @@ export default function ProfielPage() {
                       }}>
                         <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{label}</div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: 15, fontWeight: 700, color: "#fce8f0" }}>{mine}</span>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}>{mine}</span>
                           <span style={{ fontSize: 11, color: "var(--text-muted)" }}>vs</span>
-                          <span style={{ fontSize: 15, fontWeight: 700, color: "#e91e63" }}>{theirs}</span>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: "var(--primary)" }}>{theirs}</span>
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
                           <span>jij</span><span>partner</span>
@@ -554,7 +554,7 @@ export default function ProfielPage() {
                 <div style={{
                   padding: "9px 14px", borderRadius: 8, fontSize: 13,
                   background: planStatus.type === "success" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
-                  color: planStatus.type === "success" ? "#86efac" : "#fca5a5",
+                  color: planStatus.type === "success" ? "var(--green)" : "var(--red)",
                   border: `1px solid ${planStatus.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
                 }}>
                   {planStatus.msg}
@@ -565,7 +565,7 @@ export default function ProfielPage() {
                   type="submit"
                   disabled={planLoading}
                   style={{
-                    background: "#e91e63", color: "#fff", border: "none",
+                    background: "var(--primary)", color: "var(--text)", border: "none",
                     borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
                     cursor: planLoading ? "not-allowed" : "pointer",
                     opacity: planLoading ? 0.7 : 1,
@@ -663,13 +663,13 @@ export default function ProfielPage() {
                 <div style={{
                   padding: "9px 14px", borderRadius: 8, fontSize: 13,
                   background: profileStatus.type === "success" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
-                  color: profileStatus.type === "success" ? "#86efac" : "#fca5a5",
+                  color: profileStatus.type === "success" ? "var(--green)" : "var(--red)",
                   border: `1px solid ${profileStatus.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
                 }}>{profileStatus.msg}</div>
               )}
               <div>
                 <button type="submit" disabled={profileLoading} style={{
-                  background: "#e91e63", color: "#fff", border: "none",
+                  background: "var(--primary)", color: "var(--text)", border: "none",
                   borderRadius: 8, padding: "10px 22px", fontSize: 14, fontWeight: 600,
                   cursor: profileLoading ? "not-allowed" : "pointer", opacity: profileLoading ? 0.7 : 1,
                 }}>
@@ -727,7 +727,7 @@ export default function ProfielPage() {
                       pwStatus.type === "success"
                         ? "rgba(34,197,94,0.12)"
                         : "rgba(239,68,68,0.12)",
-                    color: pwStatus.type === "success" ? "#86efac" : "#fca5a5",
+                    color: pwStatus.type === "success" ? "var(--green)" : "var(--red)",
                     border: `1px solid ${pwStatus.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
                   }}
                 >
@@ -739,8 +739,8 @@ export default function ProfielPage() {
                   type="submit"
                   disabled={pwLoading}
                   style={{
-                    background: "#e91e63",
-                    color: "#fff",
+                    background: "var(--primary)",
+                    color: "var(--text)",
                     border: "none",
                     borderRadius: 8,
                     padding: "10px 22px",
@@ -768,7 +768,7 @@ export default function ProfielPage() {
                 </div>
                 {/* XP bar */}
                 <div>
-                  <div style={{ fontSize: 12, color: "#bf7a99", marginBottom: 6 }}>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 6 }}>
                     {t("profiel_quiz_xp_progress")} {quiz.level + 1}
                   </div>
                   <div
@@ -783,7 +783,7 @@ export default function ProfielPage() {
                       style={{
                         height: "100%",
                         width: `${xpPct}%`,
-                        background: "#e91e63",
+                        background: "var(--primary)",
                         borderRadius: 999,
                         transition: "width 0.4s",
                       }}
@@ -793,7 +793,7 @@ export default function ProfielPage() {
                 {/* Weak topics */}
                 {quiz.weakTopics && quiz.weakTopics.length > 0 && (
                   <div>
-                    <div style={{ fontSize: 12, color: "#bf7a99", marginBottom: 8 }}>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8 }}>
                       {t("profiel_quiz_weak")}
                     </div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -803,7 +803,7 @@ export default function ProfielPage() {
                           style={{
                             background: "rgba(233,30,99,0.1)",
                             border: "1px solid rgba(233,30,99,0.25)",
-                            color: "#e91e63",
+                            color: "var(--primary)",
                             borderRadius: 999,
                             padding: "3px 11px",
                             fontSize: 12,
@@ -818,7 +818,7 @@ export default function ProfielPage() {
                 )}
               </div>
             ) : (
-              <div style={{ color: "#bf7a99", marginTop: 12, fontSize: 13 }}>
+              <div style={{ color: "var(--text-secondary)", marginTop: 12, fontSize: 13 }}>
                 {t("profiel_quiz_empty")}
               </div>
             )}
@@ -831,7 +831,7 @@ export default function ProfielPage() {
               <div style={{ marginTop: 14, overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ color: "#bf7a99" }}>
+                    <tr style={{ color: "var(--text-secondary)" }}>
                       <th style={th}>{t("profiel_history_date")}</th>
                       <th style={th}>{t("profiel_history_score")}</th>
                       <th style={th}>{t("profiel_history_topics")}</th>
@@ -845,7 +845,7 @@ export default function ProfielPage() {
                           <span
                             style={{
                               color:
-                                s.score / s.total >= 0.7 ? "#86efac" : "#fca5a5",
+                                s.score / s.total >= 0.7 ? "var(--green)" : "var(--red)",
                               fontWeight: 600,
                             }}
                           >
@@ -870,7 +870,7 @@ export default function ProfielPage() {
               <Stat
                 label={t("profiel_paper_pnl")}
                 value={`€${totalPnl.toLocaleString(dateLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                color={totalPnl >= 0 ? "#86efac" : "#fca5a5"}
+                color={totalPnl >= 0 ? "var(--green)" : "var(--red)"}
               />
               <Stat label={t("profiel_paper_winrate")} value={closedTrades.length > 0 ? `${winRate}%` : "—"} />
               <Stat label={t("profiel_paper_trades")} value={String(closedTrades.length)} />
@@ -887,7 +887,7 @@ export default function ProfielPage() {
           {/* ── Exporteren ── */}
           <div className="card">
             <div style={sectionTitle}>{t("profiel_export_title")}</div>
-            <p style={{ fontSize: 13, color: "#bf7a99", margin: "10px 0 16px" }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "10px 0 16px" }}>
               {t("profiel_export_desc")}
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -898,7 +898,7 @@ export default function ProfielPage() {
                   display: "inline-flex", alignItems: "center", gap: 6,
                   background: "rgba(233,30,99,0.12)", border: "1px solid rgba(233,30,99,0.3)",
                   borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600,
-                  color: "#e91e63", textDecoration: "none", cursor: "pointer",
+                  color: "var(--primary)", textDecoration: "none", cursor: "pointer",
                 }}
               >
                 📥 {t("profiel_export_trades")}
@@ -910,7 +910,7 @@ export default function ProfielPage() {
                   display: "inline-flex", alignItems: "center", gap: 6,
                   background: "rgba(233,30,99,0.07)", border: "1px solid rgba(233,30,99,0.2)",
                   borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600,
-                  color: "#bf7a99", textDecoration: "none", cursor: "pointer",
+                  color: "var(--text-secondary)", textDecoration: "none", cursor: "pointer",
                 }}
               >
                 📓 {t("profiel_export_journal")}
@@ -946,10 +946,10 @@ export default function ProfielPage() {
 function Stat({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
     <div style={{ minWidth: 100 }}>
-      <div style={{ fontSize: 11, color: "#bf7a99", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>
+      <div style={{ fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>
         {label}
       </div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: color ?? "#fce8f0", fontVariantNumeric: "tabular-nums" }}>
+      <div style={{ fontSize: 18, fontWeight: 700, color: color ?? "var(--text)", fontVariantNumeric: "tabular-nums" }}>
         {value}
       </div>
     </div>
@@ -967,14 +967,14 @@ const av: React.CSSProperties = {
   justifyContent: "center",
   fontSize: 22,
   fontWeight: 700,
-  color: "#e91e63",
+  color: "var(--primary)",
   flexShrink: 0,
 };
 
 const sectionTitle: React.CSSProperties = {
   fontSize: 15,
   fontWeight: 600,
-  color: "#fce8f0",
+  color: "var(--text)",
   borderBottom: "1px solid rgba(233,30,99,0.15)",
   paddingBottom: 10,
 };
@@ -987,7 +987,7 @@ const fieldGroup: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  color: "#bf7a99",
+  color: "var(--text-secondary)",
   fontWeight: 500,
 };
 
@@ -996,7 +996,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(233,30,99,0.22)",
   borderRadius: 8,
   padding: "9px 12px",
-  color: "#fce8f0",
+  color: "var(--text)",
   fontSize: 14,
   outline: "none",
   width: "100%",
@@ -1013,5 +1013,5 @@ const th: React.CSSProperties = {
 
 const td: React.CSSProperties = {
   padding: "8px 8px",
-  color: "#fce8f0",
+  color: "var(--text)",
 };

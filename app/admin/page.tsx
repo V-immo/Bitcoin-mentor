@@ -84,7 +84,7 @@ export default function AdminOverviewPage() {
             style={t.warn ? { borderColor: "rgba(245,158,11,0.35)", background: "rgba(245,158,11,0.06)" } : undefined}
           >
             <div className="admin-stat-icon">{t.icon}</div>
-            <div className="admin-stat-value" style={t.warn ? { color: "#f59e0b" } : undefined}>{t.value}</div>
+            <div className="admin-stat-value" style={t.warn ? { color: "var(--orange)" } : undefined}>{t.value}</div>
             <div className="admin-stat-label">{t.label}</div>
             <div className="admin-stat-sub">{t.sub}</div>
           </div>
@@ -127,11 +127,11 @@ export default function AdminOverviewPage() {
                 <span style={{ fontSize: 15, textAlign: "center" }}>{TYPE_ICON[ev.type]}</span>
                 <span style={{
                   fontSize: 11, padding: "2px 6px", borderRadius: 10,
-                  background: "#2a1a28", color: "#bf7a99", textAlign: "center", fontWeight: 600,
+                  background: "var(--surface-1)", color: "var(--text-secondary)", textAlign: "center", fontWeight: 600,
                 }}>
                   {TYPE_LABEL[ev.type]}
                 </span>
-                <span style={{ color: "#e8d5e0", fontWeight: 500 }}>{ev.username}</span>
+                <span style={{ color: "var(--text)", fontWeight: 500 }}>{ev.username}</span>
                 <span style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}>
                   <span className="muted small-text">{ev.detail}</span>
                   <span className="muted small-text" style={{ whiteSpace: "nowrap", flexShrink: 0 }}>

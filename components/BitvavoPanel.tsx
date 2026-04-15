@@ -131,14 +131,14 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
   if (!connected) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ marginBottom: 10, fontWeight: 600, color: "#e5d4e7" }}>💶 Bitvavo Live Trading</div>
+        <div style={{ marginBottom: 10, fontWeight: 600, color: "var(--text)" }}>💶 Bitvavo Live Trading</div>
         <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
           Koppel je Bitvavo API key in{" "}
-          <a href="/instellingen" style={{ color: "#e91e63", textDecoration: "none" }}>Instellingen</a>{" "}
+          <a href="/instellingen" style={{ color: "var(--primary)", textDecoration: "none" }}>Instellingen</a>{" "}
           om live te handelen met echte euro&apos;s.
         </div>
-        <div style={{ fontSize: 12, color: "#6b7280", background: "#1a0f18", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
-          <strong style={{ color: "#bf7a99" }}>Hoe werkt het?</strong><br />
+        <div style={{ fontSize: 12, color: "var(--text-muted)", background: "var(--surface)", borderRadius: 8, padding: "10px 12px", lineHeight: 1.7 }}>
+          <strong style={{ color: "var(--text-secondary)" }}>Hoe werkt het?</strong><br />
           1. Ga naar <strong>bitvavo.com</strong> → Account → API<br />
           2. Maak een API key aan met handelstoegang<br />
           3. Vul de key in bij Instellingen → Bitvavo<br />
@@ -152,8 +152,8 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
   if (!market) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ fontWeight: 600, color: "#e5d4e7", marginBottom: 8 }}>💶 Bitvavo Live Trading</div>
-        <div style={{ fontSize: 13, color: "#f59e0b", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 8, padding: "10px 12px" }}>
+        <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>💶 Bitvavo Live Trading</div>
+        <div style={{ fontSize: 13, color: "var(--orange)", background: "color-mix(in srgb, var(--orange) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--orange) 25%, transparent)", borderRadius: 8, padding: "10px 12px" }}>
           ⚠️ <strong>{asset}</strong> is niet beschikbaar op Bitvavo.<br />
           Kies een crypto asset (BTC, ETH, XRP…) voor live trading.
         </div>
@@ -165,22 +165,22 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
     <div style={{ padding: "12px 0" }}>
 
       {/* Waarschuwing echte euro's */}
-      <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 8, padding: "8px 12px", marginBottom: 14, fontSize: 12, color: "#fca5a5" }}>
+      <div style={{ background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 25%, transparent)", borderRadius: 8, padding: "8px 12px", marginBottom: 14, fontSize: 12, color: "var(--red)" }}>
         ⚠️ <strong>ECHTE EURO&apos;S</strong> — dit zijn geen testorders. Handel verantwoord.
       </div>
 
       {/* Balances */}
       <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
-        <div style={{ background: "#1a0f18", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>EUR</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>€{eurBalance.toFixed(2)}</div>
+        <div style={{ background: "var(--surface)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>EUR</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>€{eurBalance.toFixed(2)}</div>
         </div>
-        <div style={{ background: "#1a0f18", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>{ticker}</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#e5d4e7" }}>{coinBalance.toFixed(6)}</div>
+        <div style={{ background: "var(--surface)", borderRadius: 8, padding: "8px 14px", flex: 1, minWidth: 100 }}>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>{ticker}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>{coinBalance.toFixed(6)}</div>
         </div>
         <button
-          style={{ background: "none", border: "1px solid #3d2a3b", borderRadius: 8, padding: "0 12px", cursor: "pointer", color: "#bf7a99", fontSize: 14 }}
+          style={{ background: "none", border: "1px solid var(--surface-1)", borderRadius: 8, padding: "0 12px", cursor: "pointer", color: "var(--text-secondary)", fontSize: 14 }}
           onClick={fetchBalance}
           title="Verversen"
         >↻</button>
@@ -196,9 +196,9 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
               flex: 1, padding: "8px 0", borderRadius: 8, fontWeight: 700, fontSize: 13,
               border: "none", cursor: "pointer",
               background: side === s
-                ? (s === "buy" ? "#26c57c" : "#ef4444")
-                : "#2a1a28",
-              color: side === s ? "#fff" : "#bf7a99",
+                ? (s === "buy" ? "var(--green)" : "var(--red)")
+                : "var(--surface-1)",
+              color: side === s ? "var(--text)" : "var(--text-secondary)",
             }}
           >
             {s === "buy" ? "🟢 KOOP" : "🔴 VERKOOP"}
@@ -208,7 +208,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
 
       {/* Bedrag */}
       <div style={{ marginBottom: 10 }}>
-        <label style={{ fontSize: 11, color: "#bf7a99", display: "block", marginBottom: 4 }}>
+        <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>
           {side === "buy" ? "Bedrag in EUR" : `Hoeveelheid ${ticker}`}
         </label>
         <div style={{ display: "flex", gap: 6 }}>
@@ -216,7 +216,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
             type="number"
             value={amount}
             onChange={e => { setAmount(e.target.value); setConfirm(false); }}
-            style={{ flex: 1, background: "#1a0f18", border: "1px solid #3d2a3b", borderRadius: 8, padding: "8px 12px", color: "#e5d4e7", fontSize: 14 }}
+            style={{ flex: 1, background: "var(--surface)", border: "1px solid var(--surface-1)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
           />
           {side === "buy" && eurBalance > 0 && (
             <div style={{ display: "flex", gap: 4 }}>
@@ -224,7 +224,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
                 <button
                   key={pct}
                   onClick={() => { setAmount((eurBalance * pct / 100).toFixed(2)); setConfirm(false); }}
-                  style={{ background: "#2a1a28", border: "1px solid #3d2a3b", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "#bf7a99", cursor: "pointer" }}
+                  style={{ background: "var(--surface-1)", border: "1px solid var(--surface-1)", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "var(--text-secondary)", cursor: "pointer" }}
                 >
                   {pct}%
                 </button>
@@ -237,7 +237,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
                 <button
                   key={pct}
                   onClick={() => { setAmount((coinBalance * pct / 100).toFixed(6)); setConfirm(false); }}
-                  style={{ background: "#2a1a28", border: "1px solid #3d2a3b", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "#bf7a99", cursor: "pointer" }}
+                  style={{ background: "var(--surface-1)", border: "1px solid var(--surface-1)", borderRadius: 6, padding: "0 8px", fontSize: 11, color: "var(--text-secondary)", cursor: "pointer" }}
                 >
                   {pct}%
                 </button>
@@ -249,12 +249,12 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
 
       {/* Koers preview — prijs is indicatief (USD koers van Binance, Bitvavo handelt in EUR) */}
       {currentPrice > 0 && parseFloat(amount) > 0 && (
-        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 10 }}>
           {side === "buy"
             ? `≈ ${(parseFloat(amount) / currentPrice).toFixed(6)} ${ticker}`
             : `≈ ${(parseFloat(amount) * currentPrice).toFixed(2)} EUR`
           }
-          <span style={{ color: "#4b5563", marginLeft: 4 }}>(indicatief · Bitvavo voert uit in EUR)</span>
+          <span style={{ color: "var(--text-muted)", marginLeft: 4 }}>(indicatief · Bitvavo voert uit in EUR)</span>
         </div>
       )}
 
@@ -262,7 +262,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
       {!confirm ? (
         <button
           className="terminal-btn terminal-btn-primary"
-          style={{ width: "100%", marginBottom: 10, background: side === "buy" ? "#26c57c" : "#ef4444", color: "#fff" }}
+          style={{ width: "100%", marginBottom: 10, background: side === "buy" ? "var(--green)" : "var(--red)", color: "var(--text)" }}
           onClick={() => setConfirm(true)}
           disabled={!parseFloat(amount) || parseFloat(amount) <= 0}
         >
@@ -272,11 +272,11 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
           }
         </button>
       ) : (
-        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.4)", borderRadius: 8, padding: "12px 14px", marginBottom: 10 }}>
-          <div style={{ fontWeight: 700, color: "#fca5a5", fontSize: 13, marginBottom: 8 }}>
+        <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 40%, transparent)", borderRadius: 8, padding: "12px 14px", marginBottom: 10 }}>
+          <div style={{ fontWeight: 700, color: "var(--red)", fontSize: 13, marginBottom: 8 }}>
             ⚠️ Bevestig — ECHTE EURO&apos;S
           </div>
-          <div style={{ fontSize: 12, color: "#e5d4e7", marginBottom: 10 }}>
+          <div style={{ fontSize: 12, color: "var(--text)", marginBottom: 10 }}>
             {side === "buy"
               ? `Je staat op het punt €${amount} EUR te gebruiken om ${ticker} te kopen op Bitvavo.`
               : `Je staat op het punt ${amount} ${ticker} te verkopen op Bitvavo.`
@@ -284,14 +284,14 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button
-              style={{ flex: 1, padding: "8px 0", background: "#2a1a28", border: "1px solid #3d2a3b", borderRadius: 8, color: "#bf7a99", cursor: "pointer", fontSize: 13 }}
+              style={{ flex: 1, padding: "8px 0", background: "var(--surface-1)", border: "1px solid var(--surface-1)", borderRadius: 8, color: "var(--text-secondary)", cursor: "pointer", fontSize: 13 }}
               onClick={() => setConfirm(false)}
             >
               Annuleer
             </button>
             <button
               className="terminal-btn terminal-btn-primary"
-              style={{ flex: 1, background: side === "buy" ? "#26c57c" : "#ef4444", color: "#fff" }}
+              style={{ flex: 1, background: side === "buy" ? "var(--green)" : "var(--red)", color: "var(--text)" }}
               onClick={placeOrder}
               disabled={placing}
             >
@@ -303,7 +303,7 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
 
       {/* Fout */}
       {orderError && (
-        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "#ef4444" }}>
+        <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "var(--red)" }}>
           ❌ {orderError}
         </div>
       )}
@@ -312,21 +312,21 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
       {lastOrder && (
         <div style={{
           background: lastOrder.status === "filled"
-            ? "rgba(38,197,124,0.1)"
+            ? "color-mix(in srgb, var(--green) 10%, transparent)"
             : lastOrder.status === "cancelled"
-              ? "rgba(239,68,68,0.08)"
-              : "rgba(245,158,11,0.08)",
-          border: `1px solid ${lastOrder.status === "filled" ? "rgba(38,197,124,0.25)" : lastOrder.status === "cancelled" ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`,
+              ? "color-mix(in srgb, var(--red) 8%, transparent)"
+              : "color-mix(in srgb, var(--orange) 8%, transparent)",
+          border: `1px solid ${lastOrder.status === "filled" ? "color-mix(in srgb, var(--green) 25%, transparent)" : lastOrder.status === "cancelled" ? "color-mix(in srgb, var(--red) 25%, transparent)" : "color-mix(in srgb, var(--orange) 25%, transparent)"}`,
           borderRadius: 8, padding: "10px 14px", fontSize: 13
         }}>
           <div style={{
-            color: lastOrder.status === "filled" ? "#26c57c" : lastOrder.status === "cancelled" ? "#ef4444" : "#f59e0b",
+            color: lastOrder.status === "filled" ? "var(--green)" : lastOrder.status === "cancelled" ? "var(--red)" : "var(--orange)",
             fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", gap: 6
           }}>
             {lastOrder.status === "filled" ? "✅ Order uitgevoerd!" : lastOrder.status === "cancelled" ? "❌ Order geannuleerd" : polling ? "⏳ Wacht op uitvoering…" : "🕐 Order geplaatst"}
-            {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "#f59e0b" }}>live update…</span>}
+            {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "var(--orange)" }}>live update…</span>}
           </div>
-          <div style={{ color: lastOrder.status === "filled" ? "#86efac" : "#e5d4e7" }}>
+          <div style={{ color: lastOrder.status === "filled" ? "var(--green)" : "var(--text)" }}>
             {lastOrder.side?.toUpperCase()} {lastOrder.filledAmount ?? lastOrder.amount ?? "?"} {ticker}
             {lastOrder.filledAmountQuote
               ? ` voor €${parseFloat(lastOrder.filledAmountQuote).toFixed(2)}`
@@ -335,16 +335,16 @@ export default function BitvavoPanel({ currentPrice, asset }: Props) {
                 : ""
             }
             {lastOrder.price && parseFloat(lastOrder.price) > 0 && (
-              <span style={{ color: "#6b7280", marginLeft: 6 }}>@ €{parseFloat(lastOrder.price).toLocaleString("nl-NL")}</span>
+              <span style={{ color: "var(--text-muted)", marginLeft: 6 }}>@ €{parseFloat(lastOrder.price).toLocaleString("nl-NL")}</span>
             )}
           </div>
-          <div style={{ color: "#6b7280", fontSize: 11, marginTop: 2 }}>
-            Order {lastOrder.orderId?.slice(0, 8)}… — status: <strong style={{ color: "#bf7a99" }}>{lastOrder.status}</strong>
+          <div style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 2 }}>
+            Order {lastOrder.orderId?.slice(0, 8)}… — status: <strong style={{ color: "var(--text-secondary)" }}>{lastOrder.status}</strong>
           </div>
         </div>
       )}
 
-      <div style={{ fontSize: 11, color: "#3d2a3b", marginTop: 10, textAlign: "center" }}>
+      <div style={{ fontSize: 11, color: "var(--surface-1)", marginTop: 10, textAlign: "center" }}>
         💶 Live trading via Bitvavo · Markt: {market}
       </div>
     </div>

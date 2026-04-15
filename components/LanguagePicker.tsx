@@ -26,23 +26,23 @@ export default function LanguagePicker() {
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 1500,
-      background: "#0e0810",
+      background: "var(--bg)",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       gap: 32, padding: 24,
     }}>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: 40, marginBottom: 8 }}>₿</div>
-        <h1 style={{ color: "#fff", fontSize: 22, fontWeight: 700, margin: 0 }}>
+        <h1 style={{ color: "var(--text)", fontSize: 22, fontWeight: 700, margin: 0 }}>
           Bitcoin Mentor
         </h1>
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <p style={{ color: "#bf7a99", fontSize: 16, margin: "0 0 6px 0", fontWeight: 600 }}>
+        <p style={{ color: "var(--text-secondary)", fontSize: 16, margin: "0 0 6px 0", fontWeight: 600 }}>
           Kies je taal / Choose your language
         </p>
-        <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>
+        <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
           Je kunt dit later wijzigen in instellingen · You can change this later in settings
         </p>
       </div>
@@ -55,7 +55,7 @@ export default function LanguagePicker() {
             borderRadius: 14,
             border: "2px solid rgba(191,122,153,0.3)",
             background: "rgba(191,122,153,0.08)",
-            color: "#fff",
+            color: "var(--text)",
             fontSize: 18,
             fontWeight: 700,
             cursor: "pointer",
@@ -77,7 +77,7 @@ export default function LanguagePicker() {
             borderRadius: 14,
             border: "2px solid rgba(191,122,153,0.3)",
             background: "rgba(191,122,153,0.08)",
-            color: "#fff",
+            color: "var(--text)",
             fontSize: 18,
             fontWeight: 700,
             cursor: "pointer",

@@ -31,9 +31,9 @@ type MemoryEntry = { date: string; category: string; content: string };
 
 const TRADING_MODE_KEYS: TradingMode[] = ["day", "swing", "long"];
 const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
-  { key: "low",    color: "#26c57c" },
-  { key: "medium", color: "#f59e0b" },
-  { key: "high",   color: "#ef4444" },
+  { key: "low",    color: "var(--green)" },
+  { key: "medium", color: "var(--orange)" },
+  { key: "high",   color: "var(--red)" },
 ];
 
 export default function SettingsPanel() {
@@ -202,22 +202,22 @@ export default function SettingsPanel() {
           const recs: Record<TradingMode, { exchanges: { name: string; tag: string; color: string; reason: string }[]; note: string }> = {
             day: {
               exchanges: [
-                { name: "Bybit", tag: t("settings_recommended"), color: "#f59e0b", reason: t("settings_day_bybit_reason") },
-                { name: "Kraken Pro", tag: t("settings_alternative"), color: "#6b7280", reason: t("settings_day_kraken_reason") },
+                { name: "Bybit", tag: t("settings_recommended"), color: "var(--orange)", reason: t("settings_day_bybit_reason") },
+                { name: "Kraken Pro", tag: t("settings_alternative"), color: "var(--text-muted)", reason: t("settings_day_kraken_reason") },
               ],
               note: t("settings_day_note"),
             },
             swing: {
               exchanges: [
-                { name: "Bitvavo", tag: t("settings_recommended"), color: "#26c57c", reason: t("settings_swing_bitvavo_reason") },
-                { name: "Bybit", tag: t("settings_alternative"), color: "#f59e0b", reason: t("settings_swing_bybit_reason") },
+                { name: "Bitvavo", tag: t("settings_recommended"), color: "var(--green)", reason: t("settings_swing_bitvavo_reason") },
+                { name: "Bybit", tag: t("settings_alternative"), color: "var(--orange)", reason: t("settings_swing_bybit_reason") },
               ],
               note: t("settings_swing_note"),
             },
             long: {
               exchanges: [
-                { name: "Bitvavo", tag: t("settings_recommended"), color: "#26c57c", reason: t("settings_long_bitvavo_reason") },
-                { name: "Kraken", tag: t("settings_alternative"), color: "#6b7280", reason: t("settings_long_kraken_reason") },
+                { name: "Bitvavo", tag: t("settings_recommended"), color: "var(--green)", reason: t("settings_long_bitvavo_reason") },
+                { name: "Kraken", tag: t("settings_alternative"), color: "var(--text-muted)", reason: t("settings_long_kraken_reason") },
               ],
               note: t("settings_long_note"),
             },
@@ -236,12 +236,12 @@ export default function SettingsPanel() {
                     </span>
                     <div>
                       <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{ex.name}</span>
-                      <span style={{ fontSize: 12, color: "#6b7280", marginLeft: 6 }}>{ex.reason}</span>
+                      <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: 6 }}>{ex.reason}</span>
                     </div>
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 8, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.5 }}>
                 {rec.note}
               </div>
             </div>
@@ -356,22 +356,22 @@ export default function SettingsPanel() {
             {memoryLoading ? "Laden…" : "Bekijk wat Marcus over jou weet"}
           </button>
         ) : memoryEntries.length === 0 ? (
-          <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280", fontStyle: "italic" }}>
+          <div style={{ marginTop: 12, fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
             Marcus heeft nog niets onthouden. Start een gesprek en hij begint automatisch notities bij te houden.
           </div>
         ) : (
           <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
             {(() => {
               const catColors: Record<string, string> = {
-                PATROON: "#f59e0b", ANGST: "#ef4444", STIJL: "#8b5cf6",
-                MIJLPAAL: "#26c57c", FOUT: "#ef4444", MEMO: "#6b7280",
+                PATROON: "var(--orange)", ANGST: "var(--red)", STIJL: "#8b5cf6",
+                MIJLPAAL: "var(--green)", FOUT: "var(--red)", MEMO: "var(--text-muted)",
               };
               const catLabels: Record<string, string> = {
                 PATROON: "Patroon", ANGST: "Emotie", STIJL: "Stijl",
                 MIJLPAAL: "Mijlpaal", FOUT: "Aandachtspunt", MEMO: "Notitie",
               };
               return memoryEntries.map((e, i) => {
-                const color = catColors[e.category] ?? "#6b7280";
+                const color = catColors[e.category] ?? "var(--text-muted)";
                 return (
                   <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <span style={{ background: `${color}20`, border: `1px solid ${color}50`, color, borderRadius: 4, padding: "1px 6px", fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>
@@ -379,7 +379,7 @@ export default function SettingsPanel() {
                     </span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.5 }}>{e.content}</div>
-                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 1 }}>{e.date}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{e.date}</div>
                     </div>
                   </div>
                 );
@@ -390,12 +390,12 @@ export default function SettingsPanel() {
 
         {memoryLoaded && memoryEntries.length > 0 && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
-            <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
+            <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>
               Wil je opnieuw beginnen? Marcus vergeet alles en start fresh.
             </div>
             <button
               className="terminal-btn terminal-btn-muted"
-              style={{ color: "#ef4444", borderColor: "rgba(239,68,68,0.3)" }}
+              style={{ color: "var(--red)", borderColor: "color-mix(in srgb, var(--red) 30%, transparent)" }}
               disabled={memoryResetting}
               onClick={async () => {
                 if (!confirm("Marcus vergeet alles wat hij over jou weet. Zeker?")) return;
@@ -417,18 +417,18 @@ export default function SettingsPanel() {
         <div className="settings-card-desc">{t("settings_desc_bitvavo")}</div>
 
         {bitvavoConnected === true && (
-          <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>
-            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{t("settings_bitvavo_connected")}</div>
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{t("settings_bitvavo_connected")}</div>
             {bitvavoBalance && bitvavoBalance.length > 0 ? (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {bitvavoBalance.map((b) => (
-                  <span key={b.symbol} style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "#86efac" }}>
+                  <span key={b.symbol} style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 20%, transparent)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "var(--green)" }}>
                     {b.symbol}: {parseFloat(b.available).toFixed(4)}
                   </span>
                 ))}
               </div>
             ) : (
-              <div style={{ color: "#86efac", fontSize: 13 }}>{t("settings_bitvavo_no_balance")}</div>
+              <div style={{ color: "var(--green)", fontSize: 13 }}>{t("settings_bitvavo_no_balance")}</div>
             )}
           </div>
         )}
@@ -522,18 +522,18 @@ export default function SettingsPanel() {
         </div>
 
         {bybitConnected === true && (
-          <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8 }}>
-            <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✅ Bybit gekoppeld</div>
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✅ Bybit gekoppeld</div>
             {bybitBalance && bybitBalance.length > 0 ? (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {bybitBalance.map((b) => (
-                  <span key={b.symbol} style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "#86efac" }}>
+                  <span key={b.symbol} style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 20%, transparent)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "var(--green)" }}>
                     {b.symbol}: {parseFloat(b.walletBalance).toFixed(4)}
                   </span>
                 ))}
               </div>
             ) : (
-              <div style={{ color: "#86efac", fontSize: 13 }}>Geen saldo gevonden</div>
+              <div style={{ color: "var(--green)", fontSize: 13 }}>Geen saldo gevonden</div>
             )}
           </div>
         )}
@@ -614,13 +614,13 @@ export default function SettingsPanel() {
         <div className="settings-card-title">🔬 Binance Testnet</div>
         <div className="settings-card-desc">
           Oefenen met echte orders op Binance Testnet — gratis nep-geld, geen risico.{" "}
-          <a href="https://testnet.binance.vision" target="_blank" rel="noopener noreferrer" style={{ color: "#e91e63" }}>
+          <a href="https://testnet.binance.vision" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
             Haal je keys op bij testnet.binance.vision →
           </a>
         </div>
 
         {testnetConnected && (
-          <div style={{ marginTop: 12, padding: "8px 14px", background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, color: "#86efac", fontSize: 13, fontWeight: 600 }}>
+          <div style={{ marginTop: 12, padding: "8px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8, color: "var(--green)", fontSize: 13, fontWeight: 600 }}>
             ✅ Binance Testnet gekoppeld
           </div>
         )}
@@ -647,7 +647,7 @@ export default function SettingsPanel() {
             />
           </div>
           {testnetError && (
-            <div style={{ color: "#ef4444", fontSize: 13 }}>❌ {testnetError}</div>
+            <div style={{ color: "var(--red)", fontSize: 13 }}>❌ {testnetError}</div>
           )}
           <button
             className="terminal-btn terminal-btn-primary"
@@ -722,9 +722,9 @@ export default function SettingsPanel() {
           {pwMsg && (
             <div style={{
               padding: "8px 12px", borderRadius: 8, fontSize: 13,
-              background: pwMsg.ok ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
-              color: pwMsg.ok ? "#86efac" : "#fca5a5",
-              border: `1px solid ${pwMsg.ok ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
+              background: pwMsg.ok ? "color-mix(in srgb, var(--green) 12%, transparent)" : "color-mix(in srgb, var(--red) 12%, transparent)",
+              color: pwMsg.ok ? "var(--green)" : "var(--red)",
+              border: `1px solid ${pwMsg.ok ? "color-mix(in srgb, var(--green) 20%, transparent)" : "color-mix(in srgb, var(--red) 20%, transparent)"}`,
             }}>
               {pwMsg.text}
             </div>
@@ -775,12 +775,12 @@ export default function SettingsPanel() {
           <div style={{ marginTop: 12, fontSize: 13, color: "var(--text-secondary)" }}>Laden…</div>
         ) : twoFaEnabled && twoFaStep === "idle" ? (
           <div style={{ marginTop: 12 }}>
-            <div style={{ background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, padding: "8px 14px", color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
+            <div style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8, padding: "8px 14px", color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
               ✅ Tweestapsverificatie is ingeschakeld
             </div>
             <button
               className="admin-btn"
-              style={{ borderColor: "rgba(239,68,68,0.3)", color: "#ef4444" }}
+              style={{ borderColor: "color-mix(in srgb, var(--red) 30%, transparent)", color: "var(--red)" }}
               onClick={() => { setTwoFaStep("disable"); setTwoFaError(null); setTwoFaToken(""); }}
             >
               2FA uitschakelen
@@ -830,7 +830,7 @@ export default function SettingsPanel() {
                 style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 20, letterSpacing: 8, textAlign: "center" }}
               />
             </div>
-            {twoFaError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 className="admin-btn"
@@ -880,10 +880,10 @@ export default function SettingsPanel() {
                 value={twoFaToken}
                 onChange={e => { setTwoFaToken(e.target.value); setTwoFaError(null); }}
                 placeholder="6-cijferige code of wachtwoord"
-                style={{ background: "var(--surface-2)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+                style={{ background: "var(--surface-2)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
               />
             </div>
-            {twoFaError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 className="admin-btn"
@@ -894,7 +894,7 @@ export default function SettingsPanel() {
               </button>
               <button
                 className="admin-btn"
-                style={{ flex: 1, background: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444" }}
+                style={{ flex: 1, background: "color-mix(in srgb, var(--red) 12%, transparent)", borderColor: "color-mix(in srgb, var(--red) 30%, transparent)", color: "var(--red)" }}
                 disabled={twoFaLoading || !twoFaToken}
                 onClick={async () => {
                   setTwoFaLoading(true);
@@ -926,22 +926,22 @@ export default function SettingsPanel() {
       </section>
 
       {/* Account verwijderen */}
-      <section className="settings-card" style={{ borderColor: "rgba(239,68,68,0.25)" }}>
-        <div className="settings-card-title" style={{ color: "#ef4444" }}>⚠️ Gevaarzone</div>
+      <section className="settings-card" style={{ borderColor: "color-mix(in srgb, var(--red) 25%, transparent)" }}>
+        <div className="settings-card-title" style={{ color: "var(--red)" }}>⚠️ Gevaarzone</div>
         <div className="settings-card-desc">
           Permanent je account en alle data verwijderen. Dit kan niet ongedaan worden gemaakt.
         </div>
         {!deleteConfirm ? (
           <button
             className="admin-btn"
-            style={{ marginTop: 12, borderColor: "rgba(239,68,68,0.4)", color: "#ef4444" }}
+            style={{ marginTop: 12, borderColor: "color-mix(in srgb, var(--red) 40%, transparent)", color: "var(--red)" }}
             onClick={() => setDeleteConfirm(true)}
           >
             Account verwijderen
           </button>
         ) : (
           <div style={{ marginTop: 12 }}>
-            <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "12px 14px", marginBottom: 12, fontSize: 13, color: "#fca5a5", lineHeight: 1.6 }}>
+            <div style={{ background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "12px 14px", marginBottom: 12, fontSize: 13, color: "var(--red)", lineHeight: 1.6 }}>
               ⚠️ Je staat op het punt je account <strong>permanent te verwijderen</strong>. Alle trades, quiz voortgang, berichten met Marcus en instellingen worden definitief gewist.
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
@@ -951,11 +951,11 @@ export default function SettingsPanel() {
                 value={deletePassword}
                 onChange={e => { setDeletePassword(e.target.value); setDeleteError(null); }}
                 placeholder="Jouw wachtwoord"
-                style={{ background: "var(--surface-2)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+                style={{ background: "var(--surface-2)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
               />
             </div>
             {deleteError && (
-              <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 8 }}>❌ {deleteError}</div>
+              <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {deleteError}</div>
             )}
             <div style={{ display: "flex", gap: 8 }}>
               <button
@@ -967,7 +967,7 @@ export default function SettingsPanel() {
               </button>
               <button
                 className="admin-btn"
-                style={{ flex: 1, background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.4)", color: "#ef4444" }}
+                style={{ flex: 1, background: "color-mix(in srgb, var(--red) 15%, transparent)", borderColor: "color-mix(in srgb, var(--red) 40%, transparent)", color: "var(--red)" }}
                 disabled={deleting || !deletePassword}
                 onClick={async () => {
                   setDeleting(true);
@@ -1003,7 +1003,7 @@ export default function SettingsPanel() {
           </div>
           {push.subscribed ? (
             <div>
-              <div style={{ color: "#86efac", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
+              <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
                 {t("settings_push_enabled")}
               </div>
               <button

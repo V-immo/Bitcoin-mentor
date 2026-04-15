@@ -216,7 +216,7 @@ export default function BrokersPage() {
           width: 32, height: 32, borderRadius: "50%",
           background: "linear-gradient(135deg, #e91e63, #c2185b)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 14, fontWeight: 800, color: "#fff", flexShrink: 0,
+          fontSize: 14, fontWeight: 800, color: "var(--text)", flexShrink: 0,
         }}>M</div>
         <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.6 }}>
           <strong style={{ color: "var(--text)" }}>Marcus zegt:</strong> Er bestaat niet één beste broker.
@@ -234,9 +234,9 @@ export default function BrokersPage() {
             onClick={() => setFilter(f)}
             style={{
               padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: filter === f ? 700 : 400,
-              background: filter === f ? "#e91e63" : "var(--surface)",
+              background: filter === f ? "var(--primary)" : "var(--surface)",
               color: filter === f ? "#fff" : "var(--text-secondary)",
-              border: `1px solid ${filter === f ? "#e91e63" : "var(--border)"}`,
+              border: `1px solid ${filter === f ? "var(--primary)" : "var(--border)"}`,
               cursor: "pointer",
             }}
           >{f}</button>
@@ -260,7 +260,7 @@ export default function BrokersPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <span style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>{broker.name}</span>
                     {broker.regulated && (
-                      <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 6, background: "rgba(34,197,94,0.15)", color: "#22c55e", fontWeight: 700 }}>
+                      <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 6, background: "rgba(34,197,94,0.15)", color: "var(--green)", fontWeight: 700 }}>
                         GEREGULEERD
                       </span>
                     )}
@@ -271,7 +271,7 @@ export default function BrokersPage() {
               {broker.badge && (
                 <span style={{
                   fontSize: 10, padding: "3px 8px", borderRadius: 8, whiteSpace: "nowrap",
-                  background: "rgba(233,30,99,0.12)", color: "#e91e63", fontWeight: 700, flexShrink: 0,
+                  background: "rgba(233,30,99,0.12)", color: "var(--primary)", fontWeight: 700, flexShrink: 0,
                 }}>{broker.badge}</span>
               )}
             </div>
@@ -291,7 +291,7 @@ export default function BrokersPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <div>
                 {broker.pros.slice(0, 3).map(p => (
-                  <div key={p} style={{ fontSize: 11, color: "#22c55e", marginBottom: 2 }}>✓ {p}</div>
+                  <div key={p} style={{ fontSize: 11, color: "var(--green)", marginBottom: 2 }}>✓ {p}</div>
                 ))}
               </div>
               <div>
@@ -309,7 +309,7 @@ export default function BrokersPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  fontSize: 12, fontWeight: 700, color: "#e91e63",
+                  fontSize: 12, fontWeight: 700, color: "var(--primary)",
                   textDecoration: "none", padding: "5px 12px",
                   border: "1px solid rgba(233,30,99,0.4)", borderRadius: 8,
                 }}

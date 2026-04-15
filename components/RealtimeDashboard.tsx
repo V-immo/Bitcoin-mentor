@@ -790,8 +790,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               </span>
               &nbsp;
               {liveMode
-                ? <span style={{ color: "#22c55e", fontSize: 11 }}>● {currency === "EUR" && BITVAVO_MAP[asset] ? "Bitvavo" : "Live"}</span>
-                : <span style={{ color: "#f59e0b", fontSize: 11 }}>⟳</span>
+                ? <span style={{ color: "var(--green)", fontSize: 11 }}>● {currency === "EUR" && BITVAVO_MAP[asset] ? "Bitvavo" : "Live"}</span>
+                : <span style={{ color: "var(--orange)", fontSize: 11 }}>⟳</span>
               }
               {tradingMode && (
                 <span style={{

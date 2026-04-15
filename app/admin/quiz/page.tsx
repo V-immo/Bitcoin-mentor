@@ -176,10 +176,10 @@ export default function AdminQuizPage() {
             <tbody>
               {LEVELS.map(lvl => (
                 <tr key={lvl} style={{ borderBottom: "1px solid #1a0f18" }}>
-                  <td style={{ padding: "7px 8px", color: "#e91e63", fontWeight: 700 }}>Level {lvl}</td>
+                  <td style={{ padding: "7px 8px", color: "var(--primary)", fontWeight: 700 }}>Level {lvl}</td>
                   {LANGS.map(lang => {
                     const count = stats.find(s => s.level === lvl && s.lang === lang)?.count ?? 0;
-                    const color = count === 0 ? "#ef4444" : count < 15 ? "#f59e0b" : "#22c55e";
+                    const color = count === 0 ? "var(--red)" : count < 15 ? "var(--orange)" : "var(--green)";
                     return (
                       <td key={lang} style={{ padding: "7px 8px", color, fontWeight: 600 }}>
                         {count} vragen {count < 15 ? "⚠️" : "✓"}
@@ -301,32 +301,32 @@ export default function AdminQuizPage() {
               <thead>
                 <tr style={{ borderBottom: "1px solid #2a1a28" }}>
                   {["ID", "Lvl", "Lang", "Onderwerp", "Vraag", "Getoond", ""].map(h => (
-                    <th key={h} style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
+                    <th key={h} style={{ padding: "6px 8px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {rows.map(row => (
                   <tr key={row.id} style={{ borderBottom: "1px solid #1a0f18" }}>
-                    <td style={{ padding: "8px", color: "#6b7280", fontSize: 11 }}>{row.id}</td>
+                    <td style={{ padding: "8px", color: "var(--text-muted)", fontSize: 11 }}>{row.id}</td>
                     <td style={{ padding: "8px" }}>
-                      <span style={{ background: "#2a1a28", color: "#e91e63", borderRadius: 10, padding: "1px 7px", fontWeight: 700, fontSize: 11 }}>
+                      <span style={{ background: "var(--surface-1)", color: "var(--primary)", borderRadius: 10, padding: "1px 7px", fontWeight: 700, fontSize: 11 }}>
                         {row.level}
                       </span>
                     </td>
-                    <td style={{ padding: "8px", color: "#bf7a99", fontSize: 11 }}>{row.lang.toUpperCase()}</td>
-                    <td style={{ padding: "8px", color: "#bf7a99", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "8px", color: "var(--text-secondary)", fontSize: 11 }}>{row.lang.toUpperCase()}</td>
+                    <td style={{ padding: "8px", color: "var(--text-secondary)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {row.topic}
                     </td>
-                    <td style={{ padding: "8px", color: "#e8d5e0", maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "8px", color: "var(--text)", maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {row.question}
                     </td>
-                    <td style={{ padding: "8px", color: "#6b7280", textAlign: "center" }}>{row.times_shown}</td>
+                    <td style={{ padding: "8px", color: "var(--text-muted)", textAlign: "center" }}>{row.times_shown}</td>
                     <td style={{ padding: "8px" }}>
                       <button
                         onClick={() => handleDelete(row.id)}
                         disabled={deleting === row.id}
-                        style={{ background: "none", border: "1px solid #3d2a3b", borderRadius: 6, padding: "2px 8px", cursor: "pointer", color: "#ef4444", fontSize: 11 }}
+                        style={{ background: "none", border: "1px solid #3d2a3b", borderRadius: 6, padding: "2px 8px", cursor: "pointer", color: "var(--red)", fontSize: 11 }}
                       >
                         {deleting === row.id ? "…" : "✕"}
                       </button>
@@ -344,8 +344,8 @@ export default function AdminQuizPage() {
 
 function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
   const base: React.CSSProperties = {
-    width: "100%", background: "#1a0f18", border: "1px solid #3d2a3b", borderRadius: 6,
-    color: "#e5d4e7", padding: "7px 10px", fontSize: 13, boxSizing: "border-box",
+    width: "100%", background: "var(--surface)", border: "1px solid #3d2a3b", borderRadius: 6,
+    color: "var(--text)", padding: "7px 10px", fontSize: 13, boxSizing: "border-box",
     fontFamily: "inherit",
   };
   return (
@@ -359,11 +359,11 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
   );
 }
 
-const labelStyle: React.CSSProperties = { display: "block", fontSize: 11, color: "#bf7a99", marginBottom: 4, fontWeight: 600 };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: 11, color: "var(--text-secondary)", marginBottom: 4, fontWeight: 600 };
 const selectStyle: React.CSSProperties = {
-  background: "#1a0f18", border: "1px solid #3d2a3b", borderRadius: 6,
-  color: "#e5d4e7", padding: "6px 10px", fontSize: 13, cursor: "pointer",
+  background: "var(--surface)", border: "1px solid #3d2a3b", borderRadius: 6,
+  color: "var(--text)", padding: "6px 10px", fontSize: 13, cursor: "pointer",
 };
 const thStyle: React.CSSProperties = {
-  padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap",
+  padding: "6px 8px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 600, whiteSpace: "nowrap",
 };

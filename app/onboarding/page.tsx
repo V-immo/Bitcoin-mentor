@@ -200,12 +200,12 @@ export default function OnboardingPage() {
                         <span style={{ fontSize: 22 }}>{ex.flag}</span>
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{ex.name}</div>
-                          <div style={{ fontSize: 12, color: "#6b7280" }}>{ex.desc}</div>
+                          <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{ex.desc}</div>
                         </div>
                       </div>
                     );
                   })()}
-                  <div style={{ fontSize: 11, color: "#6b7280", marginTop: 8 }}>Je kunt dit later wijzigen in Instellingen.</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Je kunt dit later wijzigen in Instellingen.</div>
                 </div>
               </>
             )}

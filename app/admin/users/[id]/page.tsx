@@ -217,7 +217,7 @@ export default function AdminUserDetailPage() {
             <div className="admin-label" style={{ marginBottom: 8 }}>Reset password</div>
             <button
               className="admin-btn"
-              style={{ background: "#2a1a28", color: "#bf7a99", border: "1px solid #3a2a38" }}
+              style={{ background: "var(--surface-1)", color: "var(--text-secondary)", border: "1px solid #3a2a38" }}
               onClick={resetPassword}
               disabled={resetting}
             >
@@ -228,15 +228,15 @@ export default function AdminUserDetailPage() {
                 style={{
                   marginTop: 10,
                   padding: "10px 14px",
-                  background: "#1a0f18",
+                  background: "var(--surface)",
                   borderRadius: 8,
                   border: "1px solid #4caf5060",
                 }}
               >
-                <div className="admin-label" style={{ fontSize: 11, marginBottom: 4, color: "#4caf50" }}>
+                <div className="admin-label" style={{ fontSize: 11, marginBottom: 4, color: "var(--green)" }}>
                   Temporary password (copy now!)
                 </div>
-                <code style={{ fontSize: 18, letterSpacing: 2, color: "#e8d5e0", fontFamily: "monospace" }}>
+                <code style={{ fontSize: 18, letterSpacing: 2, color: "var(--text)", fontFamily: "monospace" }}>
                   {tempPassword}
                 </code>
               </div>

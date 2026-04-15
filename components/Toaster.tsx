@@ -9,9 +9,9 @@ let nextId = 0;
 const AUTO_DISMISS_MS = 4500;
 
 const THEME: Record<ToastType, { bg: string; border: string; icon: string; iconColor: string }> = {
-  error:   { bg: "rgba(239,68,68,0.15)",  border: "rgba(239,68,68,0.45)",  icon: "✕", iconColor: "#ef4444" },
-  success: { bg: "rgba(34,197,94,0.12)",  border: "rgba(34,197,94,0.35)",  icon: "✓", iconColor: "#22c55e" },
-  info:    { bg: "rgba(233,30,99,0.12)",  border: "rgba(233,30,99,0.35)",  icon: "ℹ", iconColor: "#e91e63" },
+  error:   { bg: "rgba(239,68,68,0.15)",  border: "rgba(239,68,68,0.45)",  icon: "✕", iconColor: "var(--red)" },
+  success: { bg: "rgba(34,197,94,0.12)",  border: "rgba(34,197,94,0.35)",  icon: "✓", iconColor: "var(--green)" },
+  info:    { bg: "rgba(233,30,99,0.12)",  border: "rgba(233,30,99,0.35)",  icon: "ℹ", iconColor: "var(--primary)" },
 };
 
 export default function Toaster() {
@@ -69,7 +69,7 @@ export default function Toaster() {
             padding: "10px 14px",
             fontSize: 13,
             fontWeight: 500,
-            color: "#e5d4e7",
+            color: "var(--text)",
             backdropFilter: "blur(12px)",
             maxWidth: 360,
             pointerEvents: "auto",

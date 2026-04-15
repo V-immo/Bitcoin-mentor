@@ -583,7 +583,7 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
                   background: showSessions ? "rgba(233,30,99,0.12)" : "transparent",
                   border: `1px solid ${showSessions ? "rgba(233,30,99,0.3)" : "rgba(255,255,255,0.1)"}`,
                   borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                  color: showSessions ? "#e91e63" : "var(--text-muted)", fontSize: 13, lineHeight: 1,
+                  color: showSessions ? "var(--primary)" : "var(--text-muted)", fontSize: 13, lineHeight: 1,
                 }}
               >
                 📂
@@ -594,9 +594,9 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
                 title={voiceEnabled ? "Stem uitzetten" : "Stem aanzetten"}
                 style={{
                   background: voiceEnabled ? "rgba(233,30,99,0.15)" : "transparent",
-                  border: `1px solid ${voiceEnabled ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
+                  border: `1px solid ${voiceEnabled ? "var(--primary)" : "rgba(255,255,255,0.1)"}`,
                   borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                  color: voiceEnabled ? "#e91e63" : "var(--text-muted)",
+                  color: voiceEnabled ? "var(--primary)" : "var(--text-muted)",
                   fontSize: 14, lineHeight: 1,
                 }}
               >
@@ -609,7 +609,7 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
                   style={{
                     background: "rgba(233,30,99,0.12)", border: "1px solid rgba(233,30,99,0.3)",
                     borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                    color: "#e91e63", fontSize: 12,
+                    color: "var(--primary)", fontSize: 12,
                   }}
                 >
                   ■ Stop
@@ -691,7 +691,7 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                 background: listening ? "rgba(233,30,99,0.2)" : "var(--surface)",
-                border: `1px solid ${listening ? "#e91e63" : "var(--border)"}`,
+                border: `1px solid ${listening ? "var(--primary)" : "var(--border)"}`,
                 cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
                 animation: listening ? "marcus-notify 1.2s ease-in-out infinite" : "none",
               }}
@@ -738,11 +738,11 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
           <span style={{
             position: "absolute", top: 2, right: 2,
             width: 12, height: 12, borderRadius: "50%",
-            background: isDistressedNotif ? "#e91e63" : "#fff",
+            background: isDistressedNotif ? "var(--primary)" : "#fff",
             boxShadow: isDistressedNotif
               ? "0 0 0 0 rgba(233,30,99,0.7)"
               : "0 0 6px 2px rgba(233,30,99,0.8)",
-            border: "2px solid #e91e63",
+            border: "2px solid var(--primary)",
             display: "block",
             animation: isDistressedNotif ? "marcus-distress 1.2s ease-in-out infinite" : "none",
           }} />

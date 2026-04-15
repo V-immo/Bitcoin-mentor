@@ -68,14 +68,14 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
   return (
     <section className="terminal-side-card">
       <div className="terminal-label">{t("partner_label")}</div>
-      <div style={{ fontSize: 12, color: "#8b95ad", marginBottom: 8, lineHeight: 1.5 }}>
+      <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8, lineHeight: 1.5 }}>
         {t("partner_desc")}
       </div>
       <div className="terminal-side-title" style={{ marginBottom: 0 }}>
         {!brief && !loading && t("partner_waiting")}
         {loading && t("partner_loading")}
         {brief && !loading && (
-          <span style={{ color: isLong ? "#26c57c" : "#f59e0b", fontWeight: 700 }}>
+          <span style={{ color: isLong ? "var(--green)" : "var(--orange)", fontWeight: 700 }}>
             {isLong
               ? `${t("partner_long")} ${ticker}`
               : `${t("partner_skip")} ${ticker}${t("partner_skip_suffix") ? " " + t("partner_skip_suffix") : ""}`}
@@ -93,11 +93,11 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
             </div>
             <div className="terminal-mini-box">
               <span className="terminal-mini-label">Stop-loss</span>
-              <span className="terminal-mini-value" style={{ color: "#ef4444" }}>${fmt(brief.stopLoss, 0)}</span>
+              <span className="terminal-mini-value" style={{ color: "var(--red)" }}>${fmt(brief.stopLoss, 0)}</span>
             </div>
             <div className="terminal-mini-box">
               <span className="terminal-mini-label">{t("partner_target")}</span>
-              <span className="terminal-mini-value" style={{ color: "#26c57c" }}>${fmt(brief.target, 0)}</span>
+              <span className="terminal-mini-value" style={{ color: "var(--green)" }}>${fmt(brief.target, 0)}</span>
             </div>
             <div className="terminal-mini-box">
               <span className="terminal-mini-label">R/R</span>
@@ -109,13 +109,13 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 6 }}>
             <div className="terminal-mini-box" style={{ borderColor: "rgba(239,68,68,0.2)" }}>
               <span className="terminal-mini-label">{t("partner_risk")}</span>
-              <span className="terminal-mini-value" style={{ color: "#ef4444" }}>−{eur(brief.riskEur)}</span>
-              <span style={{ fontSize: 10, color: "#8b95ad" }}>{t("partner_if_stop")}</span>
+              <span className="terminal-mini-value" style={{ color: "var(--red)" }}>−{eur(brief.riskEur)}</span>
+              <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{t("partner_if_stop")}</span>
             </div>
             <div className="terminal-mini-box" style={{ borderColor: "rgba(38,197,124,0.2)" }}>
               <span className="terminal-mini-label">{t("partner_expected_profit")}</span>
-              <span className="terminal-mini-value" style={{ color: "#26c57c" }}>+{eur(brief.expectedProfitEur)}</span>
-              <span style={{ fontSize: 10, color: "#8b95ad" }}>{t("partner_if_target")}</span>
+              <span className="terminal-mini-value" style={{ color: "var(--green)" }}>+{eur(brief.expectedProfitEur)}</span>
+              <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{t("partner_if_target")}</span>
             </div>
           </div>
 
@@ -130,14 +130,14 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
               <div className="trade-partner-text">{brief.wanneerUitStappen}</div>
             </div>
             <div className="trade-partner-section" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-              <div className="trade-partner-label" style={{ color: "#ef4444" }}>{t("partner_biggest_risk")}</div>
+              <div className="trade-partner-label" style={{ color: "var(--red)" }}>{t("partner_biggest_risk")}</div>
               <div className="trade-partner-text">{brief.grootsteRisico}</div>
             </div>
             <div className="trade-partner-section">
               <div className="trade-partner-label">{t("partner_expected_scenario")}</div>
               <div className="trade-partner-text">{brief.verwachtScenario}</div>
               {brief.tijdshorizon && (
-                <div style={{ marginTop: 4, fontSize: 11, color: "#8b95ad" }}>{t("partner_time_horizon")} {brief.tijdshorizon}</div>
+                <div style={{ marginTop: 4, fontSize: 11, color: "var(--text-muted)" }}>{t("partner_time_horizon")} {brief.tijdshorizon}</div>
               )}
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
       )}
 
       {loading && (
-        <div style={{ marginTop: 12, color: "#8b95ad", fontSize: 13, textAlign: "center" }}>
+        <div style={{ marginTop: 12, color: "var(--text-muted)", fontSize: 13, textAlign: "center" }}>
           {t("partner_analysing")}
         </div>
       )}
@@ -189,7 +189,7 @@ export default function TradePartnerPanel({ signal, currentPrice, asset, signalR
         </button>
       </div>
 
-      <div style={{ marginTop: 6, fontSize: 11, color: "#4b5563", textAlign: "center" }}>
+      <div style={{ marginTop: 6, fontSize: 11, color: "var(--text-muted)", textAlign: "center" }}>
         {t("partner_disclaimer")}
       </div>
     </section>

@@ -122,7 +122,7 @@ export default function TrophyWall() {
               {loginStreak >= 7 ? "🔥🔥" : loginStreak >= 3 ? "🔥" : "💤"}
             </div>
             <div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b", lineHeight: 1 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "var(--orange)", lineHeight: 1 }}>
                 {loginStreak}
               </div>
               <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
@@ -136,7 +136,7 @@ export default function TrophyWall() {
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
               Level {level} <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>/ 5</span>
             </div>
-            <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: "var(--orange)", marginTop: 2 }}>
               {xp.toLocaleString("nl-NL")} XP
             </div>
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
@@ -184,10 +184,10 @@ export default function TrophyWall() {
           {(["badges", "challenges"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)} style={{
               padding: "5px 14px", borderRadius: 99,
-              border: `1px solid ${activeTab === tab ? "#f59e0b" : "rgba(255,255,255,0.1)"}`,
+              border: `1px solid ${activeTab === tab ? "var(--orange)" : "rgba(255,255,255,0.1)"}`,
               cursor: "pointer", fontSize: 12, fontWeight: 600,
               background: activeTab === tab ? "rgba(245,158,11,0.15)" : "transparent",
-              color: activeTab === tab ? "#f59e0b" : "var(--text-muted)",
+              color: activeTab === tab ? "var(--orange)" : "var(--text-muted)",
               transition: "all 0.15s",
             }}>
               {tab === "badges" ? `🏅 Badges ${newIds.size > 0 ? `(${newIds.size} nieuw!)` : ""}` : "⚡ Challenges"}
@@ -202,9 +202,9 @@ export default function TrophyWall() {
               {categories.map(cat => (
                 <button key={cat} onClick={() => setActiveCategory(cat)} style={{
                   padding: "3px 10px", borderRadius: 99,
-                  border: `1px solid ${activeCategory === cat ? "#f59e0b" : "rgba(255,255,255,0.1)"}`,
+                  border: `1px solid ${activeCategory === cat ? "var(--orange)" : "rgba(255,255,255,0.1)"}`,
                   background: activeCategory === cat ? "rgba(245,158,11,0.15)" : "transparent",
-                  color: activeCategory === cat ? "#f59e0b" : "var(--text-muted)",
+                  color: activeCategory === cat ? "var(--orange)" : "var(--text-muted)",
                   fontSize: 11, fontWeight: 600, cursor: "pointer",
                 }}>
                   {cat === "all" ? "Alle" : CATEGORY_LABELS[cat]}
@@ -241,7 +241,7 @@ export default function TrophyWall() {
                     {isNew && (
                       <div style={{
                         position: "absolute", top: -6, right: -4,
-                        background: "#e91e63", color: "#fff",
+                        background: "var(--primary)", color: "var(--text)",
                         fontSize: 8, fontWeight: 800,
                         borderRadius: 99, padding: "1px 5px",
                         letterSpacing: "0.03em",
@@ -257,13 +257,13 @@ export default function TrophyWall() {
                     </div>
                     <div style={{
                       fontSize: 10, fontWeight: 700, textAlign: "center",
-                      color: isNew ? "#e91e63" : a.earned ? "#f59e0b" : "var(--text-muted)",
+                      color: isNew ? "var(--primary)" : a.earned ? "var(--orange)" : "var(--text-muted)",
                       lineHeight: 1.3,
                     }}>
                       {a.name}
                     </div>
                     {a.earned && !isNew && (
-                      <div style={{ fontSize: 8, color: "#22d47a", marginTop: 3, fontWeight: 600 }}>✓ behaald</div>
+                      <div style={{ fontSize: 8, color: "var(--green)", marginTop: 3, fontWeight: 600 }}>✓ behaald</div>
                     )}
                   </div>
                 );
@@ -301,14 +301,14 @@ export default function TrophyWall() {
                         {ch.name}
                       </div>
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: done ? "#22d47a" : "var(--text-muted)" }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: done ? "var(--green)" : "var(--text-muted)" }}>
                       {done ? "✓" : `${progress}/${ch.target}`}
                     </div>
                   </div>
                   <div style={{ height: 5, borderRadius: 99, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
                     <div style={{
                       height: "100%", width: `${pct}%`,
-                      background: done ? "#22d47a" : "linear-gradient(90deg, #f59e0b, #f97316)",
+                      background: done ? "var(--green)" : "linear-gradient(90deg, #f59e0b, #f97316)",
                       borderRadius: 99, transition: "width 0.6s ease",
                     }} />
                   </div>

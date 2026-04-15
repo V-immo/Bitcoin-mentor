@@ -23,11 +23,11 @@ type Props = {
 
 // Snelknoppen relatief aan huidige prijs
 const QUICK_OFFSETS = [
-  { label: "-10%", pct: -10, color: "#ef4444" },
-  { label: "-5%",  pct: -5,  color: "#f97316" },
+  { label: "-10%", pct: -10, color: "var(--red)" },
+  { label: "-5%",  pct: -5,  color: "var(--orange)" },
   { label: "-2%",  pct: -2,  color: "#eab308" },
   { label: "+2%",  pct: 2,   color: "#84cc16" },
-  { label: "+5%",  pct: 5,   color: "#22c55e" },
+  { label: "+5%",  pct: 5,   color: "var(--green)" },
   { label: "+10%", pct: 10,  color: "#10b981" },
 ];
 
@@ -179,7 +179,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
 
   return (
     <div style={{
-      background: "var(--surface, #1f0d17)",
+      background: "var(--surface)",
       border: "1px solid rgba(233,30,99,0.2)",
       borderRadius: 16,
       overflow: "hidden",
@@ -194,18 +194,18 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 20 }}>🔔</span>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Prijsalerts
             </div>
-            <div style={{ fontSize: 11, color: "#64748b" }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
               {activeCount} actief — Marcus waarschuwt je bij trigger
             </div>
           </div>
         </div>
         {currentPrice && (
-          <div style={{ fontSize: 12, color: "#64748b", textAlign: "right" }}>
+          <div style={{ fontSize: 12, color: "var(--text-muted)", textAlign: "right" }}>
             <div style={{ fontSize: 10, marginBottom: 1 }}>Nu</div>
-            <div style={{ fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+            <div style={{ fontWeight: 700, color: "var(--text)" }}>
               ${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </div>
           </div>
@@ -217,7 +217,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         {/* Snelknoppen */}
         {currentPrice && (
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 6 }}>
               Snel instellen (huidige prijs: ${currentPrice.toLocaleString("en-US", { maximumFractionDigits: 0 })})
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
@@ -252,17 +252,17 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         <form onSubmit={addAlert} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {/* Asset */}
           <div>
-            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Asset</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>Asset</div>
             <select
               value={formAsset}
               onChange={e => setFormAsset(e.target.value)}
               style={{
-                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text)",
                 border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
               }}
             >
               {SCAN_ASSETS.map(a => (
-                <option key={a.symbol} value={a.symbol} style={{ background: "#1f0d17" }}>
+                <option key={a.symbol} value={a.symbol} style={{ background: "var(--surface)" }}>
                   {a.emoji} {a.name} ({a.ticker})
                 </option>
               ))}
@@ -272,21 +272,21 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
           {/* Conditie + Prijs */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 8 }}>
             <div>
-              <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Conditie</div>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>Conditie</div>
               <select
                 value={formCondition}
                 onChange={e => setFormCondition(e.target.value as "above" | "below")}
                 style={{
-                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text)",
                   border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
                 }}
               >
-                <option value="below" style={{ background: "#1f0d17" }}>📉 Daalt onder</option>
-                <option value="above" style={{ background: "#1f0d17" }}>📈 Stijgt boven</option>
+                <option value="below" style={{ background: "var(--surface)" }}>📉 Daalt onder</option>
+                <option value="above" style={{ background: "var(--surface)" }}>📈 Stijgt boven</option>
               </select>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Prijs ({currency})</div>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>Prijs ({currency})</div>
               <input
                 type="number"
                 min="0"
@@ -295,7 +295,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                 onChange={e => setFormPrice(e.target.value)}
                 placeholder={currentPrice ? String(Math.round(currentPrice * 0.95)) : "50000"}
                 style={{
-                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                  width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text)",
                   border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
                   boxSizing: "border-box",
                 }}
@@ -305,7 +305,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
 
           {/* E-mail (optioneel) */}
           <div>
-            <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>
               E-mail notificatie <span style={{ opacity: 0.5 }}>(optioneel)</span>
             </div>
             <input
@@ -314,7 +314,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
               onChange={e => setFormEmail(e.target.value)}
               placeholder="leeglaten = alleen Marcus-melding"
               style={{
-                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text-primary, #fce8f0)",
+                width: "100%", background: "rgba(255,255,255,0.05)", color: "var(--text)",
                 border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
                 boxSizing: "border-box",
               }}
@@ -322,12 +322,12 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
           </div>
 
           {error && (
-            <div style={{ color: "#ef4444", fontSize: 12, padding: "6px 10px", background: "rgba(239,68,68,0.1)", borderRadius: 6 }}>
+            <div style={{ color: "var(--red)", fontSize: 12, padding: "6px 10px", background: "rgba(239,68,68,0.1)", borderRadius: 6 }}>
               {error}
             </div>
           )}
           {success && (
-            <div style={{ color: "#22c55e", fontSize: 12, padding: "6px 10px", background: "rgba(34,197,94,0.1)", borderRadius: 6 }}>
+            <div style={{ color: "var(--green)", fontSize: 12, padding: "6px 10px", background: "rgba(34,197,94,0.1)", borderRadius: 6 }}>
               {success}
             </div>
           )}
@@ -337,10 +337,10 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
             disabled={saving || !formPrice}
             style={{
               width: "100%",
-              background: formPrice ? "#e91e63" : "rgba(255,255,255,0.05)",
-              border: `1px solid ${formPrice ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
+              background: formPrice ? "var(--primary)" : "rgba(255,255,255,0.05)",
+              border: `1px solid ${formPrice ? "var(--primary)" : "rgba(255,255,255,0.1)"}`,
               borderRadius: 10, padding: "11px 0",
-              color: formPrice ? "#fff" : "#475569",
+              color: formPrice ? "#fff" : "var(--text-muted)",
               fontSize: 14, fontWeight: 700,
               cursor: formPrice ? "pointer" : "default",
               transition: "all 0.2s",
@@ -354,16 +354,16 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
       {/* Bestaande alerts */}
       <div style={{ padding: "0 18px 16px" }}>
         <div style={{
-          fontSize: 11, fontWeight: 700, color: "#64748b",
+          fontSize: 11, fontWeight: 700, color: "var(--text-muted)",
           textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8,
         }}>
           Actieve alerts ({activeCount})
         </div>
 
         {loading ? (
-          <div style={{ color: "#64748b", fontSize: 12 }}>Laden…</div>
+          <div style={{ color: "var(--text-muted)", fontSize: 12 }}>Laden…</div>
         ) : alerts.length === 0 ? (
-          <div style={{ color: "#475569", fontSize: 12, fontStyle: "italic" }}>
+          <div style={{ color: "var(--text-muted)", fontSize: 12, fontStyle: "italic" }}>
             Nog geen alerts ingesteld.
           </div>
         ) : (
@@ -389,22 +389,22 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary, #fce8f0)" }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>
                       {def?.emoji ?? ""} {def?.ticker ?? alert.asset}{" "}
-                      <span style={{ color: isAbove ? "#22c55e" : "#ef4444" }}>
+                      <span style={{ color: isAbove ? "var(--green)" : "var(--red)" }}>
                         {isAbove ? "↑ boven" : "↓ onder"}{" "}
                         ${alert.target_price.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                       </span>
                       {recentlyTriggered && (
-                        <span style={{ marginLeft: 6, fontSize: 10, color: "#e91e63", fontWeight: 700 }}>
+                        <span style={{ marginLeft: 6, fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>
                           🔔 GETRIGGERD
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
                       {alert.email ? `📧 ${alert.email}` : "📱 In-app melding"}
                       {alert.last_triggered_at && (
-                        <span style={{ marginLeft: 6, color: "#f59e0b" }}>
+                        <span style={{ marginLeft: 6, color: "var(--orange)" }}>
                           · {new Date(alert.last_triggered_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                         </span>
                       )}
@@ -416,7 +416,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                       background: "none",
                       border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: 6,
-                      color: "#64748b",
+                      color: "var(--text-muted)",
                       cursor: "pointer",
                       padding: "3px 8px",
                       fontSize: 11,

@@ -93,8 +93,8 @@ export default function MarcusSignals() {
           disabled={savingCopy}
           style={{
             padding: "7px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, border: "none",
-            background: copyEnabled ? "#22d47a" : "rgba(233,30,99,0.15)",
-            color: copyEnabled ? "#0d1117" : "#e91e63",
+            background: copyEnabled ? "var(--green)" : "rgba(233,30,99,0.15)",
+            color: copyEnabled ? "#0d1117" : "var(--primary)",
             cursor: savingCopy ? "not-allowed" : "pointer",
             opacity: savingCopy ? 0.7 : 1,
           }}
@@ -129,22 +129,22 @@ export default function MarcusSignals() {
                     <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>{s.asset}</span>
                     <span style={{
                       marginLeft: 8, fontSize: 11, padding: "1px 7px", borderRadius: 4,
-                      background: "rgba(34,212,122,0.15)", color: "#22d47a", fontWeight: 600,
+                      background: "rgba(34,212,122,0.15)", color: "var(--green)", fontWeight: 600,
                     }}>LONG</span>
                     <span style={{
                       marginLeft: 6, fontSize: 11, color: "var(--text-muted)"
                     }}>score {s.score}/100 · RSI {s.rsi.toFixed(0)} · {s.trend}</span>
                   </div>
                   {s.pnlPct !== null && (
-                    <span style={{ fontSize: 13, fontWeight: 700, color: pnlPositive ? "#22d47a" : "#f05252" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: pnlPositive ? "var(--green)" : "var(--red)" }}>
                       {pnlPositive ? "+" : ""}{s.pnlPct}%
                     </span>
                   )}
                 </div>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 12, marginBottom: 10 }}>
                   <span style={{ color: "var(--text-muted)" }}>Entry <strong style={{ color: "var(--text)" }}>${s.entry_price.toFixed(2)}</strong></span>
-                  <span style={{ color: "#f05252" }}>SL <strong>${s.stop_loss.toFixed(2)}</strong></span>
-                  <span style={{ color: "#22d47a" }}>Target <strong>${s.target.toFixed(2)}</strong></span>
+                  <span style={{ color: "var(--red)" }}>SL <strong>${s.stop_loss.toFixed(2)}</strong></span>
+                  <span style={{ color: "var(--green)" }}>Target <strong>${s.target.toFixed(2)}</strong></span>
                   <span style={{ color: "var(--text-muted)" }}>R/R <strong style={{ color: "var(--text)" }}>{rr}:1</strong></span>
                   {s.currentPrice && <span style={{ color: "var(--text-muted)" }}>Nu <strong style={{ color: "var(--text)" }}>${s.currentPrice.toFixed(2)}</strong></span>}
                 </div>
@@ -152,7 +152,7 @@ export default function MarcusSignals() {
                   onClick={() => manualCopy(s)}
                   style={{
                     fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 6, border: "none",
-                    background: "rgba(233,30,99,0.15)", color: "#e91e63", cursor: "pointer",
+                    background: "rgba(233,30,99,0.15)", color: "var(--primary)", cursor: "pointer",
                   }}
                 >
                   ↗ Kopieer trade
@@ -183,7 +183,7 @@ export default function MarcusSignals() {
                 }}>
                   <span style={{ color: "var(--text)" }}>{icon} {s.asset} — {label}</span>
                   {pnlPct !== null && (
-                    <span style={{ fontWeight: 600, color: pnlPct >= 0 ? "#22d47a" : "#f05252" }}>
+                    <span style={{ fontWeight: 600, color: pnlPct >= 0 ? "var(--green)" : "var(--red)" }}>
                       {pnlPct >= 0 ? "+" : ""}{pnlPct}%
                     </span>
                   )}

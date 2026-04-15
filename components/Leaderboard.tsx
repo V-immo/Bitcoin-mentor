@@ -25,7 +25,7 @@ function SkeletonRow() {
               height: 12,
               width: w,
               borderRadius: 6,
-              background: "#2a1a28",
+              background: "var(--surface-1)",
               animation: "pulse 1.4s ease-in-out infinite",
             }}
           />
@@ -125,12 +125,12 @@ export default function Leaderboard() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #2a1a28" }}>
-              <th style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>#</th>
-              <th style={{ padding: "6px 8px", textAlign: "left", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_name")}</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_pnl")}</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_winrate")}</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_trades")}</th>
-              <th style={{ padding: "6px 8px", textAlign: "right", color: "#bf7a99", fontWeight: 600 }}>{t("leaderboard_quiz_lvl")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 600, whiteSpace: "nowrap" }}>#</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 600 }}>{t("leaderboard_name")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_pnl")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600, whiteSpace: "nowrap" }}>{t("leaderboard_winrate")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600 }}>{t("leaderboard_trades")}</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", color: "var(--text-secondary)", fontWeight: 600 }}>{t("leaderboard_quiz_lvl")}</th>
             </tr>
           </thead>
           <tbody>
@@ -154,7 +154,7 @@ export default function Leaderboard() {
                       <span className="lb-rank-badge">{entry.rank}</span>
                     )}
                   </td>
-                  <td style={{ padding: "10px 8px", fontWeight: 500, color: "#e8d5e0" }}>
+                  <td style={{ padding: "10px 8px", fontWeight: 500, color: "var(--text)" }}>
                     {entry.username}
                   </td>
                   <td
@@ -164,10 +164,10 @@ export default function Leaderboard() {
                     {entry.totalPnl >= 0 ? "+" : ""}
                     {entry.totalPnl.toFixed(2)}
                   </td>
-                  <td style={{ padding: "10px 8px", textAlign: "right", color: "#bf7a99" }}>
+                  <td style={{ padding: "10px 8px", textAlign: "right", color: "var(--text-secondary)" }}>
                     {entry.winRate.toFixed(1)}%
                   </td>
-                  <td style={{ padding: "10px 8px", textAlign: "right", color: "#bf7a99" }}>
+                  <td style={{ padding: "10px 8px", textAlign: "right", color: "var(--text-secondary)" }}>
                     {entry.totalTrades}
                   </td>
                   <td style={{ padding: "10px 8px", textAlign: "right" }}>
@@ -175,8 +175,8 @@ export default function Leaderboard() {
                       display: "inline-block",
                       padding: "1px 8px",
                       borderRadius: 10,
-                      background: "#2a1a28",
-                      color: "#e91e63",
+                      background: "var(--surface-1)",
+                      color: "var(--primary)",
                       fontWeight: 700,
                       fontSize: 12,
                     }}>

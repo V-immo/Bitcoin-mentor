@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { CalendarData, EconEvent, EarningsEvent } from "@/app/api/calendar/route";
 
-const IMPACT_COLOR = { 1: "#64748b", 2: "#f59e0b", 3: "#ef4444" };
+const IMPACT_COLOR = { 1: "var(--text-muted)", 2: "var(--orange)", 3: "var(--red)" };
 const IMPACT_LABEL = { 1: "laag", 2: "middel", 3: "hoog" };
 const IMPACT_DOT   = { 1: "🟢", 2: "🟡", 3: "🔴" };
 
@@ -105,7 +105,7 @@ export default function EconomicCalendar() {
 
   if (!data) {
     return (
-      <div style={{ padding: "32px 20px", textAlign: "center", color: "#64748b", fontSize: 13 }}>
+      <div style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
         Kalender niet beschikbaar
       </div>
     );
@@ -124,23 +124,23 @@ export default function EconomicCalendar() {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {/* Header */}
       <div style={{
-        background: "var(--surface, #1f0d17)",
-        border: "1px solid rgba(233,30,99,0.2)",
+        background: "var(--surface)",
+        border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
         borderRadius: 16, overflow: "hidden",
       }}>
         <div style={{
           padding: "14px 18px",
-          background: "linear-gradient(135deg, rgba(233,30,99,0.1) 0%, transparent 60%)",
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent) 0%, transparent 60%)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 20 }}>📅</span>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
                 Economische Kalender
               </div>
-              <div style={{ fontSize: 11, color: "#64748b" }}>
+              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                 Komende 14 dagen · {economic.length} macro · {earnings.length} earnings
               </div>
             </div>
@@ -152,10 +152,10 @@ export default function EconomicCalendar() {
           <div style={{ padding: "10px 18px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
             <div style={{
               display: "flex", gap: 8, alignItems: "flex-start",
-              background: "rgba(233,30,99,0.06)", borderRadius: 10, padding: "10px 12px",
+              background: "color-mix(in srgb, var(--primary) 6%, transparent)", borderRadius: 10, padding: "10px 12px",
             }}>
               <span style={{ fontSize: 16, flexShrink: 0 }}>🤖</span>
-              <p style={{ margin: 0, fontSize: 12, color: "var(--text-primary, #fce8f0)", lineHeight: 1.65 }}>
+              <p style={{ margin: 0, fontSize: 12, color: "var(--text)", lineHeight: 1.65 }}>
                 {warning}
               </p>
             </div>
@@ -170,9 +170,9 @@ export default function EconomicCalendar() {
               onClick={() => setTab(t)}
               style={{
                 padding: "5px 14px", borderRadius: 99, cursor: "pointer", fontSize: 12, fontWeight: 600,
-                border: `1px solid ${tab === t ? "#e91e63" : "rgba(255,255,255,0.1)"}`,
-                background: tab === t ? "rgba(233,30,99,0.15)" : "transparent",
-                color: tab === t ? "#e91e63" : "#64748b",
+                border: `1px solid ${tab === t ? "var(--primary)" : "rgba(255,255,255,0.1)"}`,
+                background: tab === t ? "color-mix(in srgb, var(--primary) 15%, transparent)" : "transparent",
+                color: tab === t ? "var(--primary)" : "var(--text-muted)",
                 transition: "all 0.15s",
               }}
             >
@@ -199,10 +199,10 @@ export default function EconomicCalendar() {
       {/* Lege state */}
       {dates.length === 0 && (
         <div style={{
-          background: "var(--surface, #1f0d17)",
+          background: "var(--surface)",
           border: "1px solid rgba(255,255,255,0.08)",
           borderRadius: 16, padding: "32px 20px",
-          textAlign: "center", color: "#64748b", fontSize: 13,
+          textAlign: "center", color: "var(--text-muted)", fontSize: 13,
         }}>
           {tab === "macro" ? "Geen relevante macro-events de komende 14 dagen." : "Geen earnings van gevolgde aandelen de komende 14 dagen."}
         </div>
@@ -217,28 +217,28 @@ export default function EconomicCalendar() {
 
         return (
           <div key={date} style={{
-            background: "var(--surface, #1f0d17)",
-            border: `1px solid ${isToday ? "rgba(233,30,99,0.35)" : isMorgen ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.07)"}`,
+            background: "var(--surface)",
+            border: `1px solid ${isToday ? "color-mix(in srgb, var(--primary) 35%, transparent)" : isMorgen ? "color-mix(in srgb, var(--orange) 25%, transparent)" : "rgba(255,255,255,0.07)"}`,
             borderRadius: 14, overflow: "hidden",
           }}>
             {/* Dag header */}
             <div style={{
               padding: "9px 14px",
               background: isToday
-                ? "rgba(233,30,99,0.1)"
+                ? "color-mix(in srgb, var(--primary) 10%, transparent)"
                 : isMorgen
-                  ? "rgba(245,158,11,0.07)"
+                  ? "color-mix(in srgb, var(--orange) 7%, transparent)"
                   : "rgba(255,255,255,0.02)",
               borderBottom: "1px solid rgba(255,255,255,0.05)",
               display: "flex", alignItems: "center", justifyContent: "space-between",
             }}>
               <span style={{
                 fontSize: 12, fontWeight: 700,
-                color: isToday ? "#e91e63" : isMorgen ? "#f59e0b" : "#94a3b8",
+                color: isToday ? "var(--primary)" : isMorgen ? "var(--orange)" : "var(--text-muted)",
               }}>
                 {label}
               </span>
-              <span style={{ fontSize: 10, color: "#475569" }}>
+              <span style={{ fontSize: 10, color: "var(--text-muted)" }}>
                 {dayItems.length} event{dayItems.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -276,10 +276,10 @@ function MacroRow({ event }: { event: EconEvent }) {
     }}>
       <span style={{ fontSize: 12, flexShrink: 0 }}>{dot}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary, #fce8f0)" }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>
           {event.event}
         </div>
-        <div style={{ fontSize: 10, color: "#64748b", marginTop: 1, display: "flex", gap: 8 }}>
+        <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 1, display: "flex", gap: 8 }}>
           {time && <span>{time} UTC</span>}
           {event.estimate && <span>verwacht: {event.estimate}{event.unit}</span>}
           {event.previous && <span>vorig: {event.previous}{event.unit}</span>}
@@ -295,8 +295,8 @@ function MacroRow({ event }: { event: EconEvent }) {
       )}
       {!event.actual && event.impact === 3 && (
         <div style={{
-          fontSize: 9, fontWeight: 700, color: "#ef4444",
-          background: "rgba(239,68,68,0.1)", padding: "2px 7px", borderRadius: 99, flexShrink: 0,
+          fontSize: 9, fontWeight: 700, color: "var(--red)",
+          background: "color-mix(in srgb, var(--red) 10%, transparent)", padding: "2px 7px", borderRadius: 99, flexShrink: 0,
         }}>
           HOOG
         </div>
@@ -319,13 +319,13 @@ function EarningsRow({ event }: { event: EarningsEvent }) {
     }}>
       <span style={{ fontSize: 16, flexShrink: 0 }}>{emoji}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-primary, #fce8f0)" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)" }}>
           {event.symbol}
-          <span style={{ fontWeight: 400, fontSize: 11, color: "#64748b", marginLeft: 6 }}>
+          <span style={{ fontWeight: 400, fontSize: 11, color: "var(--text-muted)", marginLeft: 6 }}>
             {event.name}
           </span>
         </div>
-        <div style={{ fontSize: 10, color: "#64748b", marginTop: 1, display: "flex", gap: 8 }}>
+        <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 1, display: "flex", gap: 8 }}>
           {hourLabel && <span>{hourLabel}</span>}
           {event.epsEstimate !== null && <span>EPS verwacht: ${event.epsEstimate?.toFixed(2)}</span>}
           {event.epsActual !== null && <span>EPS actueel: ${event.epsActual?.toFixed(2)}</span>}
@@ -334,8 +334,8 @@ function EarningsRow({ event }: { event: EarningsEvent }) {
       {beat !== null && (
         <div style={{
           fontSize: 10, fontWeight: 700,
-          color: beat ? "#22c55e" : "#ef4444",
-          background: beat ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
+          color: beat ? "var(--green)" : "var(--red)",
+          background: beat ? "color-mix(in srgb, var(--green) 12%, transparent)" : "color-mix(in srgb, var(--red) 12%, transparent)",
           padding: "2px 8px", borderRadius: 99, flexShrink: 0,
         }}>
           {beat ? "✓ BEAT" : "✗ MISS"}

@@ -28,9 +28,9 @@ export default function CommunitySentiment() {
   const bearishPct = 100 - bullishPct;
 
   // Kleur gebaseerd op sentiment
-  const sentimentColor = bullishPct >= 65 ? "#22d47a"
-    : bullishPct >= 45 ? "#f59e0b"
-    : "#f05252";
+  const sentimentColor = bullishPct >= 65 ? "var(--green)"
+    : bullishPct >= 45 ? "var(--orange)"
+    : "var(--red)";
   const sentimentLabel = bullishPct >= 65 ? "Bullish 📈"
     : bullishPct >= 45 ? "Gemengd 📊"
     : "Bearish 📉";
@@ -71,8 +71,8 @@ export default function CommunitySentiment() {
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {/* Bull/Bear labels */}
         <div style={{ display: "flex", gap: 12, alignItems: "center", flex: 1 }}>
-          <span style={{ fontSize: 12, color: "#22d47a", fontWeight: 600 }}>🟢 Bull {bullishPct}%</span>
-          <span style={{ fontSize: 12, color: "#f05252", fontWeight: 600 }}>🔴 Bear {bearishPct}%</span>
+          <span style={{ fontSize: 12, color: "var(--green)", fontWeight: 600 }}>🟢 Bull {bullishPct}%</span>
+          <span style={{ fontSize: 12, color: "var(--red)", fontWeight: 600 }}>🔴 Bear {bearishPct}%</span>
         </div>
 
         {/* Recente activiteit */}
@@ -93,7 +93,7 @@ export default function CommunitySentiment() {
             <span key={a.asset} style={{
               fontSize: 11, fontWeight: 600,
               background: "rgba(34,212,122,0.1)",
-              color: "#22d47a",
+              color: "var(--green)",
               borderRadius: 4, padding: "2px 7px",
             }}>
               {a.asset} ×{a.count}
