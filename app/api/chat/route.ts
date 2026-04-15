@@ -14,6 +14,7 @@ import {
 } from "@/lib/market-poller";
 import { webSearch, needsWebSearch, buildSearchQuery } from "@/lib/web-search";
 import { getCachedOnChainData, formatOnChainForMarcus } from "@/lib/onchain";
+import { getNewsForAsset, formatNewsForMarcus } from "@/lib/news";
 
 // Rate limiting: max 100 chat calls per uur per user
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -266,12 +267,14 @@ ${lines.join("\n")}`;
 
   const lastUserMsg = messages.filter(m => m.role === "user").slice(-1)[0]?.content ?? "";
 
-  const [fearGreed, globalMetrics, fundingRates, onChainData] = await Promise.all([
+  const [fearGreed, globalMetrics, fundingRates, onChainData, newsItems] = await Promise.all([
     getCachedFearGreed(),
     getCachedGlobalMetrics(),
     getCachedFundingRates(),
     getCachedOnChainData(),
+    getNewsForAsset(appContext.asset ?? "BTCUSDT", 4),
   ]);
+  const newsContext = formatNewsForMarcus(newsItems);
 
   // Web search — alleen als de vraag actuele informatie vereist
   let webSearchContext = "";
@@ -1478,6 +1481,7 @@ Marcus vermeldt altijd de bron als hij web research gebruikt en integreert het i
 
 MARKTOVERZICHT ALLE ASSETS (voor vergelijking):
 ${marketSummary || "Scan data nog niet beschikbaar — vraag de gebruiker om de scanner pagina even te openen."}
+${newsContext ? `\nACTUEEL NIEUWS (${(appContext.asset ?? "BTC").replace("USDT", "")} — gebruik dit als context, noem headlines als ze relevant zijn):\n${newsContext}` : ""}
 
 LEERVOORTGANG VAN DEZE GEBRUIKER:
 ${quizHistorySummary || "Nog geen quiz data — dit is waarschijnlijk een nieuwe gebruiker."}

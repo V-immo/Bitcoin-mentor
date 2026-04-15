@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getDb } from "@/db/db";
 import { sharedScanCache } from "@/lib/scan-cache";
 import { auth } from "@/auth";
+import { getNewsForAsset, formatNewsForMarcus } from "@/lib/news";
 
 const BRIEFING_SECRET = process.env.BRIEFING_SECRET ?? "marcus-daily-secret";
 
@@ -83,16 +84,22 @@ export async function POST(request: NextRequest) {
     return `${dot} ${a.ticker} — trend: ${a.trend}, RSI: ${a.rsi}, score: ${a.score}/100, 24u: ${a.change24h >= 0 ? "+" : ""}${a.change24h.toFixed(1)}% — ${a.signal}`;
   }).join("\n");
 
-  // Fear & Greed
+  // Fear & Greed + nieuws — parallel ophalen
   let fearGreed = "onbekend";
-  try {
-    const fg = await fetch("https://api.alternative.me/fng/?limit=1");
-    if (fg.ok) {
-      const fgData = await fg.json();
+  const [fgResult, btcNews] = await Promise.allSettled([
+    fetch("https://api.alternative.me/fng/?limit=1"),
+    getNewsForAsset("BTCUSDT", 5),
+  ]);
+  if (fgResult.status === "fulfilled" && fgResult.value.ok) {
+    try {
+      const fgData = await fgResult.value.json();
       const e = fgData?.data?.[0];
       if (e) fearGreed = `${e.value}/100 (${e.value_classification})`;
-    }
-  } catch { /* ignore */ }
+    } catch { /* ignore */ }
+  }
+  const newsContext = btcNews.status === "fulfilled"
+    ? formatNewsForMarcus(btcNews.value)
+    : "";
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return Response.json({ error: "ANTHROPIC_API_KEY ontbreekt" }, { status: 500 });
@@ -105,6 +112,7 @@ MARKTDATA VAN DIT MOMENT:
 ${scanSummary || "Geen scandata beschikbaar."}
 
 Fear & Greed Index: ${fearGreed}
+${newsContext ? `\nACTUEEL NIEUWS (gebruik dit om context te geven aan je briefing):\n${newsContext}` : ""}
 
 JOUW TAAK:
 Schrijf een concrete, actiegericht briefing die bruikbaar is voor zowel day traders als swing traders. Geen bullshit, geen vage algemeenheden.
