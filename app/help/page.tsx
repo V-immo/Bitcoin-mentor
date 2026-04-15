@@ -77,17 +77,15 @@ export default function HelpPage() {
   ];
 
   return (
-    <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 60px" }}>
-      <div style={{ marginBottom: 24 }}>
+    <main className="page-container page-narrow">
+      <div className="page-back-row">
         <Link href="/trade" className="page-back-btn">{t("help_back")}</Link>
       </div>
 
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>
-        {t("help_title")}
-      </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
-        {t("help_subtitle")}
-      </p>
+      <div className="page-header">
+        <h1 className="page-title">{t("help_title")}</h1>
+        <p className="page-subtitle">{t("help_subtitle")}</p>
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         {SECTIONS.map((section) => (

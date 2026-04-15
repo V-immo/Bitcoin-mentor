@@ -229,12 +229,12 @@ export default function AgendaPage() {
   const [agendaTab, setAgendaTab] = useState<"journaal" | "kalender">("journaal");
 
   return (
-    <div style={styles.wrap}>
+    <div className="page-container page-wide">
       {/* Header */}
-      <div style={styles.header}>
+      <div className="page-header">
         <div>
-          <h1 style={styles.title}>📅 Trading Agenda</h1>
-          <p style={styles.subtitle}>Log je trades, emoties en notities per dag</p>
+          <h1 className="page-title">📅 Trading Agenda</h1>
+          <p className="page-subtitle">Log je trades, emoties en notities per dag</p>
         </div>
         {/* Tab switcher */}
         <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
@@ -255,7 +255,7 @@ export default function AgendaPage() {
 
       {/* Economische kalender tab */}
       {agendaTab === "kalender" && (
-        <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 16px 40px" }}>
+        <div className="page-narrow" style={{ margin: "0 auto", paddingBottom: 40 }}>
           <EconomicCalendar />
         </div>
       )}
@@ -727,10 +727,7 @@ export default function AgendaPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  wrap: { maxWidth: 1100, margin: "0 auto", padding: "24px 16px", position: "relative" },
-  header: { marginBottom: 24 },
-  title: { margin: 0, fontSize: 24, fontWeight: 800, color: "var(--text)" },
-  subtitle: { margin: "4px 0 0", color: "var(--text-muted, #94a3b8)", fontSize: 14 },
+  /* wrap/header/title/subtitle moved to page-container/page-header/page-title/page-subtitle CSS classes */
   layout: { display: "grid", gridTemplateColumns: "1fr 360px", gap: 20, alignItems: "start" },
   calCard: { background: "var(--surface)", border: "1px solid rgba(233,30,99,0.2)", borderRadius: 16, padding: 20 },
   calNav: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },

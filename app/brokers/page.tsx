@@ -191,18 +191,14 @@ export default function BrokersPage() {
     : BROKERS.filter(b => b.assets.some(a => a.includes(filter) || filter.includes(a)));
 
   return (
-    <main style={{ maxWidth: 1100, margin: "0 auto", padding: "20px 20px 64px" }}>
+    <main className="page-container page-wide">
 
-      <div style={{ marginBottom: 20 }}>
-        <Link href="/dashboard" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none" }}>
-          ← Dashboard
-        </Link>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", margin: "8px 0 4px" }}>
-          Platforms & Brokers
-        </h1>
-        <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-          Waar je écht kunt traden — overzicht van de beste platforms per asset class
-        </p>
+      <div className="page-back-row">
+        <Link href="/dashboard" className="page-back-btn">← Dashboard</Link>
+      </div>
+      <div className="page-header">
+        <h1 className="page-title">Platforms & Brokers</h1>
+        <p className="page-subtitle">Waar je écht kunt traden — overzicht van de beste platforms per asset class</p>
       </div>
 
       {/* Marcus tip */}

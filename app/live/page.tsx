@@ -37,10 +37,10 @@ export default function LivePage() {
   const cryptoAssets = SCAN_ASSETS.filter(a => a.type === "crypto");
 
   return (
-    <main className="container-page clean-page">
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+    <main className="page-container page-narrow">
+      <div className="page-back-row">
         <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
-        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>⚡ {t("live_page_title")}</h1>
+        <h1 className="page-title">⚡ {t("live_page_title")}</h1>
       </div>
 
       {/* Asset selector */}

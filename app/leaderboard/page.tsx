@@ -9,10 +9,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function LeaderboardPage() {
   const { t } = useLanguage();
   return (
-    <main className="container-page clean-page">
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+    <main className="page-container page-narrow">
+      <div className="page-back-row">
         <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
-        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>🏆 {t("leaderboard_page_title")}</h1>
+        <h1 className="page-title">🏆 {t("leaderboard_page_title")}</h1>
       </div>
       <Leaderboard />
     </main>

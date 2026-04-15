@@ -268,14 +268,14 @@ export default function ProfielPage() {
   const dateLocale = lang === "nl" ? "nl-NL" : "en-GB";
 
   return (
-    <div className="container-page" style={{ maxWidth: 760 }}>
+    <div className="page-container page-narrow">
       {/* ── Header ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
         <div style={av}>
           {username.slice(0, 1).toUpperCase()}
         </div>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: "var(--text)" }}>{username}</div>
+          <div className="page-title" style={{ marginBottom: 0 }}>{username}</div>
           <span
             style={{
               display: "inline-block",
