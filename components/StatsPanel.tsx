@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
+import EquityCurve from "@/components/EquityCurve";
 
 type PaperTrade = {
     id: string;
@@ -24,6 +25,7 @@ const EMOTION_DATA = [
 export default function StatsPanel() {
     const { t, lang } = useLanguage();
     const [trades, setTrades] = useState<PaperTrade[]>([]);
+    const [startingBalance, setStartingBalance] = useState(10000);
 
     const DAYS = [
         t("stats_days_zo"),
@@ -46,12 +48,15 @@ export default function StatsPanel() {
                     )
                 );
                 const allTrades: PaperTrade[] = [];
+                let startBal = 10000;
                 for (const data of results) {
                     if (!data) continue;
                     const history: PaperTrade[] = data.history ?? [];
                     allTrades.push(...history);
+                    if (data.startingBalance) startBal = data.startingBalance;
                 }
                 setTrades(allTrades);
+                setStartingBalance(startBal);
             } catch { /* ignore */ }
         }
         loadTrades();
@@ -110,6 +115,16 @@ export default function StatsPanel() {
         return { best, worst };
     }, [byEmotion]);
 
+    const equityPoints = useMemo(() => {
+        const timed = sells.filter(t => t.timestamp).sort((a, b) => a.timestamp! - b.timestamp!);
+        if (timed.length < 2) return [];
+        let equity = startingBalance;
+        return timed.map(t => {
+            equity += t.pnl ?? 0;
+            return { time: t.timestamp!, value: equity };
+        });
+    }, [sells, startingBalance]);
+
     const hasDayData = sells.some((trade) => trade.timestamp);
     const hasAssetData = sells.some((trade) => trade.asset);
     const hasEmotionData = Object.keys(byEmotion).length > 0;
@@ -128,6 +143,22 @@ export default function StatsPanel() {
     return (
         <section className="terminal-side-card">
             <div className="terminal-label">{t("stats_panel_title")}</div>
+
+            {equityPoints.length >= 2 && (
+                <div style={{ marginTop: 10, marginBottom: 4 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                        <span className="terminal-stats-subtitle" style={{ margin: 0 }}>Equity curve</span>
+                        <span style={{
+                            fontSize: 13, fontWeight: 700,
+                            color: equityPoints[equityPoints.length - 1].value >= startingBalance ? "#22c55e" : "#ef4444",
+                        }}>
+                            {equityPoints[equityPoints.length - 1].value >= startingBalance ? "+" : ""}
+                            €{(equityPoints[equityPoints.length - 1].value - startingBalance).toFixed(0)}
+                        </span>
+                    </div>
+                    <EquityCurve points={equityPoints} startingBalance={startingBalance} height={110} />
+                </div>
+            )}
 
             {hasDayData && (
                 <>
