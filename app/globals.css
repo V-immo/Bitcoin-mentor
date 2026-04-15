@@ -6347,7 +6347,12 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   margin: 0 0 20px;
   animation: slideUp 0.5s ease-out 0.1s both;
 }
-.landing-title-accent { color: var(--primary); }
+.landing-title-accent {
+  background: linear-gradient(135deg, var(--primary) 0%, #ff6b9d 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .landing-subtitle {
   font-size: 17px;
   color: var(--text-secondary);
@@ -6451,10 +6456,11 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: flex;
   justify-content: center;
   gap: 40px;
-  padding: 28px 0;
-  margin-bottom: 48px;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  padding: 32px 20px;
+  margin: 0 -20px 48px;
+  background: rgba(233, 30, 99, 0.04);
+  border-top: 1px solid rgba(233, 30, 99, 0.12);
+  border-bottom: 1px solid rgba(233, 30, 99, 0.12);
 }
 .landing-stat-item {
   display: flex;
@@ -6477,19 +6483,28 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 }
 @media (max-width: 860px) { .landing-testimonial-grid { grid-template-columns: 1fr; } }
 .landing-testimonial-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .landing-testimonial-card:hover {
-  border-color: var(--border-hover);
+  border-color: rgba(233, 30, 99, 0.3);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(233, 30, 99, 0.08);
+}
+[data-theme="light"] .landing-testimonial-card {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(140, 85, 10, 0.15);
+}
+[data-theme="light"] .landing-testimonial-card:hover {
+  background: rgba(255, 255, 255, 0.8);
 }
 .landing-testimonial-quote {
   font-size: 14px;
@@ -6521,27 +6536,56 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 @media (max-width: 900px) { .landing-usps { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 500px) { .landing-usps { grid-template-columns: 1fr; } }
 .landing-usp-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px 20px;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 28px 22px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .landing-usp-card:hover {
-  border-color: var(--border-hover);
+  border-color: rgba(233, 30, 99, 0.4);
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 32px rgba(233, 30, 99, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
-.landing-usp-icon { font-size: 28px; margin-bottom: 12px; }
+[data-theme="light"] .landing-usp-card {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(140, 85, 10, 0.15);
+}
+[data-theme="light"] .landing-usp-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 12px 32px rgba(100, 55, 0, 0.12);
+}
+.landing-usp-icon {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(233,30,99,0.15), rgba(192,132,252,0.1));
+  color: var(--primary);
+  margin-bottom: 14px;
+  font-size: 22px;
+}
 .landing-usp-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
 .landing-usp-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
 
 /* Stappen — vertical timeline */
 .landing-section-title {
-  font-size: 28px; font-weight: 800; color: var(--text);
+  font-size: 28px; font-weight: 800;
   text-align: center; margin-bottom: 40px;
+  background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.landing-steps { margin-bottom: 80px; }
+.landing-steps {
+  margin: 0 -20px 80px;
+  padding: 48px 20px;
+  background: rgba(255, 255, 255, 0.015);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
 .landing-steps-timeline {
   display: flex; flex-direction: column; gap: 0;
   max-width: 520px; margin: 0 auto;
@@ -6576,6 +6620,17 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding: 40px 20px 80px;
   display: flex;
   justify-content: center;
+  position: relative;
+}
+.landing-final-cta::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 500px; height: 500px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(233,30,99,0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 .landing-final-card {
   position: relative; overflow: hidden;
