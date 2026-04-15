@@ -62,8 +62,10 @@ jobs:
 
             # Build geslaagd — backup opruimen en herstart
             rm -rf .next-backup || true
-            pm2 startOrRestart ecosystem.config.js --update-env
-            pm2 reset bitcoin-mentor || true
+
+            # Schone herstart: verwijder eventueel vastgelopen process en start opnieuw
+            pm2 delete bitcoin-mentor 2>/dev/null || true
+            pm2 start ecosystem.config.js --env production
             pm2 save
 
             echo "✅ Deploy klaar"
