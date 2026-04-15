@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Tip from "@/components/Tip";
 
 type Verdict = "GOED" | "AANPASSEN" | "NIET_DOEN";
 
@@ -197,11 +198,13 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
             {[
               { label: "Instapprijs ($)", value: entry, set: setEntry, placeholder: currentPrice > 0 ? currentPrice.toFixed(2) : "0.00" },
-              { label: `Stop-Loss ($) ${side === "long" ? "↓ onder instap" : "↑ boven instap"}`, value: sl, set: setSl, placeholder: "bijv. 83000" },
-              { label: `Target ($) ${side === "long" ? "↑ boven instap" : "↓ onder instap"}`, value: target, set: setTarget, placeholder: "bijv. 92000" },
+              { label: `Stop-Loss ($) ${side === "long" ? "↓ onder instap" : "↑ boven instap"}`, value: sl, set: setSl, placeholder: "bijv. 83000", tip: "Het prijsniveau waar je trade automatisch sluit bij verlies. Zet dit altijd vóór je instapt." },
+              { label: `Target ($) ${side === "long" ? "↑ boven instap" : "↓ onder instap"}`, value: target, set: setTarget, placeholder: "bijv. 92000", tip: "Je take-profit niveau — de prijs waarop je de trade met winst sluit." },
             ].map(field => (
               <div key={field.label}>
-                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4, fontWeight: 600 }}>{field.label}</div>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4, fontWeight: 600 }}>
+                  {field.label}{"tip" in field && field.tip ? <Tip text={field.tip} /> : null}
+                </div>
                 <input
                   type="number"
                   value={field.value}
@@ -225,7 +228,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
               border: `1px solid ${rrOk ? "#22c55e44" : "#ef444444"}`,
               borderRadius: 8, padding: "8px 12px", marginBottom: 10,
             }}>
-              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Live R/R preview</span>
+              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Live R/R preview<Tip text="Verhouding winst/verlies. Minimaal 1:2 is ideaal — voor elke €1 risico minstens €2 winst." /></span>
               <span style={{ fontWeight: 700, fontSize: 14, color: rrOk ? "#22c55e" : "#ef4444" }}>
                 1:{liveRR} {rrOk ? "✓" : "✗"}
               </span>

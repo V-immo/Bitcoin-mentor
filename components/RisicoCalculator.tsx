@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Tip from "@/components/Tip";
 
 type Props = {
     currentPrice: number;
@@ -60,7 +61,7 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
                         inputMode="decimal" placeholder="10000" />
                 </div>
                 <div style={{ flex: "0 0 auto" }}>
-                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_risk_pct")}</div>
+                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_risk_pct")}<Tip text="Hoeveel % van je kapitaal je riskeert per trade. Professionele traders houden dit op 1–2%." /></div>
                     <div style={{ display: "flex", gap: 4 }}>
                         {["0.5","1","2"].map(v => (
                             <button key={v}
@@ -72,7 +73,7 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
                     </div>
                 </div>
                 <div style={{ flex: "1 1 90px", minWidth: 80 }}>
-                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_stop")}</div>
+                    <div className="terminal-mini-label" style={{ marginBottom: 3 }}>{t("calc_stop")}<Tip text="Het prijsniveau waarop je positie sluit bij verlies. Altijd instellen vóór je instapt." /></div>
                     <input className="terminal-terminal-input" style={{ width: "100%" }}
                         value={customStop} onChange={(e) => setCustomStop(e.target.value)}
                         inputMode="decimal" placeholder={String(Math.round(stopLoss))} />
@@ -83,7 +84,7 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
             {result ? (
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 10, padding: "8px 10px", background: "var(--surface-2)", borderRadius: 8, alignItems: "center" }}>
                     <div>
-                        <div className="terminal-mini-label">{t("calc_max_position")}</div>
+                        <div className="terminal-mini-label">{t("calc_max_position")}<Tip text="Het maximale bedrag dat je in deze trade stopt, berekend op basis van je risico-instelling." /></div>
                         <div style={{ fontWeight: 700, fontSize: 16, color: "var(--primary)" }}>{eur(result.positionSize)}</div>
                     </div>
                     <div className="terminal-mini-box">
@@ -95,7 +96,7 @@ export default function RisicoCalculator({ currentPrice, stopLoss }: Props) {
                         <span className="terminal-mini-value">{result.stopDistancePct.toFixed(1)}%</span>
                     </div>
                     <div className="terminal-mini-box">
-                        <span className="terminal-mini-label">{t("calc_target")}</span>
+                        <span className="terminal-mini-label">{t("calc_target")}<Tip text="Winstdoel bij R:R 1:2 — je riskeert €1 om €2 te verdienen. Pas aan met je eigen target." /></span>
                         <span className="terminal-mini-value">${Math.round(result.rrTarget).toLocaleString("en-US")}</span>
                     </div>
                 </div>

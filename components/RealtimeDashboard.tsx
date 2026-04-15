@@ -16,6 +16,7 @@ import TradePlanValidator from "./TradePlanValidator";
 import PreMarketRitual from "./PreMarketRitual";
 import PriceAlerts from "./PriceAlerts";
 import CorrelationView from "./CorrelationView";
+import Tip from "./Tip";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -922,16 +923,16 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               {signalStripOpen && (
                 <div className="signal-strip-detail" onClick={e => e.stopPropagation()}>
                   <div className="signal-strip-grid">
-                    <div className="ssd-item"><span className="ssd-label">Entry zone</span><span className="ssd-val">{fmtCurrency(Math.round(signal.entryZoneLow), asset)} – {fmtCurrency(Math.round(signal.entryZoneHigh), asset)}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Stop-loss</span><span className="ssd-val ssd-red">{fmtCurrency(Math.round(signal.stopLoss), asset)}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Target</span><span className="ssd-val ssd-green">{fmtCurrency(Math.round(signal.resistanceZoneLow), asset)} – {fmtCurrency(Math.round(signal.resistanceZoneHigh), asset)}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">R:R ratio</span><span className="ssd-val">{signal.riskRewardEstimate}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Score</span><span className="ssd-val">{signal.score}/100 · {signal.setupGrade}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">RSI 4H / 1D</span><span className="ssd-val">{signal.rsi4h.toFixed(0)} / {signal.rsi1d.toFixed(0)}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Trend 4H</span><span className="ssd-val">{nlTrend(signal.trend4h, lang)}</span></div>
-                    <div className="ssd-item"><span className="ssd-label">Trend 1D</span><span className="ssd-val">{nlTrend(signal.trend1d, lang)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Entry zone<Tip text="Het prijsbereik waarbinnen de setup geldig is. Koop alleen als de prijs hier staat." /></span><span className="ssd-val">{fmtCurrency(Math.round(signal.entryZoneLow), asset)} – {fmtCurrency(Math.round(signal.entryZoneHigh), asset)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Stop-loss<Tip text="Het prijsniveau waarop je positie sluit bij verlies. Nooit traden zonder stop." /></span><span className="ssd-val ssd-red">{fmtCurrency(Math.round(signal.stopLoss), asset)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Target<Tip text="Je winstdoel — de zone waar Marcus weerstand verwacht en jij winst neemt." /></span><span className="ssd-val ssd-green">{fmtCurrency(Math.round(signal.resistanceZoneLow), asset)} – {fmtCurrency(Math.round(signal.resistanceZoneHigh), asset)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">R:R ratio<Tip text="Verhouding winst/verlies. 2:1 betekent dat je €2 wint voor elke €1 risico. Minimaal 1.5:1 aanbevolen." /></span><span className="ssd-val">{signal.riskRewardEstimate}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Score<Tip text="Technische score (0–100) op basis van trend, RSI, momentum en structuur. Boven 65 = sterke setup." /></span><span className="ssd-val">{signal.score}/100 · {signal.setupGrade}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">RSI 4H / 1D<Tip text="Relative Strength Index. Boven 70 = mogelijk overkocht. Onder 30 = mogelijk oververkocht." wide /></span><span className="ssd-val">{signal.rsi4h.toFixed(0)} / {signal.rsi1d.toFixed(0)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Trend 4H<Tip text="Trendrichting op de 4-uurs grafiek — de primaire timeframe voor swing entries." /></span><span className="ssd-val">{nlTrend(signal.trend4h, lang)}</span></div>
+                    <div className="ssd-item"><span className="ssd-label">Trend 1D<Tip text="Trendrichting op de dagelijkse grafiek — geeft de grotere context. Trade altijd mee met de daagse trend." wide /></span><span className="ssd-val">{nlTrend(signal.trend1d, lang)}</span></div>
                     {signal.blockers.length > 0 && (
-                      <div className="ssd-item ssd-full"><span className="ssd-label">⚠ Blockers</span><span className="ssd-val ssd-red">{signal.blockers.join(" · ")}</span></div>
+                      <div className="ssd-item ssd-full"><span className="ssd-label">⚠ Blockers<Tip text="Redenen waarom deze setup risicovol is. Los deze op of wacht op een betere kans." /></span><span className="ssd-val ssd-red">{signal.blockers.join(" · ")}</span></div>
                     )}
                   </div>
                   <button className="signal-strip-trade-btn" onClick={() => { setBottomTab("paper"); setSignalStripOpen(false); }}>
