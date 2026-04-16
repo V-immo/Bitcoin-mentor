@@ -8814,6 +8814,21 @@ textarea:focus-visible,
 .social-proof-divider { color: var(--border); }
 .social-proof-text { line-height: 1; }
 
+/* ── Quiz streak-risk waarschuwing ── */
+.quiz-streak-risk {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; margin-bottom: 14px;
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+  border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+  border-radius: 10px;
+}
+.quiz-streak-risk-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.4; }
+.quiz-streak-risk-body { flex: 1; min-width: 0; }
+.quiz-streak-risk-title {
+  font-size: 0.9rem; font-weight: 700; color: #f59e0b; margin-bottom: 2px;
+}
+.quiz-streak-risk-sub { font-size: 0.82rem; color: var(--muted); }
+
 /* ── Streak Freeze badge ── */
 .daily-missions-freeze-badge {
   font-size: 0.8rem; color: #60a5fa;

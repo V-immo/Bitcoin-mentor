@@ -484,6 +484,31 @@ export default function DailyQuiz() {
         </div>
       </div>
 
+      {/* Streak-bescherming waarschuwing — na 20:00, quiz nog niet gedaan, streak ≥ 2 */}
+      {(() => {
+        const h = new Date().getHours();
+        const streakAtRisk = !alreadyDoneToday && history.streak >= 2 && h >= 20;
+        if (!streakAtRisk) return null;
+        const hoursLeft = 23 - h;
+        return (
+          <div className="quiz-streak-risk">
+            <span className="quiz-streak-risk-icon">⚠️</span>
+            <div className="quiz-streak-risk-body">
+              <div className="quiz-streak-risk-title">
+                {lang === "nl"
+                  ? `${history.streak} dagen streak — nog ${hoursLeft} uur`
+                  : `${history.streak}-day streak — ${hoursLeft} hour${hoursLeft !== 1 ? "s" : ""} left`}
+              </div>
+              <div className="quiz-streak-risk-sub">
+                {lang === "nl"
+                  ? "Doe de quiz voor middernacht om je streak te bewaren."
+                  : "Complete the quiz before midnight to keep your streak."}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Start button */}
       <div className="quiz-start-section">
         {alreadyDoneToday ? (
