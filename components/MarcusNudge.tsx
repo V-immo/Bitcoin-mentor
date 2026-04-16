@@ -10,6 +10,7 @@ export default function MarcusNudge() {
   const [nudge, setNudge] = useState<string | null>(null);
   const [morningGreeting, setMorningGreeting] = useState<string | null>(null);
   const [inactiveDays, setInactiveDays] = useState(0);
+  const [isSlump, setIsSlump] = useState(false);
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const [greetingVisible, setGreetingVisible] = useState(false);
   const [eveningVisible, setEveningVisible] = useState(false);
@@ -47,6 +48,7 @@ export default function MarcusNudge() {
             setMorningGreeting(data.morningGreeting);
             setGreetingVisible(true);
           }
+          if (data.isSlump) setIsSlump(true);
           if (data.eveningReview && !eveningDismissedCheck) {
             setEveningReview(data.eveningReview);
           }
@@ -85,15 +87,23 @@ export default function MarcusNudge() {
       {greetingVisible && morningGreeting && (
         <div className="card" style={{
           display: "flex", alignItems: "flex-start", gap: 12, position: "relative",
+          borderLeft: isSlump ? "3px solid #f59e0b" : undefined,
         }}>
           <div style={{
             width: 34, height: 34, borderRadius: "50%",
-            background: "linear-gradient(135deg, #e91e63, #9c27b0)",
+            background: isSlump
+              ? "linear-gradient(135deg, #f59e0b, #d97706)"
+              : "linear-gradient(135deg, #e91e63, #9c27b0)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 16, flexShrink: 0,
-          }}>🌅</div>
+          }}>{isSlump ? "📉" : "🌅"}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 3 }}>Marcus · Goedemorgen</div>
+            <div style={{
+              fontSize: 12, fontWeight: 700, marginBottom: 3,
+              color: isSlump ? "#f59e0b" : "var(--primary)",
+            }}>
+              {isSlump ? "Marcus · Let op" : "Marcus · Goedemorgen"}
+            </div>
             <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: "var(--text)" }}>
               {morningGreeting}
             </p>

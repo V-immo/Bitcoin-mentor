@@ -251,6 +251,26 @@ export async function GET(request: Request) {
   const daysSinceLogin   = calendarDaysSince(user?.last_login_at ?? null) ?? 0;
   const btcSummary       = getBtcSummary();
 
+  // Slump detectie — quiz prestaties + login streak
+  const quizRow = db.prepare(
+    "SELECT level, streak as quiz_streak, history FROM quiz_progress WHERE user_id = ?"
+  ).get(userId) as { level: number; quiz_streak: number; history: string } | undefined;
+
+  let recentQuizAvg = 100;
+  let recentQuizCount = 0;
+  try {
+    const hist = JSON.parse(quizRow?.history ?? "[]") as { score: number; total: number }[];
+    const recent = hist.slice(0, 5);
+    recentQuizCount = recent.length;
+    if (recentQuizCount > 0) {
+      recentQuizAvg = Math.round(
+        recent.reduce((sum, h) => sum + (h.total > 0 ? h.score / h.total : 0), 0) / recentQuizCount * 100
+      );
+    }
+  } catch { /* ignore */ }
+
+  const isSlump = newStreak < 3 && recentQuizAvg < 50 && recentQuizCount >= 2;
+
   const client = process.env.ANTHROPIC_API_KEY
     ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     : null;
@@ -275,11 +295,15 @@ export async function GET(request: Request) {
     const lessonHint = recommendedLesson ? `Aanbevolen les: ${recommendedLesson}.` : "";
 
     try {
+      const systemPrompt = isSlump
+        ? `Je bent Marcus, directe tradingcoach. De trader scoort gemiddeld ${recentQuizAvg}% op de quizzen en heeft een streak van ${newStreak} dagen — ze zitten in een dip. Schrijf een eerlijke ochtendgroet in MAX 2 zinnen: erken dat het moeilijk gaat, geef één concrete actie voor vandaag. Geen valse hoop, geen aanmoedigingen — gewoon direct.`
+        : `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij".
+Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${lessonHint}`;
+
       const msg = await client.messages.create({
         model: "claude-haiku-4-5",
         max_tokens: 100,
-        system: `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij".
-Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${lessonHint}`,
+        system: systemPrompt,
         messages: [{ role: "user", content: "Goedemorgen." }],
       });
       morningGreeting = (msg.content[0] as { text: string }).text.trim();
@@ -382,7 +406,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
     return Response.json({
       nudge: null, active: true, streak: newStreak,
       morningGreeting, eveningReview, weeklyReport,
-      distressAlert, isDistressed,
+      distressAlert, isDistressed, isSlump,
     });
   }
 
@@ -390,7 +414,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
     return Response.json({
       nudge: null, streak: newStreak,
       morningGreeting, eveningReview, weeklyReport,
-      distressAlert, isDistressed,
+      distressAlert, isDistressed, isSlump,
     });
   }
 
@@ -398,7 +422,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
     return Response.json({
       nudge: null, streak: newStreak,
       morningGreeting, eveningReview, weeklyReport,
-      distressAlert, isDistressed,
+      distressAlert, isDistressed, isSlump,
     });
   }
 
@@ -414,7 +438,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
       nudge: fallbacks[Math.floor(Math.random() * fallbacks.length)],
       inactiveDays, streak: newStreak,
       morningGreeting, eveningReview, weeklyReport,
-      distressAlert, isDistressed,
+      distressAlert, isDistressed, isSlump,
     });
   }
 
@@ -433,6 +457,6 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
   return Response.json({
     nudge, inactiveDays, streak: newStreak,
     morningGreeting, eveningReview, weeklyReport,
-    distressAlert, isDistressed, usedFreeze,
+    distressAlert, isDistressed, isSlump, usedFreeze,
   });
 }
