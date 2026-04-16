@@ -8799,6 +8799,21 @@ textarea:focus-visible,
   color: #f59e0b; vertical-align: middle;
 }
 
+/* ── Social Proof bar ── */
+.social-proof-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; margin-bottom: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 0.8rem; color: var(--muted);
+}
+.social-proof-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  background: #22c55e;
+  animation: pulse 2s ease-in-out infinite;
+}
+.social-proof-divider { color: var(--border); }
+.social-proof-text { line-height: 1; }
+
 /* ── Streak Freeze badge ── */
 .daily-missions-freeze-badge {
   font-size: 0.8rem; color: #60a5fa;

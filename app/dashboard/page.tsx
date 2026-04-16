@@ -8,6 +8,7 @@ import MarketOverview from "@/components/MarketOverview";
 import CommunitySentiment from "@/components/CommunitySentiment";
 import CommunityScoreboard from "@/components/CommunityScoreboard";
 import FirstSteps from "@/components/FirstSteps";
+import SocialProof from "@/components/SocialProof";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
@@ -27,6 +28,7 @@ export default function DashboardPage() {
         </div>
 
         <FirstSteps />
+        <SocialProof />
         <DailyMissions />
         <DashboardStats />
 
