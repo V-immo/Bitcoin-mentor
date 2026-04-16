@@ -83,6 +83,7 @@ export default function AgendaPage() {
   const [marcusLoading, setMarcusLoading] = useState(false);
   const [marcusStats, setMarcusStats] = useState<{ totalTrades: number; totalWins: number; totalLosses: number; totalPnl: number; tradeDays: number } | null>(null);
   const marcusFetched = useRef(false);
+  const [journalPrompt, setJournalPrompt] = useState<string | null>(null);
   const [weeklyReview, setWeeklyReview] = useState<string | null>(null);
   const [weeklyLoading, setWeeklyLoading] = useState(false);
   const [weeklyIsNew, setWeeklyIsNew] = useState(false);
@@ -174,6 +175,18 @@ export default function AgendaPage() {
     setLessons(entry?.lessons ?? "");
     setSelectedTags(entry?.tags ?? []);
     setMarcusReflection(entry?.marcus_reflection ?? null);
+
+    // Dagelijkse journaalprompt ophalen voor vandaag
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (dateStr === todayStr) {
+      setJournalPrompt(null);
+      fetch("/api/me/journal-prompt?lang=nl")
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d?.prompt) setJournalPrompt(d.prompt); })
+        .catch(() => {});
+    } else {
+      setJournalPrompt(null);
+    }
   }
 
   function toggleTag(tagId: string) {
@@ -638,6 +651,31 @@ export default function AgendaPage() {
                   })}
                 </div>
               </div>
+
+              {/* Marcus dagelijkse journaalprompt */}
+              {journalPrompt && (
+                <div style={{
+                  marginBottom: 16,
+                  background: "linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent), color-mix(in srgb, var(--primary) 3%, transparent))",
+                  border: "1px solid color-mix(in srgb, var(--primary) 30%, transparent)",
+                  borderRadius: 12, padding: "12px 14px",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
+                      background: "linear-gradient(135deg, var(--primary), var(--deep-rose))",
+                      color: "#fff", fontWeight: 700, fontSize: 12,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>M</div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "var(--primary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Marcus vraagt vandaag
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6, fontStyle: "italic" }}>
+                    &ldquo;{journalPrompt}&rdquo;
+                  </div>
+                </div>
+              )}
 
               {/* Structurele reflectie */}
               <div style={{ marginBottom: 14 }}>
