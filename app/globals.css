@@ -4064,6 +4064,20 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   color: var(--text);
   line-height: 1.65;
 }
+.lesson-diagram {
+  margin: 16px 0;
+  padding: 16px;
+  background: color-mix(in srgb, var(--surface-2) 50%, transparent);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+.lesson-diagram svg {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+}
 
 .curriculum-terms {
   margin-top: 16px;

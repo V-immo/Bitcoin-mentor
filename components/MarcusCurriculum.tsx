@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,6 +23,7 @@ type Lesson = {
   termsEN?: { term: string; def: string }[];
   checkNL?: Check;
   checkEN?: Check;
+  diagramId?: string;
 };
 
 type Level = {
@@ -332,6 +333,7 @@ Marcus says: Learn to watch market movements without panic. Red isn't always bad
       {
         id: "l2-candles",
         icon: "🕯️",
+        diagramId: "candles",
         titleNL: "Candlestick grafieken — het alfabet van de trader",
         titleEN: "Candlestick charts — the trader's alphabet",
         contentNL: `Een candlestick (kaars) is de meest gebruikte manier om prijsbewegingen te zien. Elke kaars toont 4 dingen voor een bepaalde tijdsperiode:
@@ -488,6 +490,7 @@ Marcus says: Always a stop-loss. Always. No trade without one. One trade without
       {
         id: "l2-trend",
         icon: "📉",
+        diagramId: "trend",
         titleNL: "Trends herkennen — de basis van alles",
         titleEN: "Recognizing trends — the basis of everything",
         contentNL: `De allerbelangrijkste regel in trading: trade MET de trend, niet ertegen.
@@ -647,6 +650,7 @@ Marcus says: Protecting a small account is easier than building a large one. Sta
       {
         id: "l3-sr",
         icon: "🧱",
+        diagramId: "sr",
         titleNL: "Support en Resistance — de bouwstenen",
         titleEN: "Support and Resistance — the building blocks",
         contentNL: `Support en resistance zijn de meest fundamentele concepten in technische analyse. Begrijp deze twee, en je begrijpt al 60% van grafiek-lezen.
@@ -1263,6 +1267,138 @@ function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
   );
 }
 
+// ── Diagrammen ───────────────────────────────────────────────────────────────
+function renderDiagram(id: string, lang: string): React.ReactNode {
+  const isEN = lang === "en";
+  const txt = { color: "#c9b3cb", fontSize: 10, fontFamily: "sans-serif" };
+
+  if (id === "candles") {
+    return (
+      <svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Candlestick diagram">
+        {/* Groene kaars */}
+        <line x1="75" y1="20" x2="75" y2="145" stroke="#26c57c" strokeWidth="1.5" />
+        <rect x="60" y="55" width="30" height="60" fill="#26c57c" rx="2" />
+        {/* Labels groen */}
+        <text x="100" y="25" {...txt}>{isEN ? "High" : "High"}</text>
+        <text x="100" y="60" {...txt}>{isEN ? "Close" : "Close"}</text>
+        <text x="100" y="118" {...txt}>{isEN ? "Open" : "Open"}</text>
+        <text x="100" y="148" {...txt}>{isEN ? "Low" : "Low"}</text>
+        <text x="42" y="87" {...txt} fill="#26c57c" fontWeight="bold" fontSize={9}>{isEN ? "Body" : "Body"}</text>
+        <line x1="95" y1="23" x2="103" y2="23" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="95" y1="57" x2="103" y2="57" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="95" y1="115" x2="103" y2="115" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="95" y1="145" x2="103" y2="145" stroke="#c9b3cb" strokeWidth="0.8" />
+        <text x="50" y="150" {...txt} fill="#26c57c" fontSize={9} textAnchor="middle">{isEN ? "Bullish" : "Bullish"}</text>
+
+        {/* Rode kaars */}
+        <line x1="225" y1="20" x2="225" y2="145" stroke="#e91e63" strokeWidth="1.5" />
+        <rect x="210" y="55" width="30" height="60" fill="#e91e63" rx="2" />
+        {/* Labels rood */}
+        <text x="135" y="25" {...txt} textAnchor="end">{isEN ? "High" : "High"}</text>
+        <text x="135" y="60" {...txt} textAnchor="end">{isEN ? "Open" : "Open"}</text>
+        <text x="135" y="118" {...txt} textAnchor="end">{isEN ? "Close" : "Close"}</text>
+        <text x="135" y="148" {...txt} textAnchor="end">{isEN ? "Low" : "Low"}</text>
+        <line x1="138" y1="23" x2="146" y2="23" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="138" y1="57" x2="146" y2="57" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="138" y1="115" x2="146" y2="115" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="138" y1="145" x2="146" y2="145" stroke="#c9b3cb" strokeWidth="0.8" />
+        <text x="225" y="150" {...txt} fill="#e91e63" fontSize={9} textAnchor="middle">{isEN ? "Bearish" : "Bearish"}</text>
+
+        {/* Wick label */}
+        <text x="150" y="95" {...txt} textAnchor="middle" fontSize={9}>{isEN ? "← Wick →" : "← Wick →"}</text>
+      </svg>
+    );
+  }
+
+  if (id === "trend") {
+    // Uptrend: punten stijgen (HH/HL), Downtrend: punten dalen (LH/LL)
+    const up = [
+      [10, 120], [35, 80], [55, 100], [85, 55], [105, 75], [135, 30],
+    ] as [number, number][];
+    const dn = [
+      [10, 30], [35, 70], [55, 50], [85, 95], [105, 75], [135, 120],
+    ] as [number, number][];
+    const upPath = up.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
+    const dnPath = dn.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
+
+    return (
+      <svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trend diagram">
+        {/* Uptrend — linker helft */}
+        <text x="75" y="14" {...txt} textAnchor="middle" fill="#26c57c" fontWeight="bold">{isEN ? "Uptrend" : "Uptrend"}</text>
+        <g transform="translate(5, 10)">
+          <path d={upPath} fill="none" stroke="#26c57c" strokeWidth="2" strokeLinejoin="round" />
+          {/* HH labels */}
+          <text x={up[1][0] - 3} y={up[1][1] - 6} {...txt} fill="#26c57c" fontSize={9}>HH</text>
+          <text x={up[3][0] - 3} y={up[3][1] - 6} {...txt} fill="#26c57c" fontSize={9}>HH</text>
+          <text x={up[5][0] - 3} y={up[5][1] - 6} {...txt} fill="#26c57c" fontSize={9}>HH</text>
+          {/* HL labels */}
+          <text x={up[2][0] - 3} y={up[2][1] + 12} {...txt} fill="#26c57c" fontSize={9}>HL</text>
+          <text x={up[4][0] - 3} y={up[4][1] + 12} {...txt} fill="#26c57c" fontSize={9}>HL</text>
+        </g>
+
+        {/* Scheidingslijn */}
+        <line x1="152" y1="10" x2="152" y2="145" stroke="#3d2a3b" strokeWidth="1" />
+
+        {/* Downtrend — rechter helft */}
+        <text x="225" y="14" {...txt} textAnchor="middle" fill="#e91e63" fontWeight="bold">{isEN ? "Downtrend" : "Downtrend"}</text>
+        <g transform="translate(158, 10)">
+          <path d={dnPath} fill="none" stroke="#e91e63" strokeWidth="2" strokeLinejoin="round" />
+          {/* LH labels */}
+          <text x={dn[0][0] - 3} y={dn[0][1] - 6} {...txt} fill="#e91e63" fontSize={9}>LH</text>
+          <text x={dn[2][0] - 3} y={dn[2][1] - 6} {...txt} fill="#e91e63" fontSize={9}>LH</text>
+          <text x={dn[4][0] - 3} y={dn[4][1] - 6} {...txt} fill="#e91e63" fontSize={9}>LH</text>
+          {/* LL labels */}
+          <text x={dn[1][0] - 3} y={dn[1][1] + 12} {...txt} fill="#e91e63" fontSize={9}>LL</text>
+          <text x={dn[3][0] - 3} y={dn[3][1] + 12} {...txt} fill="#e91e63" fontSize={9}>LL</text>
+        </g>
+
+        {/* Legenda */}
+        <text x="150" y="145" {...txt} textAnchor="middle" fontSize={9}>{isEN ? "HH = Higher High · HL = Higher Low · LH = Lower High · LL = Lower Low" : "HH = Hoger Hoogtepunt · HL = Hoger Dieptepunt · LH = Lager Hoogtepunt · LL = Lager Dieptepunt"}</text>
+      </svg>
+    );
+  }
+
+  if (id === "sr") {
+    // Prijs bounced 3x van support, doorbreekt resistance
+    const prices = [100, 65, 100, 45, 100, 42, 100, 30, 55, 25];
+    // Punten: support bij y=100, resistance bij y=35
+    // Prijs pad: start hoog, daalt naar support, stijgt, daalt naar support, stijgt, doorbreekt resistance
+    const pts: [number, number][] = [
+      [10, 90], [30, 108], [50, 65], [70, 108], [90, 60], [110, 108], [135, 50], [160, 28],
+    ];
+    const pricePath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
+
+    return (
+      <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Support en Resistance diagram">
+        {/* Support lijn */}
+        <line x1="5" y1="110" x2="200" y2="110" stroke="#26c57c" strokeWidth="1.5" strokeDasharray="4 3" />
+        <text x="205" y="114" {...txt} fill="#26c57c" fontSize={10}>{isEN ? "Support" : "Support"}</text>
+
+        {/* Resistance lijn */}
+        <line x1="5" y1="55" x2="130" y2="55" stroke="#e91e63" strokeWidth="1.5" strokeDasharray="4 3" />
+        <text x="135" y="59" {...txt} fill="#e91e63" fontSize={10}>{isEN ? "Resistance" : "Resistance"}</text>
+
+        {/* Prijs lijn */}
+        <path d={pricePath} fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinejoin="round" />
+
+        {/* Bounce labels */}
+        <text x={pts[1][0]} y={pts[1][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
+        <text x={pts[3][0]} y={pts[3][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
+        <text x={pts[5][0]} y={pts[5][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
+
+        {/* Breakout pijl */}
+        <text x={pts[7][0]} y={pts[7][1] - 6} {...txt} fill="#f59e0b" fontSize={9} textAnchor="middle">{isEN ? "Breakout!" : "Breakout!"}</text>
+        <line x1={pts[7][0]} y1={pts[7][1]} x2={pts[7][0]} y2={pts[7][1] - 4} stroke="#f59e0b" strokeWidth="1" />
+
+        {/* Legenda */}
+        <text x="150" y="135" {...txt} textAnchor="middle" fontSize={9}>{isEN ? "Price bounces off support 3× before breaking resistance" : "Prijs bounced 3× van support voor de breakout"}</text>
+      </svg>
+    );
+  }
+
+  return null;
+}
+
 // ── Lesson Card ─────────────────────────────────────────────────────────────
 function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   lesson: Lesson;
@@ -1313,6 +1449,11 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
               <p key={i} style={{ margin: "0 0 10px 0", lineHeight: 1.6 }}>{para}</p>
             ))}
           </div>
+          {lesson.diagramId && (
+            <div className="lesson-diagram">
+              {renderDiagram(lesson.diagramId, lang)}
+            </div>
+          )}
           {terms && terms.length > 0 && (
             <div className="curriculum-terms">
               <div className="curriculum-terms-label">
