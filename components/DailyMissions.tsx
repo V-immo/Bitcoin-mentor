@@ -58,12 +58,13 @@ type MissionStatus = {
   lesson: boolean;
   journal: boolean;
   premarket: boolean;
+  chart: boolean;
 };
 
 export default function DailyMissions() {
   const router = useRouter();
   const { t, lang } = useLanguage();
-  const [status, setStatus] = useState<MissionStatus>({ quiz: false, lesson: false, journal: false, premarket: false });
+  const [status, setStatus] = useState<MissionStatus>({ quiz: false, lesson: false, journal: false, premarket: false, chart: false });
   const [quizStreak, setQuizStreak] = useState(0);
   const [recommendedLesson, setRecommendedLesson] = useState<{ id: string; title: string } | null>(null);
   const [comboGranted, setComboGranted] = useState(false);
@@ -92,7 +93,10 @@ export default function DailyMissions() {
     // 3. Pre-market status
     const premarketDone = localStorage.getItem(`btcmentor-premarket-${today}`) === "1";
 
-    // 4. Journaal status via API (lichtgewicht)
+    // 4a. Chart challenge status
+    const chartDone = localStorage.getItem(`btcmentor-chartchallenge-${today}`) === "1";
+
+    // 4b. Journaal status via API (lichtgewicht)
     let journalDone = false;
     try {
       const res = await fetch(`/api/me/journal?month=${today.slice(0, 7)}`);
@@ -111,14 +115,14 @@ export default function DailyMissions() {
     // 6. Combo al verleend vandaag?
     const comboDone = localStorage.getItem(`btcmentor-combo-${today}`) === "1";
 
-    setStatus({ quiz: quizDone, lesson: lessonDone, journal: journalDone, premarket: premarketDone });
+    setStatus({ quiz: quizDone, lesson: lessonDone, journal: journalDone, premarket: premarketDone, chart: chartDone });
     setQuizStreak(streak);
     setRecommendedLesson(rec);
     setComboGranted(comboDone);
     setLoaded(true);
 
     // Combo check
-    if (!comboDone && quizDone && lessonDone && journalDone && premarketDone) {
+    if (!comboDone && quizDone && lessonDone && journalDone && premarketDone && chartDone) {
       grantCombo();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -158,7 +162,7 @@ export default function DailyMissions() {
   }
 
   const doneCount = Object.values(status).filter(Boolean).length;
-  const allDone = doneCount === 4;
+  const allDone = doneCount === 5;
   const hour = new Date().getHours();
   const streakAtRisk = hour >= 20 && !allDone && quizStreak > 0;
 
@@ -181,10 +185,10 @@ export default function DailyMissions() {
         </div>
         <div className="daily-missions-count">
           <span className={`daily-missions-fraction${allDone ? " complete" : ""}`}>
-            {doneCount}/4
+            {doneCount}/5
           </span>
           <div className="daily-missions-bar">
-            <div className="daily-missions-bar-fill" style={{ width: `${(doneCount / 4) * 100}%` }} />
+            <div className="daily-missions-bar-fill" style={{ width: `${(doneCount / 5) * 100}%` }} />
           </div>
         </div>
       </div>
@@ -282,12 +286,32 @@ export default function DailyMissions() {
           </div>
           {!status.premarket && <span className="daily-mission-arrow">→</span>}
         </button>
+
+        {/* Chart challenge */}
+        <button
+          className={`daily-mission-row${status.chart ? " done" : ""}`}
+          onClick={() => router.push("/leren/chart-challenge")}
+          disabled={status.chart}
+        >
+          <span className="daily-mission-check">{status.chart ? "✅" : "⬜"}</span>
+          <div className="daily-mission-content">
+            <span className="daily-mission-label">
+              {lang === "nl" ? "Chart challenge" : "Chart challenge"}
+            </span>
+            {!status.chart && (
+              <span className="daily-mission-sub">
+                {lang === "nl" ? "Analyseer het dagelijkse BTC-patroon" : "Analyze today's BTC pattern"}
+              </span>
+            )}
+          </div>
+          {!status.chart && <span className="daily-mission-arrow">→</span>}
+        </button>
       </div>
 
       {/* Footer */}
       {!allDone && !comboGranted && (
         <div className="daily-missions-footer">
-          🎁 {lang === "nl" ? `Doe alle 4 voor +100 bonus XP vandaag` : `Complete all 4 for +100 bonus XP today`}
+          🎁 {lang === "nl" ? `Doe alle 5 voor +100 bonus XP vandaag` : `Complete all 5 for +100 bonus XP today`}
         </div>
       )}
       {allDone && (
