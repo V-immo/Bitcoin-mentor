@@ -9,6 +9,7 @@ import { sharedScanCache } from "./scan-cache";
 import { calculateRsi } from "./market";
 import { getDb } from "@/db/db";
 import { SCAN_ASSETS } from "./assets";
+import { sendReminderEmail } from "./mailer";
 
 const POLL_INTERVAL       = 30 * 60 * 1000; // 30 minuten (externe data)
 const CRYPTO_POLL_INTERVAL =  5 * 60 * 1000; //  5 minuten (alle crypto assets)
@@ -477,4 +478,42 @@ export function startPoller(): void {
 
   // Externe data (FearGreed, CoinGecko, funding) elke 30 minuten
   setInterval(pollAll, POLL_INTERVAL);
+
+  // Dagelijkse reminder check elke minuut — stuurt email rond 19:00
+  setInterval(runDailyReminderJob, 60_000);
+}
+
+// --- Dagelijkse missie-reminder om 19:00 ---
+
+let reminderSentDate = "";
+
+async function runDailyReminderJob(): Promise<void> {
+  const now = new Date();
+  const hour = now.getHours();
+  const today = now.toISOString().slice(0, 10);
+
+  // Alleen tussen 19:00 en 19:05 sturen, eenmalig per dag
+  if (hour !== 19 || reminderSentDate === today) return;
+  reminderSentDate = today;
+
+  try {
+    const db = getDb();
+    const users = db.prepare(`
+      SELECT u.id, u.email, u.username as name, u.reminder_opt_out,
+             qp.last_quiz_date
+      FROM users u
+      LEFT JOIN quiz_progress qp ON qp.user_id = u.id
+      WHERE u.email IS NOT NULL
+        AND (u.reminder_opt_out IS NULL OR u.reminder_opt_out = 0)
+    `).all() as { id: number; email: string; name: string; reminder_opt_out: number; last_quiz_date: string | null }[];
+
+    for (const user of users) {
+      // Sla over als quiz al gedaan vandaag
+      if (user.last_quiz_date === today) continue;
+
+      // Token = base64 van user id (eenvoudige opt-out, geen geheim nodig)
+      const token = Buffer.from(String(user.id)).toString("base64url");
+      await sendReminderEmail({ to: user.email, name: user.name ?? "trader", token }).catch(() => { /* stilletjes falen */ });
+    }
+  } catch { /* stilletjes falen */ }
 }

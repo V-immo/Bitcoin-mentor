@@ -20,6 +20,7 @@ export default auth((req) => {
     pathname === "/help" ||
     pathname === "/leren" ||
     pathname.startsWith("/api/auth") ||
+    pathname === "/api/me/unsubscribe-reminders" ||
     pathname === "/api/alerts/check" ||
     pathname === "/api/briefing" ||
     pathname.startsWith("/api/market-scan") ||

@@ -55,3 +55,36 @@ export async function sendAlertEmail(opts: {
 
   await transport.sendMail({ from, to: opts.to, subject, html });
 }
+
+export async function sendReminderEmail(opts: { to: string; name: string; token: string }) {
+  const { transport, from } = createTransport();
+
+  const subject = `${opts.name}, je streak staat op het spel 🔥`;
+  const unsubUrl = `https://bitcoinmentor.be/api/me/unsubscribe-reminders?token=${opts.token}`;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0e0810; color: #e5d4e7; max-width: 480px; margin: 0 auto; padding: 24px;">
+  <div style="background: linear-gradient(135deg, #1a0f18, #2a1a28); border: 1px solid #3d2a3b; border-radius: 12px; padding: 28px;">
+    <div style="font-size: 32px; margin-bottom: 12px;">🔥</div>
+    <h1 style="color: #e91e63; font-size: 22px; margin: 0 0 8px 0;">Hey ${opts.name},</h1>
+    <p style="color: #bf7a99; font-size: 15px; margin: 0 0 20px 0;">
+      Je hebt vandaag je dagelijkse missies nog niet afgerond.<br>
+      Doe de quiz, lees een les — het kost je maar 10 minuten.
+    </p>
+    <a href="https://bitcoinmentor.be/leren" style="display: inline-block; background: #e91e63; color: #fff; text-decoration: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px;">
+      → Ga nu naar Bitcoin Mentor
+    </a>
+    <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">— Marcus</p>
+    <p style="color: #4b5563; font-size: 11px; margin-top: 12px;">
+      <a href="${unsubUrl}" style="color: #6b7280;">Geen reminders meer ontvangen</a>
+    </p>
+  </div>
+</body>
+</html>
+  `.trim();
+
+  await transport.sendMail({ from, to: opts.to, subject, html });
+}
