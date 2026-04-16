@@ -5,6 +5,13 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+type Check = {
+  q: string;
+  options: string[];
+  correct: number; // 0-based index
+  explain: string;
+};
+
 type Lesson = {
   id: string;
   icon: string;
@@ -14,6 +21,8 @@ type Lesson = {
   contentEN: string;
   termsNL?: { term: string; def: string }[];
   termsEN?: { term: string; def: string }[];
+  checkNL?: Check;
+  checkEN?: Check;
 };
 
 type Level = {
@@ -68,6 +77,28 @@ Marcus says: Bitcoin isn't a quick way to get rich. It's a new kind of money tha
           { term: "Crypto", def: "Short for cryptocurrency — digital money built on blockchain technology." },
           { term: "Wallet", def: "Your digital wallet. Not a real wallet — but a code (private key) that proves the BTC is yours." },
         ],
+        checkNL: {
+          q: "Je bankrekening heeft €10.000. De bank gaat failliet. Wat is het verschil met Bitcoin in je eigen wallet?",
+          options: [
+            "Ook Bitcoin is niet veilig bij bankfaillissementen",
+            "Met Bitcoin ben jij de bank — geen tussenpersoon die failliet kan gaan",
+            "De overheid garandeert je Bitcoin saldo net als bij een bank",
+            "Bitcoin verdwijnt ook als er geen servers meer draaien",
+          ],
+          correct: 1,
+          explain: "Precies. Met een eigen wallet bezit jij de private key — geen bank, geen tussenpersoon. Dit is het kernidee van Bitcoin: 'be your own bank'. Daarom zeggen we: not your keys, not your coins.",
+        },
+        checkEN: {
+          q: "Your bank account has €10,000. The bank goes bankrupt. What's different with Bitcoin in your own wallet?",
+          options: [
+            "Bitcoin is also unsafe when banks fail",
+            "With Bitcoin you are the bank — no middleman that can go bankrupt",
+            "The government guarantees your Bitcoin balance just like a bank",
+            "Bitcoin also disappears if there are no more servers running",
+          ],
+          correct: 1,
+          explain: "Exactly. With your own wallet you hold the private key — no bank, no middleman. This is Bitcoin's core idea: 'be your own bank'. That's why we say: not your keys, not your coins.",
+        },
       },
       {
         id: "l1-prijs",
@@ -120,6 +151,28 @@ What influences the price:
           { term: "Supply & Demand", def: "The fundamental force behind every price. More buyers than sellers → price up." },
           { term: "Halving", def: "Every ~4 years the reward for miners is halved. Less new BTC = scarcer = historically higher price." },
         ],
+        checkNL: {
+          q: "BTC staat op €80.000. Nieuws: 'Land X verbiedt Bitcoin.' Wat verwacht je op korte termijn?",
+          options: [
+            "Prijs stijgt — nieuws is al ingeprijsd",
+            "Prijs blijft gelijk — Bitcoin reageert niet op nieuws",
+            "Prijs daalt — meer mensen willen verkopen, minder kopers",
+            "Onmogelijk te zeggen — heeft niks met vraag/aanbod te maken",
+          ],
+          correct: 2,
+          explain: "Goed. Slecht nieuws → angst → meer verkopers, minder kopers → prijs daalt. Andersom werkt het ook: goed nieuws trekt kopers aan → prijs stijgt. De markt is altijd vraag vs aanbod op dat moment.",
+        },
+        checkEN: {
+          q: "BTC is at €80,000. News: 'Country X bans Bitcoin.' What do you expect short-term?",
+          options: [
+            "Price rises — news is already priced in",
+            "Price stays the same — Bitcoin doesn't react to news",
+            "Price drops — more people want to sell, fewer buyers",
+            "Impossible to say — has nothing to do with supply/demand",
+          ],
+          correct: 2,
+          explain: "Correct. Bad news → fear → more sellers, fewer buyers → price drops. The reverse works too: good news attracts buyers → price rises. The market is always supply vs demand in that moment.",
+        },
       },
       {
         id: "l1-wallet",
@@ -164,6 +217,28 @@ Marcus says: "Not your keys, not your coins." If you don't have the private key,
           { term: "Cold Wallet", def: "Wallet NOT connected to the internet. Safer for large amounts (Ledger, Trezor)." },
           { term: "Seed Phrase", def: "12 or 24 words to recover your wallet. Store offline, never online." },
         ],
+        checkNL: {
+          q: "Je hebt 2 BTC op Bitvavo staan. De exchange wordt gehackt en alle fondsen zijn weg. Wat is het resultaat?",
+          options: [
+            "Niks — verzekering dekt dit",
+            "Je verliest alles, want Bitvavo bezit technisch jouw coins",
+            "Je krijgt alles terug — exchanges zijn verplicht te compenseren",
+            "Je kunt de BTC terugvinden op de blockchain",
+          ],
+          correct: 1,
+          explain: "Helaas correct. Bij een exchange ben jij niet de eigenaar van de private keys — Bitvavo is dat. FTX ging in 2022 failliet: miljoenen verloren hun geld. Daarom geldt: voor grote bedragen altijd een eigen cold wallet.",
+        },
+        checkEN: {
+          q: "You have 2 BTC on Bitvavo. The exchange gets hacked and all funds are gone. What's the result?",
+          options: [
+            "Nothing — insurance covers this",
+            "You lose everything, because Bitvavo technically owns your coins",
+            "You get everything back — exchanges are required to compensate",
+            "You can recover the BTC on the blockchain",
+          ],
+          correct: 1,
+          explain: "Unfortunately correct. On an exchange you don't own the private keys — Bitvavo does. FTX went bankrupt in 2022: millions lost their money. That's why for large amounts: always use your own cold wallet.",
+        },
       },
       {
         id: "l1-groen-rood",
@@ -222,6 +297,28 @@ Marcus says: Learn to watch market movements without panic. Red isn't always bad
           { term: "Sentiment", def: "How the market 'feels'. Positive sentiment → people buy more. Negative → people sell." },
           { term: "Asian / European / American session", def: "The world trades in shifts. Asia 00:00-08:00, Europe 08:00-16:00, US 14:30-22:00 (European time)." },
         ],
+        checkNL: {
+          q: "BTC is de afgelopen 6 maanden met 60% gestegen. Nieuws is positief. Iedereen is enthousiast. Hoe noem je deze marktfase?",
+          options: [
+            "Bear markt — want het kan altijd dalen",
+            "Sideways markt — want niets is zeker",
+            "Bull markt — langdurige stijging met positief sentiment",
+            "Correctie — want na stijging volgt altijd daling",
+          ],
+          correct: 2,
+          explain: "Correct. Een bull markt is niet één dag groen — het is een periode van maanden met stijgende prijzen en positief sentiment. Belangrijk: zelfs in een bull markt zijn er tijdelijke dalingen (correcties). Rood = niet per se einde van de bull.",
+        },
+        checkEN: {
+          q: "BTC has risen 60% over the past 6 months. News is positive. Everyone is enthusiastic. What do you call this market phase?",
+          options: [
+            "Bear market — because it can always fall",
+            "Sideways market — because nothing is certain",
+            "Bull market — extended rise with positive sentiment",
+            "Correction — because a rise is always followed by a fall",
+          ],
+          correct: 2,
+          explain: "Correct. A bull market isn't one green day — it's months of rising prices with positive sentiment. Important: even in a bull market there are temporary drops (corrections). Red ≠ end of the bull.",
+        },
       },
     ],
   },
@@ -291,6 +388,28 @@ Marcus says: Learn to read candles like you read letters. At first it looks chao
           { term: "4H candle", def: "Each candle = 4 hours. Best timeframe for finding buy zones and setups." },
           { term: "1H candle", def: "Each candle = 1 hour. For finer entry timing." },
         ],
+        checkNL: {
+          q: "Je ziet een 4H kaars met een kleine body bovenaan en een lange wick naar beneden. Wat vertelt dit jou?",
+          options: [
+            "Verkopers waren in controle — de prijs daalde sterk",
+            "Kopers probeerden de prijs laag te houden",
+            "Prijs werd laag geduwd maar kopers kwamen terug — koopdruk op dat niveau",
+            "Niks — wicks zijn niet belangrijk",
+          ],
+          correct: 2,
+          explain: "Goed gelezen! Lange wick naar beneden = de prijs probeerde te dalen, maar kopers grepen in en duwden hem terug omhoog. Dit is koopdruk. Op een support-zone is dit een sterk signaal dat dat niveau wordt verdedigd.",
+        },
+        checkEN: {
+          q: "You see a 4H candle with a small body at the top and a long wick downward. What does this tell you?",
+          options: [
+            "Sellers were in control — price dropped strongly",
+            "Buyers were trying to hold the price low",
+            "Price was pushed down but buyers returned — buying pressure at that level",
+            "Nothing — wicks are not important",
+          ],
+          correct: 2,
+          explain: "Well read! Long wick downward = price tried to fall, but buyers stepped in and pushed it back up. This is buying pressure. At a support zone this is a strong signal that level is being defended.",
+        },
       },
       {
         id: "l2-orders",
@@ -343,6 +462,28 @@ Marcus says: Always a stop-loss. Always. No trade without one. One trade without
           { term: "Spread", def: "Difference between buy and sell price on an exchange. The exchange earns this." },
           { term: "Position", def: "An open trade. 'You have a position in BTC' = you own BTC with an open trade." },
         ],
+        checkNL: {
+          q: "BTC staat op €82.000. Jij denkt: 'ik wil kopen op €79.500 als het terugkomt.' Welk ordertype gebruik je?",
+          options: [
+            "Marktorder — direct kopen voor €82.000",
+            "Stop-loss — instellen op €79.500",
+            "Limitorder — kooporder plaatsen op €79.500",
+            "Take-profit — instellen op €79.500",
+          ],
+          correct: 2,
+          explain: "Correct! Een limitorder laat jou een prijs kiezen. Als BTC daalt naar €79.500 wordt jouw order automatisch uitgevoerd. Zo koop je op jouw prijs, niet de marktprijs van dat moment. Professionele traders gebruiken bijna altijd limitorders.",
+        },
+        checkEN: {
+          q: "BTC is at €82,000. You think: 'I want to buy at €79,500 if it comes back down.' Which order type do you use?",
+          options: [
+            "Market order — buy immediately for €82,000",
+            "Stop-loss — set at €79,500",
+            "Limit order — place buy order at €79,500",
+            "Take-profit — set at €79,500",
+          ],
+          correct: 2,
+          explain: "Correct! A limit order lets you choose your price. When BTC drops to €79,500 your order executes automatically. That way you buy at your price, not whatever the market price is at that moment. Professional traders almost always use limit orders.",
+        },
       },
       {
         id: "l2-trend",
@@ -397,6 +538,28 @@ Marcus says: "The trend is your friend, until it ends." Buy in a rising market, 
           { term: "Higher Low (HL)", def: "A new bottom higher than the previous bottom. Characteristic of uptrend." },
           { term: "Lower High (LH)", def: "A new peak lower than the previous. Characteristic of downtrend — warning." },
         ],
+        checkNL: {
+          q: "De 1D grafiek van BTC toont: top op €85k → top op €90k → top op €88k. Wat zegt dit over de trend?",
+          options: [
+            "Uptrend — elke top is hoger",
+            "Mogelijke trendbreuk — de laatste top (€88k) was lager dan de vorige (€90k)",
+            "Downtrend — de prijs daalde van €90k naar €88k",
+            "Sideways — want de prijs beweegt niet genoeg",
+          ],
+          correct: 1,
+          explain: "Scherp! €85k → €90k = Higher High ✓. Maar €90k → €88k = Lower High. Dat is een waarschuwingssignaal: de uptrend wordt mogelijk zwakker. Nog geen bevestigde downtrend, maar je zou voorzichtiger zijn met kopen op dit moment.",
+        },
+        checkEN: {
+          q: "The 1D BTC chart shows: peak at €85k → peak at €90k → peak at €88k. What does this say about the trend?",
+          options: [
+            "Uptrend — each peak is higher",
+            "Possible trend break — the last peak (€88k) was lower than the previous (€90k)",
+            "Downtrend — price fell from €90k to €88k",
+            "Sideways — price isn't moving enough",
+          ],
+          correct: 1,
+          explain: "Sharp! €85k → €90k = Higher High ✓. But €90k → €88k = Lower High. That's a warning signal: the uptrend may be weakening. Not yet a confirmed downtrend, but you'd be more cautious about buying right now.",
+        },
       },
       {
         id: "l2-risico",
@@ -449,6 +612,28 @@ Marcus says: Protecting a small account is easier than building a large one. Sta
           { term: "Position Size", def: "How much of your capital you put into one trade. ALWAYS determine this based on your stop-loss." },
           { term: "Drawdown", def: "Percentage loss from your peak. If you had €10,000 and now €8,000 = 20% drawdown." },
         ],
+        checkNL: {
+          q: "Trader A: 70% winrate, gemiddelde winst 0.5R. Trader B: 40% winrate, gemiddelde winst 3R. Wie is winstgevender over 100 trades?",
+          options: [
+            "Trader A — hogere winrate betekent meer winst",
+            "Trader B — grotere winsten compenseren de verliezen ruimschoots",
+            "Allebei gelijk — 70% vs 40% maakt het uit",
+            "Onmogelijk te zeggen zonder meer info",
+          ],
+          correct: 1,
+          explain: "Trader B wint! Rekenen: A maakt 70 × 0.5R − 30 × 1R = 35R − 30R = +5R per 100 trades. B maakt 40 × 3R − 60 × 1R = 120R − 60R = +60R. Trader B verdient 12× meer. Dit is waarom R/R belangrijker is dan winrate.",
+        },
+        checkEN: {
+          q: "Trader A: 70% win rate, average win 0.5R. Trader B: 40% win rate, average win 3R. Who is more profitable over 100 trades?",
+          options: [
+            "Trader A — higher win rate means more profit",
+            "Trader B — bigger wins more than compensate for the losses",
+            "Both equal — 70% vs 40% makes the difference",
+            "Impossible to say without more info",
+          ],
+          correct: 1,
+          explain: "Trader B wins! Math: A makes 70 × 0.5R − 30 × 1R = 35R − 30R = +5R per 100 trades. B makes 40 × 3R − 60 × 1R = 120R − 60R = +60R. Trader B earns 12× more. This is why R/R matters more than win rate.",
+        },
       },
     ],
   },
@@ -514,6 +699,28 @@ Marcus says: Draw the horizontal zones on your chart. Those are your potential e
           { term: "Bounce", def: "When the price touches a support and bounces back up." },
           { term: "Breakout", def: "When the price breaks through resistance with volume. Potentially strong move." },
         ],
+        checkNL: {
+          q: "BTC had jarenlang resistance op €69.000. In 2024 brak de prijs er doorheen met volume. Nu trekt BTC terug naar €69.000. Wat verwacht je?",
+          options: [
+            "€69.000 is nu resistance — opnieuw afstoten",
+            "€69.000 is nu support — kopers zouden hier actief moeten zijn (role reversal)",
+            "€69.000 is niet meer relevant na de breakout",
+            "Onmogelijk te zeggen zonder de RSI te kennen",
+          ],
+          correct: 1,
+          explain: "Role reversal in actie! Dit is precies wat er in 2024 met BTC gebeurde. Oude resistance op €69k werd na de breakout sterke support. Grote kopers gebruikten deze zone om in te stappen. Dit is een van de meest consistente patronen in alle markten.",
+        },
+        checkEN: {
+          q: "BTC had resistance at €69,000 for years. In 2024 the price broke through it with volume. Now BTC pulls back to €69,000. What do you expect?",
+          options: [
+            "€69,000 is now resistance — rejection again",
+            "€69,000 is now support — buyers should be active here (role reversal)",
+            "€69,000 is no longer relevant after the breakout",
+            "Impossible to say without knowing the RSI",
+          ],
+          correct: 1,
+          explain: "Role reversal in action! This is exactly what happened with BTC in 2024. Old resistance at €69k became strong support after the breakout. Large buyers used this zone to enter. This is one of the most consistent patterns across all markets.",
+        },
       },
       {
         id: "l3-rsi",
@@ -576,6 +783,28 @@ Marcus says: RSI is your thermometer. It tells you if the market is too hot (ove
           { term: "Bearish Divergence", def: "Price rises but RSI falls → weaker buying power. Potential turning point down." },
           { term: "Moving Average (MA)", def: "Average price over X periods. MA20 = average of last 20 candles. Shows the trend." },
         ],
+        checkNL: {
+          q: "BTC staat op support €80.000. RSI op 1D = 28. Wat zegt dit signaal combinatie?",
+          options: [
+            "Sterk verkoopsignaal — RSI onder 30 = kopen is gevaarlijk",
+            "Neutraal — RSI en support zeggen niks samen",
+            "Potentieel sterk koopsignaal — oversold RSI op een historische support",
+            "RSI van 28 betekent dat de prijs seker gaat dalen naar 20",
+          ],
+          correct: 2,
+          explain: "Dit is precies de setup die professionals zoeken. Oversold RSI (28) op een sterke support = dubbele bevestiging dat er koopdruk kan komen. Niet 100% zeker — maar de kansen zijn in jouw voordeel. Dit is hoe je een edge bouwt.",
+        },
+        checkEN: {
+          q: "BTC is at support €80,000. RSI on 1D = 28. What does this signal combination say?",
+          options: [
+            "Strong sell signal — RSI below 30 = buying is dangerous",
+            "Neutral — RSI and support say nothing together",
+            "Potentially strong buy signal — oversold RSI at a historical support",
+            "RSI of 28 means price will definitely drop to 20",
+          ],
+          correct: 2,
+          explain: "This is exactly the setup professionals look for. Oversold RSI (28) at a strong support = double confirmation that buying pressure may come. Not 100% certain — but the odds are in your favor. This is how you build an edge.",
+        },
       },
       {
         id: "l3-positiegrootte",
@@ -603,7 +832,7 @@ Dat is dus 0.05 BTC kopen — niet "alles inzetten" of "gokken".
 
 In Bitcoin Mentor doe je dit automatisch: de Paper Trade tab heeft een risico-calculator. Vul je entry, stop-loss en risico% in → je krijgt de exacte positiegrootte.
 
-Marcus zegt: Traders die groot worden verloren doordat ze positiegrootte negeerden — niet doordat ze de markt verkeerd lazen. De markt lees je met je hoofd. Positiegrootte is wiskunde — geen emotie.`,
+Marcus zegt: Traders die groot werden verloren doordat ze positiegrootte negeerden — niet doordat ze de markt verkeerd lazen. De markt lees je met je hoofd. Positiegrootte is wiskunde — geen emotie.`,
         contentEN: `The most underestimated skill in trading: knowing how much to bet.
 
 Step 1: Determine your risk tolerance per trade
@@ -638,6 +867,28 @@ Marcus says: Traders who blew up lost because they ignored position size — not
           { term: "Expectancy", def: "Average expected result per trade over time. Positive = profitable system." },
           { term: "Win Rate", def: "Percentage of winning trades. 40% win rate with 3R average win can be more profitable than 70% win rate with 0.5R." },
         ],
+        checkNL: {
+          q: "Kapitaal: €8.000. Je risico: 1%. Entry BTC: €84.000, stop-loss: €81.600. Hoeveel BTC koop je?",
+          options: [
+            "0.01 BTC",
+            "0.033 BTC",
+            "0.1 BTC",
+            "0.5 BTC",
+          ],
+          correct: 1,
+          explain: "Rekenen: max verlies = 1% × €8.000 = €80. Risico per BTC = €84.000 − €81.600 = €2.400. Positiegrootte = €80 ÷ €2.400 = 0.033 BTC. Als BTC naar je stop-loss gaat, verlies je precies €80 — niet meer. Dit is discipline in getallen.",
+        },
+        checkEN: {
+          q: "Capital: €8,000. Your risk: 1%. Entry BTC: €84,000, stop-loss: €81,600. How much BTC do you buy?",
+          options: [
+            "0.01 BTC",
+            "0.033 BTC",
+            "0.1 BTC",
+            "0.5 BTC",
+          ],
+          correct: 1,
+          explain: "Math: max loss = 1% × €8,000 = €80. Risk per BTC = €84,000 − €81,600 = €2,400. Position size = €80 ÷ €2,400 = 0.033 BTC. If BTC hits your stop-loss, you lose exactly €80 — no more. This is discipline in numbers.",
+        },
       },
     ],
   },
@@ -664,7 +915,7 @@ Stap 1: Open de 1D grafiek. Is de markt in uptrend? Dan bias is LONG (je zoekt k
 Stap 2: Open de 4H grafiek. Staat de prijs in een support-zone of koopzone? RSI laag?
 Stap 3: Open de 1H. Zie je een bullish reversal kaars, een breakout van een klein patroon? Dan is dit je entry moment.
 
-Alleen traden als alle drie timeframes "groen licht" geven: bias, setup EN timing kloppen.
+Alleen traden als alle drie timeframes "groen licht" geven: bias, setup én timing kloppen.
 
 Voorbeeld Bitcoin:
 — 1D: uptrend, prijs boven MA50 → bias = bullish
@@ -711,6 +962,28 @@ Marcus says: If one timeframe says "buy" but the other two say "wait" — wait. 
           { term: "Golden Cross", def: "MA50 crosses above MA200. Historically bullish signal on longer term." },
           { term: "Death Cross", def: "MA50 crosses below MA200. Historically bearish signal." },
         ],
+        checkNL: {
+          q: "1D toont downtrend. 4H toont een kleine bounce. 1H toont een groene kaars. Moet je kopen?",
+          options: [
+            "Ja — de 1H en 4H geven groen licht",
+            "Nee — de 1D is in downtrend, je tradet tegen de hogere timeframe in",
+            "Ja — bounces in downtrends zijn altijd winstgevend",
+            "Maakt niet uit welke timeframe — alle kaarsen zijn gelijk",
+          ],
+          correct: 1,
+          explain: "Nee! Dit is de klassieke valkuil. De 1D is de baas. Als de dagelijkse grafiek in downtrend is, zijn tijdelijke bounces op 4H en 1H tegen-trend trades. Kansen zijn kleiner, risico's groter. Wacht op een trend-verandering op 1D voordat je koopt.",
+        },
+        checkEN: {
+          q: "1D shows downtrend. 4H shows a small bounce. 1H shows a green candle. Should you buy?",
+          options: [
+            "Yes — 1H and 4H give green light",
+            "No — the 1D is in downtrend, you'd be trading against the higher timeframe",
+            "Yes — bounces in downtrends are always profitable",
+            "Doesn't matter which timeframe — all candles are equal",
+          ],
+          correct: 1,
+          explain: "No! This is the classic trap. The 1D is the boss. When the daily chart is in downtrend, temporary bounces on 4H and 1H are counter-trend trades. Odds are worse, risks greater. Wait for a trend change on 1D before buying.",
+        },
       },
       {
         id: "l4-funding",
@@ -771,6 +1044,28 @@ Marcus says: Funding rates are like a greed thermometer. If everyone is already 
           { term: "Open Interest (OI)", def: "Total amount in open futures contracts. High = lots of activity. Monitor for trend confirmation." },
           { term: "Liquidation", def: "When the market moves against you and your loss exceeds your margin, the exchange forcibly closes your position." },
         ],
+        checkNL: {
+          q: "Funding rate is +0.15% (extreem positief). Iedereen is long. Wat is het gevaar?",
+          options: [
+            "Geen gevaar — hoge funding = sterk bullish signaal",
+            "Als de prijs even daalt worden al die longs geliquideerd → snelle cascade-daling",
+            "Shorts gaan winnen want funding is positief voor hen",
+            "OI zal automatisch dalen om het te compenseren",
+          ],
+          correct: 1,
+          explain: "Precies het gevaar. Extreem hoge positieve funding = de markt is overvol met longs. Eén kleine move omlaag → massale stop-losses en liquidaties → cascade-daling. Dit is een 'long squeeze'. Groot nieuws: dit is ook een signaal dat smart money soms gebruikt om retailtraders te liquideren.",
+        },
+        checkEN: {
+          q: "Funding rate is +0.15% (extremely positive). Everyone is long. What's the danger?",
+          options: [
+            "No danger — high funding = strong bullish signal",
+            "If price drops slightly all those longs get liquidated → rapid cascade drop",
+            "Shorts will win because funding is positive for them",
+            "OI will automatically drop to compensate",
+          ],
+          correct: 1,
+          explain: "Exactly the danger. Extremely high positive funding = market is overcrowded with longs. One small move down → mass stop-losses and liquidations → cascade drop. This is a 'long squeeze'. Fun fact: this is also a signal smart money sometimes uses to liquidate retail traders.",
+        },
       },
     ],
   },
@@ -834,6 +1129,28 @@ Marcus says: The trader who controls their emotions beats the trader who 'knows 
           { term: "Edge", def: "Your statistical advantage over the market. Based on your system, not luck." },
           { term: "Process > Outcome", def: "Judge a trade on the QUALITY of your decision, not the result. Good decision, bad result = still good. Bad decision, good result = still wrong." },
         ],
+        checkNL: {
+          q: "Je hebt net 3 verliezende trades op rij gehad. Je voelt de drang om nu alles terug te winnen met een grote positie. Wat doe je?",
+          options: [
+            "Grotere positie — je moet de verliezen compenseren",
+            "Stop voor vandaag. Morgen begin je opnieuw met normale positiegrootte",
+            "Dubbel inzetten — de kans dat je nu wint is groter na 3 verliezen",
+            "Switch naar een andere asset om geluk te vinden",
+          ],
+          correct: 1,
+          explain: "Dit is het juiste antwoord — en de moeilijkste beslissing. Revenge trading is de snelste weg naar een leeg account. Na 3 verliezen is je emotionele staat niet neutraal. Stoppen is een actieve, professionele keuze — niet zwak zijn. Morgen is een nieuwe dag.",
+        },
+        checkEN: {
+          q: "You just had 3 losing trades in a row. You feel the urge to win it all back with a large position. What do you do?",
+          options: [
+            "Bigger position — you need to compensate the losses",
+            "Stop for today. Tomorrow you start fresh with normal position size",
+            "Double down — the chance you win now is higher after 3 losses",
+            "Switch to another asset to find luck",
+          ],
+          correct: 1,
+          explain: "This is the right answer — and the hardest decision. Revenge trading is the fastest route to an empty account. After 3 losses your emotional state isn't neutral. Stopping is an active, professional choice — not weakness. Tomorrow is a new day.",
+        },
       },
       {
         id: "l5-smc",
@@ -884,11 +1201,69 @@ Marcus says: I don't follow smart money to copy them — I follow them to unders
           { term: "BTC Dominance", def: "Percentage of total crypto market cap that is BTC. High = altcoins weak. Low = altcoin season." },
           { term: "Market Maker", def: "Party that always provides liquidity — buys when others sell, sells when others buy. Earns on the spread." },
         ],
+        checkNL: {
+          q: "BTC daalt plots naar €77.800 — onder de zone waar veel stop-losses staan op €78.000 — en stijgt dan snel terug naar €81.000. Wat is er waarschijnlijk gebeurd?",
+          options: [
+            "Paniekverkoop door retailers — de markt was bang",
+            "Een technische storing op de exchange",
+            "Stop hunt: smart money trigerde retail stop-losses om goedkoop in te kopen, daarna stegen ze de prijs op",
+            "De prijs reageerde op support €77.800",
+          ],
+          correct: 2,
+          explain: "Dit patroon zie je keer op keer op de BTC grafiek. Grote spelers weten waar de meeste stop-losses staan (net onder ronde nummers of support zones). Ze pushen de prijs even lager, kopen de geliquideerde posities op voor een goede prijs, en laten dan de echte move starten. Nu je dit weet, zie je het overal.",
+        },
+        checkEN: {
+          q: "BTC suddenly drops to €77,800 — below the zone where many stop-losses sit at €78,000 — then quickly rises back to €81,000. What likely happened?",
+          options: [
+            "Panic selling by retailers — the market was scared",
+            "A technical glitch on the exchange",
+            "Stop hunt: smart money triggered retail stop-losses to buy cheaply, then pumped the price",
+            "Price reacted to support at €77,800",
+          ],
+          correct: 2,
+          explain: "This pattern repeats over and over on the BTC chart. Big players know where most stop-losses sit (just below round numbers or support zones). They push price briefly lower, buy up the liquidated positions at a good price, then let the real move start. Now that you know this, you'll see it everywhere.",
+        },
       },
     ],
   },
 ];
 
+// ── Check Question Component ────────────────────────────────────────────────
+function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const answered = selected !== null;
+  const correct = selected === check.correct;
+
+  return (
+    <div className={`lesson-check${answered ? (correct ? " correct" : " wrong") : ""}`}>
+      <div className="lesson-check-label">
+        {lang === "en" ? "🧠 Marcus checks:" : "🧠 Marcus checkt:"}
+      </div>
+      <div className="lesson-check-question">{check.q}</div>
+      <div className="lesson-check-options">
+        {check.options.map((opt, i) => (
+          <button
+            key={i}
+            className={`lesson-check-option${answered && i === check.correct ? " is-correct" : ""}${answered && selected === i && !correct ? " is-wrong" : ""}${!answered ? " unanswered" : ""}`}
+            onClick={() => !answered && setSelected(i)}
+            disabled={answered}
+          >
+            <span className="lesson-check-letter">{String.fromCharCode(65 + i)}</span>
+            {opt}
+          </button>
+        ))}
+      </div>
+      {answered && (
+        <div className={`lesson-check-feedback${correct ? " correct" : " wrong"}`}>
+          <span>{correct ? "✅" : "❌"}</span>
+          <span>{check.explain}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Lesson Card ─────────────────────────────────────────────────────────────
 function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   lesson: Lesson;
   lang: string;
@@ -901,16 +1276,16 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   const title = lang === "en" ? lesson.titleEN : lesson.titleNL;
   const content = lang === "en" ? lesson.contentEN : lesson.contentNL;
   const terms = lang === "en" ? lesson.termsEN : lesson.termsNL;
+  const check = lang === "en" ? lesson.checkEN : lesson.checkNL;
 
   function toggle() {
-    if (isPublic === false) return; // geblokkeerd voor niet-ingelogden
+    if (isPublic === false) return;
     setOpen(o => {
       if (!o && !isRead) onRead(lesson.id);
       return !o;
     });
   }
 
-  // Geblokkeerde les voor niet-ingelogden
   if (isPublic === false) {
     return (
       <div className="curriculum-card curriculum-card-locked">
@@ -927,9 +1302,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
       <button className="curriculum-card-header" onClick={toggle}>
         <span className="curriculum-card-icon">{lesson.icon}</span>
         <span className="curriculum-card-title">{title}</span>
-        <span className="curriculum-card-status">
-          {isRead ? "✓" : ""}
-        </span>
+        <span className="curriculum-card-status">{isRead ? "✓" : ""}</span>
         <span className="curriculum-card-arrow">{open ? "▲" : "▼"}</span>
       </button>
       {open && (
@@ -955,6 +1328,8 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
               </div>
             </div>
           )}
+          {/* Inline check question */}
+          {check && <CheckQuestion check={check} lang={lang} />}
           {/* Quiz CTA na les lezen */}
           {isRead && (
             <div className="curriculum-quiz-cta">
@@ -970,6 +1345,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   );
 }
 
+// ── Main Component ───────────────────────────────────────────────────────────
 type ReadMap = Record<string, boolean>;
 
 export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: () => void } = {}) {
@@ -982,7 +1358,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    // Load user level
     fetch("/api/me/quiz").then(r => r.ok ? r.json() : null).then(d => {
       if (d?.level) {
         setUserLevel(d.level);
@@ -990,7 +1365,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
       }
     }).catch(() => {});
 
-    // Load read progress from localStorage
     try {
       const saved = localStorage.getItem("btcmentor-curriculum-read");
       if (saved) setReadMap(JSON.parse(saved));
@@ -1001,7 +1375,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
     setReadMap(prev => {
       const next = { ...prev, [id]: true };
       localStorage.setItem("btcmentor-curriculum-read", JSON.stringify(next));
-      // Sla dagelijkse les-read op voor DailyMissions
       const today = new Date().toISOString().slice(0, 10);
       localStorage.setItem(`btcmentor-lesson-read-${today}`, "1");
       return next;
@@ -1023,7 +1396,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
 
   return (
     <div className="curriculum-wrap">
-      {/* Level selector */}
       <div className="curriculum-level-tabs">
         {CURRICULUM.map(lvl => {
           const label = lang === "en" ? `L${lvl.level}` : `N${lvl.level}`;
@@ -1041,7 +1413,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         })}
       </div>
 
-      {/* Level header */}
       <div className="curriculum-level-header">
         <div className="curriculum-level-title">
           {lang === "en" ? levelData.labelEN : levelData.labelNL}
@@ -1057,7 +1428,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         </div>
       </div>
 
-      {/* Niet-ingelogd: toon marketing banner na les 1 */}
       {!isLoggedIn && (
         <div className="curriculum-gate-banner">
           <div className="curriculum-gate-content">
@@ -1076,10 +1446,8 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         </div>
       )}
 
-      {/* Lessons */}
       <div className="curriculum-lessons">
         {levelData.lessons.map((lesson, idx) => {
-          // Voor niet-ingelogden: alleen les 1 van niveau 1 is publiek
           const lessonPublic = isLoggedIn || (activeLevel === 1 && idx === 0);
           return (
             <LessonCard
@@ -1095,7 +1463,6 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         })}
       </div>
 
-      {/* Marcus opdracht button */}
       <button className="curriculum-marcus-btn" onClick={askMarcus}>
         👤 {lang === "en" ? "Ask Marcus for a practice exercise" : "Vraag Marcus om een oefening"}
       </button>
