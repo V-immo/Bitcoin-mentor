@@ -8749,6 +8749,56 @@ textarea:focus-visible,
 .chart-challenge-done-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .chart-challenge-done-text { font-size: 0.95rem; color: var(--muted); margin: 0; }
 
+/* ── Lucky XP Toast ── */
+@keyframes lucky-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  25%  { transform: translate(-50%, -50%) scale(1); }
+  75%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+.lucky-xp-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  pointer-events: none;
+}
+.lucky-xp-card {
+  position: absolute; top: 42%; left: 50%;
+  animation: lucky-pop 3.5s ease forwards;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 2px solid #f59e0b;
+  border-radius: 20px; padding: 28px 36px;
+  text-align: center; min-width: 220px;
+  box-shadow: 0 0 40px rgba(245,158,11,0.35), 0 8px 32px rgba(0,0,0,0.6);
+}
+.lucky-xp-emoji {
+  font-size: 3rem; line-height: 1; margin-bottom: 8px;
+  filter: drop-shadow(0 0 12px #f59e0b);
+}
+.lucky-xp-title {
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #f59e0b; margin-bottom: 6px;
+}
+.lucky-xp-multiplier {
+  font-size: 2.8rem; font-weight: 800; color: #fff;
+  line-height: 1; margin-bottom: 4px;
+  text-shadow: 0 0 20px rgba(245,158,11,0.6);
+}
+.lucky-xp-amount {
+  font-size: 1.1rem; font-weight: 700; color: #fbbf24;
+  margin-bottom: 8px;
+}
+.lucky-xp-sub {
+  font-size: 0.78rem; color: #94a3b8;
+}
+
+/* Lucky badge in quiz result */
+.quiz-lucky-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 700;
+  padding: 2px 7px; border-radius: 20px; margin-left: 6px;
+  background: color-mix(in srgb, #f59e0b 20%, transparent);
+  color: #f59e0b; vertical-align: middle;
+}
+
 /* ── Streak Freeze badge ── */
 .daily-missions-freeze-badge {
   font-size: 0.8rem; color: #60a5fa;

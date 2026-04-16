@@ -71,6 +71,7 @@ export default function DailyQuiz() {
   const [history, setHistory] = useState<QuizHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [phase, setPhase] = useState<Phase>("home");
+  const [luckyMultiplier, setLuckyMultiplier] = useState(0);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [marketSnapshot, setMarketSnapshot] = useState("");
   const [current, setCurrent] = useState(0);
@@ -214,7 +215,13 @@ export default function DailyQuiz() {
     const finalCorrect = correctCount;
     const total = questions.length;
 
-    const xpEarned = finalCorrect * XP_PER_CORRECT;
+    const baseXp = finalCorrect * XP_PER_CORRECT;
+    const LUCKY_CHANCE = 0.1;
+    let luckyMult = 1;
+    if (baseXp > 0 && Math.random() < LUCKY_CHANCE) {
+      luckyMult = Math.random() < 0.5 ? 2 : 3;
+    }
+    const xpEarned = baseXp * luckyMult;
     const newXp = history.xp + xpEarned;
     const oldLevel = history.level;
     const newLevel = Math.min(5, Math.floor(newXp / XP_PER_LEVEL) + 1);
@@ -247,6 +254,10 @@ export default function DailyQuiz() {
     saveHistory(newHistory);
     setHistory(newHistory);
     setLeveledUp(didLevelUp);
+    if (luckyMult > 1) {
+      setLuckyMultiplier(luckyMult);
+      window.dispatchEvent(new CustomEvent("lucky-xp", { detail: { multiplier: luckyMult, xp: xpEarned } }));
+    }
     setPhase("result");
   }
 
@@ -358,7 +369,8 @@ export default function DailyQuiz() {
   if (phase === "result") {
     const total = questions.length;
     const pct = Math.round((correctCount / total) * 100);
-    const xpEarned = correctCount * XP_PER_CORRECT;
+    const baseXpResult = correctCount * XP_PER_CORRECT;
+    const xpEarned = baseXpResult * (luckyMultiplier || 1);
     const grade = pct >= 80 ? t("quiz_grade_excellent") : pct >= 60 ? t("quiz_grade_good") : pct >= 40 ? t("quiz_grade_practice") : t("quiz_grade_study");
     const gradeColor = pct >= 80 ? "var(--green)" : pct >= 60 ? "var(--orange)" : "var(--red)";
 
@@ -378,7 +390,12 @@ export default function DailyQuiz() {
 
         <div className="quiz-result-stats">
           <div className="quiz-result-stat">
-            <span className="quiz-result-stat-val">+{xpEarned}</span>
+            <span className="quiz-result-stat-val">
+              +{xpEarned}
+              {luckyMultiplier > 1 && (
+                <span className="quiz-lucky-badge">⚡{luckyMultiplier}×</span>
+              )}
+            </span>
             <span className="quiz-result-stat-key">{t("quiz_xp_earned")}</span>
           </div>
           <div className="quiz-result-stat">

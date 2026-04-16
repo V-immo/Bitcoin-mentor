@@ -7,6 +7,7 @@ import AppWalkthrough from "@/components/AppWalkthrough";
 import Toaster from "@/components/Toaster";
 import BadgeUnlock from "@/components/BadgeUnlock";
 import MarcusDebrief from "@/components/MarcusDebrief";
+import LuckyXPToast from "@/components/LuckyXPToast";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -71,6 +72,7 @@ export default function RootLayout({
                 <AppWalkthrough />
                 <BadgeUnlock />
                 <MarcusDebrief />
+                <LuckyXPToast />
                 <Toaster />
               </CurrencyProvider>
             </LanguageProvider>
