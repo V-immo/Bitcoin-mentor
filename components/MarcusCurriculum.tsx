@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 type Lesson = {
@@ -887,11 +889,13 @@ Marcus says: I don't follow smart money to copy them — I follow them to unders
   },
 ];
 
-function LessonCard({ lesson, lang, isRead, onRead }: {
+function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   lesson: Lesson;
   lang: string;
   isRead: boolean;
   onRead: (id: string) => void;
+  onQuizClick: () => void;
+  isPublic?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const title = lang === "en" ? lesson.titleEN : lesson.titleNL;
@@ -899,10 +903,23 @@ function LessonCard({ lesson, lang, isRead, onRead }: {
   const terms = lang === "en" ? lesson.termsEN : lesson.termsNL;
 
   function toggle() {
+    if (isPublic === false) return; // geblokkeerd voor niet-ingelogden
     setOpen(o => {
       if (!o && !isRead) onRead(lesson.id);
       return !o;
     });
+  }
+
+  // Geblokkeerde les voor niet-ingelogden
+  if (isPublic === false) {
+    return (
+      <div className="curriculum-card curriculum-card-locked">
+        <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
+          <span className="curriculum-card-icon">🔒</span>
+          <span className="curriculum-card-title">{title}</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -938,6 +955,15 @@ function LessonCard({ lesson, lang, isRead, onRead }: {
               </div>
             </div>
           )}
+          {/* Quiz CTA na les lezen */}
+          {isRead && (
+            <div className="curriculum-quiz-cta">
+              <span>✅ {lang === "en" ? "Lesson read! Ready to test yourself?" : "Les gelezen! Klaar om jezelf te testen?"}</span>
+              <button className="curriculum-quiz-cta-btn" onClick={onQuizClick}>
+                {lang === "en" ? "→ Do the quiz" : "→ Doe de quiz"}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -946,13 +972,16 @@ function LessonCard({ lesson, lang, isRead, onRead }: {
 
 type ReadMap = Record<string, boolean>;
 
-export default function MarcusCurriculum() {
+export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: () => void } = {}) {
   const { lang } = useLanguage();
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
   const [readMap, setReadMap] = useState<ReadMap>({});
   const [userLevel, setUserLevel] = useState(1);
   const [activeLevel, setActiveLevel] = useState(1);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
     // Load user level
     fetch("/api/me/quiz").then(r => r.ok ? r.json() : null).then(d => {
       if (d?.level) {
@@ -966,12 +995,15 @@ export default function MarcusCurriculum() {
       const saved = localStorage.getItem("btcmentor-curriculum-read");
       if (saved) setReadMap(JSON.parse(saved));
     } catch { /* ignore */ }
-  }, []);
+  }, [isLoggedIn]);
 
   function markRead(id: string) {
     setReadMap(prev => {
       const next = { ...prev, [id]: true };
       localStorage.setItem("btcmentor-curriculum-read", JSON.stringify(next));
+      // Sla dagelijkse les-read op voor DailyMissions
+      const today = new Date().toISOString().slice(0, 10);
+      localStorage.setItem(`btcmentor-lesson-read-${today}`, "1");
       return next;
     });
   }
@@ -1025,17 +1057,42 @@ export default function MarcusCurriculum() {
         </div>
       </div>
 
+      {/* Niet-ingelogd: toon marketing banner na les 1 */}
+      {!isLoggedIn && (
+        <div className="curriculum-gate-banner">
+          <div className="curriculum-gate-content">
+            <div className="curriculum-gate-title">
+              🔒 {lang === "en" ? "This is Level 1 of 5" : "Dit is Niveau 1 van 5"}
+            </div>
+            <p className="curriculum-gate-desc">
+              {lang === "en"
+                ? "17 more lessons, an AI quiz at your level, and Marcus as your personal coach. Completely free."
+                : "Nog 17 lessen, een AI-quiz op jouw niveau en Marcus als persoonlijke coach. Volledig gratis."}
+            </p>
+            <Link href="/auth/register" className="curriculum-gate-cta">
+              {lang === "en" ? "Register for free →" : "Gratis registreren →"}
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Lessons */}
       <div className="curriculum-lessons">
-        {levelData.lessons.map(lesson => (
-          <LessonCard
-            key={lesson.id}
-            lesson={lesson}
-            lang={lang}
-            isRead={!!readMap[lesson.id]}
-            onRead={markRead}
-          />
-        ))}
+        {levelData.lessons.map((lesson, idx) => {
+          // Voor niet-ingelogden: alleen les 1 van niveau 1 is publiek
+          const lessonPublic = isLoggedIn || (activeLevel === 1 && idx === 0);
+          return (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              lang={lang}
+              isRead={!!readMap[lesson.id]}
+              onRead={markRead}
+              onQuizClick={() => onQuizTabClick?.()}
+              isPublic={lessonPublic}
+            />
+          );
+        })}
       </div>
 
       {/* Marcus opdracht button */}

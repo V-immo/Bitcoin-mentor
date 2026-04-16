@@ -94,6 +94,302 @@ body {
   box-shadow: 0 8px 24px rgba(100, 55, 0, 0.18);
 }
 
+/* ── Daily Missions Widget ── */
+.daily-missions {
+  margin-bottom: var(--space-md);
+}
+.daily-missions.all-done {
+  border-color: color-mix(in srgb, var(--green) 40%, var(--border));
+}
+.daily-missions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.daily-missions-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.daily-missions-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.daily-missions-fraction {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 28px;
+  text-align: right;
+}
+.daily-missions-fraction.complete { color: var(--green); }
+.daily-missions-bar {
+  width: 60px;
+  height: 5px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.daily-missions-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #ff6b9d);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.all-done .daily-missions-bar-fill {
+  background: linear-gradient(90deg, var(--green), #4ade80);
+}
+.daily-missions-combo-toast {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent), color-mix(in srgb, var(--primary) 5%, transparent));
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+.daily-missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.daily-mission-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s;
+  color: var(--text);
+}
+.daily-mission-row:hover:not(:disabled) {
+  background: var(--surface-1);
+}
+.daily-mission-row.done {
+  opacity: 0.55;
+  cursor: default;
+}
+.daily-mission-check {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+}
+.daily-mission-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.daily-mission-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.daily-mission-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.daily-mission-streak {
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 600;
+}
+.daily-mission-arrow {
+  font-size: 13px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.daily-missions-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.daily-missions-footer.complete {
+  color: var(--green);
+  font-weight: 600;
+}
+.daily-missions-skeleton {
+  min-height: 80px;
+}
+.daily-missions-skeleton-bar {
+  height: 14px;
+  background: var(--surface-2);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.daily-missions-skeleton-bar.short { width: 60%; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Leren pagina ── */
+.leren-progress-card {
+  margin-bottom: 12px;
+}
+.leren-progress-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+.leren-level-badge {
+  display: inline-block;
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  color: var(--primary);
+  border-radius: var(--radius-pill);
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.leren-streak-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.leren-xp-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.leren-xp-bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.leren-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #ff6b9d);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+.leren-progress-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.leren-recommended-card {
+  margin-bottom: 12px;
+  border-left: 3px solid var(--primary);
+}
+.leren-recommended-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.leren-recommended-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.leren-recommended-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Curriculum gating (niet-ingelogden) ── */
+.curriculum-gate-banner {
+  margin: 16px 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, var(--surface)), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
+  padding: 20px;
+}
+.curriculum-gate-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.curriculum-gate-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.curriculum-gate-cta {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  padding: 9px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+}
+.curriculum-gate-cta:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+.curriculum-card-locked {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── Curriculum quiz CTA ── */
+.curriculum-quiz-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.curriculum-quiz-cta span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.curriculum-quiz-cta-btn {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  color: var(--primary);
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.curriculum-quiz-cta-btn:hover {
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
 /* ── Unified Page Layout System ── */
 .page-container {
   max-width: 960px;

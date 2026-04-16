@@ -1,7 +1,7 @@
 "use client";
 
 import OnboardingModal from "@/components/OnboardingModal";
-import MarcusNudge from "@/components/MarcusNudge";
+import DailyMissions from "@/components/DailyMissions";
 import DashboardBriefing from "@/components/DashboardBriefing";
 import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
@@ -27,7 +27,7 @@ export default function DashboardPage() {
         </div>
 
         <FirstSteps />
-        <MarcusNudge />
+        <DailyMissions />
         <DashboardStats />
 
         <div className="dashboard-grid">

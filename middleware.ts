@@ -18,6 +18,7 @@ export default auth((req) => {
     pathname === "/nieuws" ||
     pathname === "/brokers" ||
     pathname === "/help" ||
+    pathname === "/leren" ||
     pathname.startsWith("/api/auth") ||
     pathname === "/api/alerts/check" ||
     pathname === "/api/briefing" ||
