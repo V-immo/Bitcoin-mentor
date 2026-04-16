@@ -210,6 +210,8 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "last_evening_date", "TEXT DEFAULT ''");
   addCol("users", "premarket_count", "INTEGER NOT NULL DEFAULT 0");
   addCol("users", "reminder_opt_out", "INTEGER DEFAULT 0");
+  addCol("users", "streak_freeze", "INTEGER DEFAULT 1");
+  addCol("users", "streak_freeze_week", "TEXT DEFAULT ''");
 }
 
 export function getDb(): Database.Database {

@@ -190,11 +190,11 @@ export async function GET(request: Request) {
 
   const db = getDb();
   const user = db.prepare(
-    "SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date FROM users WHERE id = ?"
+    "SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date, streak_freeze FROM users WHERE id = ?"
   ).get(userId) as {
     last_login_at: string | null; username: string;
     login_streak: number; last_streak_date: string | null;
-    last_greeting_date: string | null;
+    last_greeting_date: string | null; streak_freeze: number;
   } | undefined;
 
   const now = new Date();
@@ -203,12 +203,18 @@ export async function GET(request: Request) {
   const hour = now.getHours();
   const dayOfWeek = now.getDay(); // 0 = zondag
 
-  // Streak berekening
+  // Streak berekening — freeze beschermt bij gemiste dag
   let newStreak = 1;
+  let usedFreeze = false;
   if (user?.last_streak_date === today) {
     newStreak = user.login_streak || 1;
   } else if (user?.last_streak_date === yesterday) {
     newStreak = (user.login_streak || 0) + 1;
+  } else if ((user?.streak_freeze ?? 0) > 0 && (user?.login_streak ?? 0) > 1) {
+    // Streak zou breken maar freeze beschikbaar — consumeer freeze, behoud streak
+    newStreak = user!.login_streak;
+    usedFreeze = true;
+    db.prepare("UPDATE users SET streak_freeze = streak_freeze - 1 WHERE id = ?").run(userId);
   }
 
   db.prepare("UPDATE users SET last_login_at = datetime('now'), login_streak = ?, last_streak_date = ? WHERE id = ?")
@@ -427,6 +433,6 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${les
   return Response.json({
     nudge, inactiveDays, streak: newStreak,
     morningGreeting, eveningReview, weeklyReport,
-    distressAlert, isDistressed,
+    distressAlert, isDistressed, usedFreeze,
   });
 }

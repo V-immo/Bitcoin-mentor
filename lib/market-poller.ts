@@ -481,6 +481,27 @@ export function startPoller(): void {
 
   // Dagelijkse reminder check elke minuut — stuurt email rond 19:00
   setInterval(runDailyReminderJob, 60_000);
+
+  // Wekelijkse streak freeze reload elke minuut — herlaadt elke maandag om 06:00
+  setInterval(runWeeklyFreezeReload, 60_000);
+}
+
+// --- Wekelijkse streak freeze reload (maandag 06:00) ---
+
+let freezeReloadWeek = "";
+
+function runWeeklyFreezeReload(): void {
+  const now = new Date();
+  if (now.getDay() !== 1 || now.getHours() !== 6) return; // alleen maandag 06:00
+  const week = `${now.getFullYear()}-W${String(Math.ceil((now.getDate() - now.getDay() + 10) / 7)).padStart(2, "0")}`;
+  if (freezeReloadWeek === week) return;
+  freezeReloadWeek = week;
+
+  try {
+    const db = getDb();
+    // Herlaad freeze naar 1 voor alle gebruikers die de freeze al hebben gebruikt (streak_freeze < 1)
+    db.prepare("UPDATE users SET streak_freeze = 1, streak_freeze_week = ? WHERE streak_freeze < 1").run(week);
+  } catch { /* stilletjes falen */ }
 }
 
 // --- Dagelijkse missie-reminder om 19:00 ---

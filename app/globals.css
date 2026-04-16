@@ -8748,3 +8748,12 @@ textarea:focus-visible,
 }
 .chart-challenge-done-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .chart-challenge-done-text { font-size: 0.95rem; color: var(--muted); margin: 0; }
+
+/* ── Streak Freeze badge ── */
+.daily-missions-freeze-badge {
+  font-size: 0.8rem; color: #60a5fa;
+  background: color-mix(in srgb, #60a5fa 12%, transparent);
+  border: 1px solid color-mix(in srgb, #60a5fa 30%, transparent);
+  border-radius: 8px; padding: 7px 12px; margin-bottom: 8px;
+  line-height: 1.4;
+}

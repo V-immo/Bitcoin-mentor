@@ -70,6 +70,7 @@ export default function DailyMissions() {
   const [comboGranted, setComboGranted] = useState(false);
   const [showCombo, setShowCombo] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [streakFreeze, setStreakFreeze] = useState(0);
 
   const today = todayStr();
 
@@ -120,6 +121,12 @@ export default function DailyMissions() {
     setRecommendedLesson(rec);
     setComboGranted(comboDone);
     setLoaded(true);
+
+    // Streak freeze ophalen
+    fetch("/api/me/streak-freeze")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setStreakFreeze(d.freeze ?? 0); })
+      .catch(() => {});
 
     // Combo check
     if (!comboDone && quizDone && lessonDone && journalDone && premarketDone && chartDone) {
@@ -200,12 +207,21 @@ export default function DailyMissions() {
         </div>
       )}
 
+      {/* Streak freeze shield */}
+      {streakFreeze > 0 && (
+        <div className="daily-missions-freeze-badge">
+          🛡️ {lang === "nl"
+            ? "1 streak freeze beschikbaar — je streak is beschermd als je een dag mist"
+            : "1 streak freeze available — your streak is protected if you miss a day"}
+        </div>
+      )}
+
       {/* Streak dreigingswaarschuwing */}
       {streakAtRisk && (
         <div className="daily-missions-streak-warning">
           ⚠️ {lang === "nl"
-            ? `Je streak staat op het spel — nog ${4 - doneCount} missie(s) te doen voor middernacht`
-            : `Your streak is at risk — ${4 - doneCount} mission(s) left before midnight`}
+            ? `Je streak staat op het spel — nog ${5 - doneCount} missie(s) te doen voor middernacht`
+            : `Your streak is at risk — ${5 - doneCount} mission(s) left before midnight`}
         </div>
       )}
 
