@@ -24,7 +24,17 @@ export default function MarcusNudge() {
 
     const eveningDismissedCheck = localStorage.getItem(EVENING_KEY) === today;
     if (!nudgeDismissed || !greetingDismissed || !eveningDismissedCheck) {
-      fetch("/api/me/nudge")
+      let missionsDone = 0;
+      let recommendedLesson = "";
+      try {
+        const qh = JSON.parse(localStorage.getItem("btcmentor-quiz-history") || "{}");
+        if (qh.lastQuizDate === today) missionsDone++;
+        if (localStorage.getItem(`btcmentor-lesson-read-${today}`) === "1") missionsDone++;
+        if (localStorage.getItem(`btcmentor-premarket-${today}`) === "1") missionsDone++;
+        recommendedLesson = qh.recommendedLesson ?? "";
+      } catch { /* ignore */ }
+      const nudgeUrl = `/api/me/nudge?missions_done=${missionsDone}&recommended_lesson=${encodeURIComponent(recommendedLesson)}`;
+      fetch(nudgeUrl)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (!data) return;

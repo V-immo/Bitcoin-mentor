@@ -159,6 +159,8 @@ export default function DailyMissions() {
 
   const doneCount = Object.values(status).filter(Boolean).length;
   const allDone = doneCount === 4;
+  const hour = new Date().getHours();
+  const streakAtRisk = hour >= 20 && !allDone && quizStreak > 0;
 
   if (!loaded) {
     return (
@@ -191,6 +193,15 @@ export default function DailyMissions() {
       {showCombo && (
         <div className="daily-missions-combo-toast">
           🎉 {lang === "nl" ? "Dagelijkse Combo!" : "Daily Combo!"} +100 XP
+        </div>
+      )}
+
+      {/* Streak dreigingswaarschuwing */}
+      {streakAtRisk && (
+        <div className="daily-missions-streak-warning">
+          ⚠️ {lang === "nl"
+            ? `Je streak staat op het spel — nog ${4 - doneCount} missie(s) te doen voor middernacht`
+            : `Your streak is at risk — ${4 - doneCount} mission(s) left before midnight`}
         </div>
       )}
 

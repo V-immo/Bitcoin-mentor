@@ -145,6 +145,17 @@ body {
 .all-done .daily-missions-bar-fill {
   background: linear-gradient(90deg, var(--green), #4ade80);
 }
+.daily-missions-streak-warning {
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orange) 35%, transparent);
+  color: var(--orange);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
 .daily-missions-combo-toast {
   background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent), color-mix(in srgb, var(--primary) 5%, transparent));
   border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);

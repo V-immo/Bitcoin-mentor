@@ -180,10 +180,13 @@ function getWeekTradesSummary(userId: number): { count: number; wins: number; lo
   return { count, wins, losses, pnl, bestDay, worstDay };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await auth();
   if (!session?.user) return Response.json({ nudge: null });
   const userId = parseInt((session.user as { id?: string }).id ?? "0");
+  const { searchParams } = new URL(request.url);
+  const missionsDone = parseInt(searchParams.get("missions_done") ?? "0");
+  const recommendedLesson = searchParams.get("recommended_lesson") ?? "";
 
   const db = getDb();
   const user = db.prepare(
@@ -260,13 +263,17 @@ export async function GET() {
       ? `Max ${tradingPlan.risk_per_trade ?? 1}% risico/trade, max ${tradingPlan.max_trades_per_day ?? 3} trades/dag.`
       : "";
     const streakHint = newStreak >= 2 ? `Streak: ${newStreak} dagen.` : "";
+    const missionHint = missionsDone > 0
+      ? `Gebruiker heeft ${missionsDone}/4 missies al gedaan vandaag.`
+      : "Gebruiker heeft nog geen missies gedaan vandaag.";
+    const lessonHint = recommendedLesson ? `Aanbevolen les: ${recommendedLesson}.` : "";
 
     try {
       const msg = await client.messages.create({
         model: "claude-haiku-4-5",
         max_tokens: 100,
         system: `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij".
-Context: ${btcSummary} ${openPos} ${planHint} ${streakHint}`,
+Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${lessonHint}`,
         messages: [{ role: "user", content: "Goedemorgen." }],
       });
       morningGreeting = (msg.content[0] as { text: string }).text.trim();

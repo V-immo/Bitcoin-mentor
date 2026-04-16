@@ -70,6 +70,8 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
         setFocus(data.focus ?? null);
         setDone(true);
         persist(checked, true, data.focus ?? null);
+        localStorage.setItem(`btcmentor-premarket-${today}`, "1");
+        window.dispatchEvent(new Event("storage"));
       } else {
         toast("Ritual opslaan mislukt. Probeer opnieuw.", "error");
       }
