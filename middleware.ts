@@ -11,9 +11,13 @@ export default auth((req) => {
   const role = (req.auth?.user as { role?: string })?.role;
 
   // Publieke paden — geen login vereist
+  // Marketing pages (nieuws, brokers, help) zijn publiek om bezoekers te trekken
   const isPublic =
     pathname === "/" ||
     pathname.startsWith("/auth/") ||
+    pathname === "/nieuws" ||
+    pathname === "/brokers" ||
+    pathname === "/help" ||
     pathname.startsWith("/api/auth") ||
     pathname === "/api/alerts/check" ||
     pathname === "/api/briefing" ||
@@ -23,9 +27,12 @@ export default auth((req) => {
     pathname.startsWith("/api/news") ||
     pathname.startsWith("/api/price") ||
     pathname.startsWith("/api/btc") ||
-    pathname.startsWith("/api/community") ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon");
+    pathname.startsWith("/favicon") ||
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/sw.js" ||
+    pathname === "/icon" ||
+    pathname === "/apple-icon";
 
   if (!isPublic && !isLoggedIn) {
     return NextResponse.redirect(new URL("/auth/login", req.url));

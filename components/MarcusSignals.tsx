@@ -67,18 +67,18 @@ export default function MarcusSignals() {
   const closedSignals = signals.filter(s => s.status !== "open").slice(0, 5);
 
   return (
-    <section className="stats-section" style={{ marginTop: 24 }}>
-      <div className="stats-section-header">
-        <h2 className="stats-section-title">📡 Marcus Signalen</h2>
-        <p className="stats-section-sub">Marcus genereert automatisch trade-signalen op basis van zijn marktanalyse. Jij besluit of je volgt.</p>
+    <section className="card" style={{ marginTop: 24 }}>
+      <div style={{ marginBottom: 16 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)", margin: 0 }}>📡 Marcus Signalen</h2>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "4px 0 0" }}>Marcus genereert automatisch trade-signalen op basis van zijn marktanalyse. Jij besluit of je volgt.</p>
       </div>
 
       {/* Copy trading toggle */}
-      <div style={{
+      <div className="card" style={{
         display: "flex", alignItems: "center", gap: 12,
-        background: copyEnabled ? "rgba(34,212,122,0.08)" : "var(--surface-2)",
-        border: `1px solid ${copyEnabled ? "rgba(34,212,122,0.3)" : "var(--border)"}`,
-        borderRadius: 10, padding: "10px 14px", marginBottom: 16,
+        background: copyEnabled ? "rgba(34,212,122,0.08)" : undefined,
+        borderColor: copyEnabled ? "rgba(34,212,122,0.3)" : undefined,
+        padding: "10px 14px", marginBottom: 16,
       }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
@@ -106,10 +106,8 @@ export default function MarcusSignals() {
       {loading ? (
         <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Laden…</p>
       ) : openSignals.length === 0 ? (
-        <div style={{
-          background: "var(--surface-2)", borderRadius: 10,
-          padding: "20px 16px", textAlign: "center",
-          color: "var(--text-muted)", fontSize: 13,
+        <div className="card" style={{
+          textAlign: "center", color: "var(--text-muted)", fontSize: 13,
         }}>
           Geen actieve signalen op dit moment. Marcus analyseert de markt elke 30 minuten.
         </div>
@@ -119,9 +117,8 @@ export default function MarcusSignals() {
             const pnlPositive = (s.pnlPct ?? 0) >= 0;
             const rr = parseFloat((((s.target - s.entry_price) / (s.entry_price - s.stop_loss))).toFixed(1));
             return (
-              <div key={s.id} style={{
-                background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: 12, padding: "12px 14px",
+              <div key={s.id} className="card" style={{
+                padding: "12px 14px",
                 borderLeft: "3px solid #22d47a",
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
@@ -177,9 +174,9 @@ export default function MarcusSignals() {
               const icon = s.status === "hit_target" ? "✅" : s.status === "hit_stop" ? "🛑" : "⏰";
               const label = s.status === "hit_target" ? "Target geraakt" : s.status === "hit_stop" ? "Stop geraakt" : "Verlopen";
               return (
-                <div key={s.id} style={{
+                <div key={s.id} className="card" style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
-                  background: "var(--surface-2)", borderRadius: 8, padding: "8px 12px", fontSize: 12,
+                  padding: "8px 12px", fontSize: 12,
                 }}>
                   <span style={{ color: "var(--text)" }}>{icon} {s.asset} — {label}</span>
                   {pnlPct !== null && (

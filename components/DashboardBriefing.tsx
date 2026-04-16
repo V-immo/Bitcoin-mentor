@@ -25,7 +25,7 @@ export default function DashboardBriefing() {
   const hasMore = data.briefing.length > 180;
 
   return (
-    <div className="dash-briefing-card">
+    <div className="card">
       <div className="dash-briefing-header">
         <div className="dash-briefing-avatar">M</div>
         <div>

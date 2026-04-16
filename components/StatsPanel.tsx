@@ -131,7 +131,7 @@ export default function StatsPanel() {
 
     if (sells.length === 0) {
         return (
-            <section className="terminal-side-card">
+            <section className="card">
                 <div className="terminal-label">{t("stats_panel_title")}</div>
                 <div className="terminal-stats-empty">
                     {t("stats_panel_empty")}
@@ -141,7 +141,7 @@ export default function StatsPanel() {
     }
 
     return (
-        <section className="terminal-side-card">
+        <section className="card">
             <div className="terminal-label">{t("stats_panel_title")}</div>
 
             {equityPoints.length >= 2 && (

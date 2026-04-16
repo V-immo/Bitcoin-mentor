@@ -110,7 +110,7 @@ export default function GoalTracker() {
 
   if (loading) {
     return (
-      <section className="terminal-side-card goal-tracker">
+      <section className="card goal-tracker">
         <div className="terminal-label">{t("goal_title")}</div>
         <div style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 8 }}>{t("goal_loading")}</div>
       </section>
@@ -118,7 +118,7 @@ export default function GoalTracker() {
   }
 
   return (
-    <section className="terminal-side-card goal-tracker">
+    <section className="card goal-tracker">
       <div className="terminal-label">{t("goal_title_icon")}</div>
 
       {!editGoal ? (

@@ -108,10 +108,7 @@ export default function DashboardStats() {
     }}>
       {cards.map((card, i) => (
         card === null ? (
-          <div key={i} style={{
-            background: "var(--surface-1)",
-            border: "1px solid var(--border)",
-            borderRadius: 14, padding: "16px 14px",
+          <div key={i} className="card" style={{
             height: 90,
             animation: "pulse 1.5s ease-in-out infinite",
           }} />
@@ -133,12 +130,7 @@ type CardData = { icon: string; label: string; value: string; sub: string; color
 
 function StatCard({ card }: { card: CardData }) {
   return (
-    <div style={{
-      background: "var(--surface-1)",
-      border: "1px solid var(--border)",
-      borderRadius: 14, padding: "14px 14px",
-      transition: "border-color 0.15s",
-    }}
+    <div className="card"
       onMouseEnter={e => (e.currentTarget.style.borderColor = card.color + "55")}
       onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
     >

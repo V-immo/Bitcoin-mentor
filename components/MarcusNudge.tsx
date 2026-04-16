@@ -73,10 +73,7 @@ export default function MarcusNudge() {
 
       {/* Morning greeting */}
       {greetingVisible && morningGreeting && (
-        <div style={{
-          background: "linear-gradient(135deg, rgba(233,30,99,0.10) 0%, rgba(233,30,99,0.05) 100%)",
-          border: "1px solid rgba(233,30,99,0.28)",
-          borderRadius: 14, padding: "12px 14px",
+        <div className="card" style={{
           display: "flex", alignItems: "flex-start", gap: 12, position: "relative",
         }}>
           <div style={{
@@ -97,10 +94,7 @@ export default function MarcusNudge() {
 
       {/* Comeback nudge */}
       {nudgeVisible && nudge && (
-        <div style={{
-          background: "linear-gradient(135deg, rgba(233,30,99,0.12) 0%, rgba(233,30,99,0.06) 100%)",
-          border: "1px solid rgba(233,30,99,0.35)",
-          borderRadius: 14, padding: "14px 16px",
+        <div className="card" style={{
           display: "flex", alignItems: "flex-start", gap: 12, position: "relative",
         }}>
           <div style={{
@@ -131,10 +125,7 @@ export default function MarcusNudge() {
 
       {/* Evening review */}
       {eveningVisible && (
-        <div style={{
-          background: "rgba(233,30,99,0.06)",
-          border: "1px solid rgba(233,30,99,0.22)",
-          borderRadius: 14, padding: "12px 14px",
+        <div className="card" style={{
           display: "flex", alignItems: "center", gap: 12, position: "relative",
         }}>
           <div style={{
