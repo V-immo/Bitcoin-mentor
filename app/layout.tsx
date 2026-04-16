@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import FloatingMarcus from "@/components/FloatingMarcus";
 import AppWalkthrough from "@/components/AppWalkthrough";
 import Toaster from "@/components/Toaster";
+import BadgeUnlock from "@/components/BadgeUnlock";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -67,6 +68,7 @@ export default function RootLayout({
                 <div className="app-content">{children}</div>
                 <FloatingMarcus />
                 <AppWalkthrough />
+                <BadgeUnlock />
                 <Toaster />
               </CurrencyProvider>
             </LanguageProvider>
