@@ -1230,6 +1230,242 @@ Marcus says: I don't follow smart money to copy them — I follow them to unders
       },
     ],
   },
+  // ── Niveau 6 — Trading Psychologie (interactief, scenario-gebaseerd) ──────
+  // Uniek: geen enkel platform koppelt psychologie-lessen aan je eigen trade-gedrag.
+  // Format: situatie → keuze → Marcus analyseert de bias + gevolgen over 100 trades.
+  {
+    level: 6,
+    labelNL: "Niveau 6 — Trading Psychologie",
+    labelEN: "Level 6 — Trading Psychology",
+    descNL: "De meeste traders verliezen niet door slechte analyse, maar door slechte beslissingen onder druk. Dit niveau traint je oordeel met echte scenario's.",
+    descEN: "Most traders don't lose because of bad analysis, but because of bad decisions under pressure. This level trains your judgment with real scenarios.",
+    lessons: [
+      {
+        id: "l6-fomo",
+        icon: "🚀",
+        titleNL: "FOMO — de duurste emotie in trading",
+        titleEN: "FOMO — the most expensive emotion in trading",
+        contentNL: `FOMO staat voor Fear Of Missing Out — de angst om een beweging te missen. Het is de meest voorkomende reden waarom beginners kopen op pieken en verkopen in dalen.
+
+Het patroon is altijd hetzelfde: de markt beweegt snel omhoog. Je staat aan de zijlijn. Je ziet anderen winst maken. Het gevoel van urgentie neemt over. Je koopt. De markt draait om. Je verliest.
+
+Waarom werkt FOMO zo krachtig? Omdat je brein verlies en gemiste winst even zwaar ervaart. Het gevoel van "ik had er bij moeten zijn" activeert precies dezelfde emotionele respons als een echt verlies.
+
+Marcus zegt: elke trade die je mist is een goede trade. Waarom? Omdat je hem gemist hebt op basis van jouw systeem. Jouw systeem had geen entry signaal — dus er was geen trade. De markt biedt elke dag nieuwe kansen. Een gemiste kans is geen verlies. Een FOMO-trade die fout gaat, is een verlies.
+
+Het enige wat werkt tegen FOMO: een systeem met duidelijke entry-voorwaarden. Als de markt je entry niet geeft, is er geen trade. Punt.`,
+        contentEN: `FOMO stands for Fear Of Missing Out — the fear of missing a move. It's the most common reason beginners buy at peaks and sell at lows.
+
+The pattern is always the same: the market moves sharply upward. You're on the sidelines. You see others making profits. The sense of urgency takes over. You buy. The market reverses. You lose.
+
+Why does FOMO work so powerfully? Because your brain experiences missed gains and real losses with equal weight. The feeling of "I should have been there" activates the exact same emotional response as an actual loss.
+
+Marcus says: every trade you miss is a good trade. Why? Because you missed it based on your system. Your system had no entry signal — so there was no trade. The market offers new opportunities every day. A missed opportunity is not a loss. A FOMO trade that goes wrong is a loss.
+
+The only thing that works against FOMO: a system with clear entry conditions. If the market doesn't give you your entry, there is no trade. Full stop.`,
+        checkNL: {
+          q: "BTC is de afgelopen 2 uur met 9% gestegen. Je had geen positie. De markt staat op een all-time high. Wat doe je?",
+          options: [
+            "Nu instappen — de trend is duidelijk omhoog en ik wil niet meer missen",
+            "Wachten op een pullback naar een duidelijk support niveau",
+            "Accepteren dat ik deze move gemist heb en wachten op de volgende setup",
+          ],
+          correct: 2,
+          explain: "Juist. Instappen na 9% pump op een ATH is per definitie een FOMO-trade. Je koopt op het moment van maximale euforie — statistisch het slechtste instapmoment. Over 100 van zulke trades verlies je structureel omdat de R/R negatief is: weinig ruimte omhoog, veel ruimte voor een correctie. Wachten op een pullback (B) is al beter, maar vereist dat je een concreet plan hebt waar je instapt. Optie C is de sterkste: een gemiste move is geen verlies. De volgende setup komt altijd.",
+        },
+        checkEN: {
+          q: "BTC has risen 9% in the last 2 hours. You had no position. The market is at an all-time high. What do you do?",
+          options: [
+            "Enter now — the trend is clearly upward and I don't want to miss more",
+            "Wait for a pullback to a clear support level",
+            "Accept that I missed this move and wait for the next setup",
+          ],
+          correct: 2,
+          explain: "Correct. Entering after a 9% pump at ATH is by definition a FOMO trade. You're buying at the moment of maximum euphoria — statistically the worst entry point. Over 100 such trades you lose structurally because the R/R is negative: little room upward, much room for a correction. Waiting for a pullback (B) is better, but requires a concrete plan for where you enter. Option C is the strongest: a missed move is not a loss. The next setup always comes.",
+        },
+      },
+      {
+        id: "l6-revenge",
+        icon: "😤",
+        titleNL: "Revenge trading — hoe één verlies tien verliezen wordt",
+        titleEN: "Revenge trading — how one loss becomes ten losses",
+        contentNL: `Revenge trading is het fenomeen waarbij je na een verlies direct een nieuwe trade opent om "het goed te maken." Het is een van de meest destructieve patronen in trading, omdat het verlies op verlies stapelt — terwijl je emotioneel het minst geschikt bent om te handelen.
+
+De psychologie erachter: verlies activeert pijn. Je brein wil die pijn ongedaan maken. De snelste manier is een nieuwe trade openen en winnen. Maar op het moment dat je dat denkt, ben je al niet meer rationeel. Je negeert je systeem, vergroot je positie, of pakt setups die je normaal nooit zou nemen.
+
+Het resultaat over 100 revenge trades is universeel: een winrate die significant onder je normale winrate ligt. Dat klopt ook logisch — je trade zonder setup, zonder plan, met verhoogde emotie.
+
+Marcus zegt: een verlies is informatie. Het vertelt je iets over de markt, je entry, of je risicobeheer. Maar je kunt die informatie alleen verwerken als je eerst stopt. 30 minuten pauze na een verlies is geen zwakte — het is risicomanagement.
+
+De ijzeren regel: als je een verlies hebt geleden dat pijn doet, doe geen trade meer die dag. Kom de volgende dag terug met een helder hoofd.`,
+        contentEN: `Revenge trading is the phenomenon where after a loss you immediately open a new trade to "make it back." It's one of the most destructive patterns in trading, because it stacks loss on loss — while you're emotionally least equipped to trade.
+
+The psychology behind it: loss activates pain. Your brain wants to undo that pain. The fastest way is to open a new trade and win. But at the moment you think that, you're already no longer rational. You ignore your system, increase your position size, or take setups you'd never normally take.
+
+The result over 100 revenge trades is universal: a win rate significantly below your normal win rate. That makes logical sense too — you're trading without a setup, without a plan, with heightened emotion.
+
+Marcus says: a loss is information. It tells you something about the market, your entry, or your risk management. But you can only process that information if you stop first. A 30-minute break after a loss is not weakness — it is risk management.
+
+The iron rule: if you've taken a loss that stings, make no more trades that day. Come back the next day with a clear head.`,
+        checkNL: {
+          q: "Je hebt zojuist €250 verloren op een trade. BTC beweegt en je ziet een setup. Wat doe je?",
+          options: [
+            "Direct instappen — ik wil het verlies zo snel mogelijk terugverdienen",
+            "30 minuten pauze nemen, daarna objectief beoordelen of de setup echt geldig is",
+            "De trade analyseren, in het journal schrijven, en pas morgen opnieuw traden",
+          ],
+          correct: 2,
+          explain: "Optie A is revenge trading — je staat met verlies in de markt en je denkt al aan de volgende trade. Dat is de definitie van irrationeel handelen. Optie B is al goed: de pauze geeft je brein tijd om te herkalibreren. Maar optie C is de sterkste: je verliest een dag traden, maar je wint data. Traders die hun verliezen journalen en een nacht slapen voor de volgende trade, presteren over 100 trades significant beter dan traders die direct doorgaan. Het verlies van €250 is al weg. Het gaat erom dat je er €0 extra aan verliest.",
+        },
+        checkEN: {
+          q: "You just lost €250 on a trade. BTC is moving and you see a setup. What do you do?",
+          options: [
+            "Enter immediately — I want to recover the loss as quickly as possible",
+            "Take a 30-minute break, then objectively assess whether the setup is genuinely valid",
+            "Analyze the trade, write it in the journal, and only trade again tomorrow",
+          ],
+          correct: 2,
+          explain: "Option A is revenge trading — you're sitting with a loss and already thinking about the next trade. That is the definition of irrational action. Option B is already good: the break gives your brain time to recalibrate. But option C is the strongest: you lose a day of trading, but you gain data. Traders who journal their losses and sleep on it before the next trade perform significantly better over 100 trades than traders who immediately continue. The €250 loss is already gone. The point is not to lose another €0 extra on it.",
+        },
+      },
+      {
+        id: "l6-overconfidence",
+        icon: "🎰",
+        titleNL: "Overconfidence — waarom winstreeksen gevaarlijk zijn",
+        titleEN: "Overconfidence — why winning streaks are dangerous",
+        contentNL: `Overconfidence is de bias waarbij recente successen leiden tot overdreven zelfvertrouwen — met als gevolg het nemen van grotere risico's dan je systeem toestaat. Paradoxaal genoeg is een winstreeks van 5 trades een van de gevaarlijkste momenten in je trading carrière.
+
+Hoe het werkt: je hebt 5 goede trades achter de rug. Je brein concludeert: "ik doe het goed." Het gevoel van vaardigheid neemt toe. Je vergeet dat je succes ook beïnvloed wordt door marktomstandigheden, geluk en timing. Je vergroot je positiegrootte. Trade 6 gaat fout. Door de grotere positie is het verlies groter dan elk individueel verlies uit de winstreeks.
+
+Dit heet de Gamblers Fallacy in reverse: mensen denken dat een winstreeks hun vaardigheid bewijst, terwijl het in realiteit ook geluk en omstandigheden bevat die elk moment kunnen veranderen.
+
+Marcus zegt: je positiegrootte mag nooit afhangen van hoe je je voelt. Positiegrootte is wiskundig bepaald — het is een percentage van je kapitaal dat gelijk blijft, ongeacht of je laatste 3 trades winnaars of verliezers waren.
+
+De regel: verander je positiegrootte alleen als je systeem structureel verbetert — bewezen over minimaal 50 trades. Niet op basis van gevoel.`,
+        contentEN: `Overconfidence is the bias where recent successes lead to excessive self-confidence — resulting in taking larger risks than your system allows. Paradoxically, a winning streak of 5 trades is one of the most dangerous moments in your trading career.
+
+How it works: you've had 5 good trades. Your brain concludes: "I'm doing well." The feeling of skill increases. You forget that your success is also influenced by market conditions, luck, and timing. You increase your position size. Trade 6 goes wrong. Due to the larger position, the loss is larger than any individual loss from the winning streak.
+
+This is called the Gambler's Fallacy in reverse: people think a winning streak proves their skill, while in reality it also contains luck and circumstances that can change at any moment.
+
+Marcus says: your position size should never depend on how you feel. Position size is mathematically determined — it's a percentage of your capital that stays the same, regardless of whether your last 3 trades were winners or losers.
+
+The rule: only change your position size if your system structurally improves — proven over at least 50 trades. Not based on feeling.`,
+        checkNL: {
+          q: "Je hebt 5 trades achter elkaar gewonnen. Je normale positiegrootte is 2% van je kapitaal. Wat doe je met de volgende trade?",
+          options: [
+            "Ik vergroot naar 6% — ik zit duidelijk in een goede flow",
+            "Ik vergroot iets naar 2,5% — kleine beloning voor goede prestaties",
+            "Ik blijf op 2% — mijn systeem bepaalt de positiegrootte, niet mijn streak",
+          ],
+          correct: 2,
+          explain: "Optie C is de enige correcte keuze. Je positiegrootte is bepaald door je risicosysteem, niet door je emotionele toestand. Een winstreeks bewijst niets over de volgende trade — elke trade is statistisch onafhankelijk. Wat optie A en B doen: ze koppelen je risicogedrag aan je recente resultaten. Als trade 6 dan fout gaat (wat statistisch gewoon gaat gebeuren), verlies je meer dan je 'verdiend' had met 5 wins. Over 100 traders die dit patroon volgen, verliezen degenen met vaste positiegrootte significant minder dan degenen die opschalen na een winstreeks.",
+        },
+        checkEN: {
+          q: "You've won 5 trades in a row. Your normal position size is 2% of your capital. What do you do with the next trade?",
+          options: [
+            "I increase to 6% — I'm clearly in a good flow right now",
+            "I increase slightly to 2.5% — small reward for good performance",
+            "I stay at 2% — my system determines position size, not my streak",
+          ],
+          correct: 2,
+          explain: "Option C is the only correct choice. Your position size is determined by your risk system, not your emotional state. A winning streak proves nothing about the next trade — each trade is statistically independent. What options A and B do: they link your risk behavior to your recent results. If trade 6 then goes wrong (which statistically will happen), you lose more than you 'earned' from 5 wins. Across 100 traders who follow this pattern, those with fixed position sizing lose significantly less than those who scale up after a winning streak.",
+        },
+      },
+      {
+        id: "l6-system",
+        icon: "📐",
+        titleNL: "Een systeem bouwen en vasthouden",
+        titleEN: "Building and sticking to a system",
+        contentNL: `Een trading systeem is een set van regels die bepaalt wanneer je in- en uitstapt, hoe groot je positie is, en wanneer je niet tradt. Zonder systeem ben je geen trader — je bent een gokker met een charting app.
+
+Het probleem dat de meeste traders hebben: ze bouwen een systeem, maar passen het aan zodra het even niet werkt. Een verliezende trade, en opeens zijn de regels "niet meer van toepassing." Twee verliezende trades, en het systeem is "gebroken." Dit is de diepste fout die je kunt maken.
+
+Waarom werkt een systeem? Omdat het gebaseerd is op statistiek over honderden trades. Als je systeem een winrate van 55% heeft, gaan er 45 van de 100 trades fout. Dat betekent dat verliezende trades geen bugs zijn — het zijn features. Ze horen erbij.
+
+Wat je nooit mag doen: het systeem aanpassen na een verliezende trade. Je verandert de regels op basis van één datapunt. Dat is wiskundig onverantwoord.
+
+Marcus zegt: het testen van een systeem vereist minimaal 50 trades onder identieke omstandigheden. Pas daarna heb je genoeg data om te beslissen of het systeem werkt of niet. Doe je aanpassingen eerder, handel je op ruis.
+
+De discipline om een systeem te volgen als het even tegenzit, is wat winstgevende traders onderscheidt van verliezende traders. Niet de strategie — de discipline.`,
+        contentEN: `A trading system is a set of rules that determines when you enter and exit, how large your position is, and when you don't trade. Without a system, you're not a trader — you're a gambler with a charting app.
+
+The problem most traders have: they build a system, but adjust it as soon as it stops working for a moment. A losing trade, and suddenly the rules are "no longer applicable." Two losing trades, and the system is "broken." This is the deepest mistake you can make.
+
+Why does a system work? Because it's based on statistics over hundreds of trades. If your system has a win rate of 55%, 45 out of 100 trades will go wrong. That means losing trades aren't bugs — they're features. They're part of it.
+
+What you must never do: adjust the system after a losing trade. You're changing the rules based on one data point. That is mathematically irresponsible.
+
+Marcus says: testing a system requires a minimum of 50 trades under identical conditions. Only then do you have enough data to decide whether the system works or not. Make adjustments earlier and you're acting on noise.
+
+The discipline to follow a system when it's going against you is what separates profitable traders from losing traders. Not the strategy — the discipline.`,
+        checkNL: {
+          q: "Je systeem heeft duidelijke entry-voorwaarden. Vandaag zie je een setup die er bijna aan voldoet — maar niet helemaal. Je voelt sterk dat het gaat werken. Wat doe je?",
+          options: [
+            "Neem de trade — het gevoel zegt dat het goed gaat",
+            "Sla de trade over — mijn systeem zegt nee, dus is er geen trade",
+            "Pas de entry-voorwaarde iets aan zodat de trade geldig is",
+          ],
+          correct: 1,
+          explain: "Optie B is het enige correcte antwoord. Optie A is discretionair handelen — je vervangt je systeem door gevoel. Dat maakt je resultaten onreproduceerbaar en onmeetbaar. Optie C is het ergste: je past je regels aan om één specifieke trade te rechtvaardigen. Dat is niet aanpassen op data — dat is cherrypicking. Over 100 trades waarbij je 'bijna' geldig als geldig beschouwt, verdun je je edge tot nul. Je systeem is pas iets waard als je het ook volgt als je er geen zin in hebt.",
+        },
+        checkEN: {
+          q: "Your system has clear entry conditions. Today you see a setup that almost meets them — but not quite. You have a strong feeling it will work. What do you do?",
+          options: [
+            "Take the trade — my gut says it's going to work",
+            "Skip the trade — my system says no, so there is no trade",
+            "Adjust the entry condition slightly so the trade becomes valid",
+          ],
+          correct: 1,
+          explain: "Option B is the only correct answer. Option A is discretionary trading — you're replacing your system with gut feeling. That makes your results unreproducible and unmeasurable. Option C is the worst: you're adjusting your rules to justify one specific trade. That's not adapting based on data — that's cherrypicking. Over 100 trades where you count 'almost valid' as valid, you dilute your edge to zero. Your system is only worth something when you follow it even when you don't feel like it.",
+        },
+      },
+      {
+        id: "l6-journal",
+        icon: "📓",
+        titleNL: "Het trading journal — je enige echte coach",
+        titleEN: "The trading journal — your only real coach",
+        contentNL: `Een trading journal is de meest onderbenutte tool in de wereld van retail trading. Meer dan 90% van de traders die structureel verliest, journalt niet. Meer dan 80% van de traders die structureel wint, journalt wel. Dat is geen toeval.
+
+Waarom werkt een journal? Omdat de mens slecht is in het herkennen van eigen patronen. We herinneren ons de winsten scherper dan de verliezen. We zien onze fouten niet als patroon maar als pech. Het journal maakt het onzichtbare zichtbaar.
+
+Wat moet erin? Niet alleen de resultaten — de context. Op welk niveau stond de RSI? Was de trend op de hogere timeframe bullish of bearish? Hoe voelde je je toen je de trade plaatste — kalm, gefrustreerd, opgewonden? Na hoeveel minuten ging je trade de verkeerde kant op? Allemaal data.
+
+Na 30 trades kun je terugkijken en zien: "ik verlies altijd als ik trade met een bearish trend op de 4H." Of: "mijn beste trades zijn altijd vroeg in de ochtend." Of: "elke trade die ik doe als ik gefrustreerd ben, verlies ik."
+
+Marcus zegt: zonder journal heb je na 100 trades geen idee of je beter bent geworden. Met journal heb je een bewijs. Gebruik het.`,
+        contentEN: `A trading journal is the most underutilized tool in the world of retail trading. More than 90% of traders who structurally lose do not journal. More than 80% of traders who structurally win do journal. That is not a coincidence.
+
+Why does a journal work? Because humans are poor at recognizing their own patterns. We remember wins more sharply than losses. We don't see our mistakes as a pattern but as bad luck. The journal makes the invisible visible.
+
+What should be in it? Not just the results — the context. What level was RSI at? Was the trend on the higher timeframe bullish or bearish? How did you feel when you placed the trade — calm, frustrated, excited? After how many minutes did your trade go the wrong way? All data.
+
+After 30 trades you can look back and see: "I always lose when I trade against a bearish trend on the 4H." Or: "my best trades are always early in the morning." Or: "every trade I make when I'm frustrated, I lose."
+
+Marcus says: without a journal, after 100 trades you have no idea whether you've improved. With a journal you have proof. Use it.`,
+        checkNL: {
+          q: "Je hebt een verliezende week gehad. Je opent je journal. Wat schrijf je?",
+          options: [
+            "Niets — het was al een slechte week, ik wil er niet nog langer bij stilstaan",
+            "Een korte samenvatting van wat er mis ging",
+            "Voor elke trade: entry, exit, emotie op het moment van entry, marktcontext, en wat ik er van leer",
+          ],
+          correct: 2,
+          explain: "Optie C is de enige waardevolle keuze. Optie A is het meest voorkomend — en het meest destructief. Je mist precies de data die je zou helpen om volgende week beter te presteren. Optie B is al beter, maar onvolledig. Zonder de emotionele context en het marktoverzicht weet je niet *waarom* je verloor — of het aan je systeem lag, aan de markt, of aan je toestand. Verliezende weken zijn de meest waardevolle leermomenten — maar alleen als je ze documenteert. Traders die hun verliezende periodes goed journalen, presteren over de volgende 100 trades aantoonbaar beter.",
+        },
+        checkEN: {
+          q: "You've had a losing week. You open your journal. What do you write?",
+          options: [
+            "Nothing — it was already a bad week, I don't want to dwell on it longer",
+            "A brief summary of what went wrong",
+            "For each trade: entry, exit, emotion at entry, market context, and what I learn from it",
+          ],
+          correct: 2,
+          explain: "Option C is the only valuable choice. Option A is the most common — and the most destructive. You miss exactly the data that would help you perform better next week. Option B is already better, but incomplete. Without the emotional context and market overview you don't know *why* you lost — whether it was your system, the market, or your state of mind. Losing weeks are the most valuable learning moments — but only if you document them. Traders who journal their losing periods well demonstrably perform better over the next 100 trades.",
+        },
+      },
+    ],
+  },
 ];
 
 // ── Check Question Component ────────────────────────────────────────────────
