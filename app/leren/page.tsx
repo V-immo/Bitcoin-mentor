@@ -120,6 +120,22 @@ export default function LerenPage() {
         </div>
       )}
 
+      {/* Live Ready entry */}
+      <Link href="/leren/live-ready" className="liveready-entry-card">
+        <span className="liveready-entry-card-icon">🏆</span>
+        <div className="liveready-entry-card-body">
+          <div className="liveready-entry-card-title">
+            {lang === "nl" ? "Ben jij Live Ready?" : "Are you Live Ready?"}
+          </div>
+          <div className="liveready-entry-card-sub">
+            {lang === "nl"
+              ? "Controleer of je klaar bent voor live trading — Marcus beoordeelt jouw voortgang."
+              : "Check if you're ready for live trading — Marcus reviews your progress."}
+          </div>
+        </div>
+        <span className="liveready-entry-card-arrow">→</span>
+      </Link>
+
       <div className="leren-tabs">
         {TABS.map((tabItem) => (
           <button

@@ -1,0 +1,295 @@
+"use client";
+
+// Live Ready — het eindpunt van het leerpad.
+// Wanneer alle drie vereisten groen zijn verklaart Marcus je Live Ready.
+// Sterkste upgrademoment van het platform + groeimechanisme via social share.
+
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+type LiveReadyData = {
+  username: string;
+  curriculum: { quizLevel: number; quizLevelMin: number; quizAvgScore: number; quizScoreMin: number; done: boolean };
+  trades: { count: number; countMin: number; rrRatio: number; rrMin: number; done: boolean };
+  streak: { days: number; daysMin: number; done: boolean };
+  allDone: boolean;
+  certificate: string | null;
+};
+
+function Requirement({
+  icon, title, subtitle, value, max, label, done, lang,
+}: {
+  icon: string; title: string; subtitle: string;
+  value: number; max: number; label: string;
+  done: boolean; lang: string;
+}) {
+  const pct = Math.min(100, Math.round((value / max) * 100));
+  return (
+    <div className={`liveready-req${done ? " done" : ""}`}>
+      <div className="liveready-req-header">
+        <span className="liveready-req-icon">{done ? "✅" : icon}</span>
+        <div className="liveready-req-info">
+          <div className="liveready-req-title">{title}</div>
+          <div className="liveready-req-subtitle">{subtitle}</div>
+        </div>
+        <div className={`liveready-req-badge${done ? " done" : ""}`}>
+          {done ? (lang === "nl" ? "Behaald" : "Done") : `${pct}%`}
+        </div>
+      </div>
+      <div className="liveready-req-bar">
+        <div className={`liveready-req-bar-fill${done ? " done" : ""}`} style={{ width: `${pct}%` }} />
+      </div>
+      <div className="liveready-req-label">{label}</div>
+    </div>
+  );
+}
+
+export default function LiveReadyPage() {
+  const { lang } = useLanguage();
+  const [data, setData] = useState<LiveReadyData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const certRef = useRef<HTMLDivElement>(null);
+  const isNL = lang === "nl";
+
+  useEffect(() => {
+    fetch("/api/me/live-ready")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setData(d); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  function share() {
+    if (!data?.certificate) return;
+    const text = isNL
+      ? `Marcus heeft mij Live Ready verklaard op Bitcoin Mentor 🏆\n\n"${data.certificate}"\n\n📊 ${data.trades.count} paper trades · 🔥 ${data.streak.days} dagen streak · 5 niveaus voltooid\n\nhttps://bitcoinmentor.be`
+      : `Marcus declared me Live Ready on Bitcoin Mentor 🏆\n\n"${data.certificate}"\n\n📊 ${data.trades.count} paper trades · 🔥 ${data.streak.days} day streak · 5 levels completed\n\nhttps://bitcoinmentor.be`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }).catch(() => {});
+  }
+
+  if (loading) {
+    return (
+      <main className="container-page">
+        <div className="liveready-loading">
+          <div className="liveready-loading-pulse" />
+          {isNL ? "Marcus beoordeelt jouw voortgang…" : "Marcus is reviewing your progress…"}
+        </div>
+      </main>
+    );
+  }
+
+  if (!data) {
+    return (
+      <main className="container-page">
+        <Link href="/leren" className="page-back-btn" style={{ display: "inline-block", marginBottom: 16 }}>
+          ← {isNL ? "Terug" : "Back"}
+        </Link>
+        <div className="card" style={{ textAlign: "center", padding: 32 }}>
+          {isNL ? "Kon voortgang niet laden." : "Could not load progress."}
+        </div>
+      </main>
+    );
+  }
+
+  const doneCount = [data.curriculum.done, data.trades.done, data.streak.done].filter(Boolean).length;
+
+  return (
+    <main className="container-page">
+      {/* Terug */}
+      <div style={{ marginBottom: 12 }} className="no-print">
+        <Link href="/leren" className="page-back-btn">
+          ← {isNL ? "Terug naar leren" : "Back to learning"}
+        </Link>
+      </div>
+
+      {/* Hero */}
+      <div className="liveready-hero no-print">
+        {data.allDone ? (
+          <>
+            <div className="liveready-hero-seal">🏆</div>
+            <h1 className="liveready-title">
+              {isNL ? "Je bent Live Ready" : "You're Live Ready"}
+            </h1>
+            <p className="liveready-subtitle">
+              {isNL
+                ? "Marcus heeft jouw voortgang beoordeeld. Je hebt bewezen klaar te zijn voor live trading."
+                : "Marcus has reviewed your progress. You've proven you're ready for live trading."}
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="liveready-hero-seal" style={{ fontSize: 48 }}>🎯</div>
+            <h1 className="liveready-title">
+              {isNL ? "Ben jij Live Ready?" : "Are you Live Ready?"}
+            </h1>
+            <p className="liveready-subtitle">
+              {isNL
+                ? "Drie vereisten. Wanneer alles groen is, verklaart Marcus je Live Ready."
+                : "Three requirements. When everything is green, Marcus declares you Live Ready."}
+            </p>
+            <div className="liveready-progress-summary">
+              {[0, 1, 2].map(i => (
+                <span key={i} className={`liveready-dot${i < doneCount ? " done" : ""}`} />
+              ))}
+              <span className="liveready-progress-text">
+                {doneCount}/3 {isNL ? "behaald" : "done"}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Vereisten */}
+      <div className="liveready-requirements">
+        <Requirement
+          icon="📚"
+          title={isNL ? "Curriculum niveau 1–5" : "Curriculum levels 1–5"}
+          subtitle={isNL ? "Alle niveaus afgerond · Gemiddelde quizscore ≥ 70%" : "All levels completed · Average quiz score ≥ 70%"}
+          value={Math.min(100,
+            Math.round(((data.curriculum.quizLevel - 1) / (data.curriculum.quizLevelMin - 1)) * 70) +
+            Math.round((Math.min(data.curriculum.quizAvgScore, data.curriculum.quizScoreMin) / data.curriculum.quizScoreMin) * 30)
+          )}
+          max={100}
+          label={isNL
+            ? `Level ${data.curriculum.quizLevel}/5 · Score: ${data.curriculum.quizAvgScore}%`
+            : `Level ${data.curriculum.quizLevel}/5 · Score: ${data.curriculum.quizAvgScore}%`}
+          done={data.curriculum.done}
+          lang={lang}
+        />
+
+        <Requirement
+          icon="📊"
+          title={isNL ? "20 paper trades" : "20 paper trades"}
+          subtitle={isNL
+            ? `Min. ${data.trades.countMin} afgeronde trades · Gem. R/R ≥ 1:${data.trades.rrMin}`
+            : `Min. ${data.trades.countMin} closed trades · Avg R/R ≥ 1:${data.trades.rrMin}`}
+          value={data.trades.count}
+          max={data.trades.countMin}
+          label={isNL
+            ? `${data.trades.count}/${data.trades.countMin} trades · Gem. R/R 1:${data.trades.rrRatio.toFixed(2)}`
+            : `${data.trades.count}/${data.trades.countMin} trades · Avg R/R 1:${data.trades.rrRatio.toFixed(2)}`}
+          done={data.trades.done}
+          lang={lang}
+        />
+
+        <Requirement
+          icon="🔥"
+          title={isNL ? "14 dagen consistentie" : "14 days consistency"}
+          subtitle={isNL ? "14 aaneengesloten dagen dagelijks actief" : "14 consecutive days of daily activity"}
+          value={data.streak.days}
+          max={data.streak.daysMin}
+          label={isNL
+            ? `${data.streak.days}/${data.streak.daysMin} dagen`
+            : `${data.streak.days}/${data.streak.daysMin} days`}
+          done={data.streak.done}
+          lang={lang}
+        />
+      </div>
+
+      {/* Nog niet klaar */}
+      {!data.allDone && (
+        <div className="card liveready-next no-print">
+          <p className="liveready-next-text">
+            {isNL ? "Volgende stappen:" : "Next steps:"}
+          </p>
+          <div className="liveready-next-actions">
+            {!data.curriculum.done && (
+              <Link href="/leren" className="liveready-action-link">
+                📚 {isNL ? "Ga verder met leren" : "Continue learning"}
+              </Link>
+            )}
+            {!data.trades.done && (
+              <Link href="/trade" className="liveready-action-link">
+                📊 {isNL
+                  ? `Doe paper trades (${data.trades.countMin - data.trades.count > 0 ? `nog ${data.trades.countMin - data.trades.count}` : "R/R verbeteren"})`
+                  : `Do paper trades (${data.trades.countMin - data.trades.count > 0 ? `${data.trades.countMin - data.trades.count} more` : "improve R/R"})`}
+              </Link>
+            )}
+            {!data.streak.done && (
+              <Link href="/dashboard" className="liveready-action-link">
+                🔥 {isNL ? `Houd je streak bij (nog ${data.streak.daysMin - data.streak.days} dagen)` : `Keep your streak (${data.streak.daysMin - data.streak.days} days to go)`}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Certificaat */}
+      {data.allDone && data.certificate && (
+        <>
+          <div className="liveready-certificate" ref={certRef}>
+            <div className="liveready-cert-header">
+              <span className="liveready-cert-brand">Bitcoin Mentor</span>
+              <span className="liveready-cert-tag">Live Ready</span>
+            </div>
+            <div className="liveready-cert-seal">🏆</div>
+            <h2 className="liveready-cert-name">{data.username}</h2>
+            <p className="liveready-cert-label">
+              {isNL ? "is Live Ready verklaard door Marcus" : "has been declared Live Ready by Marcus"}
+            </p>
+            <div className="liveready-cert-divider" />
+            <blockquote className="liveready-cert-quote">"{data.certificate}"</blockquote>
+            <div className="liveready-cert-footer">
+              <span className="liveready-cert-signature">— Marcus</span>
+              <span className="liveready-cert-date">
+                {new Date().toLocaleDateString(isNL ? "nl-NL" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}
+              </span>
+            </div>
+            <div className="liveready-cert-stats">
+              <div className="liveready-cert-stat">
+                <span className="liveready-cert-stat-val">5/5</span>
+                <span className="liveready-cert-stat-lbl">{isNL ? "Niveaus" : "Levels"}</span>
+              </div>
+              <div className="liveready-cert-stat">
+                <span className="liveready-cert-stat-val">{data.trades.count}</span>
+                <span className="liveready-cert-stat-lbl">{isNL ? "Trades" : "Trades"}</span>
+              </div>
+              <div className="liveready-cert-stat">
+                <span className="liveready-cert-stat-val">{data.streak.days}d</span>
+                <span className="liveready-cert-stat-lbl">{isNL ? "Streak" : "Streak"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Acties */}
+          <div className="liveready-cert-actions no-print">
+            <button className="liveready-btn-primary" onClick={share}>
+              {copied
+                ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!")
+                : (isNL ? "📋 Deel op social media" : "📋 Share on social media")}
+            </button>
+            <button className="liveready-btn-secondary" onClick={() => window.print()}>
+              {isNL ? "🖨️ Print / Download" : "🖨️ Print / Download"}
+            </button>
+          </div>
+
+          {/* Affiliate — Marcus's persoonlijk advies */}
+          <div className="card liveready-affiliate no-print">
+            <div className="liveready-affiliate-avatar">M</div>
+            <div>
+              <p className="liveready-affiliate-text">
+                {isNL
+                  ? "Je bent klaar. Voor Nederlandse en Belgische traders gebruik ik Bitvavo — laagste fees in de Benelux, iDEAL-storting, Nederlandse support."
+                  : "You're ready. For European traders I use Bitvavo — lowest fees in the Benelux, instant bank transfer, native language support."}
+              </p>
+              <a
+                href="https://bitvavo.com/?invite=BITCOINMENTOR"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="liveready-btn-primary"
+                style={{ display: "inline-block", marginTop: 10 }}
+              >
+                {isNL ? "→ Start op Bitvavo" : "→ Start on Bitvavo"}
+              </a>
+            </div>
+          </div>
+        </>
+      )}
+    </main>
+  );
+}
