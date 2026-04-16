@@ -53,6 +53,8 @@ export type TradeCloseDetail = {
     asset: string;
     reason: "manual" | "sl" | "tp";
     btcAmount: number;
+    stopLoss?: number;
+    takeProfit?: number;
 };
 
 type Props = {
@@ -490,7 +492,7 @@ export default function TerminalPaperPanel({
             checkCompliance("sell", closeValue, currentPrice);
             // Fire Marcus auto-debrief event
             window.dispatchEvent(new CustomEvent("marcus-trade-debrief", {
-                detail: { pnl, entryPrice: state.avgEntry, exitPrice: currentPrice, asset, reason: "manual", btcAmount: closeBtc } satisfies TradeCloseDetail,
+                detail: { pnl, entryPrice: state.avgEntry, exitPrice: currentPrice, asset, reason: "manual", btcAmount: closeBtc, stopLoss: state.activeSL, takeProfit: state.activeTP } satisfies TradeCloseDetail,
             }));
         }
     }
@@ -525,7 +527,7 @@ export default function TerminalPaperPanel({
         );
         // Fire Marcus auto-debrief event
         window.dispatchEvent(new CustomEvent("marcus-trade-debrief", {
-            detail: { pnl, entryPrice: entrySnap, exitPrice: currentPrice, asset, reason, btcAmount: btcSnap } satisfies TradeCloseDetail,
+            detail: { pnl, entryPrice: entrySnap, exitPrice: currentPrice, asset, reason, btcAmount: btcSnap, stopLoss: state.activeSL, takeProfit: state.activeTP } satisfies TradeCloseDetail,
         }));
     }
 

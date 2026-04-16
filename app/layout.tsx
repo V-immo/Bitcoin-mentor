@@ -6,6 +6,7 @@ import FloatingMarcus from "@/components/FloatingMarcus";
 import AppWalkthrough from "@/components/AppWalkthrough";
 import Toaster from "@/components/Toaster";
 import BadgeUnlock from "@/components/BadgeUnlock";
+import MarcusDebrief from "@/components/MarcusDebrief";
 import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -69,6 +70,7 @@ export default function RootLayout({
                 <FloatingMarcus />
                 <AppWalkthrough />
                 <BadgeUnlock />
+                <MarcusDebrief />
                 <Toaster />
               </CurrencyProvider>
             </LanguageProvider>
