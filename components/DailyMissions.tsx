@@ -71,6 +71,7 @@ export default function DailyMissions() {
   const [showCombo, setShowCombo] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [streakFreeze, setStreakFreeze] = useState(0);
+  const [activeToday, setActiveToday] = useState<number | null>(null);
 
   const today = todayStr();
 
@@ -128,6 +129,12 @@ export default function DailyMissions() {
       .then(d => { if (d) setStreakFreeze(d.freeze ?? 0); })
       .catch(() => {});
 
+    // Social proof — hoeveel traders actief vandaag
+    fetch("/api/stats/daily")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setActiveToday(d.active ?? null); })
+      .catch(() => {});
+
     // Combo check
     if (!comboDone && quizDone && lessonDone && journalDone && premarketDone && chartDone) {
       grantCombo();
@@ -137,9 +144,12 @@ export default function DailyMissions() {
 
   useEffect(() => {
     checkStatuses();
-    // Hercheck elke minuut (bijv. als tab opnieuw actief wordt)
+    // Hercheck elke minuut
     const iv = setInterval(checkStatuses, 60_000);
-    return () => clearInterval(iv);
+    // Reageer direct op storage events (bijv. premarket-ritual voltooien)
+    const onStorage = () => checkStatuses();
+    window.addEventListener("storage", onStorage);
+    return () => { clearInterval(iv); window.removeEventListener("storage", onStorage); };
   }, [checkStatuses]);
 
   async function grantCombo() {
@@ -333,6 +343,13 @@ export default function DailyMissions() {
       {allDone && (
         <div className="daily-missions-footer complete">
           🏆 {lang === "nl" ? "Alle missies voltooid! Geweldig werk vandaag." : "All missions complete! Great work today."}
+        </div>
+      )}
+
+      {/* Social proof */}
+      {activeToday !== null && activeToday > 1 && (
+        <div className="daily-missions-social-proof">
+          💬 {activeToday} {lang === "nl" ? "traders actief vandaag" : "traders active today"}
         </div>
       )}
     </div>
