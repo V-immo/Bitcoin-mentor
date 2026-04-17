@@ -9830,3 +9830,360 @@ textarea:focus-visible,
   transition: opacity 0.15s;
 }
 .lesson-done-btn:hover { opacity: 0.88; }
+
+/* ── Road to Live Trading (rijexamen) ────────────────────────────────────── */
+
+@keyframes rijexamen-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.rijexamen-page {
+  max-width: 720px;
+}
+
+/* Hero */
+.rijexamen-hero {
+  text-align: center;
+  padding: 28px 16px 20px;
+  margin-bottom: 4px;
+}
+.rijexamen-hero-icon {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.rijexamen-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  background: linear-gradient(135deg, var(--primary), var(--deep-rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.rijexamen-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  max-width: 500px;
+  margin: 0 auto 16px;
+  line-height: 1.6;
+}
+.rijexamen-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.rijexamen-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.rijexamen-dot.done { background: var(--primary); }
+.rijexamen-dots-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+.rijexamen-ready-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Marcus intro */
+.rijexamen-marcus-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.rijexamen-marcus-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Requirement cards */
+.rijexamen-requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.rijexamen-req-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition: border-color 0.25s;
+}
+.rijexamen-req-card.done {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+}
+.rijexamen-req-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.rijexamen-req-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.rijexamen-req-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rijexamen-req-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.rijexamen-req-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.rijexamen-req-badge {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.rijexamen-req-badge.done {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+}
+.rijexamen-req-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.rijexamen-req-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--deep-rose));
+  transition: width 0.7s ease;
+}
+.rijexamen-req-fill.done {
+  background: var(--primary);
+}
+.rijexamen-req-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Next steps */
+.rijexamen-next {
+  margin-bottom: 20px;
+}
+.rijexamen-next-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+.rijexamen-next-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rijexamen-next-link {
+  display: block;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.rijexamen-next-link:hover {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 7%, transparent);
+}
+
+/* Certificate initial (M avatar) */
+.rijexamen-cert-initial {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--deep-rose));
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Certificate section */
+.rijexamen-cert-section {
+  margin-bottom: 20px;
+}
+.rijexamen-cert-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.rijexamen-cert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.rijexamen-cert-quote {
+  font-style: italic;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  border: none;
+}
+
+/* Affiliate */
+.rijexamen-affiliate {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.rijexamen-affiliate-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.rijexamen-affiliate-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.rijexamen-affiliate-text {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+}
+.rijexamen-exchange-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--surface));
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.2s, transform 0.15s;
+}
+.rijexamen-exchange-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.rijexamen-exchange-flag {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.rijexamen-exchange-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rijexamen-exchange-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rijexamen-exchange-rec {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+.rijexamen-exchange-tagline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.rijexamen-exchange-cta {
+  flex-shrink: 0;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 8px 14px;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.rijexamen-exchange-card:hover .rijexamen-exchange-cta {
+  opacity: 0.88;
+}
+.rijexamen-affiliate-disclaimer {
+  font-size: 0.71rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.4;
+}
+.rijexamen-brokers-link {
+  font-size: 0.82rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.rijexamen-brokers-link:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .rijexamen-exchange-card { flex-wrap: wrap; }
+  .rijexamen-exchange-cta { width: 100%; text-align: center; }
+  .rijexamen-title { font-size: 1.45rem; }
+}
