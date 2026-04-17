@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
+import { getDb } from "@/db/db";
 import Anthropic from "@anthropic-ai/sdk";
 import { sharedScanCache } from "@/lib/scan-cache";
 
@@ -56,6 +57,28 @@ export async function POST(request: NextRequest) {
   if (!client) {
     return Response.json({ debrief: "Marcus is momenteel niet beschikbaar. Analyseer zelf: was je stop-loss correct geplaatst?" });
   }
+
+  // Liga-score bijwerken op basis van trade kwaliteit
+  try {
+    const rrForScore = stopLoss && takeProfit && entry
+      ? Math.abs(takeProfit - entry) / Math.abs(entry - stopLoss)
+      : null;
+    const today = new Date().toISOString().slice(0, 10);
+    const weekNum = String(Math.floor(Date.now() / (7 * 86_400_000)));
+    let tradeScore = 0;
+    if (pnl > 0 && rrForScore !== null && rrForScore >= 2) tradeScore = 30;      // winst + goed R/R
+    else if (pnl > 0 && rrForScore !== null && rrForScore >= 1) tradeScore = 15; // winst + ok R/R
+    else if (pnl > 0) tradeScore = 8;                                             // winst, geen R/R data
+    else if (stopLoss) tradeScore = 5;                                            // verlies maar stop-loss had
+    if (tradeScore > 0) {
+      const db = getDb();
+      const wk = db.prepare("SELECT week_key FROM users WHERE id = ?").get(userId) as { week_key: string } | undefined;
+      if (wk?.week_key !== weekNum) {
+        db.prepare("UPDATE users SET week_score = 0, week_key = ? WHERE id = ?").run(weekNum, userId);
+      }
+      db.prepare("UPDATE users SET week_score = week_score + ?, last_streak_date = ? WHERE id = ?").run(tradeScore, today, userId);
+    }
+  } catch { /* score update niet kritiek */ }
 
   const pnlStr = pnl >= 0 ? `winst van €${Math.abs(pnl).toFixed(2)}` : `verlies van €${Math.abs(pnl).toFixed(2)}`;
   const slStr = stopLoss ? `Stop-loss: €${stopLoss.toLocaleString("nl-NL", { maximumFractionDigits: 0 })}` : "Geen stop-loss ingesteld";

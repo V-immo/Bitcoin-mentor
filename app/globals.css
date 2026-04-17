@@ -9212,6 +9212,24 @@ textarea:focus-visible,
 .league-row-score { font-size: 0.8rem; color: var(--muted); font-weight: 500; flex-shrink: 0; }
 .league-footer { font-size: 0.7rem; color: var(--muted); text-align: center; margin: 0; }
 
+/* League pro gate */
+.league-pro-gate { padding: 4px 0 8px; display: flex; flex-direction: column; gap: 12px; }
+.league-pro-gate-text { font-size: 13px; color: var(--text); line-height: 1.6; margin: 0; }
+.league-pro-gate-preview { display: flex; flex-direction: column; gap: 6px; }
+.league-pro-preview-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  padding: 6px 10px; background: rgba(255,255,255,0.03);
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+}
+.league-pro-gate-btn {
+  display: inline-block; padding: 10px 20px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff; font-size: 13px; font-weight: 700;
+  text-decoration: none; text-align: center; transition: opacity 0.15s;
+}
+.league-pro-gate-btn:hover { opacity: 0.88; }
+
 /* ── B2B pagina's ── */
 .b2b-register-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;

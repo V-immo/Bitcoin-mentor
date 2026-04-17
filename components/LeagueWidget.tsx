@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePro } from "@/contexts/ProContext";
 
 type LeagueEntry = { rank: number; display: string; score: number; isMe: boolean };
 
@@ -29,17 +31,56 @@ const TIER_COLORS: Record<number, string> = {
 export default function LeagueWidget() {
   const { data: session } = useSession();
   const { lang } = useLanguage();
+  const { isPro, loading: proLoading } = usePro();
   const isNL = lang === "nl";
 
   const [data, setData] = useState<LeagueData | null>(null);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user || !isPro) return;
     fetch("/api/me/league")
       .then(r => r.ok ? r.json() : null)
       .then(d => d && setData(d))
       .catch(() => {});
-  }, [session]);
+  }, [session, isPro]);
+
+  if (proLoading) return null;
+
+  // Free users: toon upgrade teaser
+  if (!isPro) {
+    return (
+      <div className="card league-card">
+        <div className="league-header">
+          <div className="league-title-row">
+            <span className="league-icon">🏆</span>
+            <span className="league-title">{isNL ? "Liga" : "League"}</span>
+          </div>
+          <span className="nav-pro-badge">PRO</span>
+        </div>
+        <div className="league-pro-gate">
+          <p className="league-pro-gate-text">
+            {isNL
+              ? "Strijd elke week met traders op jouw niveau. Top 3 stijgt naar een hogere liga."
+              : "Compete every week with traders at your level. Top 3 advance to a higher league."}
+          </p>
+          <div className="league-pro-gate-preview">
+            {["🥇 CryptoNinja", "🥈 BitcoinBob", "🥉 TraderAlex"].map((name, i) => (
+              <div key={i} className="league-pro-preview-row" style={{ opacity: 1 - i * 0.2 }}>
+                <span>{name}</span>
+                <span style={{ color: "var(--text-muted)", fontSize: 12 }}>{320 - i * 80} pt</span>
+              </div>
+            ))}
+            <div className="league-pro-preview-row" style={{ opacity: 0.3 }}>
+              <span>···</span>
+            </div>
+          </div>
+          <Link href="/pro" className="league-pro-gate-btn">
+            {isNL ? "Ontgrendel Liga →" : "Unlock League →"}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!data) return null;
 

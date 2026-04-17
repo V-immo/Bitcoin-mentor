@@ -5,6 +5,7 @@ import Link from "next/link";
 import DailyQuiz from "@/components/DailyQuiz";
 import LearningResources from "@/components/LearningResources";
 import MarcusCurriculum from "@/components/MarcusCurriculum";
+import LeagueWidget from "@/components/LeagueWidget";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_LEVEL = 500;
@@ -75,6 +76,7 @@ export default function LerenPage() {
     { id: "lessons", label: t("leren_tab_lessons"), icon: "📖" },
     { id: "quiz", label: t("leren_tab_quiz"), icon: "🎓" },
     { id: "resources", label: t("leren_tab_resources"), icon: "📺" },
+    { id: "league", label: lang === "nl" ? "Liga" : "League", icon: "🏆" },
   ];
 
   return (
@@ -152,6 +154,30 @@ export default function LerenPage() {
       {tab === "lessons" && <MarcusCurriculum onQuizTabClick={() => setTab("quiz")} />}
       {tab === "quiz" && <DailyQuiz />}
       {tab === "resources" && <LearningResources />}
+      {tab === "league" && (
+        <div style={{ marginTop: 8 }}>
+          <LeagueWidget />
+          <div style={{ marginTop: 16, padding: "12px 16px", background: "var(--surface)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              {lang === "nl" ? "Hoe verdien je punten?" : "How do you earn points?"}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { pts: "+10", desc: lang === "nl" ? "Dagelijkse login" : "Daily login" },
+                { pts: "+40", desc: lang === "nl" ? "Quiz voltooid" : "Quiz completed" },
+                { pts: "+30", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:2" : "Winning trade with R/R ≥ 1:2" },
+                { pts: "+15", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:1" : "Winning trade with R/R ≥ 1:1" },
+                { pts: "+5", desc: lang === "nl" ? "Trade met stop-loss (ook verlies)" : "Trade with stop-loss (even a loss)" },
+              ].map((row, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--primary)", minWidth: 32 }}>{row.pts}</span>
+                  <span style={{ fontSize: 12, color: "var(--text)" }}>{row.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Onderaan terug knop */}
       <div style={{ marginTop: 32, paddingBottom: 16 }}>
