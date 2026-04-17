@@ -211,6 +211,16 @@ function ensureSchema(database: Database.Database) {
       UNIQUE(week, user_id)
     );
     CREATE INDEX IF NOT EXISTS idx_league_week_tier ON league_scores(week, tier, score);
+
+    CREATE TABLE IF NOT EXISTS market_briefs (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      date        TEXT    NOT NULL,
+      level_group INTEGER NOT NULL,
+      content     TEXT    NOT NULL,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(date, level_group)
+    );
+    CREATE INDEX IF NOT EXISTS idx_market_briefs_date ON market_briefs(date);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen

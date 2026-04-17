@@ -8352,6 +8352,55 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); align-items: start; }
 @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
+/* Morning Brief */
+.morning-brief-card {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 10%, var(--surface)),
+    var(--surface));
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 14px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.morning-brief-card--collapsed { border-color: var(--border); }
+.morning-brief-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer; gap: 12px;
+  user-select: none;
+}
+.morning-brief-header:hover { background: color-mix(in srgb, var(--primary) 5%, transparent); }
+.morning-brief-header-left { display: flex; align-items: center; gap: 12px; }
+.morning-brief-icon { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+.morning-brief-title { font-weight: 700; font-size: 1rem; color: var(--text); }
+.morning-brief-meta { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.morning-brief-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.morning-brief-copy-btn {
+  font-size: 0.78rem; font-weight: 600;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 7px; padding: 5px 11px;
+  cursor: pointer; white-space: nowrap; transition: opacity 0.15s;
+}
+.morning-brief-copy-btn:hover { opacity: 0.85; }
+.morning-brief-chevron { font-size: 0.75rem; color: var(--muted); }
+.morning-brief-body {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 0 18px 18px;
+}
+.morning-brief-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--deep-rose));
+  color: #fff; font-weight: 700; font-size: 0.95rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.morning-brief-content { flex: 1; }
+.morning-brief-para {
+  font-size: 0.9rem; line-height: 1.6; color: var(--text);
+  margin: 0 0 8px;
+}
+.morning-brief-para:last-child { margin-bottom: 0; }
+.morning-brief-spacer { height: 6px; }
+
 /* ══════════════════════════════════════════
    GLOBAL POLISH — Focus, Animations, Depth
    ══════════════════════════════════════════ */

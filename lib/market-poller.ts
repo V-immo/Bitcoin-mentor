@@ -487,6 +487,9 @@ export function startPoller(): void {
 
   // Wekelijks league job elke minuut — snapshots zondag 23:55
   setInterval(runWeeklyLeagueJob, 60_000);
+
+  // Dagelijkse morning brief elke minuut — genereert om 08:45
+  setInterval(runMorningBriefJob, 60_000);
 }
 
 // --- Wekelijks league systeem (zondag 23:55) ---
@@ -557,6 +560,87 @@ function runWeeklyFreezeReload(): void {
     // Herlaad freeze naar 1 voor alle gebruikers die de freeze al hebben gebruikt (streak_freeze < 1)
     db.prepare("UPDATE users SET streak_freeze = 1, streak_freeze_week = ? WHERE streak_freeze < 1").run(week);
   } catch { /* stilletjes falen */ }
+}
+
+// --- Morning Brief (08:45) ---
+
+let morningBriefDate = "";
+
+async function runMorningBriefJob(): Promise<void> {
+  const now = new Date();
+  const hour = now.getHours();
+  const min  = now.getMinutes();
+  const today = now.toISOString().slice(0, 10);
+
+  // Alleen 08:45–08:49, eenmalig per dag
+  if (hour !== 8 || min < 45 || morningBriefDate === today) return;
+  morningBriefDate = today;
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return;
+
+  // Haal marktdata op — gebruik bestaande cache of fetch vers
+  const btcEntry = sharedScanCache.data?.find(e => e.ticker === "BTC" || e.symbol === "BTCUSDT");
+  const ethEntry = sharedScanCache.data?.find(e => e.ticker === "ETH" || e.symbol === "ETHUSDT");
+  const fearGreed = cachedFearGreed?.data ?? "onbekend";
+
+  const marketCtx = [
+    `BTC: $${btcEntry ? btcEntry.price.toLocaleString("nl-NL") : "?"} (${btcEntry ? (btcEntry.change24h >= 0 ? "+" : "") + btcEntry.change24h.toFixed(1) + "%" : "?"})`,
+    btcEntry ? `RSI BTC: ${btcEntry.rsi.toFixed(0)}, trend: ${btcEntry.trend}` : "",
+    ethEntry ? `ETH: $${ethEntry.price.toLocaleString("nl-NL")} (${ethEntry.change24h >= 0 ? "+" : ""}${ethEntry.change24h.toFixed(1)}%)` : "",
+    `Fear & Greed: ${fearGreed}`,
+    `Datum: ${today}`,
+  ].filter(Boolean).join("\n");
+
+  // 3 niveau-groepen: 1-2 (beginner), 3-4 (gevorderd), 5-6 (expert)
+  const GROUPS: { group: number; systemPrompt: string }[] = [
+    {
+      group: 1,
+      systemPrompt: `Je bent Marcus, een directe trading coach. Schrijf een korte Morning Brief (max 120 woorden) voor BEGINNERS (level 1-2).
+Toon: direct, motiverend maar eerlijk. GEEN jargon — leg elk begrip direct uit.
+Structuur: 1 zin marktoverzicht → 1 concreet leerpunt van vandaag → 1 tip om vandaag te oefenen (paper trading of quiz).
+Spreek de lezer aan als "je". Eindig met een korte call-to-action.`,
+    },
+    {
+      group: 2,
+      systemPrompt: `Je bent Marcus, een directe trading coach. Schrijf een Morning Brief (max 150 woorden) voor GEVORDERDE traders (level 3-4).
+Toon: analytisch, direct. Gebruik trading termen maar leg complexe concepten kort uit.
+Structuur: marktanalyse (RSI, trend, wat het betekent) → een concrete setup of patroon om op te letten vandaag → risicobeheer-herinnering.
+Spreek de lezer aan als "je". Sluit af met een concrete actie.`,
+    },
+    {
+      group: 3,
+      systemPrompt: `Je bent Marcus, een directe trading coach. Schrijf een Morning Brief (max 180 woorden) voor ERVAREN traders (level 5-6).
+Toon: direct, geen sugarcoating. Gebruik volledige vakterm-set (RSI, funding rates, dominantie, trend-confluence, invalidatie).
+Structuur: macro-context → technische analyse BTC/ETH → concrete setup-thesis met entry/invalidatie → mindset-herinnering.
+Geen motivational fluff — alleen wat werkt.`,
+    },
+  ];
+
+  const { default: Anthropic } = await import("@anthropic-ai/sdk");
+  const client = new Anthropic({ apiKey });
+  const db = getDb();
+
+  for (const { group, systemPrompt } of GROUPS) {
+    // Check of al bestaat voor vandaag
+    const existing = db.prepare("SELECT id FROM market_briefs WHERE date = ? AND level_group = ?").get(today, group);
+    if (existing) continue;
+
+    try {
+      const msg = await client.messages.create({
+        model: "claude-haiku-4-5",
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{
+          role: "user",
+          content: `Marktdata van vandaag:\n${marketCtx}\n\nGenereer de Morning Brief.`,
+        }],
+      });
+
+      const content = (msg.content[0] as { text: string }).text.trim();
+      db.prepare("INSERT OR IGNORE INTO market_briefs (date, level_group, content) VALUES (?, ?, ?)").run(today, group, content);
+    } catch { /* stilletjes falen — morgen opnieuw */ }
+  }
 }
 
 // --- Dagelijkse missie-reminder om 19:00 ---

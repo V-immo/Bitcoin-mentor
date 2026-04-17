@@ -12,6 +12,7 @@ import AccountabilityPartner from "@/components/AccountabilityPartner";
 import LeagueWidget from "@/components/LeagueWidget";
 import FirstSteps from "@/components/FirstSteps";
 import SocialProof from "@/components/SocialProof";
+import MorningBrief from "@/components/MorningBrief";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
@@ -30,6 +31,7 @@ export default function DashboardPage() {
           {dateStr && <p className="dashboard-date">{dateStr}</p>}
         </div>
 
+        <MorningBrief />
         <FirstSteps />
         <SocialProof />
         <DailyMissions />
