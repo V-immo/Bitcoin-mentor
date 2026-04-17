@@ -8649,6 +8649,63 @@ textarea:focus-visible,
   }
 }
 
+/* ── Friends Streaks ── */
+.friends-streaks-card { margin-bottom: 12px; }
+.friends-streaks-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.friends-streaks-title {
+  font-size: 0.9rem; font-weight: 700;
+}
+.friends-streaks-invite-btn {
+  font-size: 0.75rem; font-weight: 600; padding: 4px 10px;
+  border-radius: 20px; border: 1px solid var(--primary);
+  color: var(--primary); background: transparent; cursor: pointer;
+  transition: background 0.15s;
+}
+.friends-streaks-invite-btn:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+.friends-streaks-empty { text-align: center; padding: 8px 0; }
+.friends-streaks-empty-text {
+  font-size: 0.82rem; color: var(--muted); margin: 0 0 10px;
+}
+.friends-streaks-copy-link {
+  font-size: 0.8rem; padding: 8px 14px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; color: var(--text);
+  transition: border-color 0.15s;
+}
+.friends-streaks-copy-link:hover { border-color: var(--primary); }
+.friends-streaks-list { display: flex; flex-direction: column; gap: 8px; }
+.friends-streaks-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.friends-streaks-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--deep-rose));
+  color: #fff; font-weight: 700; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.friends-streaks-info {
+  flex: 1; display: flex; align-items: center; gap: 6px; min-width: 0;
+}
+.friends-streaks-name {
+  font-size: 0.88rem; font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.friends-streaks-active-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+.friends-streaks-streak {
+  display: flex; align-items: center; gap: 3px; flex-shrink: 0;
+}
+.friends-streaks-fire { font-size: 0.9rem; }
+.friends-streaks-days { font-size: 0.9rem; font-weight: 700; }
+
 /* ── Chart Challenge ── */
 .chart-challenge-hero {
   text-align: center; padding: 24px 16px 20px;

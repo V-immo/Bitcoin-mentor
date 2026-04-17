@@ -171,6 +171,15 @@ function ensureSchema(database: Database.Database) {
       UNIQUE(user_a, user_b)
     );
     CREATE INDEX IF NOT EXISTS idx_partnerships_users ON partnerships(user_a, user_b, status);
+
+    CREATE TABLE IF NOT EXISTS friendships (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_a     INTEGER NOT NULL,
+      user_b     INTEGER NOT NULL,
+      created_at TEXT    NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(user_a, user_b)
+    );
+    CREATE INDEX IF NOT EXISTS idx_friendships ON friendships(user_a, user_b);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen

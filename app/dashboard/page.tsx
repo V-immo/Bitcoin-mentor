@@ -7,6 +7,7 @@ import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
 import CommunitySentiment from "@/components/CommunitySentiment";
 import CommunityScoreboard from "@/components/CommunityScoreboard";
+import FriendsStreaks from "@/components/FriendsStreaks";
 import FirstSteps from "@/components/FirstSteps";
 import SocialProof from "@/components/SocialProof";
 import { useState, useEffect } from "react";
@@ -35,6 +36,7 @@ export default function DashboardPage() {
         <div className="dashboard-grid">
           <DashboardBriefing />
           <div className="dashboard-sidebar">
+            <FriendsStreaks />
             <CommunitySentiment />
             <CommunityScoreboard />
             <MarketOverview compact />
