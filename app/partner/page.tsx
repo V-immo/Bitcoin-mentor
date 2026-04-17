@@ -68,8 +68,8 @@ function StatCard({ label, mine, theirs, format = (v: number | null) => v !== nu
 }
 
 export default function PartnerPage() {
-  const { language } = useLanguage();
-  const isNL = language !== "en";
+  const { lang } = useLanguage();
+  const isNL = lang !== "en";
 
   const [partnerData, setPartnerData] = useState<PartnerData | null>(null);
   const [summary, setSummary] = useState<SummaryData | null>(null);
