@@ -154,7 +154,7 @@ export default function EconomicCalendar() {
               display: "flex", gap: 8, alignItems: "flex-start",
               background: "color-mix(in srgb, var(--primary) 6%, transparent)", borderRadius: 10, padding: "10px 12px",
             }}>
-              <span style={{ fontSize: 16, flexShrink: 0 }}>🤖</span>
+              <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: "var(--primary)" }}>M</span>
               <p style={{ margin: 0, fontSize: 12, color: "var(--text)", lineHeight: 1.65 }}>
                 {warning}
               </p>

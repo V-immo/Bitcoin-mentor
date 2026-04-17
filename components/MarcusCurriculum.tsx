@@ -1636,13 +1636,15 @@ function renderDiagram(id: string, lang: string): React.ReactNode {
 }
 
 // ── Lesson Card ─────────────────────────────────────────────────────────────
-function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
+function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lessonNum, totalLessons }: {
   lesson: Lesson;
   lang: string;
   isRead: boolean;
   onRead: (id: string) => void;
   onQuizClick: () => void;
   isPublic?: boolean;
+  lessonNum: number;
+  totalLessons: number;
 }) {
   const [open, setOpen] = useState(false);
   const title = lang === "en" ? lesson.titleEN : lesson.titleNL;
@@ -1660,59 +1662,108 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
 
   if (isPublic === false) {
     return (
-      <div className="curriculum-card curriculum-card-locked">
-        <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
-          <span className="curriculum-card-icon">🔒</span>
-          <span className="curriculum-card-title">{title}</span>
+      <div className="lesson-card lesson-card--locked">
+        <div className="lesson-card-header">
+          <span className="lesson-card-num">🔒</span>
+          <span className="lesson-card-title">{title}</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`curriculum-card${isRead ? " curriculum-card-read" : ""}`}>
-      <button className="curriculum-card-header" onClick={toggle}>
-        <span className="curriculum-card-icon">{lesson.icon}</span>
-        <span className="curriculum-card-title">{title}</span>
-        <span className="curriculum-card-status">{isRead ? "✓" : ""}</span>
-        <span className="curriculum-card-arrow">{open ? "▲" : "▼"}</span>
+    <div className={`lesson-card${isRead ? " lesson-card--read" : ""}${open ? " lesson-card--open" : ""}`}>
+      <button className="lesson-card-header" onClick={toggle}>
+        <div className="lesson-card-meta">
+          <span className="lesson-card-num">
+            {lang === "en" ? `Lesson ${lessonNum}` : `Les ${lessonNum}`}
+            <span className="lesson-card-of"> / {totalLessons}</span>
+          </span>
+          {isRead && <span className="lesson-card-done">{lang === "en" ? "✓ Done" : "✓ Gelezen"}</span>}
+        </div>
+        <div className="lesson-card-title-row">
+          <span className="lesson-card-icon">{lesson.icon}</span>
+          <span className="lesson-card-title">{title}</span>
+          <span className="lesson-card-arrow">{open ? "▲" : "▼"}</span>
+        </div>
       </button>
+
       {open && (
-        <div className="curriculum-card-body">
-          <div className="curriculum-marcus-label">Marcus:</div>
-          <div className="curriculum-content">
-            {content.split("\n\n").map((para, i) => (
-              <p key={i} style={{ margin: "0 0 10px 0", lineHeight: 1.6 }}>{para}</p>
-            ))}
+        <div className="lesson-body">
+          {/* Leestekst */}
+          <div className="lesson-text">
+            {content.split("\n\n").map((para, i) => {
+              // Detecteer lijstregels (beginnen met —, ·, -, •, of genummerd)
+              const lines = para.split("\n");
+              const isList = lines.length > 1 && lines.every(l => /^[—·\-•]/.test(l.trim()) || /^\d+\./.test(l.trim()));
+              if (isList) {
+                return (
+                  <ul key={i} className="lesson-list">
+                    {lines.map((l, j) => (
+                      <li key={j}>{l.replace(/^[—·\-•]\s*/, "").replace(/^\d+\.\s*/, "")}</li>
+                    ))}
+                  </ul>
+                );
+              }
+              // Speciale Marcus-uitspraken (beginnen met "Marcus zegt:" of "Marcus says:")
+              if (/^Marcus (zegt|says):/.test(para)) {
+                return (
+                  <blockquote key={i} className="lesson-marcus-quote">
+                    <span className="lesson-marcus-initial">M</span>
+                    <span>{para.replace(/^Marcus (zegt|says):\s*/, "")}</span>
+                  </blockquote>
+                );
+              }
+              // Sectie-koppen (volledig hoofdletters of eindigen op ":")
+              if (para === para.toUpperCase() && para.length < 60 && !para.includes("€") && !para.includes("%")) {
+                return <h3 key={i} className="lesson-section-heading">{para}</h3>;
+              }
+              return <p key={i} className="lesson-para">{para}</p>;
+            })}
           </div>
+
+          {/* Diagram */}
           {lesson.diagramId && (
             <div className="lesson-diagram">
               {renderDiagram(lesson.diagramId, lang)}
             </div>
           )}
+
+          {/* Begrippenlijst */}
           {terms && terms.length > 0 && (
-            <div className="curriculum-terms">
-              <div className="curriculum-terms-label">
-                {lang === "en" ? "📚 Key Terms" : "📚 Begrippen"}
+            <div className="lesson-terms">
+              <div className="lesson-terms-heading">
+                {lang === "en" ? "Key Terms" : "Begrippen"}
               </div>
-              <div className="curriculum-terms-grid">
+              <dl className="lesson-terms-list">
                 {terms.map((t, i) => (
-                  <div key={i} className="curriculum-term">
-                    <span className="curriculum-term-name">{t.term}</span>
-                    <span className="curriculum-term-def">{t.def}</span>
+                  <div key={i} className="lesson-term-row">
+                    <dt className="lesson-term-name">{t.term}</dt>
+                    <dd className="lesson-term-def">{t.def}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             </div>
           )}
-          {/* Inline check question */}
-          {check && <CheckQuestion check={check} lang={lang} />}
-          {/* Quiz CTA na les lezen */}
+
+          {/* Toetsvraag */}
+          {check && (
+            <div className="lesson-check-section">
+              <div className="lesson-check-heading">
+                {lang === "en" ? "Test yourself" : "Test jezelf"}
+              </div>
+              <CheckQuestion check={check} lang={lang} />
+            </div>
+          )}
+
+          {/* CTA na lezen */}
           {isRead && (
-            <div className="curriculum-quiz-cta">
-              <span>✅ {lang === "en" ? "Lesson read! Ready to test yourself?" : "Les gelezen! Klaar om jezelf te testen?"}</span>
-              <button className="curriculum-quiz-cta-btn" onClick={onQuizClick}>
-                {lang === "en" ? "→ Do the quiz" : "→ Doe de quiz"}
+            <div className="lesson-done-cta">
+              <span className="lesson-done-msg">
+                {lang === "en" ? "Lesson completed — ready for the quiz?" : "Les voltooid — klaar voor de quiz?"}
+              </span>
+              <button className="lesson-done-btn" onClick={onQuizClick}>
+                {lang === "en" ? "Go to quiz →" : "Naar de quiz →"}
               </button>
             </div>
           )}
@@ -1821,8 +1872,8 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
             </div>
             <p className="curriculum-gate-desc">
               {lang === "en"
-                ? "17 more lessons, an AI quiz at your level, and Marcus as your personal coach. Completely free."
-                : "Nog 17 lessen, een AI-quiz op jouw niveau en Marcus als persoonlijke coach. Volledig gratis."}
+                ? "17 more lessons, a quiz at your level, and Marcus as your personal coach. Completely free."
+                : "Nog 17 lessen, een quiz op jouw niveau en Marcus als persoonlijke coach. Volledig gratis."}
             </p>
             <Link href="/auth/register" className="curriculum-gate-cta">
               {lang === "en" ? "Register for free →" : "Gratis registreren →"}
@@ -1876,6 +1927,8 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
                 onRead={markRead}
                 onQuizClick={() => onQuizTabClick?.()}
                 isPublic={lessonPublic}
+                lessonNum={idx + 1}
+                totalLessons={levelData.lessons.length}
               />
             );
           })}

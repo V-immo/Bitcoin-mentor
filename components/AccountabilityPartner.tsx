@@ -225,7 +225,7 @@ export default function AccountabilityPartner() {
                     color: "var(--primary)", fontSize: 12, fontWeight: 600,
                   }}
                 >
-                  🤖 Vergelijk met Marcus
+                  Vergelijk met Marcus
                 </button>
                 <button
                   onClick={endPartnership}
@@ -247,7 +247,7 @@ export default function AccountabilityPartner() {
               background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
               fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6,
             }}>
-              🤖 Klik op &quot;Vergelijk met Marcus&quot; om een persoonlijke analyse te krijgen van jullie prestaties deze week.
+              Klik op &quot;Vergelijk met Marcus&quot; om een persoonlijke analyse te krijgen van jullie prestaties deze week.
             </div>
           </>
         )}

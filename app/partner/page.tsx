@@ -284,7 +284,7 @@ export default function PartnerPage() {
               >
                 {loadingSummary
                   ? (isNL ? "Marcus analyseert…" : "Marcus is analysing…")
-                  : (isNL ? "🤖 Laad Marcus-vergelijking" : "🤖 Load Marcus comparison")}
+                  : (isNL ? "Laad Marcus-vergelijking" : "Load Marcus comparison")}
               </button>
             </div>
           )}

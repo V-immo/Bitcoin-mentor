@@ -9600,3 +9600,233 @@ textarea:focus-visible,
   border: 1px solid color-mix(in srgb, #22c55e 28%, transparent);
   color: #22c55e; text-align: center;
 }
+
+/* ── Lesson cards (MarcusCurriculum) ── */
+.lesson-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; overflow: hidden;
+  transition: border-color 0.15s;
+}
+.lesson-card--read {
+  border-color: color-mix(in srgb, #22c55e 20%, transparent);
+}
+.lesson-card--open {
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.lesson-card--locked {
+  opacity: 0.55;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px; overflow: hidden;
+}
+.lesson-card-header {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; cursor: pointer;
+  background: none; border: none; text-align: left;
+  border-bottom: 1px solid transparent; transition: background 0.1s;
+}
+.lesson-card--open .lesson-card-header {
+  border-bottom-color: rgba(255,255,255,0.06);
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+.lesson-card-meta {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.lesson-card-num {
+  font-size: 11px; font-weight: 800; color: var(--text-muted);
+  background: rgba(255,255,255,0.06); border-radius: 99px;
+  padding: 2px 8px; white-space: nowrap;
+}
+.lesson-card-of {
+  color: var(--text-muted); font-weight: 400;
+}
+.lesson-card-done {
+  font-size: 10px; font-weight: 700; color: #22c55e;
+  background: color-mix(in srgb, #22c55e 12%, transparent);
+  border: 1px solid color-mix(in srgb, #22c55e 25%, transparent);
+  padding: 2px 8px; border-radius: 99px;
+}
+.lesson-card-title-row {
+  flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0;
+}
+.lesson-card-icon {
+  font-size: 18px; flex-shrink: 0;
+}
+.lesson-card-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  flex: 1; min-width: 0; text-align: left;
+}
+.lesson-card--read .lesson-card-title {
+  color: var(--text-muted);
+}
+.lesson-card-arrow {
+  font-size: 10px; color: var(--text-muted); flex-shrink: 0;
+}
+
+/* Lesson body */
+.lesson-body {
+  padding: 20px 22px 24px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.lesson-text {
+  display: flex; flex-direction: column; gap: 0;
+}
+.lesson-para {
+  font-size: 14px; line-height: 1.75; color: var(--text);
+  margin: 0 0 14px; padding: 0;
+}
+.lesson-para:last-child { margin-bottom: 0; }
+
+.lesson-list {
+  margin: 0 0 14px 0; padding-left: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.lesson-list li {
+  font-size: 14px; line-height: 1.65; color: var(--text);
+}
+
+.lesson-section-heading {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin: 20px 0 8px; padding: 0; border: none;
+}
+.lesson-section-heading:first-child { margin-top: 0; }
+
+/* Marcus quote block */
+.lesson-marcus-quote {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px; margin: 4px 0 14px;
+}
+.lesson-marcus-initial {
+  font-size: 13px; font-weight: 900; color: var(--primary);
+  flex-shrink: 0; margin-top: 1px;
+}
+.lesson-marcus-quote p {
+  margin: 0; font-size: 13px; line-height: 1.7;
+  color: var(--text); font-style: italic;
+}
+
+/* Glossary */
+.lesson-terms {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.lesson-terms-heading {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.lesson-terms-list {
+  display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0;
+}
+.lesson-term-row {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.lesson-term-row:last-child { border-bottom: none; }
+.lesson-term-name {
+  font-size: 12px; font-weight: 700; color: var(--text);
+}
+.lesson-term-def {
+  font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 0;
+}
+
+/* Diagram placeholder */
+.lesson-diagram {
+  margin: 16px 0;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 24px;
+  text-align: center; font-size: 12px; color: var(--text-muted);
+}
+
+/* Quiz / check section */
+.lesson-check-section {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.lesson-check-heading {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.lesson-check {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 16px;
+}
+.lesson-check.correct { border-color: color-mix(in srgb, #22c55e 30%, transparent); }
+.lesson-check.wrong   { border-color: color-mix(in srgb, var(--red) 30%, transparent); }
+.lesson-check-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+.lesson-check-question {
+  font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; line-height: 1.5;
+}
+.lesson-check-options {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.lesson-check-option {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  font-size: 13px; color: var(--text);
+  cursor: pointer; transition: all 0.12s; text-align: left; width: 100%;
+}
+.lesson-check-option.unanswered:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+}
+.lesson-check-option.is-correct {
+  border-color: color-mix(in srgb, #22c55e 40%, transparent);
+  background: color-mix(in srgb, #22c55e 8%, transparent);
+  color: #22c55e;
+}
+.lesson-check-option.is-wrong {
+  border-color: color-mix(in srgb, var(--red) 40%, transparent);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+  color: var(--red);
+}
+.lesson-check-letter {
+  font-size: 11px; font-weight: 800;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.06); flex-shrink: 0;
+}
+.lesson-check-feedback {
+  margin-top: 12px; padding: 10px 14px; border-radius: 10px;
+  font-size: 13px; line-height: 1.6;
+}
+.lesson-check-feedback.correct {
+  background: color-mix(in srgb, #22c55e 8%, transparent);
+  color: #22c55e;
+}
+.lesson-check-feedback.wrong {
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+  color: var(--red);
+}
+
+/* Lesson done CTA */
+.lesson-done-cta {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+}
+.lesson-done-msg {
+  font-size: 13px; color: var(--text-muted); line-height: 1.5; flex: 1; min-width: 180px;
+}
+.lesson-done-btn {
+  padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff; border: none; cursor: pointer; white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.lesson-done-btn:hover { opacity: 0.88; }

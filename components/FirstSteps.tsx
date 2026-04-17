@@ -160,7 +160,7 @@ export default function FirstSteps() {
           borderBottom: "1px solid rgba(255,255,255,0.04)",
           display: "flex", gap: 8, alignItems: "flex-start",
         }}>
-          <span style={{ fontSize: 14, flexShrink: 0 }}>🤖</span>
+          <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: "var(--primary)" }}>M</span>
           <p style={{ margin: 0, fontSize: 12, color: "var(--text)", lineHeight: 1.6 }}>
             {doneCount === 0
               ? `Begin met "${nextStep.title}" — dat is stap 1. Zonder dit kan ik je niet goed coachen.`
