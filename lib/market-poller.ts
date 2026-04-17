@@ -484,6 +484,61 @@ export function startPoller(): void {
 
   // Wekelijkse streak freeze reload elke minuut — herlaadt elke maandag om 06:00
   setInterval(runWeeklyFreezeReload, 60_000);
+
+  // Wekelijks league job elke minuut — snapshots zondag 23:55
+  setInterval(runWeeklyLeagueJob, 60_000);
+}
+
+// --- Wekelijks league systeem (zondag 23:55) ---
+
+let leagueJobWeek = "";
+
+function runWeeklyLeagueJob(): void {
+  const now = new Date();
+  if (now.getDay() !== 0 || now.getHours() !== 23 || now.getMinutes() < 55) return;
+  const weekNum = String(Math.floor(Date.now() / (7 * 86_400_000)));
+  if (leagueJobWeek === weekNum) return;
+  leagueJobWeek = weekNum;
+
+  try {
+    const db = getDb();
+    const TIERS = 5;
+    const PROMOTE = 3;
+    const DEGRADE = 3;
+
+    const users = db.prepare(
+      "SELECT id, week_score, league_tier FROM users WHERE week_score > 0"
+    ).all() as { id: number; week_score: number; league_tier: number }[];
+
+    const byTier = new Map<number, typeof users>();
+    for (const u of users) {
+      const t = Math.max(1, Math.min(TIERS, u.league_tier));
+      if (!byTier.has(t)) byTier.set(t, []);
+      byTier.get(t)!.push(u);
+    }
+
+    const tierChanges = new Map<number, number>();
+
+    for (const [tier, tierUsers] of byTier) {
+      tierUsers.sort((a, b) => b.week_score - a.week_score);
+      tierUsers.forEach((u, idx) => {
+        db.prepare(
+          "INSERT OR REPLACE INTO league_scores (week, user_id, tier, score, rank) VALUES (?, ?, ?, ?, ?)"
+        ).run(weekNum, u.id, tier, u.week_score, idx + 1);
+
+        let newTier = tier;
+        if (idx < PROMOTE && tier < TIERS) newTier = tier + 1;
+        else if (idx >= tierUsers.length - DEGRADE && tier > 1) newTier = tier - 1;
+        tierChanges.set(u.id, newTier);
+      });
+    }
+
+    for (const [uid, newTier] of tierChanges) {
+      db.prepare("UPDATE users SET league_tier = ?, week_score = 0, week_key = '' WHERE id = ?").run(newTier, uid);
+    }
+    // Reset inactieve gebruikers
+    db.prepare("UPDATE users SET week_score = 0, week_key = '' WHERE week_score > 0 AND id NOT IN (SELECT user_id FROM league_scores WHERE week = ?)").run(weekNum);
+  } catch { /* stilletjes falen */ }
 }
 
 // --- Wekelijkse streak freeze reload (maandag 06:00) ---

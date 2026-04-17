@@ -9,6 +9,7 @@ import CommunitySentiment from "@/components/CommunitySentiment";
 import CommunityScoreboard from "@/components/CommunityScoreboard";
 import FriendsStreaks from "@/components/FriendsStreaks";
 import AccountabilityPartner from "@/components/AccountabilityPartner";
+import LeagueWidget from "@/components/LeagueWidget";
 import FirstSteps from "@/components/FirstSteps";
 import SocialProof from "@/components/SocialProof";
 import { useState, useEffect } from "react";
@@ -37,6 +38,7 @@ export default function DashboardPage() {
         <div className="dashboard-grid">
           <DashboardBriefing />
           <div className="dashboard-sidebar">
+            <LeagueWidget />
             <FriendsStreaks />
             <AccountabilityPartner />
             <CommunitySentiment />

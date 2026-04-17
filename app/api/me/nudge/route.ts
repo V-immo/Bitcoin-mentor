@@ -220,6 +220,20 @@ export async function GET(request: Request) {
   db.prepare("UPDATE users SET last_login_at = datetime('now'), login_streak = ?, last_streak_date = ? WHERE id = ?")
     .run(newStreak, today, userId);
 
+  // Week score bijwerken (eenmalig per dag)
+  const weekNum = String(Math.floor(Date.now() / (7 * 86_400_000)));
+  const isFirstCallToday = user?.last_streak_date !== today;
+  const isNewWeek = (db.prepare("SELECT week_key FROM users WHERE id = ?").get(userId) as { week_key: string } | undefined)?.week_key !== weekNum;
+  if (isNewWeek) {
+    db.prepare("UPDATE users SET week_score = 0, week_key = ? WHERE id = ?").run(weekNum, userId);
+  }
+  if (isFirstCallToday) {
+    let dailyScore = 10;
+    const quizDoneToday = db.prepare("SELECT 1 FROM quiz_progress WHERE user_id = ? AND last_quiz_date = ?").get(userId, today);
+    if (quizDoneToday) dailyScore += 40;
+    db.prepare("UPDATE users SET week_score = week_score + ? WHERE id = ?").run(dailyScore, userId);
+  }
+
   // Laatste trade datum
   const paperRow = db.prepare(
     "SELECT history FROM paper_trading WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1"

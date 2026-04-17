@@ -180,6 +180,17 @@ function ensureSchema(database: Database.Database) {
       UNIQUE(user_a, user_b)
     );
     CREATE INDEX IF NOT EXISTS idx_friendships ON friendships(user_a, user_b);
+
+    CREATE TABLE IF NOT EXISTS league_scores (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      week       TEXT    NOT NULL,
+      user_id    INTEGER NOT NULL,
+      tier       INTEGER DEFAULT 1,
+      score      INTEGER DEFAULT 0,
+      rank       INTEGER DEFAULT 0,
+      UNIQUE(week, user_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_league_week_tier ON league_scores(week, tier, score);
   `);
 
   // Voeg ontbrekende kolommen toe aan bestaande tabellen
@@ -221,6 +232,9 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "reminder_opt_out", "INTEGER DEFAULT 0");
   addCol("users", "streak_freeze", "INTEGER DEFAULT 1");
   addCol("users", "streak_freeze_week", "TEXT DEFAULT ''");
+  addCol("users", "week_score", "INTEGER DEFAULT 0");
+  addCol("users", "week_key", "TEXT DEFAULT ''");
+  addCol("users", "league_tier", "INTEGER DEFAULT 1");
 }
 
 export function getDb(): Database.Database {

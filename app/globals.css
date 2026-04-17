@@ -8894,3 +8894,52 @@ textarea:focus-visible,
   border-radius: 8px; padding: 7px 12px; margin-bottom: 8px;
   line-height: 1.4;
 }
+
+/* ── League widget ── */
+.league-card { padding: 16px; }
+.league-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.league-title-row { display: flex; align-items: center; gap: 8px; }
+.league-icon { font-size: 1.1rem; }
+.league-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.league-tier-badge {
+  font-size: 0.75rem; font-weight: 700;
+  border: 1px solid; border-radius: 99px; padding: 3px 10px;
+  background: transparent;
+}
+.league-rank-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
+}
+.league-my-rank { display: flex; align-items: baseline; gap: 5px; }
+.league-rank-num { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.league-rank-label { font-size: 0.78rem; color: var(--muted); }
+.league-score-block { display: flex; flex-direction: column; align-items: flex-end; }
+.league-score-num { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+.league-score-label { font-size: 0.72rem; color: var(--muted); }
+.league-zone-banner {
+  font-size: 0.78rem; font-weight: 600; border-radius: 8px;
+  padding: 6px 10px; margin-bottom: 10px; text-align: center;
+}
+.league-zone-promote {
+  background: color-mix(in srgb, #22c55e 10%, transparent);
+  color: #22c55e; border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+}
+.league-zone-degrade {
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  color: #ef4444; border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+}
+.league-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.league-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 8px;
+  font-size: 0.82rem;
+}
+.league-row--me {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+}
+.league-row-rank { width: 28px; font-size: 0.85rem; flex-shrink: 0; }
+.league-row-name { flex: 1; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.league-row-score { font-size: 0.8rem; color: var(--muted); font-weight: 500; flex-shrink: 0; }
+.league-footer { font-size: 0.7rem; color: var(--muted); text-align: center; margin: 0; }
