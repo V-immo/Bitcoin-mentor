@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TrophyWall from "@/components/TrophyWall";
+import ReferralCard from "@/components/ReferralCard";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -327,6 +328,9 @@ export default function ProfielPage() {
               <span>🔥 Streak: {Math.min(quiz?.streak ?? 0, 7)}/7 dagen</span>
             </div>
           </div>
+
+          {/* ── Referral ── */}
+          <ReferralCard />
 
           {/* ── Trophy Wall ── */}
           <TrophyWall />

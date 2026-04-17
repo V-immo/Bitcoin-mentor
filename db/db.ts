@@ -257,6 +257,9 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "league_tier", "INTEGER DEFAULT 1");
   addCol("users", "company_id", "INTEGER DEFAULT 0");
   addCol("users", "company_role", "TEXT DEFAULT ''");
+  addCol("users", "referral_code", "TEXT DEFAULT ''");
+  addCol("users", "referred_by", "TEXT DEFAULT ''");
+  addCol("users", "referral_xp_earned", "INTEGER DEFAULT 0");
 }
 
 export function getDb(): Database.Database {

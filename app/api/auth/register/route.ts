@@ -51,19 +51,38 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Wachtwoord moet minimaal 8 tekens zijn" }, { status: 400 });
   }
 
+  const { ref } = body;
+
   const db = getDb();
   const hash = bcrypt.hashSync(password, 12);
 
   // Detecteer regio op de achtergrond voor valuta-default
   const { currency, countryCode } = await detectCurrency(request);
 
+  // Valideer referral code
+  let referrerId: number | null = null;
+  if (ref && typeof ref === "string" && /^[A-Z0-9]{6,10}$/.test(ref)) {
+    const referrer = db.prepare("SELECT id FROM users WHERE referral_code = ?").get(ref) as { id: number } | undefined;
+    if (referrer) referrerId = referrer.id;
+  }
+
+  // Genereer eigen referral code (6 tekens, uniek)
+  function makeCode(): string {
+    return Math.random().toString(36).slice(2, 8).toUpperCase();
+  }
+  let newCode = makeCode();
+  let attempts = 0;
+  while (db.prepare("SELECT 1 FROM users WHERE referral_code = ?").get(newCode) && attempts++ < 10) {
+    newCode = makeCode();
+  }
+
   try {
     const result = db.prepare(`
-      INSERT INTO users (username, email, password_hash, role, start_capital)
-      VALUES (?, ?, ?, 'user', 10000)
-    `).run(username.trim(), email.trim().toLowerCase(), hash);
+      INSERT INTO users (username, email, password_hash, role, start_capital, referred_by, referral_code)
+      VALUES (?, ?, ?, 'user', 10000, ?, ?)
+    `).run(username.trim(), email.trim().toLowerCase(), hash, ref ?? "", newCode);
 
-    const userId = result.lastInsertRowid;
+    const userId = result.lastInsertRowid as number;
 
     // Maak settings direct aan met gedetecteerde valuta en land
     try {
@@ -72,6 +91,28 @@ export async function POST(request: NextRequest) {
         VALUES (?, 'swing', 'medium', 10000, '["BTCUSDT","ETHUSDT"]', 'nl', ?, ?)
       `).run(userId, currency, countryCode);
     } catch { /* settings worden later aangemaakt door getOrCreateSettings */ }
+
+    // Referral beloning: +100 XP + 1 streak freeze voor beide partijen
+    if (referrerId) {
+      const REFERRAL_XP = 100;
+
+      // Nieuwe gebruiker: +100 XP welkomstbonus
+      db.prepare(`
+        INSERT INTO quiz_progress (user_id, level, xp, streak, last_quiz_date, weak_topics, history)
+        VALUES (?, 1, ?, 0, '', '[]', '[]')
+        ON CONFLICT(user_id) DO UPDATE SET xp = xp + ?
+      `).run(userId, REFERRAL_XP, REFERRAL_XP);
+      db.prepare("UPDATE users SET streak_freeze = streak_freeze + 1 WHERE id = ?").run(userId);
+
+      // Referrer: +100 XP + 1 streak freeze
+      db.prepare(`
+        INSERT INTO quiz_progress (user_id, level, xp, streak, last_quiz_date, weak_topics, history)
+        VALUES (?, 1, ?, 0, '', '[]', '[]')
+        ON CONFLICT(user_id) DO UPDATE SET xp = xp + ?
+      `).run(referrerId, REFERRAL_XP, REFERRAL_XP);
+      db.prepare("UPDATE users SET streak_freeze = streak_freeze + 1, referral_xp_earned = referral_xp_earned + ? WHERE id = ?")
+        .run(REFERRAL_XP, referrerId);
+    }
 
     return Response.json({ ok: true, id: userId });
   } catch (e) {

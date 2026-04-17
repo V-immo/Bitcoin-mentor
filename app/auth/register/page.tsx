@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
   const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });
+  const [refCode, setRefCode] = useState("");
+
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) setRefCode(ref.toUpperCase());
+  }, [searchParams]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +37,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: form.username, email: form.email, password: form.password }),
+      body: JSON.stringify({ username: form.username, email: form.email, password: form.password, ref: refCode || undefined }),
     });
 
     const data = await res.json();
@@ -127,6 +134,12 @@ export default function RegisterPage() {
               disabled={loading}
             />
           </div>
+
+          {refCode && (
+            <div className="referral-register-banner">
+              🎁 Uitnodigingscode actief: <strong>{refCode}</strong> — je krijgt +100 XP bij registratie
+            </div>
+          )}
 
           {error && <div className="login-error">{error}</div>}
 
