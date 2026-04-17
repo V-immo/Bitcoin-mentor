@@ -8,6 +8,7 @@ import MarketOverview from "@/components/MarketOverview";
 import CommunitySentiment from "@/components/CommunitySentiment";
 import CommunityScoreboard from "@/components/CommunityScoreboard";
 import FriendsStreaks from "@/components/FriendsStreaks";
+import AccountabilityPartner from "@/components/AccountabilityPartner";
 import FirstSteps from "@/components/FirstSteps";
 import SocialProof from "@/components/SocialProof";
 import { useState, useEffect } from "react";
@@ -37,6 +38,7 @@ export default function DashboardPage() {
           <DashboardBriefing />
           <div className="dashboard-sidebar">
             <FriendsStreaks />
+            <AccountabilityPartner />
             <CommunitySentiment />
             <CommunityScoreboard />
             <MarketOverview compact />
