@@ -48,12 +48,17 @@ export default function Nav() {
   const [dropOpen, setDropOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const [streak, setStreak] = useState<number>(0);
+  const [isPro, setIsPro]   = useState(false);
 
   useEffect(() => {
     if (!session?.user) return;
     fetch("/api/me/nudge")
       .then(r => r.json())
       .then(d => { if (d.streak) setStreak(d.streak); })
+      .catch(() => {});
+    fetch("/api/me/pro")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.isPro) setIsPro(true); })
       .catch(() => {});
   }, [session]);
 
@@ -150,6 +155,11 @@ export default function Nav() {
               </div>
             )}
           </div>
+
+          {/* Pro badge */}
+          {isPro && (
+            <div className="nav-pro-badge" title="Marcus Pro">✦ Pro</div>
+          )}
 
           {/* Streak badge */}
           {streak >= 2 && (

@@ -1732,6 +1732,9 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
   const [readMap, setReadMap] = useState<ReadMap>({});
   const [userLevel, setUserLevel] = useState(1);
   const [activeLevel, setActiveLevel] = useState(1);
+  const [isPro, setIsPro] = useState(false);
+
+  const PRO_LEVEL_START = 3;
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -1740,6 +1743,10 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         setUserLevel(d.level);
         setActiveLevel(d.level);
       }
+    }).catch(() => {});
+
+    fetch("/api/me/pro").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.isPro) setIsPro(true);
     }).catch(() => {});
 
     try {
@@ -1777,14 +1784,15 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         {CURRICULUM.map(lvl => {
           const label = lang === "en" ? `L${lvl.level}` : `N${lvl.level}`;
           const locked = lvl.level > userLevel + 1;
+          const proRequired = lvl.level >= PRO_LEVEL_START && !isPro;
           return (
             <button
               key={lvl.level}
-              className={`curriculum-level-tab${activeLevel === lvl.level ? " active" : ""}${locked ? " locked" : ""}`}
+              className={`curriculum-level-tab${activeLevel === lvl.level ? " active" : ""}${locked ? " locked" : ""}${proRequired && !locked ? " pro-required" : ""}`}
               onClick={() => !locked && setActiveLevel(lvl.level)}
               title={locked ? (lang === "en" ? "Complete previous level first" : "Voltooi vorig niveau eerst") : ""}
             >
-              {locked ? "🔒" : label}
+              {locked ? "🔒" : proRequired ? "✦" : label}
             </button>
           );
         })}
@@ -1823,22 +1831,56 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         </div>
       )}
 
-      <div className="curriculum-lessons">
-        {levelData.lessons.map((lesson, idx) => {
-          const lessonPublic = isLoggedIn || (activeLevel === 1 && idx === 0);
-          return (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              lang={lang}
-              isRead={!!readMap[lesson.id]}
-              onRead={markRead}
-              onQuizClick={() => onQuizTabClick?.()}
-              isPublic={lessonPublic}
-            />
-          );
-        })}
-      </div>
+      {/* Marcus Pro gate voor niveaus 3+ */}
+      {activeLevel >= PRO_LEVEL_START && !isPro ? (
+        <div className="pro-gate-banner">
+          <div className="pro-gate-icon">✦</div>
+          <div className="pro-gate-body">
+            <div className="pro-gate-title">
+              {lang === "en" ? "Marcus Pro — required for this level" : "Marcus Pro — vereist voor dit niveau"}
+            </div>
+            <p className="pro-gate-desc">
+              {lang === "en"
+                ? "Levels 3–6 are part of Marcus Pro. Upgrade to unlock Technical Analysis, Advanced, Mastery and Psychology — the levels that make the real difference."
+                : "Niveau 3–6 zijn onderdeel van Marcus Pro. Upgrade om Technische Analyse, Geavanceerd, Meesterschap en Psychologie te ontgrendelen — de niveaus die het echte verschil maken."}
+            </p>
+            <div className="pro-gate-features">
+              {[
+                lang === "en" ? "All 6 curriculum levels" : "Alle 6 curriculumniveaus",
+                lang === "en" ? "Unlimited Marcus chat" : "Onbeperkte Marcus chat",
+                lang === "en" ? "Live Trading certificate" : "Live Trading certificaat",
+              ].map((f, i) => (
+                <span key={i} className="pro-gate-feature-pill">✓ {f}</span>
+              ))}
+            </div>
+            <div className="pro-gate-pricing">
+              <span className="pro-gate-price">€9,99<span className="pro-gate-unit">/maand</span></span>
+              <span className="pro-gate-or">{lang === "en" ? "or" : "of"}</span>
+              <span className="pro-gate-price">€79<span className="pro-gate-unit">/jaar</span></span>
+            </div>
+            <Link href="/pro" className="pro-gate-cta">
+              {lang === "en" ? "Upgrade to Marcus Pro →" : "Upgrade naar Marcus Pro →"}
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="curriculum-lessons">
+          {levelData.lessons.map((lesson, idx) => {
+            const lessonPublic = isLoggedIn || (activeLevel === 1 && idx === 0);
+            return (
+              <LessonCard
+                key={lesson.id}
+                lesson={lesson}
+                lang={lang}
+                isRead={!!readMap[lesson.id]}
+                onRead={markRead}
+                onQuizClick={() => onQuizTabClick?.()}
+                isPublic={lessonPublic}
+              />
+            );
+          })}
+        </div>
+      )}
 
       <button className="curriculum-marcus-btn" onClick={askMarcus}>
         👤 {lang === "en" ? "Ask Marcus for a practice exercise" : "Vraag Marcus om een oefening"}

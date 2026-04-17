@@ -260,6 +260,8 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "referral_code", "TEXT DEFAULT ''");
   addCol("users", "referred_by", "TEXT DEFAULT ''");
   addCol("users", "referral_xp_earned", "INTEGER DEFAULT 0");
+  addCol("users", "is_pro", "INTEGER DEFAULT 0");
+  addCol("users", "pro_until", "TEXT DEFAULT ''");
 }
 
 export function getDb(): Database.Database {

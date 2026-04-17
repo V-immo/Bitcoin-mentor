@@ -9240,6 +9240,115 @@ textarea:focus-visible,
 .referral-reward-label { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
 .referral-reward-divider { font-size: 0.9rem; color: var(--muted); }
 
+/* ── Marcus Pro — pricing pagina ── */
+.pro-page { max-width: 680px; margin: 0 auto; padding: 40px 20px; }
+.pro-hero { text-align: center; margin-bottom: 32px; }
+.pro-hero-badge {
+  display: inline-block; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em;
+  background: linear-gradient(135deg, #f59e0b, #e91e63);
+  color: #fff; border-radius: 99px; padding: 4px 14px; margin-bottom: 14px;
+}
+.pro-hero-title { font-size: 1.75rem; font-weight: 900; color: var(--text); margin: 0 0 10px; line-height: 1.2; }
+.pro-hero-sub { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin: 0; }
+.pro-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.pro-plan-card {
+  position: relative; padding: 18px; border-radius: 14px; cursor: pointer;
+  border: 2px solid var(--border); background: transparent; text-align: left;
+  transition: border-color 0.15s;
+}
+.pro-plan-card--active { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 6%, transparent); }
+.pro-plan-saving {
+  position: absolute; top: -10px; right: 10px;
+  font-size: 0.68rem; font-weight: 700; color: #22c55e;
+  background: color-mix(in srgb, #22c55e 15%, var(--surface));
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+  padding: 2px 8px; border-radius: 99px;
+}
+.pro-plan-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+.pro-plan-price { font-size: 1.4rem; font-weight: 900; color: var(--text); }
+.pro-plan-unit { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.pro-upgrade-btn {
+  width: 100%; padding: 16px; border-radius: 14px; font-size: 1.1rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff; border: none; cursor: pointer; margin-bottom: 36px;
+  transition: opacity 0.15s;
+}
+.pro-upgrade-btn:disabled { opacity: 0.6; cursor: default; }
+.pro-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.pro-compare-col { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+.pro-compare-col--pro { border-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+.pro-compare-header {
+  padding: 12px 16px; font-size: 0.85rem; font-weight: 700; text-align: center;
+}
+.pro-compare-header--free { background: var(--surface-2, rgba(255,255,255,0.04)); color: var(--muted); }
+.pro-compare-header--pro {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, transparent), color-mix(in srgb, #a855f7 20%, transparent));
+  color: var(--text);
+}
+.pro-compare-list { list-style: none; margin: 0; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.pro-compare-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: var(--text); }
+.pro-compare-item--free .pro-compare-check { color: var(--muted); }
+.pro-compare-item--included .pro-compare-check { color: #22c55e; }
+.pro-compare-item--pro .pro-compare-check { color: #f59e0b; }
+.pro-compare-item--star { font-weight: 600; }
+.pro-social {
+  text-align: center; padding: 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+}
+.pro-social-text { font-size: 0.9rem; color: var(--text); font-style: italic; line-height: 1.6; margin: 0 0 8px; }
+.pro-social-name { font-size: 0.8rem; color: var(--muted); margin: 0; }
+.pro-success-card {
+  max-width: 420px; margin: 80px auto; text-align: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px;
+}
+.pro-success-icon { font-size: 2.5rem; margin-bottom: 14px; }
+.pro-success-title { font-size: 1.5rem; font-weight: 800; color: var(--text); margin: 0 0 12px; }
+.pro-success-text { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin: 0 0 20px; }
+.pro-success-back {
+  display: inline-block; padding: 10px 20px; border-radius: 10px;
+  background: var(--primary); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+}
+
+/* ── Curriculum pro gate ── */
+.pro-gate-banner {
+  display: flex; gap: 16px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, transparent), color-mix(in srgb, #a855f7 6%, transparent));
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-radius: 16px; padding: 24px; margin: 16px 0;
+}
+.pro-gate-icon { font-size: 1.8rem; flex-shrink: 0; }
+.pro-gate-body { flex: 1; }
+.pro-gate-title { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.pro-gate-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; margin: 0 0 12px; }
+.pro-gate-features { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.pro-gate-feature-pill {
+  font-size: 0.72rem; font-weight: 600;
+  background: color-mix(in srgb, #22c55e 10%, transparent);
+  color: #22c55e; border: 1px solid color-mix(in srgb, #22c55e 25%, transparent);
+  padding: 2px 10px; border-radius: 99px;
+}
+.pro-gate-pricing { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.pro-gate-price { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+.pro-gate-unit { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+.pro-gate-or { font-size: 0.78rem; color: var(--muted); }
+.pro-gate-cta {
+  display: inline-block; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff; text-decoration: none;
+}
+
+/* Nav pro badge */
+.nav-pro-badge {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #f59e0b, #e91e63);
+  color: #fff; border-radius: 99px; padding: 3px 9px;
+}
+
+/* Curriculum tab pro-required stijl */
+.curriculum-level-tab.pro-required {
+  color: #a78bfa; border-color: color-mix(in srgb, #a78bfa 30%, transparent);
+}
+
 /* Registratie-banner voor referral code */
 .referral-register-banner {
   padding: 10px 14px; border-radius: 10px; font-size: 0.83rem;
