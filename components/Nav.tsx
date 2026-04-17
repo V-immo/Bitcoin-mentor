@@ -9,7 +9,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import {
   Home, GraduationCap, Newspaper, Radar, TrendingUp, User,
   Calendar, BarChart3, Building2, FlaskConical, Trophy,
-  Settings, HelpCircle, ShieldCheck, LogOut, Sun, Moon, Flame, X, Video,
+  Settings, HelpCircle, ShieldCheck, LogOut, Sun, Moon, Flame, X, Video, Users,
   type LucideProps,
 } from "lucide-react";
 
@@ -31,6 +31,7 @@ const EXTRA_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
   { href: "/testnet",      key: "more_menu_testnet", Icon: FlaskConical },
   { href: "/leaderboard",  key: "more_menu_ranking", Icon: Trophy },
   { href: "/content",      key: "nav_link_content",  Icon: Video },
+  { href: "/partner",      key: "nav_link_partner",  Icon: Users },
 ];
 
 const ACCOUNT_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
