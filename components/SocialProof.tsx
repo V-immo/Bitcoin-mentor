@@ -35,10 +35,10 @@ export default function SocialProof() {
           ? `${active} trader${active !== 1 ? "s" : ""} actief vandaag`
           : `${active} trader${active !== 1 ? "s" : ""} active today`}
       </span>
-      {quizzes > 0 && (
+      {(quizzes ?? 0) > 0 && (
         <span className="social-proof-divider">·</span>
       )}
-      {quizzes > 0 && (
+      {(quizzes ?? 0) > 0 && (
         <span className="social-proof-text">
           {lang === "nl"
             ? `${quizzes} quiz${quizzes !== 1 ? "zes" : ""} gedaan`
