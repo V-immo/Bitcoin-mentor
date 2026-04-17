@@ -83,11 +83,11 @@ Rules: conversational, no jargon, direct tone. End each section with a blank lin
 
   const raw = (msg.content[0] as { text: string }).text.trim();
 
-  // Parse sections
-  const hookMatch    = raw.match(/HOOK:\s*(.+?)(?=ANALYSE:|$)/s);
-  const analyseMatch = raw.match(/ANALYSE:\s*(.+?)(?=CTA:|$)/s);
-  const ctaMatch     = raw.match(/CTA:\s*(.+?)(?=HASHTAGS:|$)/s);
-  const hashMatch    = raw.match(/HASHTAGS:\s*(.+?)$/s);
+  // Parse sections ([\s\S] i.p.v. /s flag voor ES2017 compatibiliteit)
+  const hookMatch    = raw.match(/HOOK:\s*([\s\S]+?)(?=ANALYSE:|$)/);
+  const analyseMatch = raw.match(/ANALYSE:\s*([\s\S]+?)(?=CTA:|$)/);
+  const ctaMatch     = raw.match(/CTA:\s*([\s\S]+?)(?=HASHTAGS:|$)/);
+  const hashMatch    = raw.match(/HASHTAGS:\s*([\s\S]+?)$/);
 
   const hook    = hookMatch?.[1]?.trim()    ?? "";
   const analyse = analyseMatch?.[1]?.trim() ?? "";
