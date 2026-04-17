@@ -181,6 +181,26 @@ function ensureSchema(database: Database.Database) {
     );
     CREATE INDEX IF NOT EXISTS idx_friendships ON friendships(user_a, user_b);
 
+    CREATE TABLE IF NOT EXISTS companies (
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      name          TEXT    NOT NULL,
+      contact_email TEXT    NOT NULL UNIQUE,
+      seats         INTEGER NOT NULL DEFAULT 5,
+      plan          TEXT    NOT NULL DEFAULT 'monthly',
+      created_at    TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS company_invites (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      company_id  INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+      email       TEXT    NOT NULL DEFAULT '',
+      token       TEXT    NOT NULL UNIQUE,
+      accepted    INTEGER NOT NULL DEFAULT 0,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_company_invites_token ON company_invites(token);
+    CREATE INDEX IF NOT EXISTS idx_company_invites_company ON company_invites(company_id);
+
     CREATE TABLE IF NOT EXISTS league_scores (
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       week       TEXT    NOT NULL,
@@ -235,6 +255,8 @@ function ensureSchema(database: Database.Database) {
   addCol("users", "week_score", "INTEGER DEFAULT 0");
   addCol("users", "week_key", "TEXT DEFAULT ''");
   addCol("users", "league_tier", "INTEGER DEFAULT 1");
+  addCol("users", "company_id", "INTEGER DEFAULT 0");
+  addCol("users", "company_role", "TEXT DEFAULT ''");
 }
 
 export function getDb(): Database.Database {

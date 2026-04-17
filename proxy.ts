@@ -23,6 +23,9 @@ export default auth((req) => {
     pathname === "/api/me/unsubscribe-reminders" ||
     pathname.startsWith("/api/stats/") ||
     pathname.startsWith("/invite/") ||
+    pathname === "/b2b/register" ||
+    pathname.startsWith("/b2b/join/") ||
+    pathname.startsWith("/api/b2b/accept/") ||
     pathname.startsWith("/api/users/public/") ||
     pathname === "/api/alerts/check" ||
     pathname === "/api/briefing" ||
