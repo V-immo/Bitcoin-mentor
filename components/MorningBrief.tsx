@@ -24,8 +24,8 @@ const GROUP_LABEL_EN: Record<number, string> = {
 };
 
 export default function MorningBrief() {
-  const { language } = useLanguage();
-  const isNL = language !== "en";
+  const { lang } = useLanguage();
+  const isNL = lang !== "en";
   const [data, setData] = useState<BriefData | null>(null);
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(true);
