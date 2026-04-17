@@ -8618,6 +8618,78 @@ textarea:focus-visible,
   font-size: 0.9rem; line-height: 1.55; margin: 0 0 4px; color: var(--muted);
 }
 
+/* Affiliate section — exchange aanbeveling */
+.liveready-affiliate-section {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.liveready-affiliate-header {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.liveready-affiliate-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 4px;
+}
+.liveready-affiliate-intro {
+  font-size: 0.9rem; line-height: 1.55; color: var(--muted); margin: 0;
+}
+.liveready-exchange-cards {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.liveready-exchange-card {
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; background: var(--surface2);
+  display: flex; align-items: center; gap: 14px;
+}
+.liveready-exchange-card--primary {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  background: color-mix(in srgb, var(--primary) 7%, var(--surface));
+}
+.liveready-exchange-flag {
+  font-size: 1.8rem; line-height: 1; flex-shrink: 0;
+}
+.liveready-exchange-info {
+  flex: 1; display: flex; flex-direction: column; gap: 2px;
+}
+.liveready-exchange-name-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.liveready-exchange-name {
+  font-weight: 700; font-size: 1rem; color: var(--text);
+}
+.liveready-exchange-rec {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; background: var(--primary);
+  color: #fff; border-radius: 4px; padding: 2px 6px;
+}
+.liveready-exchange-tagline {
+  font-size: 0.82rem; color: var(--muted); line-height: 1.4;
+}
+.liveready-exchange-cta {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  background: var(--primary); color: #fff; font-size: 0.82rem; font-weight: 700;
+  border-radius: 8px; padding: 8px 14px; text-decoration: none;
+  transition: opacity 0.15s;
+}
+.liveready-exchange-cta:hover { opacity: 0.85; }
+.liveready-exchange-cta--secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.liveready-exchange-cta--secondary:hover { border-color: var(--primary); color: var(--primary); }
+.liveready-affiliate-disclaimer {
+  font-size: 0.72rem; color: var(--muted); opacity: 0.7;
+  margin: 0; line-height: 1.4;
+}
+.liveready-affiliate-teaser {
+  font-size: 0.82rem; color: var(--muted); font-style: italic;
+  margin-top: 4px; line-height: 1.45;
+}
+@media (max-width: 480px) {
+  .liveready-exchange-card { flex-wrap: wrap; }
+  .liveready-exchange-cta { width: 100%; justify-content: center; }
+}
+
 /* Hero entry card on /leren */
 .liveready-entry-card {
   background: linear-gradient(135deg,

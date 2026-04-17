@@ -73,6 +73,11 @@ export async function GET() {
   const loginStreak = userRow?.login_streak ?? 0;
   const username = userRow?.username ?? "Trader";
 
+  // Landcode voor affiliate aanbeveling
+  const settingsRow = db.prepare("SELECT country_code FROM settings WHERE user_id = ?").get(userId) as
+    { country_code: string } | undefined;
+  const countryCode = settingsRow?.country_code ?? "";
+
   // Vereisten (drempelwaarden)
   const QUIZ_LEVEL_MIN    = 5;
   const QUIZ_SCORE_MIN    = 70;     // gemiddeld %
@@ -142,5 +147,6 @@ Regels:
     },
     allDone,
     certificate,
+    countryCode,
   });
 }

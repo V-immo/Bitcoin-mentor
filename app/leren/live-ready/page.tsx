@@ -15,6 +15,34 @@ type LiveReadyData = {
   streak: { days: number; daysMin: number; done: boolean };
   allDone: boolean;
   certificate: string | null;
+  countryCode: string;
+};
+
+const EU_COUNTRIES = new Set([
+  "NL","BE","AT","CH","DE","FR","ES","IT","PT","DK","SE","NO","FI","IE","LU","PL","CZ","HU","RO","SK","SI","HR","EE","LV","LT","BG","CY","GR","MT",
+]);
+
+const EXCHANGES = {
+  bitvavo: {
+    name: "Bitvavo",
+    flag: "🇳🇱",
+    taglineNL: "Laagste fees in de Benelux · iDEAL-storting · Nederlandse support",
+    taglineEN: "Lowest fees in Benelux · Direct bank transfer · EU regulated",
+    url: "https://bitvavo.com/?invite=BITCOINMENTOR",
+    ctaNL: "→ Open account op Bitvavo",
+    ctaEN: "→ Open account on Bitvavo",
+    recommended: true,
+  },
+  bybit: {
+    name: "Bybit",
+    flag: "🌍",
+    taglineNL: "Wereldwijde exchange · Futures & spot · 0,1% fee",
+    taglineEN: "Global exchange · Futures & spot · 0.1% fee",
+    url: "https://www.bybit.com/invite?ref=BITCOINMENTOR",
+    ctaNL: "→ Open account op Bybit",
+    ctaEN: "→ Open account on Bybit",
+    recommended: false,
+  },
 };
 
 function Requirement({
@@ -41,6 +69,79 @@ function Requirement({
         <div className={`liveready-req-bar-fill${done ? " done" : ""}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="liveready-req-label">{label}</div>
+    </div>
+  );
+}
+
+function AffiliateSection({ isNL, countryCode }: { isNL: boolean; countryCode: string }) {
+  const isEU = EU_COUNTRIES.has(countryCode.toUpperCase());
+  const primary   = isEU ? EXCHANGES.bitvavo : EXCHANGES.bybit;
+  const secondary = isEU ? EXCHANGES.bybit   : EXCHANGES.bitvavo;
+
+  return (
+    <div className="liveready-affiliate-section no-print">
+      <div className="liveready-affiliate-header">
+        <div className="liveready-affiliate-avatar">M</div>
+        <div>
+          <div className="liveready-affiliate-label">
+            {isNL ? "Marcus's aanbeveling" : "Marcus's recommendation"}
+          </div>
+          <p className="liveready-affiliate-text">
+            {isNL
+              ? `Je bent klaar voor live trading. ${isEU ? "Voor traders in de EU gebruik ik Bitvavo — gereguleerd, laagste fees, directe bankstorting." : "Voor internationale traders is Bybit mijn keuze — laag fees, uitgebreide tools, betrouwbaar."}`
+              : `You're ready for live trading. ${isEU ? "For EU traders I use Bitvavo — regulated, lowest fees, instant bank deposit." : "For international traders Bybit is my choice — low fees, advanced tools, reliable."}`}
+          </p>
+        </div>
+      </div>
+
+      {/* Primaire aanbeveling */}
+      <a
+        href={primary.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="liveready-exchange-card liveready-exchange-card--primary"
+      >
+        <div className="liveready-exchange-flag">{primary.flag}</div>
+        <div className="liveready-exchange-info">
+          <div className="liveready-exchange-name">
+            {primary.name}
+            <span className="liveready-exchange-rec">
+              {isNL ? "Aanbevolen" : "Recommended"}
+            </span>
+          </div>
+          <div className="liveready-exchange-tagline">
+            {isNL ? primary.taglineNL : primary.taglineEN}
+          </div>
+        </div>
+        <div className="liveready-exchange-cta">
+          {isNL ? primary.ctaNL : primary.ctaEN}
+        </div>
+      </a>
+
+      {/* Secundaire optie */}
+      <a
+        href={secondary.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="liveready-exchange-card"
+      >
+        <div className="liveready-exchange-flag">{secondary.flag}</div>
+        <div className="liveready-exchange-info">
+          <div className="liveready-exchange-name">{secondary.name}</div>
+          <div className="liveready-exchange-tagline">
+            {isNL ? secondary.taglineNL : secondary.taglineEN}
+          </div>
+        </div>
+        <div className="liveready-exchange-cta liveready-exchange-cta--secondary">
+          {isNL ? secondary.ctaNL : secondary.ctaEN}
+        </div>
+      </a>
+
+      <p className="liveready-affiliate-disclaimer">
+        {isNL
+          ? "Bitcoin Mentor ontvangt mogelijk een vergoeding via deze links. Jij betaalt nooit meer — soms zelfs minder via onze partner-deal."
+          : "Bitcoin Mentor may receive a referral fee via these links. You never pay more — sometimes even less through our partner deal."}
+      </p>
     </div>
   );
 }
@@ -194,6 +295,10 @@ export default function LiveReadyPage() {
       {/* Nog niet klaar */}
       {!data.allDone && (
         <div className="card liveready-next no-print">
+          <div className="liveready-affiliate-teaser">
+            🏦 {isNL
+              ? "Als je Live Ready bent, geeft Marcus je persoonlijk advies over de beste exchange voor jouw regio."
+              : "When you're Live Ready, Marcus will personally recommend the best exchange for your region."}</div>
           <p className="liveready-next-text">
             {isNL ? "Volgende stappen:" : "Next steps:"}
           </p>
@@ -268,26 +373,8 @@ export default function LiveReadyPage() {
             </button>
           </div>
 
-          {/* Affiliate — Marcus's persoonlijk advies */}
-          <div className="card liveready-affiliate no-print">
-            <div className="liveready-affiliate-avatar">M</div>
-            <div>
-              <p className="liveready-affiliate-text">
-                {isNL
-                  ? "Je bent klaar. Voor Nederlandse en Belgische traders gebruik ik Bitvavo — laagste fees in de Benelux, iDEAL-storting, Nederlandse support."
-                  : "You're ready. For European traders I use Bitvavo — lowest fees in the Benelux, instant bank transfer, native language support."}
-              </p>
-              <a
-                href="https://bitvavo.com/?invite=BITCOINMENTOR"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="liveready-btn-primary"
-                style={{ display: "inline-block", marginTop: 10 }}
-              >
-                {isNL ? "→ Start op Bitvavo" : "→ Start on Bitvavo"}
-              </a>
-            </div>
-          </div>
+          {/* Affiliate — Marcus's persoonlijk exchange advies */}
+          <AffiliateSection isNL={isNL} countryCode={data.countryCode} />
         </>
       )}
     </main>
