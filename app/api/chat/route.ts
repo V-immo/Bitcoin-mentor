@@ -15,8 +15,9 @@ import {
 import { webSearch, needsWebSearch, buildSearchQuery } from "@/lib/web-search";
 import { getCachedOnChainData, formatOnChainForMarcus } from "@/lib/onchain";
 import { getNewsForAsset, formatNewsForMarcus } from "@/lib/news";
+import { isUserPro } from "@/lib/pro";
 
-// Rate limiting: max 100 chat calls per uur per user
+// Rate limiting: max 100 chat calls per uur per user (veiligheidsklep)
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
 const CHAT_MAX = 100;
 const CHAT_WINDOW = 60 * 60 * 1000; // 1 uur
@@ -31,6 +32,24 @@ function checkChatRate(key: string): boolean {
   if (entry.count >= CHAT_MAX) return false;
   entry.count++;
   return true;
+}
+
+// Dagelijkse limiet voor free users: max 5 berichten per dag
+const FREE_DAILY_LIMIT = 5;
+const freeDailyMap = new Map<string, { count: number; date: string }>();
+
+function checkFreeDaily(key: string): { allowed: boolean; used: number; limit: number } {
+  const today = new Date().toISOString().slice(0, 10);
+  const entry = freeDailyMap.get(key);
+  if (!entry || entry.date !== today) {
+    freeDailyMap.set(key, { count: 1, date: today });
+    return { allowed: true, used: 1, limit: FREE_DAILY_LIMIT };
+  }
+  if (entry.count >= FREE_DAILY_LIMIT) {
+    return { allowed: false, used: entry.count, limit: FREE_DAILY_LIMIT };
+  }
+  entry.count++;
+  return { allowed: true, used: entry.count, limit: FREE_DAILY_LIMIT };
 }
 
 function getClient() {
@@ -63,13 +82,30 @@ export async function POST(request: NextRequest) {
     getDb().prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
   }
 
-  // Rate limit: 20 berichten per uur per user (of per IP als niet ingelogd)
+  // Rate limit: max 100 berichten per uur (veiligheidsklep)
   const rateKey = userId ? `user:${userId}` : (request.headers.get("x-forwarded-for") ?? "anon");
   if (!checkChatRate(rateKey)) {
     return Response.json(
       { reply: "Je hebt het uurtarief bereikt (100 berichten/uur). Probeer het later opnieuw." },
       { status: 429 }
     );
+  }
+
+  // Dagelijkse limiet voor free users: max 5 berichten/dag
+  const proUser = userId ? isUserPro(userId) : false;
+  if (!proUser && userId) {
+    const daily = checkFreeDaily(`free:${userId}`);
+    if (!daily.allowed) {
+      return Response.json(
+        {
+          reply: `Je hebt het dagelijkse maximum van ${daily.limit} berichten bereikt. Upgrade naar Marcus Pro voor onbeperkte coaching.\n\n[Upgrade naar Pro →](/pro)`,
+          proGate: true,
+          used: daily.used,
+          limit: daily.limit,
+        },
+        { status: 429 }
+      );
+    }
   }
 
   const body = await request.json().catch(() => ({}));

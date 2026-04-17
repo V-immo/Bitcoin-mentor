@@ -4236,6 +4236,25 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .debrief-loss { color: var(--primary); font-weight: 700; }
 .debrief-saved { font-size: 13px; color: var(--green); font-weight: 600; }
 @keyframes debrief-fade    { from { opacity: 0; } to { opacity: 1; } }
+
+/* Debrief pro gate */
+.marcus-debrief-pro-gate {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; padding: 8px 0; text-align: center;
+}
+.marcus-debrief-pro-icon {
+  font-size: 28px; color: var(--primary);
+}
+.marcus-debrief-pro-text {
+  font-size: 13px; color: var(--text); line-height: 1.65; margin: 0;
+}
+.marcus-debrief-pro-btn {
+  display: inline-block; padding: 10px 22px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff; font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: opacity 0.15s;
+}
+.marcus-debrief-pro-btn:hover { opacity: 0.88; }
 @keyframes debrief-slide-up { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes debrief-pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 

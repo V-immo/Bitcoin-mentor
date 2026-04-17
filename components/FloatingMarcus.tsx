@@ -451,6 +451,19 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
         signal: abortRef.current.signal,
       });
 
+      // Pro-gate: 429 met JSON body
+      if (res.status === 429) {
+        const err = await res.json().catch(() => ({})) as { reply?: string; proGate?: boolean };
+        full = err.reply ?? "Je hebt het daglimiet bereikt. Upgrade naar Marcus Pro voor onbeperkte coaching.";
+        setMessages(m => {
+          const copy = [...m];
+          copy[copy.length - 1] = { role: "assistant", content: full };
+          return copy;
+        });
+        setLoading(false); setStreaming(false);
+        return;
+      }
+
       if (!res.ok || !res.body) throw new Error("fout");
 
       const reader = res.body.getReader();

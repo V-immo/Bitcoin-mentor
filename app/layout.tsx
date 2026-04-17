@@ -12,6 +12,7 @@ import SessionWrapper from "@/components/SessionWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { ProProvider } from "@/contexts/ProContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,14 +67,16 @@ export default function RootLayout({
           <ThemeProvider>
             <LanguageProvider>
               <CurrencyProvider>
-                <Nav />
-                <div className="app-content">{children}</div>
-                <FloatingMarcus />
-                <AppWalkthrough />
-                <BadgeUnlock />
-                <MarcusDebrief />
-                <LuckyXPToast />
-                <Toaster />
+                <ProProvider>
+                  <Nav />
+                  <div className="app-content">{children}</div>
+                  <FloatingMarcus />
+                  <AppWalkthrough />
+                  <BadgeUnlock />
+                  <MarcusDebrief />
+                  <LuckyXPToast />
+                  <Toaster />
+                </ProProvider>
               </CurrencyProvider>
             </LanguageProvider>
           </ThemeProvider>

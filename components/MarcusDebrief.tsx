@@ -2,10 +2,11 @@
 
 // MarcusDebrief — toont na elke paper trade een persoonlijke debrief van Marcus.
 // Luistert naar "marcus-trade-debrief" events van TerminalPaperPanel.
-// Dit bestaat nergens anders: TradingView heeft paper trading maar geeft nul feedback.
-// Marcus analyseert entry, stop-loss, R/R en geeft één concreet verbeterpunt.
+// Pro-only feature — free users zien een upgrade-prompt.
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePro } from "@/contexts/ProContext";
 import type { TradeCloseDetail } from "@/components/TerminalPaperPanel";
 
 type State =
@@ -14,12 +15,21 @@ type State =
   | { phase: "done"; detail: TradeCloseDetail; debrief: string };
 
 export default function MarcusDebrief() {
+  const { isPro } = usePro();
   const [state, setState] = useState<State>({ phase: "idle" });
   const [savedToJournal, setSavedToJournal] = useState(false);
 
   useEffect(() => {
     async function onTradeClose(e: Event) {
       const detail = (e as CustomEvent<TradeCloseDetail>).detail;
+
+      // Free users: toon upgrade-prompt ipv echte debrief
+      if (!isPro) {
+        setState({ phase: "done", detail, debrief: "__pro_gate__" });
+        setSavedToJournal(false);
+        return;
+      }
+
       setState({ phase: "loading", detail });
       setSavedToJournal(false);
 
@@ -118,13 +128,21 @@ export default function MarcusDebrief() {
               <span className="marcus-debrief-dots" />
               Marcus analyseert je trade…
             </div>
+          ) : state.debrief === "__pro_gate__" ? (
+            <div className="marcus-debrief-pro-gate">
+              <div className="marcus-debrief-pro-icon">✦</div>
+              <p className="marcus-debrief-pro-text">
+                Marcus analyseert elke trade die je sluit — entry, stop-loss, R/R en één concreet verbeterpunt. Dit is een <strong>Marcus Pro</strong> feature.
+              </p>
+              <Link href="/pro" className="marcus-debrief-pro-btn">Upgrade naar Pro →</Link>
+            </div>
           ) : (
             <p className="marcus-debrief-text">{state.debrief}</p>
           )}
         </div>
 
         {/* Footer */}
-        {state.phase === "done" && (
+        {state.phase === "done" && state.debrief !== "__pro_gate__" && (
           <div className="marcus-debrief-footer">
             {savedToJournal ? (
               <span className="debrief-saved">✓ Opgeslagen in journal</span>
