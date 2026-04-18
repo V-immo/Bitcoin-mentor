@@ -1,35 +1,65 @@
 @import "tailwindcss";
 
 :root {
+  /* ── Kleuren ── */
   --bg: #130610;
   --surface: #1f0d17;
   --surface-1: #261020;
   --surface-2: #2c1221;
-  --text: #fce8f0;
-  --text-secondary: #bf7a99;
-  --text-muted: #8a5068;
+  --text: #f0d8e8;
+  --text-secondary: #b87095;
+  --text-muted: #7a4a62;
   --green: #22c55e;
   --orange: #f59e0b;
   --red: #ef4444;
-  --border: rgba(233, 30, 99, 0.18);
-  --border-hover: rgba(233, 30, 99, 0.5);
-  --border-subtle: rgba(255, 255, 255, 0.04);
   --primary: #e91e63;
   --primary-hover: #c2185b;
   --deep-rose: #ad1457;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --radius-lg: 20px;
+
+  /* ── Borders — één systeem ── */
+  --border: rgba(233, 30, 99, 0.16);
+  --border-hover: rgba(233, 30, 99, 0.42);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-strong: rgba(233, 30, 99, 0.30);
+  --glass-border: rgba(255, 255, 255, 0.05);
+
+  /* ── Shadows — één systeem ── */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.30);
+  --shadow-md:  0 3px 12px rgba(0,0,0,0.32);
+  --shadow-lg:  0 6px 28px rgba(0,0,0,0.38);
+  --shadow-glow: 0 0 0 1px rgba(233,30,99,0.10), 0 4px 20px rgba(0,0,0,0.35);
+  --glow-primary: 0 0 32px rgba(233, 30, 99, 0.14);
+  --glow-primary-strong: 0 0 56px rgba(233, 30, 99, 0.24);
+
+  /* ── Radius — één systeem ── */
+  --radius-xs:  6px;
+  --radius-sm:  9px;
+  --radius:     14px;
+  --radius-lg:  20px;
   --radius-pill: 999px;
+
+  /* ── Spacing ── */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-2xl: 48px;
-  --glow-primary: 0 0 32px rgba(233, 30, 99, 0.14);
-  --glow-primary-strong: 0 0 56px rgba(233, 30, 99, 0.24);
-  --glass-border: rgba(255, 255, 255, 0.06);
+
+  /* ── Typografie — één systeem ── */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 14px;
+  --text-md:   16px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+
+  /* ── Accent backgrounds ── */
+  --primary-bg:       rgba(233,30,99,0.10);
+  --primary-bg-hover: rgba(233,30,99,0.18);
+  --surface-hover:    rgba(255,255,255,0.03);
 }
 
 [data-theme="light"] {
@@ -40,16 +70,24 @@
   --text: #0d1117;
   --text-secondary: #4a5568;
   --text-muted: #8a95a3;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(233, 30, 99, 0.30);
+  --border: rgba(0, 0, 0, 0.09);
+  --border-hover: rgba(216, 27, 96, 0.35);
   --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-strong: rgba(0, 0, 0, 0.16);
   --glass-border: rgba(0, 0, 0, 0.06);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:  0 3px 12px rgba(0,0,0,0.10);
+  --shadow-lg:  0 6px 28px rgba(0,0,0,0.13);
+  --shadow-glow: 0 0 0 1px rgba(216,27,96,0.08), 0 4px 20px rgba(0,0,0,0.10);
   --glow-primary: 0 4px 20px rgba(233, 30, 99, 0.10);
   --primary: #d81b60;
   --primary-hover: #c2185b;
   --green: #16a34a;
   --red: #dc2626;
   --orange: #d97706;
+  --primary-bg:       rgba(216,27,96,0.07);
+  --primary-bg-hover: rgba(216,27,96,0.13);
+  --surface-hover:    rgba(0,0,0,0.02);
 }
 
 
@@ -87,8 +125,8 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
 }
 .card:hover {
   transform: translateY(-2px);
@@ -11595,134 +11633,184 @@ html {
   .lp2-hero-h1 { font-size: 26px; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   UNIFIED DESIGN SYSTEM
-   Één palet, één taal — overschrijft alle losse stijlen
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   UNIFIED DESIGN SYSTEM — één palet, één taal
+   Alles hieronder overschrijft losse stijlen met de design tokens
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Cards: één stijl ── */
+/* ── CARDS: één stijl ── */
 .card {
   background: var(--surface) !important;
-  border: 1px solid rgba(233,30,99,0.14) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.28) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-md) !important;
   transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s !important;
 }
 .card:hover {
-  border-color: rgba(233,30,99,0.32) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.36), 0 0 0 1px rgba(233,30,99,0.10) !important;
+  border-color: var(--border-hover) !important;
+  box-shadow: var(--shadow-glow) !important;
   transform: translateY(-1px) !important;
 }
 
-/* ── App-nav & lp-nav: zelfde hoogte, zelfde kleur ── */
+/* ── NAV: app-nav & lp-nav identiek ── */
 .app-nav, .lp-nav {
-  background: rgba(19,6,16,0.82) !important;
+  background: rgba(19,6,16,0.85) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+[data-theme="light"] .app-nav,
+[data-theme="light"] .lp-nav {
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom-color: var(--border) !important;
 }
 
-/* ── Alle page-heroes: np-hero & lp2-hero unified ── */
+/* ── PAGE HEROES: np-hero, lp2-hero, dashboard-header ── */
 .np-hero, .lp2-hero {
   background: linear-gradient(160deg,
-    rgba(233,30,99,0.07) 0%,
+    var(--primary-bg) 0%,
     var(--surface) 40%,
     var(--bg) 100%
   ) !important;
-  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+  border-bottom: 1px solid var(--border) !important;
 }
-
-/* ── Dashboard-header: zelfde taal als page-heroes ── */
 .dashboard-header {
   padding: 28px 0 22px !important;
-  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+  border-bottom: 1px solid var(--border) !important;
   margin-bottom: 24px !important;
 }
-.dashboard-title {
-  background: linear-gradient(110deg, var(--text) 55%, var(--primary)) !important;
+[data-theme="light"] .np-hero,
+[data-theme="light"] .lp2-hero {
+  background: linear-gradient(160deg,
+    var(--primary-bg) 0%, #ffffff 55%, var(--bg) 100%
+  ) !important;
+}
+
+/* ── PAGE TITELS: allemaal gradient tekst ── */
+.dashboard-title,
+.np-hero-h1,
+.lp2-hero-h1 {
+  background: linear-gradient(110deg, var(--text) 50%, var(--primary)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   font-weight: 800 !important;
-  letter-spacing: -0.5px !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.15 !important;
 }
 
-/* ── Labels (uppercase accent boven titels): één stijl ── */
-.np-hero-label, .lp2-hero-label,
-.lp-hero-label, .lp-card-bubble-text {
-  font-size: 11px !important;
+/* ── ACCENT LABELS boven titels ── */
+.np-hero-label, .lp2-hero-label, .lp-hero-label {
+  display: inline-block !important;
+  font-size: var(--text-xs) !important;
   font-weight: 700 !important;
-  letter-spacing: 0.12em !important;
+  letter-spacing: 0.10em !important;
   text-transform: uppercase !important;
   color: var(--primary) !important;
+  background: var(--primary-bg) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 3px 10px !important;
+  margin-bottom: 12px !important;
 }
 
-/* ── Accent-titels (gradient tekst): één stijl ── */
-.np-hero-accent, .lp2-hero-accent, .lp-hero-h1-accent {
-  background: linear-gradient(90deg, var(--primary) 0%, #ff6b9d 60%, var(--primary) 100%) !important;
-  background-size: 200% !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-}
-
-/* ── Sub-tekst onder titels: één kleur ── */
-.np-hero-sub, .lp2-hero-sub, .lp-hero-sub,
-.dashboard-date {
+/* ── SUB-TEKST ── */
+.np-hero-sub, .lp2-hero-sub, .lp-hero-sub, .dashboard-date {
   color: var(--text-muted) !important;
-  font-size: 14px !important;
+  font-size: var(--text-sm) !important;
+  line-height: 1.6 !important;
 }
 
-/* ── Pill filters & tabs: één stijl ── */
+/* ── SECTION HEADERS binnen pagina's ── */
+.np-section-title, .lp2-section-title,
+.lp-section-h {
+  font-size: var(--text-xl) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--text) !important;
+  margin-bottom: 20px !important;
+}
+
+/* ── TABS & PILLS ── */
 .np-pill, .lp2-tab {
   font-family: inherit !important;
+  font-size: var(--text-sm) !important;
   font-weight: 600 !important;
-}
-.np-pill.active, .lp2-tab.active {
-  color: var(--primary) !important;
+  border-radius: var(--radius-pill) !important;
+  transition: all 0.15s !important;
 }
 .np-pill.active {
-  background: rgba(233,30,99,0.15) !important;
-  border-color: rgba(233,30,99,0.40) !important;
+  background: var(--primary-bg-hover) !important;
+  border-color: var(--border-strong) !important;
   color: var(--primary) !important;
 }
+.lp2-tab.active { color: var(--primary) !important; }
 
-/* ── Buttons primary: één kleur ── */
-.lp-btn-primary, .lp-nav-cta {
-  background: var(--primary) !important;
-  color: #fff !important;
-  font-family: inherit !important;
-  font-weight: 700 !important;
-}
-.lp-btn-primary:hover, .lp-nav-cta:hover {
-  background: var(--primary-hover) !important;
-  opacity: 1 !important;
-}
-
-/* ── Borders: overal dezelfde roze-tint ── */
+/* ── BORDERS op containers ── */
 .np-feed .np-item,
 .lp2-tabs,
 .lp2-hero-progress,
 .lp2-rec-card,
 .lp-feat-card,
 .lp-proof-card,
-.lp-stat {
-  border-color: rgba(233,30,99,0.14) !important;
+.lp-stat,
+.lesson-card,
+.lesson-done-cta {
+  border-color: var(--border) !important;
 }
 
-/* ── Light theme unified ── */
+/* ── KNOPPEN PRIMARY ── */
+.lp-btn-primary, .lp-nav-cta,
+.lesson-done-btn, .np-btn-primary {
+  background: var(--primary) !important;
+  color: #fff !important;
+  font-family: inherit !important;
+  font-weight: 700 !important;
+  border-radius: var(--radius-sm) !important;
+}
+.lp-btn-primary:hover, .lp-nav-cta:hover,
+.lesson-done-btn:hover {
+  background: var(--primary-hover) !important;
+  opacity: 1 !important;
+}
+
+/* ── KNOPPEN GHOST ── */
+.lp-btn-ghost, .lp-nav-login {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+}
+.lp-btn-ghost:hover, .lp-nav-login:hover {
+  color: var(--text) !important;
+}
+
+/* ── FEATURE CARDS (landing) ── */
+.lp-feat-card {
+  background: var(--surface) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.lp-feat-card:hover { box-shadow: var(--shadow-glow) !important; }
+
+/* ── PROOF CARDS (testimonials) ── */
+.lp-proof-card {
+  background: var(--surface) !important;
+  border-radius: var(--radius) !important;
+}
+
+/* ── STAT ITEMS ── */
+.lp-stat { background: var(--surface) !important; }
+
+/* ── LIGHT THEME specifieke overrides ── */
 [data-theme="light"] .card {
-  border-color: rgba(0,0,0,0.08) !important;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
-}
-[data-theme="light"] .app-nav, [data-theme="light"] .lp-nav {
-  background: rgba(255,255,255,0.90) !important;
-  border-bottom-color: rgba(0,0,0,0.08) !important;
-}
-[data-theme="light"] .np-hero, [data-theme="light"] .lp2-hero {
-  background: linear-gradient(160deg, rgba(233,30,99,0.04) 0%, #fff 50%, #f8f5f8 100%) !important;
-  border-bottom-color: rgba(0,0,0,0.08) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 [data-theme="light"] .dashboard-header {
-  border-bottom-color: rgba(0,0,0,0.08) !important;
+  border-bottom-color: var(--border) !important;
+}
+[data-theme="light"] .lp-feat-card,
+[data-theme="light"] .lp-proof-card,
+[data-theme="light"] .lp-stat {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
 }
