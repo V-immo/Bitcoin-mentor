@@ -55,7 +55,7 @@ export default function LoginPage() {
         setError(t("login_error"));
       }
     } else {
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     }
   }
