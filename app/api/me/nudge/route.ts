@@ -308,11 +308,27 @@ export async function GET(request: Request) {
       : "Gebruiker heeft nog geen missies gedaan vandaag.";
     const lessonHint = recommendedLesson ? `Aanbevolen les: ${recommendedLesson}.` : "";
 
+    // Vriend-streak context — wie ligt voor?
+    let friendHint = "";
+    try {
+      const friendRows = db.prepare(`
+        SELECT u.login_streak, u.username
+        FROM friendships f
+        JOIN users u ON (CASE WHEN f.user_a = ? THEN f.user_b ELSE f.user_a END = u.id)
+        WHERE (f.user_a = ? OR f.user_b = ?) AND u.login_streak > ?
+        ORDER BY u.login_streak DESC LIMIT 1
+      `).all(userId, userId, userId, newStreak) as { login_streak: number; username: string }[];
+      if (friendRows.length > 0) {
+        const ahead = friendRows[0];
+        friendHint = `${ahead.username} heeft een streak van ${ahead.login_streak} dagen — ${ahead.login_streak - newStreak} meer dan jij.`;
+      }
+    } catch { /* geen vriendendata */ }
+
     try {
       const systemPrompt = isSlump
         ? `Je bent Marcus, directe tradingcoach. De trader scoort gemiddeld ${recentQuizAvg}% op de quizzen en heeft een streak van ${newStreak} dagen — ze zitten in een dip. Schrijf een eerlijke ochtendgroet in MAX 2 zinnen: erken dat het moeilijk gaat, geef één concrete actie voor vandaag. Geen valse hoop, geen aanmoedigingen — gewoon direct.`
         : `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij".
-Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${lessonHint}`;
+Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionHint} ${lessonHint}${friendHint ? ` Vrienden: ${friendHint}` : ""}`;
 
       const msg = await client.messages.create({
         model: "claude-haiku-4-5",

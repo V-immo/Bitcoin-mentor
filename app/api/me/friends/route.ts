@@ -25,12 +25,25 @@ export async function GET() {
     ORDER BY u.login_streak DESC
   `).all(userId, userId, userId) as FriendRow[];
 
+  // Eigen streak meesturen voor vergelijking
+  const me = db.prepare("SELECT login_streak, username FROM users WHERE id = ?")
+    .get(userId) as { login_streak: number; username: string } | undefined;
+  const myStreak = me?.login_streak ?? 0;
+  const myUsername = me?.username ?? "Jij";
+
+  // Welke vrienden liggen voor (hogere streak dan jij)?
+  const friendsAhead = rows.filter(r => (r.login_streak ?? 0) > myStreak);
+
   return Response.json({
+    myStreak,
+    myUsername,
+    friendsAhead: friendsAhead.length,
     friends: rows.map(r => ({
       id: r.id,
       username: r.username,
       streak: r.login_streak ?? 0,
       activeToday: r.last_streak_date === today,
+      isAhead: (r.login_streak ?? 0) > myStreak,
     })),
   });
 }
