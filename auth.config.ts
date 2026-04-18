@@ -34,4 +34,16 @@ export const authConfig: NextAuthConfig = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 dagen
   },
+  cookies: {
+    sessionToken: {
+      name: "__Secure-authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: true,
+        maxAge: 30 * 24 * 60 * 60, // 30 dagen — persistent cookie
+      },
+    },
+  },
 };
