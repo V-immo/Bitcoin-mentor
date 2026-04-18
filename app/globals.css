@@ -11103,7 +11103,13 @@ html {
 .lp-stat-lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
 /* Features */
-.lp-features { padding: 80px 60px; background: var(--bg); }
+.lp-features {
+  padding: 80px 60px;
+  background:
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(233,30,99,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 0% 50%,   rgba(110,15,140,0.08) 0%, transparent 60%),
+    var(--surface-1);
+}
 .lp-section-h {
   font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
   color: var(--text); text-align: center; margin: 0 0 48px;
@@ -11115,9 +11121,10 @@ html {
   gap: 16px;
 }
 .lp-feat-card {
-  background: var(--surface); border: 1px solid var(--border);
+  background: var(--surface-2); border: 1px solid var(--border);
   border-radius: 18px; padding: 28px 24px;
   transition: all 0.2s; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 .lp-feat-card::after {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
