@@ -5022,7 +5022,10 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 70% 60% at 80% 10%, rgba(233,30,99,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(110,15,140,0.18) 0%, transparent 55%),
+    linear-gradient(160deg, #220e1e 0%, #130610 50%, #1c0a18 100%);
   padding: 20px;
 }
 .login-card {
@@ -10942,8 +10945,11 @@ html {
   display: flex; align-items: center; gap: 60px;
   padding: 100px 60px 80px;
   min-height: 88vh;
-  background: radial-gradient(ellipse 90% 70% at 80% 20%, rgba(180,30,100,0.20) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 50% at 10% 90%, rgba(100,20,140,0.15) 0%, transparent 55%);
+  background:
+    radial-gradient(ellipse 80% 60% at 75% 10%, rgba(233,30,99,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 5%  85%, rgba(120,20,160,0.20) 0%, transparent 55%),
+    linear-gradient(175deg, #2a1024 0%, #1f0d17 50%, #261020 100%);
+  border-bottom: 1px solid var(--border);
 }
 .lp-hero-grid {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -11082,7 +11088,10 @@ html {
 /* Stats */
 .lp-stats {
   display: flex; justify-content: center; gap: 0;
-  padding: 0; border-bottom: 1px solid var(--border);
+  padding: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 .lp-stat {
   flex: 1; max-width: 240px;
@@ -11094,7 +11103,7 @@ html {
 .lp-stat-lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
 /* Features */
-.lp-features { padding: 80px 60px; }
+.lp-features { padding: 80px 60px; background: var(--bg); }
 .lp-section-h {
   font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
   color: var(--text); text-align: center; margin: 0 0 48px;
@@ -11156,7 +11165,7 @@ html {
 .lp-proof-ctx { font-size: 12px; color: var(--text-muted); }
 
 /* Final CTA */
-.lp-cta-section { padding: 80px 60px; }
+.lp-cta-section { padding: 80px 60px; background: var(--surface); border-top: 1px solid var(--border); }
 .lp-cta-box {
   position: relative; overflow: hidden;
   background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
