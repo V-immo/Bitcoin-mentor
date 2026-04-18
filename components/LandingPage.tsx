@@ -127,9 +127,13 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         <div className="lp-nav-right">
           <button className={`lp-lang${lang === "nl" ? " active" : ""}`} onClick={() => switchLang("nl")}>NL</button>
           <button className={`lp-lang${lang === "en" ? " active" : ""}`} onClick={() => switchLang("en")}>EN</button>
-          <Link href="/auth/login" className="lp-nav-login">{c.nav_login}</Link>
-          {!loggedIn && (
-            <Link href="/auth/register" className="lp-nav-cta">{c.nav_cta}</Link>
+          {loggedIn ? (
+            <Link href="/dashboard" className="lp-nav-cta">Dashboard →</Link>
+          ) : (
+            <>
+              <Link href="/auth/login" className="lp-nav-login">{c.nav_login}</Link>
+              <Link href="/auth/register" className="lp-nav-cta">{c.nav_cta}</Link>
+            </>
           )}
         </div>
       </nav>
