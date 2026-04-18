@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #1c0a1a;
-  --surface: #251120;
-  --surface-1: #2e1529;
-  --surface-2: #341830;
+  --bg: #2e0e28;
+  --surface: #3b1433;
+  --surface-1: #451838;
+  --surface-2: #4e1c40;
   --text: #fce8f0;
   --text-secondary: #bf7a99;
   --text-muted: #8a5068;
@@ -10806,16 +10806,18 @@ html {
 
 .lp-root {
   display: flex; flex-direction: column; min-height: 100vh;
-  background: radial-gradient(ellipse 120% 60% at 70% 0%, rgba(140,20,80,0.22) 0%, transparent 55%),
-              radial-gradient(ellipse 80% 50% at 0% 80%, rgba(90,10,100,0.18) 0%, transparent 60%),
-              linear-gradient(170deg, #200c1e 0%, #180818 40%, #1c0a1a 100%);
+  background:
+    radial-gradient(ellipse 100% 55% at 75% 0%,   rgba(200,30,100,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 70%  45% at 5%  85%,  rgba(120,20,150,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  40% at 50% 50%,  rgba(160,20,80,0.12)  0%, transparent 60%),
+    linear-gradient(160deg, #3a1232 0%, #2e0e28 45%, #380f30 100%);
 }
 
 /* Nav */
 .lp-nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 40px; height: 60px;
-  background: rgba(28,10,26,0.85);
+  background: rgba(46,14,40,0.88);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(233,30,99,0.12);
   position: sticky; top: 0; z-index: 100;
