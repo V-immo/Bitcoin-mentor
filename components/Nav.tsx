@@ -78,7 +78,7 @@ export default function Nav() {
   }, [dropOpen]);
 
   if (pathname.startsWith("/auth/")) return null;
-  if (pathname === "/" && !session) return null;
+  if (pathname === "/") return null;
 
   const rl = (key: string) => key.startsWith("nav_") ? t(key as Parameters<typeof t>[0]) : key;
 

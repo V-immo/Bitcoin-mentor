@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #130610;
-  --surface: #1f0d17;
-  --surface-1: #261020;
-  --surface-2: #2c1221;
+  --bg: #1c0a1a;
+  --surface: #251120;
+  --surface-1: #2e1529;
+  --surface-2: #341830;
   --text: #fce8f0;
   --text-secondary: #bf7a99;
   --text-muted: #8a5068;
@@ -10804,13 +10804,18 @@ html {
    NIEUWE LANDING PAGE — lp-* klassen
    ══════════════════════════════════════════════ */
 
-.lp-root { display: flex; flex-direction: column; min-height: 100vh; background: var(--bg); }
+.lp-root {
+  display: flex; flex-direction: column; min-height: 100vh;
+  background: radial-gradient(ellipse 120% 60% at 70% 0%, rgba(140,20,80,0.22) 0%, transparent 55%),
+              radial-gradient(ellipse 80% 50% at 0% 80%, rgba(90,10,100,0.18) 0%, transparent 60%),
+              linear-gradient(170deg, #200c1e 0%, #180818 40%, #1c0a1a 100%);
+}
 
 /* Nav */
 .lp-nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 40px; height: 60px;
-  background: rgba(19,6,16,0.80);
+  background: rgba(28,10,26,0.85);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(233,30,99,0.12);
   position: sticky; top: 0; z-index: 100;
@@ -10843,6 +10848,8 @@ html {
   display: flex; align-items: center; gap: 60px;
   padding: 100px 60px 80px;
   min-height: 88vh;
+  background: radial-gradient(ellipse 90% 70% at 80% 20%, rgba(180,30,100,0.20) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 50% at 10% 90%, rgba(100,20,140,0.15) 0%, transparent 55%);
 }
 .lp-hero-grid {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -10867,10 +10874,10 @@ html {
   letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px;
 }
 .lp-hero-h1 {
-  font-size: clamp(36px, 5.5vw, 64px); font-weight: 900;
+  font-size: clamp(36px, 5.5vw, 64px); font-weight: 800;
   line-height: 1.05; letter-spacing: -2px; margin: 0 0 24px;
 }
-.lp-hero-h1-plain { color: var(--text); }
+.lp-hero-h1-plain { color: rgba(255,255,255,0.88); }
 .lp-hero-h1-accent {
   background: linear-gradient(120deg, #e91e63, #ff6b9d 50%, #e91e63);
   background-size: 200%;
@@ -10989,7 +10996,7 @@ html {
   padding: 36px 20px; border-right: 1px solid var(--border);
 }
 .lp-stat:last-child { border-right: none; }
-.lp-stat-val { font-size: 36px; font-weight: 900; letter-spacing: -1px; color: var(--text); }
+.lp-stat-val { font-size: 36px; font-weight: 800; letter-spacing: -1px; color: rgba(255,255,255,0.9); }
 .lp-stat-lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
 /* Features */
@@ -11029,7 +11036,7 @@ html {
 }
 .lp-feat-icon--m {
   background: linear-gradient(135deg, #e91e63, #9c1048);
-  color: #fff; font-weight: 900; font-size: 20px; border: none;
+  color: #fff; font-weight: 800; font-size: 20px; border: none;
 }
 .lp-feat-title { font-size: 17px; font-weight: 700; color: var(--text); margin: 0 0 10px; }
 .lp-feat-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin: 0; }
@@ -11073,7 +11080,7 @@ html {
   font-family: Arial, sans-serif; font-weight: 900; pointer-events: none;
   user-select: none; line-height: 1;
 }
-.lp-cta-h { font-size: 40px; font-weight: 900; letter-spacing: -1px; color: var(--text); margin: 0 0 14px; position: relative; }
+.lp-cta-h { font-size: 40px; font-weight: 800; letter-spacing: -1px; color: rgba(255,255,255,0.9); margin: 0 0 14px; position: relative; }
 .lp-cta-sub { font-size: 16px; color: var(--text-secondary); margin: 0 0 36px; position: relative; }
 .lp-cta-btns { display: flex; align-items: center; justify-content: center; gap: 16px; position: relative; }
 
