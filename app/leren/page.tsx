@@ -10,7 +10,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_LEVEL = 500;
 
-// Vereenvoudigde les-directory (gedeeld met DailyMissions logica)
 const LESSON_DIR: { id: string; level: number; titleNL: string; titleEN: string; topics: string[] }[] = [
   { id: "l1-bitcoin",        level: 1, titleNL: "Wat is Bitcoin eigenlijk?",               titleEN: "What is Bitcoin really?",                  topics: ["bitcoin", "crypto", "basis"] },
   { id: "l1-prijs",          level: 1, titleNL: "Hoe werkt de prijs van Bitcoin?",          titleEN: "How does Bitcoin's price work?",            topics: ["prijs", "vraag", "aanbod"] },
@@ -46,6 +45,14 @@ function getRecommendedLesson(level: number, weakTopics: string[], readIds: stri
   return pick ? { id: pick.id, title: lang === "nl" ? pick.titleNL : pick.titleEN } : null;
 }
 
+const LEVEL_NAMES: Record<number, string> = {
+  1: "Beginner",
+  2: "Basis",
+  3: "Gevorderd",
+  4: "Pro",
+  5: "Expert",
+};
+
 export default function LerenPage() {
   const { t, lang } = useLanguage();
   const [tab, setTab] = useState("lessons");
@@ -60,7 +67,6 @@ export default function LerenPage() {
       setQuizLevel(qh.level || 1);
       setQuizXp(qh.xp || 0);
       setQuizStreak(qh.streak || 0);
-
       const readIds = Object.keys(localStorage)
         .filter(k => k.startsWith("btcmentor-read-"))
         .map(k => k.replace("btcmentor-read-", ""));
@@ -71,120 +77,141 @@ export default function LerenPage() {
   const currentXp = quizXp % XP_PER_LEVEL;
   const xpPct = Math.min(100, (currentXp / XP_PER_LEVEL) * 100);
   const nextLevel = Math.min(5, quizLevel + 1);
+  const levelName = LEVEL_NAMES[quizLevel] ?? `Level ${quizLevel}`;
 
   const TABS = [
-    { id: "lessons", label: t("leren_tab_lessons"), icon: "📖" },
-    { id: "quiz", label: t("leren_tab_quiz"), icon: "🎓" },
-    { id: "resources", label: t("leren_tab_resources"), icon: "📺" },
-    { id: "league", label: lang === "nl" ? "Liga" : "League", icon: "🏆" },
+    { id: "lessons",   label: t("leren_tab_lessons"),   icon: "📖" },
+    { id: "quiz",      label: t("leren_tab_quiz"),       icon: "🎓" },
+    { id: "resources", label: t("leren_tab_resources"),  icon: "📺" },
+    { id: "league",    label: lang === "nl" ? "Liga" : "League", icon: "🏆" },
   ];
 
   return (
-    <main className="container-page">
-      {/* Terug knop */}
-      <div style={{ marginBottom: 12 }}>
-        <Link href="/trade" className="page-back-btn">
-          {t("leren_back")}
+    <div className="lp2-root">
+
+      {/* ── Hero ── */}
+      <div className="lp2-hero">
+        <div className="lp2-hero-orb" aria-hidden="true" />
+        <div className="lp2-hero-inner">
+          <div className="lp2-hero-label">
+            {lang === "nl" ? "Marcus Curriculum" : "Marcus Curriculum"}
+          </div>
+          <h1 className="lp2-hero-h1">
+            {lang === "nl" ? "Leren" : "Learn"}
+            <span className="lp2-hero-accent"> & Groeien</span>
+          </h1>
+          <p className="lp2-hero-sub">
+            {lang === "nl"
+              ? "Van basis tot Smart Money Concepts. Op jouw tempo, met Marcus als coach."
+              : "From basics to Smart Money Concepts. At your pace, with Marcus as coach."}
+          </p>
+        </div>
+
+        {/* Level progress inlined in hero */}
+        <div className="lp2-hero-progress">
+          <div className="lp2-progress-labels">
+            <div className="lp2-progress-level">
+              <span className="lp2-level-pill">Level {quizLevel}</span>
+              <span className="lp2-level-name">{levelName}</span>
+              {quizStreak >= 2 && (
+                <span className="lp2-streak-badge">🔥 {quizStreak}</span>
+              )}
+            </div>
+            <span className="lp2-xp-count">{currentXp} <span className="lp2-xp-slash">/</span> {XP_PER_LEVEL} XP</span>
+          </div>
+          <div className="lp2-xp-track">
+            <div className="lp2-xp-fill" style={{ width: `${xpPct}%` }} />
+            <div className="lp2-xp-glow" style={{ left: `${xpPct}%` }} />
+          </div>
+          {quizLevel < 5 && (
+            <p className="lp2-xp-hint">
+              {lang === "nl"
+                ? `Nog ${XP_PER_LEVEL - currentXp} XP voor Level ${nextLevel}`
+                : `${XP_PER_LEVEL - currentXp} XP to Level ${nextLevel}`}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── Aanbevolen les + Live Ready in een rij ── */}
+      <div className="lp2-cards-row">
+        {recommendedLesson && tab === "lessons" && (
+          <div className="lp2-rec-card">
+            <div className="lp2-rec-glow" aria-hidden="true" />
+            <div className="lp2-rec-top">
+              <span className="lp2-rec-label">
+                {lang === "nl" ? "📚 Vandaag aanbevolen" : "📚 Recommended today"}
+              </span>
+            </div>
+            <div className="lp2-rec-title">{recommendedLesson.title}</div>
+            <p className="lp2-rec-sub">
+              {lang === "nl"
+                ? "Marcus selecteerde dit op basis van jouw quizresultaten."
+                : "Marcus selected this based on your quiz results."}
+            </p>
+          </div>
+        )}
+
+        <Link href="/leren/live-ready" className="lp2-liveready-card">
+          <div className="lp2-liveready-icon">🏆</div>
+          <div className="lp2-liveready-body">
+            <div className="lp2-liveready-title">
+              {lang === "nl" ? "Ben jij Live Ready?" : "Are you Live Ready?"}
+            </div>
+            <div className="lp2-liveready-sub">
+              {lang === "nl"
+                ? "Marcus beoordeelt jouw voortgang voor live trading."
+                : "Marcus reviews your progress for live trading."}
+            </div>
+          </div>
+          <div className="lp2-liveready-arrow">→</div>
         </Link>
       </div>
 
-      {/* Level voortgangskaart */}
-      <div className="card leren-progress-card">
-        <div className="leren-progress-top">
-          <div>
-            <span className="leren-level-badge">Level {quizLevel}</span>
-            {quizStreak >= 2 && <span className="leren-streak-badge">🔥 {quizStreak}</span>}
-          </div>
-          <span className="leren-xp-label">{currentXp} / {XP_PER_LEVEL} XP</span>
-        </div>
-        <div className="leren-xp-bar">
-          <div className="leren-xp-fill" style={{ width: `${xpPct}%` }} />
-        </div>
-        {quizLevel < 5 && (
-          <p className="leren-progress-hint">
-            {lang === "nl"
-              ? `Nog ${XP_PER_LEVEL - currentXp} XP voor Level ${nextLevel} — ~${Math.ceil((XP_PER_LEVEL - currentXp) / 140)} quiz${Math.ceil((XP_PER_LEVEL - currentXp) / 140) === 1 ? "" : "zes"}`
-              : `${XP_PER_LEVEL - currentXp} XP to Level ${nextLevel} — ~${Math.ceil((XP_PER_LEVEL - currentXp) / 140)} quiz${Math.ceil((XP_PER_LEVEL - currentXp) / 140) === 1 ? "" : "zes"} away`}
-          </p>
-        )}
-      </div>
-
-      {/* Aanbevolen les kaart */}
-      {recommendedLesson && tab === "lessons" && (
-        <div className="card leren-recommended-card">
-          <div className="leren-recommended-label">
-            {lang === "nl" ? "📚 Vandaag aanbevolen" : "📚 Recommended today"}
-          </div>
-          <div className="leren-recommended-title">{recommendedLesson.title}</div>
-          <p className="leren-recommended-sub">
-            {lang === "nl" ? "Marcus heeft deze les geselecteerd op basis van jouw quizresultaten." : "Marcus selected this lesson based on your quiz results."}
-          </p>
-        </div>
-      )}
-
-      {/* Live Ready entry */}
-      <Link href="/leren/live-ready" className="liveready-entry-card">
-        <span className="liveready-entry-card-icon">🏆</span>
-        <div className="liveready-entry-card-body">
-          <div className="liveready-entry-card-title">
-            {lang === "nl" ? "Ben jij Live Ready?" : "Are you Live Ready?"}
-          </div>
-          <div className="liveready-entry-card-sub">
-            {lang === "nl"
-              ? "Controleer of je klaar bent voor live trading — Marcus beoordeelt jouw voortgang."
-              : "Check if you're ready for live trading — Marcus reviews your progress."}
-          </div>
-        </div>
-        <span className="liveready-entry-card-arrow">→</span>
-      </Link>
-
-      <div className="leren-tabs">
+      {/* ── Tabs ── */}
+      <div className="lp2-tabs">
         {TABS.map((tabItem) => (
           <button
             key={tabItem.id}
-            className={`leren-tab${tab === tabItem.id ? " active" : ""}`}
+            className={`lp2-tab${tab === tabItem.id ? " active" : ""}`}
             onClick={() => setTab(tabItem.id)}
           >
-            <span>{tabItem.icon}</span>
-            {tabItem.label}
+            <span className="lp2-tab-icon">{tabItem.icon}</span>
+            <span className="lp2-tab-label">{tabItem.label}</span>
           </button>
         ))}
       </div>
 
-      {tab === "lessons" && <MarcusCurriculum onQuizTabClick={() => setTab("quiz")} />}
-      {tab === "quiz" && <DailyQuiz />}
-      {tab === "resources" && <LearningResources />}
-      {tab === "league" && (
-        <div style={{ marginTop: 8 }}>
-          <LeagueWidget />
-          <div style={{ marginTop: 16, padding: "12px 16px", background: "var(--surface)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              {lang === "nl" ? "Hoe verdien je punten?" : "How do you earn points?"}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {[
-                { pts: "+10", desc: lang === "nl" ? "Dagelijkse login" : "Daily login" },
-                { pts: "+40", desc: lang === "nl" ? "Quiz voltooid" : "Quiz completed" },
-                { pts: "+30", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:2" : "Winning trade with R/R ≥ 1:2" },
-                { pts: "+15", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:1" : "Winning trade with R/R ≥ 1:1" },
-                { pts: "+5", desc: lang === "nl" ? "Trade met stop-loss (ook verlies)" : "Trade with stop-loss (even a loss)" },
-              ].map((row, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--primary)", minWidth: 32 }}>{row.pts}</span>
-                  <span style={{ fontSize: 12, color: "var(--text)" }}>{row.desc}</span>
-                </div>
-              ))}
+      {/* ── Tab content ── */}
+      <div className="lp2-content">
+        {tab === "lessons" && <MarcusCurriculum onQuizTabClick={() => setTab("quiz")} />}
+        {tab === "quiz" && <DailyQuiz />}
+        {tab === "resources" && <LearningResources />}
+        {tab === "league" && (
+          <div className="lp2-league-wrap">
+            <LeagueWidget />
+            <div className="lp2-points-card">
+              <div className="lp2-points-title">
+                {lang === "nl" ? "Hoe verdien je punten?" : "How do you earn points?"}
+              </div>
+              <div className="lp2-points-list">
+                {[
+                  { pts: "+10", desc: lang === "nl" ? "Dagelijkse login" : "Daily login" },
+                  { pts: "+40", desc: lang === "nl" ? "Quiz voltooid" : "Quiz completed" },
+                  { pts: "+30", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:2" : "Winning trade with R/R ≥ 1:2" },
+                  { pts: "+15", desc: lang === "nl" ? "Winnende trade met R/R ≥ 1:1" : "Winning trade with R/R ≥ 1:1" },
+                  { pts: "+5",  desc: lang === "nl" ? "Trade met stop-loss (ook verlies)" : "Trade with stop-loss (even a loss)" },
+                ].map((row, i) => (
+                  <div key={i} className="lp2-points-row">
+                    <span className="lp2-points-val">{row.pts}</span>
+                    <span className="lp2-points-desc">{row.desc}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Onderaan terug knop */}
-      <div style={{ marginTop: 32, paddingBottom: 16 }}>
-        <Link href="/trade" className="page-back-btn">
-          {t("leren_back")}
-        </Link>
+        )}
       </div>
-    </main>
+    </div>
   );
 }
