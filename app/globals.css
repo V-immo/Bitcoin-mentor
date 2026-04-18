@@ -11572,3 +11572,135 @@ html {
   .np-item-arrow { display: none; }
   .lp2-hero-h1 { font-size: 26px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   UNIFIED DESIGN SYSTEM
+   Één palet, één taal — overschrijft alle losse stijlen
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Cards: één stijl ── */
+.card {
+  background: var(--surface) !important;
+  border: 1px solid rgba(233,30,99,0.14) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.28) !important;
+  transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s !important;
+}
+.card:hover {
+  border-color: rgba(233,30,99,0.32) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.36), 0 0 0 1px rgba(233,30,99,0.10) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── App-nav & lp-nav: zelfde hoogte, zelfde kleur ── */
+.app-nav, .lp-nav {
+  background: rgba(19,6,16,0.82) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+}
+
+/* ── Alle page-heroes: np-hero & lp2-hero unified ── */
+.np-hero, .lp2-hero {
+  background: linear-gradient(160deg,
+    rgba(233,30,99,0.07) 0%,
+    var(--surface) 40%,
+    var(--bg) 100%
+  ) !important;
+  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+}
+
+/* ── Dashboard-header: zelfde taal als page-heroes ── */
+.dashboard-header {
+  padding: 28px 0 22px !important;
+  border-bottom: 1px solid rgba(233,30,99,0.14) !important;
+  margin-bottom: 24px !important;
+}
+.dashboard-title {
+  background: linear-gradient(110deg, var(--text) 55%, var(--primary)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* ── Labels (uppercase accent boven titels): één stijl ── */
+.np-hero-label, .lp2-hero-label,
+.lp-hero-label, .lp-card-bubble-text {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--primary) !important;
+}
+
+/* ── Accent-titels (gradient tekst): één stijl ── */
+.np-hero-accent, .lp2-hero-accent, .lp-hero-h1-accent {
+  background: linear-gradient(90deg, var(--primary) 0%, #ff6b9d 60%, var(--primary) 100%) !important;
+  background-size: 200% !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* ── Sub-tekst onder titels: één kleur ── */
+.np-hero-sub, .lp2-hero-sub, .lp-hero-sub,
+.dashboard-date {
+  color: var(--text-muted) !important;
+  font-size: 14px !important;
+}
+
+/* ── Pill filters & tabs: één stijl ── */
+.np-pill, .lp2-tab {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+}
+.np-pill.active, .lp2-tab.active {
+  color: var(--primary) !important;
+}
+.np-pill.active {
+  background: rgba(233,30,99,0.15) !important;
+  border-color: rgba(233,30,99,0.40) !important;
+  color: var(--primary) !important;
+}
+
+/* ── Buttons primary: één kleur ── */
+.lp-btn-primary, .lp-nav-cta {
+  background: var(--primary) !important;
+  color: #fff !important;
+  font-family: inherit !important;
+  font-weight: 700 !important;
+}
+.lp-btn-primary:hover, .lp-nav-cta:hover {
+  background: var(--primary-hover) !important;
+  opacity: 1 !important;
+}
+
+/* ── Borders: overal dezelfde roze-tint ── */
+.np-feed .np-item,
+.lp2-tabs,
+.lp2-hero-progress,
+.lp2-rec-card,
+.lp-feat-card,
+.lp-proof-card,
+.lp-stat {
+  border-color: rgba(233,30,99,0.14) !important;
+}
+
+/* ── Light theme unified ── */
+[data-theme="light"] .card {
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .app-nav, [data-theme="light"] .lp-nav {
+  background: rgba(255,255,255,0.90) !important;
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .np-hero, [data-theme="light"] .lp2-hero {
+  background: linear-gradient(160deg, rgba(233,30,99,0.04) 0%, #fff 50%, #f8f5f8 100%) !important;
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .dashboard-header {
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}

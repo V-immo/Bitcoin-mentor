@@ -7,7 +7,7 @@ const copy = {
   nl: {
     nav_login: "Inloggen",
     nav_cta: "Gratis starten",
-    hero_label: "AI Trading Coach",
+    hero_label: "Marcus",
     hero_h1a: "",
     hero_h1b: "Begin met traden.",
     hero_sub: "Marcus is jouw persoonlijke trading coach. Hij kent jouw niveau, analyseert je trades en geeft je dagelijks één concrete opdracht.",
@@ -45,7 +45,7 @@ const copy = {
   en: {
     nav_login: "Log in",
     nav_cta: "Start free",
-    hero_label: "AI Trading Coach",
+    hero_label: "Marcus",
     hero_h1a: "",
     hero_h1b: "Start trading.",
     hero_sub: "Marcus is your personal trading coach. He knows your level, analyses your trades and gives you one concrete assignment every day.",
