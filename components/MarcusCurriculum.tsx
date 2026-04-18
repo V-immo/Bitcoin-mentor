@@ -1775,15 +1775,23 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lesso
             </div>
           )}
 
-          {/* CTA na lezen */}
-          {isRead && (
+          {/* CTA na lezen — alleen bij de laatste les van het niveau */}
+          {isRead && lessonNum === totalLessons && (
             <div className="lesson-done-cta">
               <span className="lesson-done-msg">
-                {lang === "en" ? "Lesson completed — ready for the quiz?" : "Les voltooid — klaar voor de quiz?"}
+                {lang === "en" ? "All lessons done — ready for the quiz?" : "Alle lessen klaar — klaar voor de quiz?"}
               </span>
               <button className="lesson-done-btn" onClick={onQuizClick}>
                 {lang === "en" ? "Go to quiz →" : "Naar de quiz →"}
               </button>
+            </div>
+          )}
+          {/* Tussenbericht bij andere lessen: ga door */}
+          {isRead && lessonNum < totalLessons && (
+            <div className="lesson-done-cta lesson-done-cta--next">
+              <span className="lesson-done-msg">
+                {lang === "en" ? `Lesson ${lessonNum} of ${totalLessons} done ✓` : `Les ${lessonNum} van ${totalLessons} klaar ✓`}
+              </span>
             </div>
           )}
         </div>

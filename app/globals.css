@@ -9929,6 +9929,12 @@ textarea:focus-visible,
   border-top: 1px solid rgba(255,255,255,0.06);
   flex-wrap: wrap;
 }
+.lesson-done-cta--next {
+  justify-content: flex-start;
+}
+.lesson-done-cta--next .lesson-done-msg {
+  color: var(--green); font-weight: 600;
+}
 .lesson-done-msg {
   font-size: 13px; color: var(--text-muted); line-height: 1.5; flex: 1; min-width: 180px;
 }
