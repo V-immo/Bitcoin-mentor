@@ -8,7 +8,7 @@ const copy = {
     nav_login: "Inloggen",
     nav_cta: "Gratis starten",
     hero_label: "AI Trading Coach",
-    hero_h1a: "Stop met gokken.",
+    hero_h1a: "",
     hero_h1b: "Begin met traden.",
     hero_sub: "Marcus is jouw persoonlijke trading coach. Hij kent jouw niveau, analyseert je trades en geeft je dagelijks één concrete opdracht.",
     hero_cta: "Start gratis →",
@@ -46,7 +46,7 @@ const copy = {
     nav_login: "Log in",
     nav_cta: "Start free",
     hero_label: "AI Trading Coach",
-    hero_h1a: "Stop guessing.",
+    hero_h1a: "",
     hero_h1b: "Start trading.",
     hero_sub: "Marcus is your personal trading coach. He knows your level, analyses your trades and gives you one concrete assignment every day.",
     hero_cta: "Start for free →",
@@ -145,8 +145,6 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         <div className="lp-hero-inner">
           <div className="lp-hero-label">{c.hero_label}</div>
           <h1 className="lp-hero-h1">
-            <span className="lp-hero-h1-plain">{c.hero_h1a}</span>
-            <br />
             <span className="lp-hero-h1-accent">{c.hero_h1b}</span>
           </h1>
           <p className="lp-hero-sub">{c.hero_sub}</p>
