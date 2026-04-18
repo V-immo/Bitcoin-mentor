@@ -10269,10 +10269,10 @@ textarea:focus-visible,
    ══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --bg: #06030d;
-  --surface: #0d0718;
-  --surface-1: #130e20;
-  --surface-2: #191429;
+  --bg: #100c1c;
+  --surface: #181228;
+  --surface-1: #1f1730;
+  --surface-2: #251d38;
   --glow-primary: 0 0 40px rgba(233,30,99,0.12);
   --glow-primary-strong: 0 0 60px rgba(233,30,99,0.22);
   --glass-bg: rgba(255,255,255,0.025);
@@ -10463,6 +10463,47 @@ textarea:focus-visible,
   -ms-overflow-style: none;
 }
 .dashboard-sidebar::-webkit-scrollbar { display: none; }
+
+/* ── Dashboard nieuwe layout klassen ── */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 310px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+/* Override oud sidebar — nu sticky naast main */
+.dashboard-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  position: sticky !important;
+  top: calc(54px + 16px) !important;
+  max-height: calc(100vh - 88px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  min-width: 0;
+}
+.dashboard-sidebar::-webkit-scrollbar { display: none !important; }
+@media (max-width: 960px) {
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .dashboard-sidebar {
+    position: static !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+}
+@media (max-width: 600px) {
+  .dashboard-page { padding: 14px 12px 40px !important; }
+  .dashboard-title { font-size: 20px !important; }
+}
 
 /* ── Animaties ── */
 @keyframes fadeInUp {
@@ -10716,18 +10757,13 @@ textarea:focus-visible,
   .landing-final-card { padding: 36px 24px; }
 }
 
-/* ── Subtiele body achtergrond glow ── */
-body::before {
-  content: "";
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(ellipse 120% 80% at 80% -10%,rgba(233,30,99,0.05) 0%,transparent 60%),
-    radial-gradient(ellipse 80% 60% at -10% 80%,rgba(100,0,200,0.04) 0%,transparent 60%);
-  pointer-events: none; z-index: 0;
+/* ── Subtiele achtergrond glow op html niveau ── */
+html {
+  background-image:
+    radial-gradient(ellipse 100% 60% at 90% 0%, rgba(233,30,99,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 0% 90%, rgba(120,0,220,0.04) 0%, transparent 55%);
+  background-attachment: fixed;
 }
-body > * { position: relative; z-index: 1; }
-[data-theme="light"] body::before {
-  background:
-    radial-gradient(ellipse 120% 80% at 80% -10%,rgba(233,30,99,0.025) 0%,transparent 60%),
-    radial-gradient(ellipse 80% 60% at -10% 80%,rgba(100,0,200,0.015) 0%,transparent 60%);
+[data-theme="light"] html {
+  background-image: none;
 }

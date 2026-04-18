@@ -18,7 +18,14 @@
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull origin claude/jolly-einstein-583133 && npm run build 2>&1 | tail -8 && pm2 delete bitcoin-mentor 2>/dev/null; pm2 start npm --name bitcoin-mentor -- run start && sleep 3 && pm2 status bitcoin-mentor\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git fetch origin && git checkout main && git merge origin/claude/jolly-einstein-583133 && npm run build 2>&1 | tail -8 && pm2 delete bitcoin-mentor 2>/dev/null; pm2 start npm --name bitcoin-mentor -- start && pm2 save\")",
       "Bash(ssh root@202.71.14.150 \"pm2 list && pm2 logs bitcoin-mentor --lines 5 --nostream 2>/dev/null\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git fetch origin && git merge origin/claude/jolly-einstein-583133 && npm run build 2>&1 | tail -5 && pm2 delete bitcoin-mentor 2>/dev/null; pm2 start npm --name bitcoin-mentor -- start && pm2 save\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 list | grep -E 'online|errored'\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull origin main 2>&1 | tail -3 && npm run build 2>&1 | tail -6\")",
+      "Bash(ssh root@202.71.14.150 \"while fuser /var/www/bitcoin-mentor/.next/lock 2>/dev/null; do sleep 5; done; echo 'Build klaar'; pm2 delete bitcoin-mentor 2>/dev/null; pm2 start npm --name bitcoin-mentor -- start; pm2 save; pm2 list | grep bitcoin\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 delete all; pm2 start npm --name bitcoin-mentor -- start; pm2 save; pm2 list\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 list && pm2 logs bitcoin-mentor --lines 20 --nostream 2>&1\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 delete all; cd /var/www/bitcoin-mentor && pm2 start npm --name bitcoin-mentor --cwd /var/www/bitcoin-mentor -- start && pm2 save && pm2 list\")"
     ]
   }
 }

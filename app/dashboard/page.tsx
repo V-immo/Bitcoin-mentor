@@ -14,39 +14,55 @@ import FirstSteps from "@/components/FirstSteps";
 import SocialProof from "@/components/SocialProof";
 import MorningBrief from "@/components/MorningBrief";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DashboardPage() {
+  const { lang } = useLanguage();
   const [dateStr, setDateStr] = useState("");
 
   useEffect(() => {
-    setDateStr(new Date().toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long" }));
-  }, []);
+    const locale = lang === "nl" ? "nl-NL" : "en-GB";
+    setDateStr(new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" }));
+  }, [lang]);
 
   return (
     <>
       <OnboardingModal />
       <div className="dashboard-page">
+
+        {/* ── Header ── */}
         <div className="dashboard-header">
-          <h1 className="dashboard-title">Dashboard</h1>
-          {dateStr && <p className="dashboard-date">{dateStr}</p>}
+          <div>
+            <h1 className="dashboard-title">Dashboard</h1>
+            {dateStr && <p className="dashboard-date">{dateStr}</p>}
+          </div>
         </div>
 
+        {/* ── Morning Brief — full width, featured ── */}
         <MorningBrief />
-        <FirstSteps />
-        <SocialProof />
-        <DailyMissions />
-        <DashboardStats />
 
-        <div className="dashboard-grid">
-          <DashboardBriefing />
-          <div className="dashboard-sidebar">
+        {/* ── Hoofdlayout: main + sidebar naast elkaar ── */}
+        <div className="dashboard-layout">
+
+          {/* ── Linker kolom: hoofd content ── */}
+          <div className="dashboard-main">
+            <FirstSteps />
+            <SocialProof />
+            <DailyMissions />
+            <DashboardStats />
+            <DashboardBriefing />
+          </div>
+
+          {/* ── Rechter kolom: sticky sidebar ── */}
+          <aside className="dashboard-sidebar">
             <LeagueWidget />
             <FriendsStreaks />
+            <MarketOverview compact />
             <AccountabilityPartner />
             <CommunitySentiment />
             <CommunityScoreboard />
-            <MarketOverview compact />
-          </div>
+          </aside>
+
         </div>
       </div>
     </>
