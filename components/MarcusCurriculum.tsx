@@ -1509,39 +1509,51 @@ function renderDiagram(id: string, lang: string): React.ReactNode {
   const txt = { color: "#c9b3cb", fontSize: 10, fontFamily: "sans-serif" };
 
   if (id === "candles") {
+    // Green candle: wick x=85, rect x=70-100 — labels to the LEFT
+    // Red candle:   wick x=215, rect x=200-230 — labels to the RIGHT
+    // Center label for Wick + Body + Bullish/Bearish titles
     return (
-      <svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Candlestick diagram">
-        {/* Groene kaars */}
-        <line x1="75" y1="20" x2="75" y2="145" stroke="#26c57c" strokeWidth="1.5" />
-        <rect x="60" y="55" width="30" height="60" fill="#26c57c" rx="2" />
-        {/* Labels groen */}
-        <text x="100" y="25" {...txt}>{isEN ? "High" : "High"}</text>
-        <text x="100" y="60" {...txt}>{isEN ? "Close" : "Close"}</text>
-        <text x="100" y="118" {...txt}>{isEN ? "Open" : "Open"}</text>
-        <text x="100" y="148" {...txt}>{isEN ? "Low" : "Low"}</text>
-        <text x="42" y="87" {...txt} fill="#26c57c" fontWeight="bold" fontSize={9}>{isEN ? "Body" : "Body"}</text>
-        <line x1="95" y1="23" x2="103" y2="23" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="95" y1="57" x2="103" y2="57" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="95" y1="115" x2="103" y2="115" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="95" y1="145" x2="103" y2="145" stroke="#c9b3cb" strokeWidth="0.8" />
-        <text x="50" y="150" {...txt} fill="#26c57c" fontSize={9} textAnchor="middle">{isEN ? "Bullish" : "Bullish"}</text>
+      <svg viewBox="0 0 300 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Candlestick diagram">
+        {/* ── Groene (bullish) kaars ── */}
+        <line x1="85" y1="18" x2="85" y2="148" stroke="#26c57c" strokeWidth="1.5" />
+        <rect x="70" y="52" width="30" height="65" fill="#26c57c" rx="2" />
+        {/* Titel */}
+        <text x="85" y="10" {...txt} fill="#26c57c" fontWeight="bold" textAnchor="middle" fontSize={10}>{isEN ? "Bullish" : "Bullish"}</text>
+        {/* Labels LINKS van groene kaars */}
+        <text x="58" y="22" {...txt} textAnchor="end">High</text>
+        <text x="58" y="57" {...txt} textAnchor="end">{isEN ? "Close" : "Close"}</text>
+        <text x="58" y="120" {...txt} textAnchor="end">{isEN ? "Open" : "Open"}</text>
+        <text x="58" y="152" {...txt} textAnchor="end">Low</text>
+        {/* Connector lijnen links */}
+        <line x1="60" y1="19" x2="68" y2="19" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="60" y1="54" x2="68" y2="54" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="60" y1="117" x2="68" y2="117" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="60" y1="148" x2="68" y2="148" stroke="#c9b3cb" strokeWidth="0.8" />
+        {/* Body label */}
+        <text x="85" y="89" {...txt} fill="#26c57c" fontWeight="bold" fontSize={9} textAnchor="middle">{isEN ? "Body" : "Body"}</text>
 
-        {/* Rode kaars */}
-        <line x1="225" y1="20" x2="225" y2="145" stroke="#e91e63" strokeWidth="1.5" />
-        <rect x="210" y="55" width="30" height="60" fill="#e91e63" rx="2" />
-        {/* Labels rood */}
-        <text x="135" y="25" {...txt} textAnchor="end">{isEN ? "High" : "High"}</text>
-        <text x="135" y="60" {...txt} textAnchor="end">{isEN ? "Open" : "Open"}</text>
-        <text x="135" y="118" {...txt} textAnchor="end">{isEN ? "Close" : "Close"}</text>
-        <text x="135" y="148" {...txt} textAnchor="end">{isEN ? "Low" : "Low"}</text>
-        <line x1="138" y1="23" x2="146" y2="23" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="138" y1="57" x2="146" y2="57" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="138" y1="115" x2="146" y2="115" stroke="#c9b3cb" strokeWidth="0.8" />
-        <line x1="138" y1="145" x2="146" y2="145" stroke="#c9b3cb" strokeWidth="0.8" />
-        <text x="225" y="150" {...txt} fill="#e91e63" fontSize={9} textAnchor="middle">{isEN ? "Bearish" : "Bearish"}</text>
+        {/* Midden: Wick pijl + scheiding */}
+        <line x1="149" y1="12" x2="149" y2="158" stroke="rgba(201,179,203,0.15)" strokeWidth="1" />
+        <text x="150" y="89" {...txt} textAnchor="middle" fontSize={9}>Wick</text>
+        <text x="150" y="101" {...txt} textAnchor="middle" fontSize={8}>{isEN ? "(shadow)" : "(schaduw)"}</text>
 
-        {/* Wick label */}
-        <text x="150" y="95" {...txt} textAnchor="middle" fontSize={9}>{isEN ? "← Wick →" : "← Wick →"}</text>
+        {/* ── Rode (bearish) kaars ── */}
+        <line x1="215" y1="18" x2="215" y2="148" stroke="#e91e63" strokeWidth="1.5" />
+        <rect x="200" y="52" width="30" height="65" fill="#e91e63" rx="2" />
+        {/* Titel */}
+        <text x="215" y="10" {...txt} fill="#e91e63" fontWeight="bold" textAnchor="middle" fontSize={10}>{isEN ? "Bearish" : "Bearish"}</text>
+        {/* Labels RECHTS van rode kaars */}
+        <text x="242" y="22" {...txt}>High</text>
+        <text x="242" y="57" {...txt}>{isEN ? "Open" : "Open"}</text>
+        <text x="242" y="120" {...txt}>{isEN ? "Close" : "Close"}</text>
+        <text x="242" y="152" {...txt}>Low</text>
+        {/* Connector lijnen rechts */}
+        <line x1="231" y1="19" x2="239" y2="19" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="231" y1="54" x2="239" y2="54" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="231" y1="117" x2="239" y2="117" stroke="#c9b3cb" strokeWidth="0.8" />
+        <line x1="231" y1="148" x2="239" y2="148" stroke="#c9b3cb" strokeWidth="0.8" />
+        {/* Body label */}
+        <text x="215" y="89" {...txt} fill="#e91e63" fontWeight="bold" fontSize={9} textAnchor="middle">{isEN ? "Body" : "Body"}</text>
       </svg>
     );
   }
@@ -1595,39 +1607,46 @@ function renderDiagram(id: string, lang: string): React.ReactNode {
   }
 
   if (id === "sr") {
-    // Prijs bounced 3x van support, doorbreekt resistance
-    const prices = [100, 65, 100, 45, 100, 42, 100, 30, 55, 25];
-    // Punten: support bij y=100, resistance bij y=35
-    // Prijs pad: start hoog, daalt naar support, stijgt, daalt naar support, stijgt, doorbreekt resistance
+    // Support at y=105, Resistance at y=42
+    // Price: starts mid, drops to support (bounce 1), rises to resistance, drops to support (bounce 2),
+    //        rises to resistance, drops to support (bounce 3), then breaks through resistance → breakout
     const pts: [number, number][] = [
-      [10, 90], [30, 108], [50, 65], [70, 108], [90, 60], [110, 108], [135, 50], [160, 28],
+      [10, 75],   // start
+      [28, 105],  // bounce 1 at support
+      [48, 45],   // rise to resistance
+      [68, 105],  // bounce 2 at support
+      [88, 45],   // rise to resistance
+      [108, 105], // bounce 3 at support
+      [132, 38],  // break through resistance
+      [165, 18],  // keep climbing (breakout confirmed)
     ];
     const pricePath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
 
     return (
       <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Support en Resistance diagram">
         {/* Support lijn */}
-        <line x1="5" y1="110" x2="200" y2="110" stroke="#26c57c" strokeWidth="1.5" strokeDasharray="4 3" />
-        <text x="205" y="114" {...txt} fill="#26c57c" fontSize={10}>{isEN ? "Support" : "Support"}</text>
+        <line x1="5" y1="105" x2="185" y2="105" stroke="#26c57c" strokeWidth="1.5" strokeDasharray="4 3" />
+        <text x="190" y="109" {...txt} fill="#26c57c" fontSize={10}>{isEN ? "Support" : "Support"}</text>
 
-        {/* Resistance lijn */}
-        <line x1="5" y1="55" x2="130" y2="55" stroke="#e91e63" strokeWidth="1.5" strokeDasharray="4 3" />
-        <text x="135" y="59" {...txt} fill="#e91e63" fontSize={10}>{isEN ? "Resistance" : "Resistance"}</text>
+        {/* Resistance lijn — eindigt bij breakout punt */}
+        <line x1="5" y1="42" x2="128" y2="42" stroke="#e91e63" strokeWidth="1.5" strokeDasharray="4 3" />
+        <text x="190" y="46" {...txt} fill="#e91e63" fontSize={10} textAnchor="start">{isEN ? "Resistance" : "Resistance"}</text>
 
         {/* Prijs lijn */}
         <path d={pricePath} fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinejoin="round" />
 
-        {/* Bounce labels */}
-        <text x={pts[1][0]} y={pts[1][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
-        <text x={pts[3][0]} y={pts[3][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
-        <text x={pts[5][0]} y={pts[5][1] + 12} {...txt} fill="#26c57c" fontSize={8} textAnchor="middle">↑</text>
+        {/* Bounce pijlen op support */}
+        <text x={pts[1][0]} y={pts[1][1] + 13} {...txt} fill="#26c57c" fontSize={10} textAnchor="middle">↑</text>
+        <text x={pts[3][0]} y={pts[3][1] + 13} {...txt} fill="#26c57c" fontSize={10} textAnchor="middle">↑</text>
+        <text x={pts[5][0]} y={pts[5][1] + 13} {...txt} fill="#26c57c" fontSize={10} textAnchor="middle">↑</text>
 
-        {/* Breakout pijl */}
-        <text x={pts[7][0]} y={pts[7][1] - 6} {...txt} fill="#f59e0b" fontSize={9} textAnchor="middle">{isEN ? "Breakout!" : "Breakout!"}</text>
-        <line x1={pts[7][0]} y1={pts[7][1]} x2={pts[7][0]} y2={pts[7][1] - 4} stroke="#f59e0b" strokeWidth="1" />
+        {/* Breakout label */}
+        <text x={pts[7][0] + 8} y={pts[7][1] + 4} {...txt} fill="#f59e0b" fontSize={9} textAnchor="start">{isEN ? "🚀 Breakout" : "🚀 Breakout"}</text>
 
         {/* Legenda */}
-        <text x="150" y="135" {...txt} textAnchor="middle" fontSize={9}>{isEN ? "Price bounces off support 3× before breaking resistance" : "Prijs bounced 3× van support voor de breakout"}</text>
+        <text x="150" y="133" {...txt} textAnchor="middle" fontSize={9}>
+          {isEN ? "Price bounces off support 3× then breaks resistance" : "Prijs bounced 3× van support, dan breakout"}
+        </text>
       </svg>
     );
   }
