@@ -1469,10 +1469,16 @@ Marcus says: without a journal, after 100 trades you have no idea whether you've
 ];
 
 // ── Check Question Component ────────────────────────────────────────────────
-function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
+function CheckQuestion({ check, lang, onCorrect }: { check: Check; lang: string; onCorrect?: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
   const answered = selected !== null;
   const correct = selected === check.correct;
+
+  function handleSelect(i: number) {
+    if (answered) return;
+    setSelected(i);
+    if (i === check.correct) onCorrect?.();
+  }
 
   return (
     <div className={`lesson-check${answered ? (correct ? " correct" : " wrong") : ""}`}>
@@ -1485,7 +1491,7 @@ function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
           <button
             key={i}
             className={`lesson-check-option${answered && i === check.correct ? " is-correct" : ""}${answered && selected === i && !correct ? " is-wrong" : ""}${!answered ? " unanswered" : ""}`}
-            onClick={() => !answered && setSelected(i)}
+            onClick={() => handleSelect(i)}
             disabled={answered}
           >
             <span className="lesson-check-letter">{String.fromCharCode(65 + i)}</span>
@@ -1673,10 +1679,11 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lesso
 
   function toggle() {
     if (isPublic === false) return;
-    setOpen(o => {
-      if (!o && !isRead) onRead(lesson.id);
-      return !o;
-    });
+    setOpen(o => !o);
+  }
+
+  function markDone() {
+    if (!isRead) onRead(lesson.id);
   }
 
   if (isPublic === false) {
@@ -1771,8 +1778,15 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lesso
               <div className="lesson-check-heading">
                 {lang === "en" ? "Test yourself" : "Test jezelf"}
               </div>
-              <CheckQuestion check={check} lang={lang} />
+              <CheckQuestion check={check} lang={lang} onCorrect={markDone} />
             </div>
+          )}
+
+          {/* Geen check → handmatige voltooiknop */}
+          {!check && !isRead && (
+            <button className="lesson-complete-btn" onClick={markDone}>
+              {lang === "en" ? "✓ Mark as done" : "✓ Les voltooien"}
+            </button>
           )}
 
           {/* CTA na lezen — alleen bij de laatste les van het niveau */}

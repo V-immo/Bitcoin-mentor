@@ -9935,6 +9935,22 @@ textarea:focus-visible,
 .lesson-done-cta--next .lesson-done-msg {
   color: var(--green); font-weight: 600;
 }
+.lesson-complete-btn {
+  margin-top: 20px;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.lesson-complete-btn:hover {
+  border-color: var(--primary);
+  background: rgba(233,30,99,0.08);
+  color: var(--primary);
+}
 .lesson-done-msg {
   font-size: 13px; color: var(--text-muted); line-height: 1.5; flex: 1; min-width: 180px;
 }
