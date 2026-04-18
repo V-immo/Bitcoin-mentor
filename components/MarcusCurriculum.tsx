@@ -1471,8 +1471,9 @@ Marcus says: without a journal, after 100 trades you have no idea whether you've
 // ── Check Question Component ────────────────────────────────────────────────
 function CheckQuestion({ check, lang, onCorrect }: { check: Check; lang: string; onCorrect?: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const answered = selected !== null;
-  const correct = selected === check.correct;
+  const correct = answered && selected === check.correct;
 
   function handleSelect(i: number) {
     if (answered) return;
@@ -1480,10 +1481,20 @@ function CheckQuestion({ check, lang, onCorrect }: { check: Check; lang: string;
     if (i === check.correct) onCorrect?.();
   }
 
+  function retry() {
+    setSelected(null);
+    setAttempts(a => a + 1);
+  }
+
   return (
     <div className={`lesson-check${answered ? (correct ? " correct" : " wrong") : ""}`}>
       <div className="lesson-check-label">
         {lang === "en" ? "🧠 Marcus checks:" : "🧠 Marcus checkt:"}
+        {attempts > 0 && !correct && (
+          <span className="lesson-check-attempt">
+            {lang === "en" ? ` — attempt ${attempts + 1}` : ` — poging ${attempts + 1}`}
+          </span>
+        )}
       </div>
       <div className="lesson-check-question">{check.q}</div>
       <div className="lesson-check-options">
@@ -1503,6 +1514,11 @@ function CheckQuestion({ check, lang, onCorrect }: { check: Check; lang: string;
         <div className={`lesson-check-feedback${correct ? " correct" : " wrong"}`}>
           <span>{correct ? "✅" : "❌"}</span>
           <span>{check.explain}</span>
+          {!correct && (
+            <button className="lesson-check-retry" onClick={retry}>
+              {lang === "en" ? "Try again →" : "Opnieuw proberen →"}
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -1661,13 +1677,14 @@ function renderDiagram(id: string, lang: string): React.ReactNode {
 }
 
 // ── Lesson Card ─────────────────────────────────────────────────────────────
-function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lessonNum, totalLessons }: {
+function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnlocked, lessonNum, totalLessons }: {
   lesson: Lesson;
   lang: string;
   isRead: boolean;
   onRead: (id: string) => void;
   onQuizClick: () => void;
   isPublic?: boolean;
+  isUnlocked?: boolean;
   lessonNum: number;
   totalLessons: number;
 }) {
@@ -1677,8 +1694,11 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lesso
   const terms = lang === "en" ? lesson.termsEN : lesson.termsNL;
   const check = lang === "en" ? lesson.checkEN : lesson.checkNL;
 
+  // Locked = niet ingelogd OF vorige les nog niet klaar
+  const locked = isPublic === false || isUnlocked === false;
+
   function toggle() {
-    if (isPublic === false) return;
+    if (locked) return;
     setOpen(o => !o);
   }
 
@@ -1686,12 +1706,20 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, lesso
     if (!isRead) onRead(lesson.id);
   }
 
-  if (isPublic === false) {
+  if (locked) {
     return (
       <div className="lesson-card lesson-card--locked">
         <div className="lesson-card-header">
-          <span className="lesson-card-num">🔒</span>
-          <span className="lesson-card-title">{title}</span>
+          <div className="lesson-card-meta">
+            <span className="lesson-card-num">
+              {lang === "en" ? `Lesson ${lessonNum}` : `Les ${lessonNum}`}
+              <span className="lesson-card-of"> / {totalLessons}</span>
+            </span>
+          </div>
+          <span className="lesson-card-title lesson-card-title--locked">{title}</span>
+          <span className="lesson-card-lock-hint">
+            🔒 {lang === "en" ? "Complete the previous lesson first" : "Rond de vorige les af om door te gaan"}
+          </span>
         </div>
       </div>
     );
@@ -1958,7 +1986,10 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
       ) : (
         <div className="curriculum-lessons">
           {levelData.lessons.map((lesson, idx) => {
+            // Login-gating: niet ingelogd → alleen les 1 van niveau 1 zichtbaar
             const lessonPublic = isLoggedIn || (activeLevel === 1 && idx === 0);
+            // Sequentieel: les 0 altijd open, les N pas open als les N-1 gelezen is
+            const lessonUnlocked = idx === 0 || !!readMap[levelData.lessons[idx - 1].id];
             return (
               <LessonCard
                 key={lesson.id}
@@ -1968,6 +1999,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
                 onRead={markRead}
                 onQuizClick={() => onQuizTabClick?.()}
                 isPublic={lessonPublic}
+                isUnlocked={lessonUnlocked}
                 lessonNum={idx + 1}
                 totalLessons={levelData.lessons.length}
               />

@@ -9762,10 +9762,45 @@ textarea:focus-visible,
   border-color: color-mix(in srgb, var(--primary) 30%, transparent);
 }
 .lesson-card--locked {
-  opacity: 0.55;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 16px; overflow: hidden;
+  opacity: 0.50;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius); overflow: hidden;
+  cursor: not-allowed;
+}
+.lesson-card-title--locked {
+  color: var(--text-muted);
+}
+.lesson-card-lock-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.lesson-check-attempt {
+  font-weight: 400;
+  color: var(--orange);
+  font-size: 11px;
+}
+.lesson-check-retry {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.lesson-check-retry:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-bg);
 }
 .lesson-card-header {
   width: 100%; display: flex; align-items: center; gap: 12px;
