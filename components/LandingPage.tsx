@@ -2,88 +2,102 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { BarChart3, Calendar, GraduationCap, Users, Target, Star } from "lucide-react";
 
 const copy = {
   nl: {
-    badge: "🚀 Nu gratis beschikbaar",
-    h1a: "Leer traden met",
-    h1b: "Marcus, jouw mentor",
-    subtitle: "Marcus kent jouw niveau, jouw trades en jouw fouten. Hij coacht je elke dag — van je eerste trade tot je eigen strategie.",
-    cta: "Start nu gratis →",
-    ctaDashboard: "Naar dashboard →",
-    login: "Al een account? Inloggen",
-    priceNote: "Gratis · Geen creditcard nodig · Volledig toegankelijk",
-    mockBubble: "BTC breekt uit boven weerstand. Dit is een goede setup voor swing traders.",
-    mockTask: "📌 Opdracht: open een kleine paper trade van €100",
-    usp1t: "Marcus — jouw mentor",
-    usp1: "Marcus kent jouw niveau, jouw trades en jouw zwakke punten. Hij geeft je elke dag één concrete opdracht — niet meer, niet minder.",
-    usp2t: "Paper trading met live data",
-    usp2: "Oefen met echte marktprijzen zonder echt geld te riskeren. Zie je P&L groeien terwijl je leert.",
-    usp3t: "Trading agenda",
-    usp3: "Log elke trade, je emoties en je gedachten. Marcus analyseert je patronen en vertelt je waar je geld verliest.",
-    usp4t: "Leer terwijl je tradt",
-    usp4: "Dagelijkse quizzen, lessen van Mark Douglas tot ICT — afgestemd op jouw niveau en tempo.",
-    stepsTitle: "Hoe het werkt",
-    s1t: "Maak een account", s1: "Gratis, geen creditcard. In 30 seconden aangemeld.",
-    s2t: "Marcus leert je kennen", s2: "Hij stelt je niveau in en geeft je eerste opdracht.",
-    s3t: "Trade en leer elke dag", s3: "Paper trades, live coaching, dagelijkse feedback.",
-    s4t: "Trade zelfstandig", s4: "Op jouw tempo bouw je jouw eigen strategie.",
-    finalH: "Gratis starten. Geen creditcard.",
-    finalSub: "Volledige toegang tot alle functies — geen verborgen kosten.",
-    finalCta: "Maak gratis een account →",
-    socialProof: "Sluit je aan bij 500+ traders",
-    stat1v: "500+", stat1l: "Actieve traders",
-    stat2v: "25.000+", stat2l: "Paper trades",
-    stat3v: "4.8/5", stat3l: "Gemiddelde score",
-    testimonialsTitle: "Wat traders zeggen",
-    t1q: "Marcus heeft me geleerd om niet impulsief te traden. Na 3 maanden is mijn winrate van 35% naar 62% gegaan.",
-    t1n: "Thomas K.", t1c: "Actief sinds 2025",
-    t2q: "De paper trading modus is geniaal. Ik oefen nu elke dag zonder risico en leer van mijn fouten.",
-    t2n: "Lieke V.", t2c: "Beginner",
-    t3q: "Eindelijk een platform dat in het Nederlands is en niet probeert je geld afhandig te maken.",
-    t3n: "Marco D.", t3c: "Swing trader",
+    nav_login: "Inloggen",
+    nav_cta: "Gratis starten",
+    hero_label: "AI Trading Coach",
+    hero_h1a: "Stop met gokken.",
+    hero_h1b: "Begin met traden.",
+    hero_sub: "Marcus is jouw persoonlijke trading coach. Hij kent jouw niveau, analyseert je trades en geeft je dagelijks één concrete opdracht.",
+    hero_cta: "Start gratis →",
+    hero_login: "Al een account?",
+    ticker_label: "Live markt",
+    feat_title: "Alles wat je nodig hebt",
+    feat1_t: "Marcus — jouw mentor",
+    feat1_s: "Geen generieke tips. Marcus kent jouw trades, jouw fouten en jouw niveau.",
+    feat2_t: "Paper trading",
+    feat2_s: "Oefen met echte marktprijzen zonder risico. Zie je P&L groeien terwijl je leert.",
+    feat3_t: "Dagelijkse missies",
+    feat3_s: "Elke dag één concrete opdracht. Kleine stappen, grote resultaten.",
+    feat4_t: "Curriculum niveau 1–6",
+    feat4_s: "Van basis tot Smart Money Concepts. Quizzes, lessen en live diagrammen.",
+    feat5_t: "Prijs alerts",
+    feat5_s: "Slaap rustig. Marcus waarschuwt je als de markt beweegt.",
+    feat6_t: "Liga & vrienden",
+    feat6_s: "Compete met vrienden. Wie houdt de langste streak vol?",
+    stats_traders: "Actieve traders",
+    stats_trades: "Paper trades",
+    stats_rating: "Gemiddelde score",
+    proof_title: "Traders over Marcus",
+    proof1_q: "Na 3 maanden steeg mijn winrate van 35% naar 62%. Marcus leerde me stoppen met impulsief traden.",
+    proof1_n: "Thomas K.", proof1_c: "Swing trader",
+    proof2_q: "Eindelijk een platform dat in het Nederlands is en me écht helpt, zonder me geld af te troggelen.",
+    proof2_n: "Lieke V.", proof2_c: "Beginner",
+    proof3_q: "De paper trading modus is geniaal. Ik maak fouten zonder het te betalen met echt geld.",
+    proof3_n: "Marco D.", proof3_c: "Day trader",
+    cta_h: "Klaar om te beginnen?",
+    cta_sub: "Gratis. Geen creditcard. Volledige toegang.",
+    cta_btn: "Maak een account aan →",
+    cta_login: "Inloggen",
   },
   en: {
-    badge: "🚀 Now free to use",
-    h1a: "Learn to trade with",
-    h1b: "Marcus, your mentor",
-    subtitle: "Marcus knows your level, your trades and your mistakes. He coaches you every day — from your first trade to your own strategy.",
-    cta: "Start for free →",
-    ctaDashboard: "Go to dashboard →",
-    login: "Already have an account? Log in",
-    priceNote: "Free · No credit card needed · Full access",
-    mockBubble: "BTC breaks out above resistance. This is a great setup for swing traders.",
-    mockTask: "📌 Assignment: open a small paper trade of €100",
-    usp1t: "Marcus — your mentor",
-    usp1: "Marcus knows your level, your trades and your weak spots. He gives you one concrete assignment every day — no more, no less.",
-    usp2t: "Paper trading with live data",
-    usp2: "Practice with real market prices without risking real money. Watch your P&L grow as you learn.",
-    usp3t: "Trading journal",
-    usp3: "Log every trade, your emotions and thoughts. Marcus analyses your patterns and tells you where you're losing money.",
-    usp4t: "Learn while you trade",
-    usp4: "Daily quizzes, lessons from Mark Douglas to ICT — tailored to your level.",
-    stepsTitle: "How it works",
-    s1t: "Create an account", s1: "Free, no credit card. Signed up in 30 seconds.",
-    s2t: "Marcus gets to know you", s2: "He sets your level and gives you your first assignment.",
-    s3t: "Trade and learn every day", s3: "Paper trades, live coaching, daily feedback.",
-    s4t: "Trade independently", s4: "At your own pace you build your own strategy.",
-    finalH: "Start for free. No credit card.",
-    finalSub: "Full access to all features — no hidden costs.",
-    finalCta: "Create a free account →",
-    socialProof: "Join 500+ traders",
-    stat1v: "500+", stat1l: "Active traders",
-    stat2v: "25,000+", stat2l: "Paper trades",
-    stat3v: "4.8/5", stat3l: "Average rating",
-    testimonialsTitle: "What traders say",
-    t1q: "Marcus taught me to stop trading impulsively. After 3 months my winrate went from 35% to 62%.",
-    t1n: "Thomas K.", t1c: "Active since 2025",
-    t2q: "The paper trading mode is genius. I now practice every day without risk and learn from my mistakes.",
-    t2n: "Lieke V.", t2c: "Beginner",
-    t3q: "Finally a platform in my language that doesn't try to take my money.",
-    t3n: "Marco D.", t3c: "Swing trader",
+    nav_login: "Log in",
+    nav_cta: "Start free",
+    hero_label: "AI Trading Coach",
+    hero_h1a: "Stop guessing.",
+    hero_h1b: "Start trading.",
+    hero_sub: "Marcus is your personal trading coach. He knows your level, analyses your trades and gives you one concrete assignment every day.",
+    hero_cta: "Start for free →",
+    hero_login: "Already have an account?",
+    ticker_label: "Live market",
+    feat_title: "Everything you need",
+    feat1_t: "Marcus — your mentor",
+    feat1_s: "No generic tips. Marcus knows your trades, your mistakes and your level.",
+    feat2_t: "Paper trading",
+    feat2_s: "Practice with real market prices without risk. Watch your P&L grow as you learn.",
+    feat3_t: "Daily missions",
+    feat3_s: "One concrete assignment every day. Small steps, big results.",
+    feat4_t: "Curriculum level 1–6",
+    feat4_s: "From basics to Smart Money Concepts. Quizzes, lessons and live diagrams.",
+    feat5_t: "Price alerts",
+    feat5_s: "Sleep well. Marcus warns you when the market moves.",
+    feat6_t: "League & friends",
+    feat6_s: "Compete with friends. Who keeps the longest streak?",
+    stats_traders: "Active traders",
+    stats_trades: "Paper trades",
+    stats_rating: "Average rating",
+    proof_title: "Traders about Marcus",
+    proof1_q: "After 3 months my winrate went from 35% to 62%. Marcus taught me to stop trading impulsively.",
+    proof1_n: "Thomas K.", proof1_c: "Swing trader",
+    proof2_q: "Finally a platform in my language that actually helps me, without taking my money.",
+    proof2_n: "Lieke V.", proof2_c: "Beginner",
+    proof3_q: "The paper trading mode is genius. I make mistakes without paying for them with real money.",
+    proof3_n: "Marco D.", proof3_c: "Day trader",
+    cta_h: "Ready to start?",
+    cta_sub: "Free. No credit card. Full access.",
+    cta_btn: "Create an account →",
+    cta_login: "Log in",
   },
 };
+
+const TICKER_ITEMS = [
+  { sym: "BTC", price: "$97,420", chg: "+2.4%", up: true },
+  { sym: "ETH", price: "$3,210", chg: "+1.8%", up: true },
+  { sym: "SOL", price: "$142", chg: "-0.9%", up: false },
+  { sym: "BNB", price: "$610", chg: "+0.5%", up: true },
+  { sym: "XRP", price: "$0.62", chg: "-1.2%", up: false },
+];
+
+const FEATURES = (c: typeof copy["nl"]) => [
+  { icon: "M", label: "Marcus", t: c.feat1_t, s: c.feat1_s, accent: true },
+  { icon: "📈", t: c.feat2_t, s: c.feat2_s, accent: false },
+  { icon: "🎯", t: c.feat3_t, s: c.feat3_s, accent: false },
+  { icon: "🎓", t: c.feat4_t, s: c.feat4_s, accent: false },
+  { icon: "🔔", t: c.feat5_t, s: c.feat5_s, accent: false },
+  { icon: "🏆", t: c.feat6_t, s: c.feat6_s, accent: false },
+];
 
 export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }) {
   const [lang, setLang] = useState<"nl" | "en">("nl");
@@ -99,149 +113,155 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
   }
 
   const c = copy[lang];
+  const feats = FEATURES(c);
 
   return (
-    <>
-      {/* ── Nav-stijl header — alleen voor niet-ingelogde bezoekers ── */}
-      {!loggedIn && (
-        <nav className="app-nav">
-          <Link href="/" className="app-nav-brand" style={{ textDecoration: "none" }}>
-            <span className="app-nav-logo" style={{ fontFamily: "Arial, sans-serif" }}>₿</span>
-            <span className="app-nav-name">Bitcoin Mentor</span>
-          </Link>
-          <div className="landing-top-right">
-            <div className="landing-lang-toggle">
-              <button
-                className={`landing-lang-btn${lang === "nl" ? " active" : ""}`}
-                onClick={() => switchLang("nl")}
-              >🇳🇱 NL</button>
-              <button
-                className={`landing-lang-btn${lang === "en" ? " active" : ""}`}
-                onClick={() => switchLang("en")}
-              >🇬🇧 EN</button>
-            </div>
-            <Link href="/auth/login" className="landing-top-login">
-              {lang === "nl" ? "Inloggen" : "Log in"}
-            </Link>
-          </div>
-        </nav>
-      )}
+    <div className="lp-root">
 
-    <div className="landing-wrap">
+      {/* ── Nav ── */}
+      <nav className="lp-nav">
+        <div className="lp-nav-brand">
+          <span className="lp-nav-btc">₿</span>
+          <span className="lp-nav-name">Bitcoin Mentor</span>
+        </div>
+        <div className="lp-nav-right">
+          <button className={`lp-lang${lang === "nl" ? " active" : ""}`} onClick={() => switchLang("nl")}>NL</button>
+          <button className={`lp-lang${lang === "en" ? " active" : ""}`} onClick={() => switchLang("en")}>EN</button>
+          <Link href="/auth/login" className="lp-nav-login">{c.nav_login}</Link>
+          {!loggedIn && (
+            <Link href="/auth/register" className="lp-nav-cta">{c.nav_cta}</Link>
+          )}
+        </div>
+      </nav>
 
       {/* ── Hero ── */}
-      <section className="landing-hero">
-        <div className="landing-hero-inner">
-          <div className="landing-badge">{c.badge}</div>
-          <h1 className="landing-title">
-            {c.h1a}<br />
-            <span className="landing-title-accent">{c.h1b}</span>
+      <section className="lp-hero">
+        {/* Achtergrond grid */}
+        <div className="lp-hero-grid" aria-hidden="true" />
+        {/* Glow orbs */}
+        <div className="lp-orb lp-orb-1" aria-hidden="true" />
+        <div className="lp-orb lp-orb-2" aria-hidden="true" />
+
+        <div className="lp-hero-inner">
+          <div className="lp-hero-label">{c.hero_label}</div>
+          <h1 className="lp-hero-h1">
+            <span className="lp-hero-h1-plain">{c.hero_h1a}</span>
+            <br />
+            <span className="lp-hero-h1-accent">{c.hero_h1b}</span>
           </h1>
-          <p className="landing-subtitle">{c.subtitle}</p>
-          <div className="landing-cta-row">
+          <p className="lp-hero-sub">{c.hero_sub}</p>
+          <div className="lp-hero-ctas">
             {loggedIn ? (
-              <Link href="/dashboard" className="landing-btn-primary">{c.ctaDashboard}</Link>
+              <Link href="/dashboard" className="lp-btn-primary">Naar dashboard →</Link>
             ) : (
               <>
-                <Link href="/auth/register" className="landing-btn-primary">{c.cta}</Link>
-                <Link href="/auth/login" className="landing-btn-ghost">{c.login}</Link>
+                <Link href="/auth/register" className="lp-btn-primary">{c.hero_cta}</Link>
+                <Link href="/auth/login" className="lp-btn-ghost">{c.hero_login}</Link>
               </>
             )}
           </div>
-          <div className="landing-price-note">{c.priceNote}</div>
+          <div className="lp-hero-note">Gratis · Geen creditcard · Volledig toegankelijk</div>
         </div>
 
-        {/* Mock dashboard preview */}
-        <div className="landing-preview">
-          <div className="landing-preview-bar">
-            <span className="landing-preview-dot red" />
-            <span className="landing-preview-dot yellow" />
-            <span className="landing-preview-dot green" />
-            <span className="landing-preview-url">bitcoinmentor.be</span>
+        {/* Marcus preview card */}
+        <div className="lp-hero-card">
+          <div className="lp-card-header">
+            <div className="lp-card-dot red" /><div className="lp-card-dot yellow" /><div className="lp-card-dot green" />
+            <span className="lp-card-url">bitcoinmentor.be/dashboard</span>
           </div>
-          <div className="landing-preview-content">
-            <div className="landing-mock-header">
-              <span className="landing-mock-asset">BTC/USDT</span>
-              <span className="landing-mock-price">$97,420</span>
-              <span className="landing-mock-badge green">{lang === "nl" ? "Goed moment" : "Good time"}</span>
+          <div className="lp-card-body">
+            <div className="lp-card-price-row">
+              <span className="lp-card-asset">BTC/USDT</span>
+              <span className="lp-card-price">$97,420</span>
+              <span className="lp-card-badge">+2.4%</span>
             </div>
-            <div className="landing-mock-chart">
-              <svg viewBox="0 0 300 80" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+            <div className="lp-card-chart">
+              <svg viewBox="0 0 280 70" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
                 <defs>
-                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#e91e63" stopOpacity="0.3" />
+                  <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#e91e63" stopOpacity="0.25" />
                     <stop offset="100%" stopColor="#e91e63" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                <path d="M0,60 L30,55 L60,50 L90,45 L120,48 L150,35 L180,25 L210,20 L240,15 L270,10 L300,8 L300,80 L0,80Z" fill="url(#chartGrad)" />
-                <path d="M0,60 L30,55 L60,50 L90,45 L120,48 L150,35 L180,25 L210,20 L240,15 L270,10 L300,8" fill="none" stroke="#e91e63" strokeWidth="2" />
+                <path d="M0,55 L35,48 L70,44 L105,40 L120,43 L145,30 L170,22 L200,16 L230,11 L260,6 L280,4 L280,70 L0,70Z" fill="url(#lg)" />
+                <path d="M0,55 L35,48 L70,44 L105,40 L120,43 L145,30 L170,22 L200,16 L230,11 L260,6 L280,4" fill="none" stroke="#e91e63" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
-            <div className="landing-mock-marcus">
-              <span className="landing-mock-avatar marcus-avatar-m">M</span>
-              <div className="landing-mock-bubble">
-                {c.mockBubble}<br /><strong>{c.mockTask}</strong>
+            <div className="lp-card-marcus">
+              <div className="lp-card-m">M</div>
+              <div className="lp-card-bubble">
+                <div className="lp-card-bubble-text">BTC breekt uit boven weerstand. Goed moment voor een swing long.</div>
+                <div className="lp-card-mission">📌 Opdracht: open een paper trade van max 2% risico</div>
               </div>
+            </div>
+            <div className="lp-card-missions">
+              <div className="lp-card-mission-row done">✓ Morning brief gelezen</div>
+              <div className="lp-card-mission-row done">✓ Quiz gemaakt (+40 XP)</div>
+              <div className="lp-card-mission-row active">→ Trade openen</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Social proof stats ── */}
-      <section className="landing-stats-bar">
+      {/* ── Ticker strip ── */}
+      <div className="lp-ticker">
+        <span className="lp-ticker-label">{c.ticker_label}</span>
+        <div className="lp-ticker-track">
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((t, i) => (
+            <div key={i} className="lp-ticker-item">
+              <span className="lp-ticker-sym">{t.sym}</span>
+              <span className="lp-ticker-price">{t.price}</span>
+              <span className={`lp-ticker-chg ${t.up ? "up" : "dn"}`}>{t.chg}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Stats ── */}
+      <section className="lp-stats">
         {[
-          { icon: Users, value: c.stat1v, label: c.stat1l },
-          { icon: Target, value: c.stat2v, label: c.stat2l },
-          { icon: Star, value: c.stat3v, label: c.stat3l },
+          { val: "500+", lbl: c.stats_traders },
+          { val: "25.000+", lbl: c.stats_trades },
+          { val: "4.8/5", lbl: c.stats_rating },
         ].map((s) => (
-          <div key={s.label} className="landing-stat-item">
-            <s.icon size={20} className="landing-stat-icon" />
-            <span className="landing-stat-value">{s.value}</span>
-            <span className="landing-stat-label">{s.label}</span>
+          <div key={s.lbl} className="lp-stat">
+            <span className="lp-stat-val">{s.val}</span>
+            <span className="lp-stat-lbl">{s.lbl}</span>
           </div>
         ))}
       </section>
 
-      {/* ── USPs ── */}
-      <section className="landing-usps">
-        <div className="landing-usp-card">
-          <div className="landing-usp-icon marcus-avatar-m" style={{ width: 48, height: 48, fontSize: 22 }}>M</div>
-          <h3 className="landing-usp-title">{c.usp1t}</h3>
-          <p className="landing-usp-text">{c.usp1}</p>
-        </div>
-        <div className="landing-usp-card">
-          <div className="landing-usp-icon"><BarChart3 size={26} /></div>
-          <h3 className="landing-usp-title">{c.usp2t}</h3>
-          <p className="landing-usp-text">{c.usp2}</p>
-        </div>
-        <div className="landing-usp-card">
-          <div className="landing-usp-icon"><Calendar size={26} /></div>
-          <h3 className="landing-usp-title">{c.usp3t}</h3>
-          <p className="landing-usp-text">{c.usp3}</p>
-        </div>
-        <div className="landing-usp-card">
-          <div className="landing-usp-icon"><GraduationCap size={26} /></div>
-          <h3 className="landing-usp-title">{c.usp4t}</h3>
-          <p className="landing-usp-text">{c.usp4}</p>
+      {/* ── Features grid ── */}
+      <section className="lp-features">
+        <h2 className="lp-section-h">{c.feat_title}</h2>
+        <div className="lp-features-grid">
+          {feats.map((f, i) => (
+            <div key={i} className={`lp-feat-card${f.accent ? " lp-feat-card--accent" : ""}${i === 0 ? " lp-feat-card--wide" : ""}`}>
+              <div className={`lp-feat-icon${f.accent ? " lp-feat-icon--m" : ""}`}>{f.icon}</div>
+              <h3 className="lp-feat-title">{f.t}</h3>
+              <p className="lp-feat-sub">{f.s}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className="landing-testimonials">
-        <h2 className="landing-section-title">{c.testimonialsTitle}</h2>
-        <div className="landing-testimonial-grid">
+      {/* ── Social proof ── */}
+      <section className="lp-proof">
+        <h2 className="lp-section-h">{c.proof_title}</h2>
+        <div className="lp-proof-grid">
           {[
-            { q: c.t1q, n: c.t1n, ctx: c.t1c, initials: "TK" },
-            { q: c.t2q, n: c.t2n, ctx: c.t2c, initials: "LV" },
-            { q: c.t3q, n: c.t3n, ctx: c.t3c, initials: "MD" },
-          ].map((t) => (
-            <div key={t.n} className="landing-testimonial-card">
-              <p className="landing-testimonial-quote">&ldquo;{t.q}&rdquo;</p>
-              <div className="landing-testimonial-author">
-                <div className="landing-testimonial-avatar">{t.initials}</div>
+            { q: c.proof1_q, n: c.proof1_n, ctx: c.proof1_c, init: "TK" },
+            { q: c.proof2_q, n: c.proof2_n, ctx: c.proof2_c, init: "LV" },
+            { q: c.proof3_q, n: c.proof3_n, ctx: c.proof3_c, init: "MD" },
+          ].map((p) => (
+            <div key={p.n} className="lp-proof-card">
+              <div className="lp-proof-stars">★★★★★</div>
+              <p className="lp-proof-q">&ldquo;{p.q}&rdquo;</p>
+              <div className="lp-proof-author">
+                <div className="lp-proof-avatar">{p.init}</div>
                 <div>
-                  <div className="landing-testimonial-name">{t.n}</div>
-                  <div className="landing-testimonial-ctx">{t.ctx}</div>
+                  <div className="lp-proof-name">{p.n}</div>
+                  <div className="lp-proof-ctx">{p.ctx}</div>
                 </div>
               </div>
             </div>
@@ -249,50 +269,34 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
         </div>
       </section>
 
-      {/* ── Hoe het werkt ── */}
-      <section className="landing-steps">
-        <h2 className="landing-section-title">{c.stepsTitle}</h2>
-        <div className="landing-steps-timeline">
-          {[
-            { num: 1, title: c.s1t, desc: c.s1, icon: "✦" },
-            { num: 2, title: c.s2t, desc: c.s2, icon: "✦" },
-            { num: 3, title: c.s3t, desc: c.s3, icon: "✦" },
-            { num: 4, title: c.s4t, desc: c.s4, icon: "✦" },
-          ].map((step, i, arr) => (
-            <div key={step.num} className="landing-step-item">
-              <div className="landing-step-spine">
-                <div className="landing-step-dot">{step.num}</div>
-                {i < arr.length - 1 && <div className="landing-step-line" />}
-              </div>
-              <div className="landing-step-body">
-                <h4 className="landing-step-title">{step.title}</h4>
-                <p className="landing-step-desc">{step.desc}</p>
-              </div>
-            </div>
-          ))}
+      {/* ── Final CTA ── */}
+      <section className="lp-cta-section">
+        <div className="lp-cta-box">
+          <div className="lp-cta-orb" aria-hidden="true" />
+          <div className="lp-cta-btc" aria-hidden="true">₿</div>
+          <h2 className="lp-cta-h">{c.cta_h}</h2>
+          <p className="lp-cta-sub">{c.cta_sub}</p>
+          <div className="lp-cta-btns">
+            {loggedIn ? (
+              <Link href="/dashboard" className="lp-btn-primary">Naar dashboard →</Link>
+            ) : (
+              <>
+                <Link href="/auth/register" className="lp-btn-primary lp-btn-lg">{c.cta_btn}</Link>
+                <Link href="/auth/login" className="lp-btn-ghost">{c.cta_login}</Link>
+              </>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* ── Gratis CTA ── */}
-      <section className="landing-final-cta">
-        <div className="landing-final-card">
-          <div className="landing-final-glow" />
-          <div className="marcus-avatar-m landing-final-avatar">M</div>
-          <h2 className="landing-final-title">{c.finalH}</h2>
-          <p className="landing-final-sub">{c.finalSub}</p>
-          {!loggedIn ? (
-            <Link href="/auth/register" className="landing-btn-primary landing-final-btn">
-              {c.finalCta}
-            </Link>
-          ) : (
-            <Link href="/dashboard" className="landing-btn-primary landing-final-btn">
-              {c.ctaDashboard}
-            </Link>
-          )}
+      {/* ── Footer ── */}
+      <footer className="lp-footer">
+        <span>© 2026 Bitcoin Mentor</span>
+        <div className="lp-footer-links">
+          <Link href="/auth/login">{c.nav_login}</Link>
+          <Link href="/auth/register">{c.nav_cta}</Link>
         </div>
-      </section>
-
+      </footer>
     </div>
-    </>
   );
 }
