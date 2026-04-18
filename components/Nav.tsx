@@ -114,7 +114,9 @@ export default function Nav() {
             >
               <Settings size={17} className="app-nav-icon" />
               <span className="app-nav-label">
-                {username} {dropOpen ? "▴" : "▾"}
+                {username}
+                {streak >= 2 && <span className="nav-streak-inline"><Flame size={11} />{streak}</span>}
+                {" "}{dropOpen ? "▴" : "▾"}
               </span>
             </button>
 
@@ -162,20 +164,14 @@ export default function Nav() {
             <div className="nav-pro-badge" title="Marcus Pro">✦ Pro</div>
           )}
 
-          {/* Streak badge */}
-          {streak >= 2 && (
-            <div className="nav-streak-badge" title={`${streak} dagen op rij actief`}>
-              <Flame size={14} /> <span>{streak}</span>
-            </div>
-          )}
-
-          {/* Thema toggle */}
+          {/* Thema toggle — altijd helemaal rechts, los van streak */}
           <button
             onClick={toggleTheme}
             title={theme === "dark" ? "Lichtmodus" : "Donkermodus"}
-            className="app-nav-link app-nav-theme-btn"
+            className="nav-theme-toggle"
+            aria-label="Thema wisselen"
           >
-            {theme === "dark" ? <Sun size={17} className="app-nav-icon" /> : <Moon size={17} className="app-nav-icon" />}
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
 
