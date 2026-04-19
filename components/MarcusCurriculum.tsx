@@ -554,6 +554,738 @@ Marcus says: The market phase determines EVERYTHING. In a bull market you can ba
           explain: "A -18% drop after 8 months of bull market is a CORRECTION — not a confirmed bear market. Bear markets are characterized by months of lower peaks and lower bottoms, not one sharp dip. Traders who shout 'bear market!' at every correction always sell at the worst moment. Look at the broader structure.",
         },
       },
+      {
+        id: "l1-altcoins",
+        icon: "🌐",
+        titleNL: "Altcoins en het ecosysteem — meer dan alleen Bitcoin",
+        titleEN: "Altcoins and the ecosystem — more than just Bitcoin",
+        contentNL: `Marcus stelt je een vraag: waarom bestaat er naast Bitcoin nog duizenden andere crypto's? Is Ethereum gewoon een goedkopere Bitcoin? Of is het iets totaal anders?
+
+Dit is een van de meest misverstane vragen in crypto. En het antwoord bepaalt hoe je naar de markt kijkt.
+
+WAT IS EEN ALTCOIN?
+
+Altcoin = elke cryptocurrency die NIET Bitcoin is. De naam komt van "alternative coin." Er zijn er meer dan 20.000. De meeste zijn waardeloos. Een handvol zijn echt relevant.
+
+De hiërarchie van crypto:
+
+BITCOIN (BTC) — de digitale goudstandaard
+— Oorsprong: 2009
+— Doel: waardeopslag, gedecentraliseerd geld
+— Maximaal aanbod: 21 miljoen
+— Positie: de benchmark. Als BTC daalt, dalen bijna alle altcoins mee.
+
+ETHEREUM (ETH) — het slimme contract platform
+— Oorsprong: 2015, bedacht door Vitalik Buterin
+— Doel: programmeerbare blockchain. Op Ethereum draaien apps, DeFi, NFTs.
+— Vergelijking: als Bitcoin een rekenmachine is, is Ethereum een smartphone.
+— Positie: #2 van de markt. De meeste crypto-apps draaien op Ethereum of Ethereum-klonen.
+
+LARGE CAPS — de gevestigde namen
+Bijv. Solana (SOL), BNB, XRP, Cardano (ADA). Marktcap >€1 miljard. Meer liquide, minder risico dan kleine coins.
+
+SMALL CAPS / MEME COINS — hoog risico
+Bijv. Dogecoin, Shiba Inu, willekeurige nieuwe tokens. Kunnen in een dag 10× stijgen — en in een week 95% verliezen.
+
+BITCOIN DOMINANTIE — de thermometer van het ecosysteem
+
+Bitcoin Dominantie = het percentage van de totale crypto-marktcap dat BTC uitmaakt.
+
+Wanneer BTC dominantie STIJGT: geld stroomt van altcoins naar Bitcoin. Altcoins dalen relatief. Veilig-haven gedrag.
+
+Wanneer BTC dominantie DAALT: geld stroomt naar altcoins. Altcoin season — kleine coins kunnen enorm stijgen.
+
+In Bitcoin Mentor staat de dominantie op het dashboard. Dit is één van je eerste indicatoren elke ochtend.
+
+WAAROM BEGINNERS ALTIJD BEGINNEN MET BTC
+
+Bitcoin is de meest liquide, meest voorspelbare, meest gevolgde crypto. Hij heeft de meeste historische data. De meeste technische analyse werkt het best op BTC. Altcoins zijn complexer, manipulatievoeliger, en moeilijker te analyseren.
+
+Marcus' regel: leer BTC handelen voordat je altcoins aanraakt. Als je BTC niet kunt lezen, kun je SOL of DOGE zeker niet lezen.
+
+Actie: ga naar CoinMarketCap.com. Bekijk de top 10 coins. Kijk naar BTC dominantie (rechtsboven). Noteer: hoeveel procent is BTC van de totale markt vandaag?
+
+Marcus zegt: De altcoin markt is een uitvergroting van Bitcoin. Als BTC niest, krijgt de altcoin-markt longontsteking. Beheers de benchmark eerst.`,
+        contentEN: `Marcus asks you a question: why do thousands of other cryptos exist alongside Bitcoin? Is Ethereum just a cheaper Bitcoin? Or is it something totally different?
+
+This is one of the most misunderstood questions in crypto. And the answer determines how you view the market.
+
+WHAT IS AN ALTCOIN?
+
+Altcoin = any cryptocurrency that is NOT Bitcoin. The name comes from "alternative coin." There are more than 20,000. Most are worthless. A handful are truly relevant.
+
+The hierarchy of crypto:
+
+BITCOIN (BTC) — the digital gold standard
+— Origin: 2009
+— Purpose: store of value, decentralized money
+— Maximum supply: 21 million
+— Position: the benchmark. When BTC falls, almost all altcoins fall with it.
+
+ETHEREUM (ETH) — the smart contract platform
+— Origin: 2015, conceived by Vitalik Buterin
+— Purpose: programmable blockchain. Apps, DeFi, NFTs run on Ethereum.
+— Comparison: if Bitcoin is a calculator, Ethereum is a smartphone.
+— Position: #2 in the market. Most crypto apps run on Ethereum or Ethereum clones.
+
+LARGE CAPS — the established names
+E.g. Solana (SOL), BNB, XRP, Cardano (ADA). Market cap >€1 billion. More liquid, less risk than small coins.
+
+SMALL CAPS / MEME COINS — high risk
+E.g. Dogecoin, Shiba Inu, random new tokens. Can rise 10× in a day — and lose 95% in a week.
+
+BITCOIN DOMINANCE — the ecosystem thermometer
+
+Bitcoin Dominance = the percentage of total crypto market cap that BTC represents.
+
+When BTC dominance RISES: money flows from altcoins to Bitcoin. Altcoins fall relatively. Safe-haven behavior.
+
+When BTC dominance FALLS: money flows to altcoins. Altcoin season — small coins can rise enormously.
+
+In Bitcoin Mentor the dominance is shown on the dashboard. This is one of your first indicators every morning.
+
+WHY BEGINNERS ALWAYS START WITH BTC
+
+Bitcoin is the most liquid, most predictable, most followed crypto. It has the most historical data. Technical analysis works best on BTC. Altcoins are more complex, more susceptible to manipulation, and harder to analyze.
+
+Marcus's rule: learn to trade BTC before touching altcoins. If you can't read BTC, you definitely can't read SOL or DOGE.
+
+Action: go to CoinMarketCap.com. Look at the top 10 coins. Check BTC dominance (top right). Note: what percentage is BTC of the total market today?
+
+Marcus says: The altcoin market is an amplified version of Bitcoin. When BTC sneezes, the altcoin market gets pneumonia. Master the benchmark first.`,
+        termsNL: [
+          { term: "Altcoin", def: "Elke cryptocurrency die niet Bitcoin is. Meer dan 20.000 bestaan, meeste zijn waardeloos." },
+          { term: "Ethereum (ETH)", def: "De #2 crypto. Programmeerbare blockchain waarop apps, DeFi en NFTs draaien. Niet hetzelfde als Bitcoin." },
+          { term: "Large Cap", def: "Crypto met hoge marktcap (>€1 mrd). Meer liquide, stabieler. Bijv. ETH, SOL, BNB." },
+          { term: "Meme Coin", def: "Crypto zonder echte technologie, gedreven door hype (Dogecoin, Shiba). Extreem volatiel en riskant." },
+          { term: "Bitcoin Dominantie", def: "% van totale crypto marktcap dat BTC is. Hoog = geld in BTC. Laag = geld in altcoins (altcoin season)." },
+          { term: "Altcoin Season", def: "Periode waarin Bitcoin dominantie daalt en altcoins sterker stijgen dan BTC." },
+        ],
+        termsEN: [
+          { term: "Altcoin", def: "Any cryptocurrency that isn't Bitcoin. More than 20,000 exist, most are worthless." },
+          { term: "Ethereum (ETH)", def: "The #2 crypto. Programmable blockchain on which apps, DeFi and NFTs run. Not the same as Bitcoin." },
+          { term: "Large Cap", def: "Crypto with high market cap (>€1 billion). More liquid, more stable. E.g. ETH, SOL, BNB." },
+          { term: "Meme Coin", def: "Crypto without real technology, driven by hype (Dogecoin, Shiba). Extremely volatile and risky." },
+          { term: "Bitcoin Dominance", def: "% of total crypto market cap that is BTC. High = money in BTC. Low = money in altcoins (altcoin season)." },
+          { term: "Altcoin Season", def: "Period when Bitcoin dominance falls and altcoins rise stronger than BTC." },
+        ],
+        checkNL: {
+          q: "BTC dominantie stijgt van 52% naar 62% in twee weken. Wat verwacht je van altcoins in die periode?",
+          options: [
+            "Altcoins stijgen ook — want de crypto markt groeit",
+            "Altcoins dalen relatief — geld stroomt van altcoins naar BTC",
+            "Altcoins zijn onafhankelijk van BTC dominantie",
+            "Altcoin season begint — lagere dominantie is goed voor altcoins",
+          ],
+          correct: 1,
+          explain: "Stijgende BTC dominantie = geld stroomt VAN altcoins NAAR BTC. Altcoins dalen relatief — zelfs als ze in euro's gelijk blijven, verliezen ze terrein ten opzichte van BTC. Dit is risk-off gedrag: beleggers vluchten naar de veiligste crypto. Dalende dominantie = altcoin season.",
+        },
+        checkEN: {
+          q: "BTC dominance rises from 52% to 62% in two weeks. What do you expect from altcoins in that period?",
+          options: [
+            "Altcoins rise too — because the crypto market is growing",
+            "Altcoins fall relatively — money flows from altcoins to BTC",
+            "Altcoins are independent of BTC dominance",
+            "Altcoin season begins — lower dominance is good for altcoins",
+          ],
+          correct: 1,
+          explain: "Rising BTC dominance = money flows FROM altcoins TO BTC. Altcoins fall relatively — even if they stay flat in euros, they lose ground against BTC. This is risk-off behavior: investors flee to the safest crypto. Falling dominance = altcoin season.",
+        },
+      },
+      {
+        id: "l1-marktcap",
+        icon: "📊",
+        titleNL: "Marktkapitalisatie — de echte maatstaf",
+        titleEN: "Market capitalization — the real measure",
+        contentNL: `Marcus stelt je een vraag die veel beginners verkeerd beantwoorden: een coin staat op €0,002. Een andere op €80.000. Welke is 'goedkoper' om te kopen?
+
+Als je antwoord "de coin van €0,002" is — lees deze les goed. Dit is een van de duurste misverstanden in crypto.
+
+WAT IS MARKTKAPITALISATIE?
+
+Marktcap = prijs × totaal aantal coins in omloop.
+
+Voorbeeld:
+— BTC prijs: €80.000. Aantal BTC in omloop: 19,7 miljoen.
+— BTC marktcap = €80.000 × 19.700.000 = €1.576 miljard.
+
+Een willekeurige meme coin:
+— Prijs: €0,002. Coins in omloop: 1 biljoen (1.000.000.000.000).
+— Marktcap = €0,002 × 1.000.000.000.000 = €2 miljard.
+
+Verrassend: die meme coin heeft een marktcap van €2 miljard. Dat is niet klein. En voor die coin te verdubbelen naar €0,004, moet er €2 miljard aan nieuw geld bijkomen. Voor BTC te verdubbelen moet er €1.576 miljard bij.
+
+De prijs per coin zegt NIETS. Marktcap zegt alles.
+
+WAAROM DIT ZO BELANGRIJK IS
+
+Beginners kopen coins met een lage prijs per coin omdat ze denken "als dit ooit net als BTC wordt, word ik rijk." Maar een coin van €0,002 heeft misschien al een marktcap van miljarden — er is geen ruimte meer voor ×1000 groei.
+
+Bitcoin had in 2010 een prijs van $0,05. Dat was NIET de reden om het te kopen. Het was dat de marktcap toen vrijwel nul was — er was enorm veel ruimte voor groei.
+
+DE DRIE CATEGORIEËN:
+
+Large Cap (>€10 miljard marktcap): BTC, ETH, SOL.
+— Stabielst, meest liquide, minst risico, maar ook langzaamst groeiend.
+
+Mid Cap (€1-10 miljard): gevestigde altcoins.
+— Meer potentieel, meer risico.
+
+Small Cap (<€1 miljard): kleine projecten.
+— Kunnen 10× gaan — maar ook naar nul. Hoog risico.
+
+HOE LEES JE MARKTCAP IN BITCOIN MENTOR?
+
+Op het dashboard zie je de marktcap van elke asset naast de prijs. Op CoinMarketCap.com zie je de top 100 gerangschikt op marktcap.
+
+Praktische regel: kijk ALTIJD naar de marktcap, niet de prijs, als je beoordeelt hoe groot een coin al is.
+
+Actie: ga naar CoinMarketCap.com. Bekijk de top 5. Noteer voor elke coin: prijs EN marktcap. Snap je nu waarom een coin van €0.50 groter kan zijn dan een coin van €50?
+
+Marcus zegt: Prijs is marketing. Marktcap is realiteit. Elke beginner die €500 in een €0,001-coin steekt "omdat het de nieuwe Bitcoin wordt" heeft deze les niet begrepen.`,
+        contentEN: `Marcus asks you a question that many beginners answer wrong: one coin is at €0.002. Another at €80,000. Which is 'cheaper' to buy?
+
+If your answer is "the coin at €0.002" — read this lesson carefully. This is one of the most expensive misconceptions in crypto.
+
+WHAT IS MARKET CAPITALIZATION?
+
+Market cap = price × total number of coins in circulation.
+
+Example:
+— BTC price: €80,000. BTC in circulation: 19.7 million.
+— BTC market cap = €80,000 × 19,700,000 = €1,576 billion.
+
+A random meme coin:
+— Price: €0.002. Coins in circulation: 1 trillion (1,000,000,000,000).
+— Market cap = €0.002 × 1,000,000,000,000 = €2 billion.
+
+Surprising: that meme coin has a market cap of €2 billion. That's not small. And for that coin to double to €0.004, €2 billion in new money must come in. For BTC to double, €1,576 billion must come in.
+
+Price per coin says NOTHING. Market cap says everything.
+
+WHY THIS IS SO IMPORTANT
+
+Beginners buy low-price coins thinking "if this ever becomes like BTC, I'll get rich." But a coin at €0.002 might already have a market cap of billions — there's no room left for ×1000 growth.
+
+Bitcoin in 2010 had a price of $0.05. That was NOT the reason to buy it. It was that the market cap was virtually zero then — there was enormous room for growth.
+
+THE THREE CATEGORIES:
+
+Large Cap (>€10 billion market cap): BTC, ETH, SOL.
+— Most stable, most liquid, least risk, but also slowest growing.
+
+Mid Cap (€1-10 billion): established altcoins.
+— More potential, more risk.
+
+Small Cap (<€1 billion): small projects.
+— Can 10× — but also go to zero. High risk.
+
+HOW TO READ MARKET CAP IN BITCOIN MENTOR?
+
+On the dashboard you see the market cap of each asset next to the price. On CoinMarketCap.com you see the top 100 ranked by market cap.
+
+Practical rule: ALWAYS look at market cap, not price, when assessing how big a coin already is.
+
+Action: go to CoinMarketCap.com. Look at the top 5. Note for each coin: price AND market cap. Do you now understand why a €0.50 coin can be bigger than a €50 coin?
+
+Marcus says: Price is marketing. Market cap is reality. Every beginner who puts €500 into a €0.001 coin "because it'll be the next Bitcoin" hasn't understood this lesson.`,
+        termsNL: [
+          { term: "Marktkapitalisatie (Marktcap)", def: "Prijs × aantal coins in omloop. De echte maatstaf voor hoe groot een crypto is." },
+          { term: "Large Cap", def: "Marktcap >€10 miljard. BTC, ETH. Stabiel, liquide, laag risico relatief gezien." },
+          { term: "Mid Cap", def: "Marktcap €1-10 miljard. Meer groeipotentieel maar ook meer risico." },
+          { term: "Small Cap", def: "Marktcap <€1 miljard. Kunnen explosief stijgen maar ook naar nul. Hoog risico." },
+          { term: "Circulerend Aanbod", def: "Het aantal coins dat nu in omloop is. Bepalend voor de marktcap-berekening." },
+          { term: "Totaal Aanbod / Max Supply", def: "Het maximale aantal coins dat ooit bestaat. BTC: 21 miljoen. Beïnvloedt schaarste." },
+        ],
+        termsEN: [
+          { term: "Market Capitalization (Market Cap)", def: "Price × number of coins in circulation. The real measure of how large a crypto is." },
+          { term: "Large Cap", def: "Market cap >€10 billion. BTC, ETH. Stable, liquid, relatively low risk." },
+          { term: "Mid Cap", def: "Market cap €1-10 billion. More growth potential but also more risk." },
+          { term: "Small Cap", def: "Market cap <€1 billion. Can rise explosively but also go to zero. High risk." },
+          { term: "Circulating Supply", def: "The number of coins currently in circulation. Determines market cap calculation." },
+          { term: "Total Supply / Max Supply", def: "The maximum number of coins that will ever exist. BTC: 21 million. Affects scarcity." },
+        ],
+        checkNL: {
+          q: "Coin A: prijs €0,001, 500 biljoen coins in omloop. Coin B: prijs €500, 1 miljoen coins in omloop. Welke heeft de grotere marktcap?",
+          options: [
+            "Coin B — hogere prijs per coin",
+            "Coin A — meer coins in omloop dus groter",
+            "Coin A: €500 miljard marktcap. Coin B: €500 miljoen marktcap. Coin A is 1000× groter.",
+            "Ze zijn gelijk — prijs en aanbod compenseren elkaar altijd",
+          ],
+          correct: 2,
+          explain: "Coin A: €0,001 × 500.000.000.000.000 = €500 miljard. Coin B: €500 × 1.000.000 = €500 miljoen. Coin A is 1.000× groter dan Coin B — ondanks de 500.000× lagere prijs per coin. Dit is waarom je nooit op prijs per coin kunt vertrouwen. Marktcap is de enige eerlijke maatstaf.",
+        },
+        checkEN: {
+          q: "Coin A: price €0.001, 500 trillion coins in circulation. Coin B: price €500, 1 million coins in circulation. Which has the larger market cap?",
+          options: [
+            "Coin B — higher price per coin",
+            "Coin A — more coins in circulation so larger",
+            "Coin A: €500 billion market cap. Coin B: €500 million market cap. Coin A is 1000× larger.",
+            "They're equal — price and supply always compensate each other",
+          ],
+          correct: 2,
+          explain: "Coin A: €0.001 × 500,000,000,000,000 = €500 billion. Coin B: €500 × 1,000,000 = €500 million. Coin A is 1,000× larger than Coin B — despite the 500,000× lower price per coin. This is why you can never rely on price per coin. Market cap is the only honest measure.",
+        },
+      },
+      {
+        id: "l1-stablecoins",
+        icon: "💵",
+        titleNL: "Stablecoins en trading pairs — de taal van crypto-handel",
+        titleEN: "Stablecoins and trading pairs — the language of crypto trading",
+        contentNL: `Marcus vraagt je: wanneer je BTC 'verkoopt', wat ontvang je dan? Euros? Dollars? Of iets anders?
+
+Op de meeste crypto-exchanges ontvang je USDT. Dat is een stablecoin — en het is de ruggengraat van de hele crypto-handel.
+
+WAT IS EEN STABLECOIN?
+
+Een stablecoin is een cryptocurrency waarvan de waarde gekoppeld is aan een stabiele munt — meestal de US dollar.
+
+1 USDT ≈ 1 US Dollar. Altijd. (bijna)
+1 USDC ≈ 1 US Dollar. Altijd.
+
+Waarom bestaat dit? Crypto is extreem volatiel. Als je BTC verkoopt en €5.000 winst wilt "parkeren" terwijl je wacht op de volgende koop, wil je niet dat die €5.000 ook daalt terwijl je wacht. Oplossing: zet het om naar USDT — dat blijft stabiel.
+
+DE TWEE MEEST GEBRUIKTE STABLECOINS:
+
+USDT (Tether): grootste stablecoin ter wereld. €65+ miljard in omloop. Gebruikt op vrijwel elke exchange wereldwijd. Kleine kanttekening: Tether heeft in het verleden vragen gehad over hun reserves.
+
+USDC (USD Coin): gemaakt door Coinbase en Circle. Meer transparant, volledig geauditeerd. Iets kleiner maar betrouwbaarder voor grotere bedragen.
+
+TRADING PAIRS — hoe de markt georganiseerd is
+
+Op een exchange koop je niet "BTC". Je koopt het BTC/USDT PAIR — de verhouding tussen Bitcoin en USDT.
+
+BTC/USDT = de prijs van BTC uitgedrukt in USDT.
+Als BTC/USDT = 82.000, betekent dat: 1 BTC kost 82.000 USDT.
+
+ETH/USDT = de prijs van Ethereum in USDT.
+ETH/BTC = de prijs van Ethereum uitgedrukt in Bitcoin (hoeveel BTC kost 1 ETH?).
+
+Waarom pairs belangrijk zijn:
+— Je handelt altijd TWEE assets tegelijk. Als je BTC koopt, geef je USDT weg.
+— Als je BTC verkoopt, ontvang je USDT.
+— Je saldo is altijd in één van beide: BTC of USDT.
+
+IN BITCOIN MENTOR:
+
+De chart toont standaard BTC/USDT. De prijs die je ziet is in USDT. Als je papier-tradet, start je met USDT en koop je BTC. Als je verkoopt, ontvang je USDT terug.
+
+HOE EURO's IN DIT SYSTEEM PASSEN:
+
+In Europa koop je crypto via Bitvavo met euro's. Bitvavo converteert intern. Op grote exchanges zoals Binance handel je in USDT-pairs. Dat is de internationale standaard.
+
+Praktisch: denk aan USDT als "crypto-dollars". De markt denkt in dollars, niet euros.
+
+Actie: ga naar de chart in Bitcoin Mentor. Kijk: welk pair zie je? BTC/USDT. Zie je nu hoe dat werkt? De prijs is hoeveel USDT één BTC kost.
+
+Marcus zegt: Stablecoins zijn je schuilkelder. Als de markt crasht en jij wilt USDT houden, ben je niet 'uit de markt' — je bent er klaar voor om op het juiste moment terug te kopen.`,
+        contentEN: `Marcus asks you: when you 'sell' BTC, what do you receive? Euros? Dollars? Or something else?
+
+On most crypto exchanges you receive USDT. That's a stablecoin — and it's the backbone of all crypto trading.
+
+WHAT IS A STABLECOIN?
+
+A stablecoin is a cryptocurrency whose value is pegged to a stable currency — usually the US dollar.
+
+1 USDT ≈ 1 US Dollar. Always. (almost)
+1 USDC ≈ 1 US Dollar. Always.
+
+Why does this exist? Crypto is extremely volatile. If you sell BTC and want to "park" €5,000 profit while waiting for the next buy, you don't want that €5,000 to also drop while you wait. Solution: convert to USDT — that stays stable.
+
+THE TWO MOST USED STABLECOINS:
+
+USDT (Tether): world's largest stablecoin. €65+ billion in circulation. Used on virtually every exchange worldwide. Small caveat: Tether has historically had questions about their reserves.
+
+USDC (USD Coin): made by Coinbase and Circle. More transparent, fully audited. Slightly smaller but more reliable for larger amounts.
+
+TRADING PAIRS — how the market is organized
+
+On an exchange you don't buy "BTC". You buy the BTC/USDT PAIR — the ratio between Bitcoin and USDT.
+
+BTC/USDT = the price of BTC expressed in USDT.
+If BTC/USDT = 82,000, that means: 1 BTC costs 82,000 USDT.
+
+ETH/USDT = the price of Ethereum in USDT.
+ETH/BTC = the price of Ethereum expressed in Bitcoin (how much BTC does 1 ETH cost?).
+
+Why pairs matter:
+— You always trade TWO assets simultaneously. When you buy BTC, you give away USDT.
+— When you sell BTC, you receive USDT.
+— Your balance is always in one of both: BTC or USDT.
+
+IN BITCOIN MENTOR:
+
+The chart shows BTC/USDT by default. The price you see is in USDT. When you paper trade, you start with USDT and buy BTC. When you sell, you receive USDT back.
+
+HOW EUROS FIT IN THIS SYSTEM:
+
+In Europe you buy crypto via Bitvavo with euros. Bitvavo converts internally. On large exchanges like Binance you trade in USDT pairs. That's the international standard.
+
+Practical: think of USDT as "crypto-dollars". The market thinks in dollars, not euros.
+
+Action: go to the chart in Bitcoin Mentor. Look: which pair do you see? BTC/USDT. Do you now see how that works? The price is how much USDT one BTC costs.
+
+Marcus says: Stablecoins are your shelter. When the market crashes and you want to hold USDT, you're not 'out of the market' — you're ready to buy back at the right moment.`,
+        termsNL: [
+          { term: "Stablecoin", def: "Cryptocurrency gekoppeld aan een stabiele munt (USD). 1 USDT ≈ 1 dollar. Beschermt tegen volatiliteit." },
+          { term: "USDT (Tether)", def: "Grootste stablecoin. Internationaal handelsstandaard op exchanges. 1 USDT = 1 USD." },
+          { term: "USDC", def: "Stablecoin van Coinbase/Circle. Transparanter dan USDT. Ook 1:1 met USD." },
+          { term: "Trading Pair", def: "Twee assets die je tegelijk handelt. BTC/USDT = je koopt BTC, geeft USDT. Verkoop je BTC, ontvang je USDT." },
+          { term: "Base / Quote Currency", def: "In BTC/USDT: BTC is de base (wat je koopt), USDT is de quote (waarmee je betaalt)." },
+          { term: "Liquiditeit in USDT", def: "Je winst parkeren in USDT tijdens onzekerheid. Klaar om snel terug te kopen zonder exchange-transacties." },
+        ],
+        termsEN: [
+          { term: "Stablecoin", def: "Cryptocurrency pegged to a stable currency (USD). 1 USDT ≈ 1 dollar. Protects against volatility." },
+          { term: "USDT (Tether)", def: "Largest stablecoin. International trading standard on exchanges. 1 USDT = 1 USD." },
+          { term: "USDC", def: "Stablecoin from Coinbase/Circle. More transparent than USDT. Also 1:1 with USD." },
+          { term: "Trading Pair", def: "Two assets you trade simultaneously. BTC/USDT = you buy BTC, give USDT. Sell BTC, receive USDT." },
+          { term: "Base / Quote Currency", def: "In BTC/USDT: BTC is the base (what you buy), USDT is the quote (what you pay with)." },
+          { term: "Liquidity in USDT", def: "Parking your profit in USDT during uncertainty. Ready to buy back quickly without exchange transactions." },
+        ],
+        checkNL: {
+          q: "Je hebt 0.1 BTC. BTC staat op €80.000. Je 'verkoopt' je BTC. Wat heb je daarna in je account?",
+          options: [
+            "€8.000 in euros — direct overgemaakt naar je bankrekening",
+            "8.000 USDT — de stablecoin waartegen BTC werd verhandeld",
+            "Niks — je moet eerst een bankrekening koppelen",
+            "0.1 BTC + de winst in euros",
+          ],
+          correct: 1,
+          explain: "Op een exchange handel je in pairs. BTC/USDT: als je BTC verkoopt, ontvang je USDT. 0.1 BTC × €80.000 = €8.000 ≈ 8.000 USDT. Die USDT staat in je exchange-account. Wil je euros? Dan moet je USDT → EUR converteren en opnemen naar je bank. Dat is een extra stap.",
+        },
+        checkEN: {
+          q: "You have 0.1 BTC. BTC is at €80,000. You 'sell' your BTC. What do you have in your account afterwards?",
+          options: [
+            "€8,000 in euros — transferred directly to your bank account",
+            "8,000 USDT — the stablecoin against which BTC was traded",
+            "Nothing — you need to link a bank account first",
+            "0.1 BTC + the profit in euros",
+          ],
+          correct: 1,
+          explain: "On an exchange you trade in pairs. BTC/USDT: when you sell BTC, you receive USDT. 0.1 BTC × €80,000 = €8,000 ≈ 8,000 USDT. That USDT sits in your exchange account. Want euros? Then you need to convert USDT → EUR and withdraw to your bank. That's an extra step.",
+        },
+      },
+      {
+        id: "l1-volatiliteit",
+        icon: "⚡",
+        titleNL: "Volatiliteit — waarom crypto zo anders is",
+        titleEN: "Volatility — why crypto is so different",
+        contentNL: `Marcus stelt je een vraag: het is 2022. Je hebt €10.000 in BTC geïnvesteerd in november 2021. Een jaar later is je positie nog €1.700 waard. Dat is -83%. Hoe reageer je?
+
+Als je antwoord "ik had dit niet verwacht" is, was je niet voorbereid op crypto.
+
+Want dit — -83% in één jaar — is gewoon. Niet uitzonderlijk. In 2018 was het -84%. In 2015 -85%. Het hoort bij het asset.
+
+WAT IS VOLATILITEIT?
+
+Volatiliteit = de mate van prijsschommeling over een periode.
+
+BTC beweegt gemiddeld 3-5% per dag. Op heftige dagen 10-15%. In crash-scenario's 30-50% in één maand.
+
+Vergelijking:
+— Aandelen (S&P 500): gemiddeld 15-20% volatiliteit per jaar.
+— Bitcoin: gemiddeld 60-80% volatiliteit per jaar.
+— Bitcoin is 4-5× volatieler dan de aandelenmarkt.
+
+WAAROM IS CRYPTO ZO VOLATIEL?
+
+1. Markt is klein. De totale crypto-markt (€2-3 biljoen) is een fractie van de aandelen- of obligatiemarkt. Grote spelers kunnen de markt bewegen.
+
+2. Geen fundamentele anker. Aandelen hebben winst, omzet, dividenden. Crypto heeft perceptie en sentiment. Verandert het sentiment, verandert de prijs — snel.
+
+3. 24/7 trading. Er is nooit een nacht-pauze. Slecht nieuws om 3 uur 's nachts = direct effect.
+
+4. Jonge markt. Crypto bestaat pas 15 jaar. De markt is nog aan het ontdekken wat de 'echte' waarde is.
+
+DE TWEE KANTEN VAN VOLATILITEIT:
+
+RISICO: -50% is mogelijk in maanden. -80% is mogelijk in een jaar. Geld beleggen dat je nodig hebt in de komende 12 maanden is gevaarlijk.
+
+KANS: +200% in één bull markt is normaal. +1000% in een altcoin cycle is gezien. Geen andere liquide markt biedt dit potentieel.
+
+Dit is geen reclame voor crypto. Dit is realiteit. De volatiliteit die je rijk kan maken, is dezelfde die je kan ruïneren.
+
+PRAKTISCHE REGELS OM VOLATILITEIT TE OVERLEVEN:
+
+1. Investeer alleen geld dat je 3-5 jaar kunt missen.
+2. Start klein. €100-500 om te leren. Laat emoties niet bepalen door de bedragen.
+3. Gebruik altijd een stop-loss (les 5, niveau 2).
+4. Diversifieer: nooit >50% van spaargeld in crypto.
+5. Dollar Cost Averaging (DCA): koop elke maand een vast bedrag, ongeacht de prijs. Spreidt risico over tijd.
+
+DE PSYCHOLOGISCHE TRAP:
+
+In een bull markt voelt -5% verliezen onmogelijk. Dan komt er een dag van -15% en verkoopt iedereen in paniek. Dan stijgt BTC 40% in de twee weken daarna.
+
+Volatiliteit test je psychologie, niet je analyse. Wie paniek niet kan uitschakelen, verliest in crypto.
+
+Actie: kijk naar de BTC 1D grafiek, afgelopen 3 jaar. Markeer de grootste dalingen. Noteer: hoe lang duurde elke daling? Hoe snel herstelde BTC daarna?
+
+Marcus zegt: Volatiliteit is het leergeld van de markt. Het elimineert zwakke handen. Als jij kalm blijft terwijl anderen panikeren, heb je al een edge.`,
+        contentEN: `Marcus asks you a question: it's 2022. You invested €10,000 in BTC in November 2021. A year later your position is worth €1,700. That's -83%. How do you react?
+
+If your answer is "I didn't expect this", you weren't prepared for crypto.
+
+Because this — -83% in one year — is normal. Not exceptional. In 2018 it was -84%. In 2015 -85%. It comes with the asset.
+
+WHAT IS VOLATILITY?
+
+Volatility = the degree of price fluctuation over a period.
+
+BTC moves on average 3-5% per day. On intense days 10-15%. In crash scenarios 30-50% in one month.
+
+Comparison:
+— Stocks (S&P 500): average 15-20% volatility per year.
+— Bitcoin: average 60-80% volatility per year.
+— Bitcoin is 4-5× more volatile than the stock market.
+
+WHY IS CRYPTO SO VOLATILE?
+
+1. Market is small. The total crypto market (€2-3 trillion) is a fraction of the stock or bond market. Large players can move the market.
+
+2. No fundamental anchor. Stocks have profit, revenue, dividends. Crypto has perception and sentiment. Change the sentiment, change the price — fast.
+
+3. 24/7 trading. There's never a night pause. Bad news at 3am = immediate effect.
+
+4. Young market. Crypto has only existed 15 years. The market is still discovering what the 'real' value is.
+
+THE TWO SIDES OF VOLATILITY:
+
+RISK: -50% is possible in months. -80% is possible in a year. Investing money you need in the next 12 months is dangerous.
+
+OPPORTUNITY: +200% in one bull market is normal. +1000% in an altcoin cycle has been seen. No other liquid market offers this potential.
+
+This isn't advertising for crypto. This is reality. The volatility that can make you rich is the same that can ruin you.
+
+PRACTICAL RULES TO SURVIVE VOLATILITY:
+
+1. Only invest money you can miss for 3-5 years.
+2. Start small. €100-500 to learn. Don't let amounts determine your emotions.
+3. Always use a stop-loss (lesson 5, level 2).
+4. Diversify: never >50% of savings in crypto.
+5. Dollar Cost Averaging (DCA): buy a fixed amount every month, regardless of price. Spreads risk over time.
+
+THE PSYCHOLOGICAL TRAP:
+
+In a bull market -5% loss feels impossible. Then a -15% day comes and everyone sells in panic. Then BTC rises 40% in the two weeks after.
+
+Volatility tests your psychology, not your analysis. Whoever can't switch off panic, loses in crypto.
+
+Action: look at the BTC 1D chart, past 3 years. Mark the largest declines. Note: how long did each decline last? How quickly did BTC recover afterwards?
+
+Marcus says: Volatility is the market's tuition fee. It eliminates weak hands. If you stay calm while others panic, you already have an edge.`,
+        termsNL: [
+          { term: "Volatiliteit", def: "Mate van prijsschommeling. BTC: 60-80% per jaar. Aandelen: 15-20%. Crypto is 4-5× volatieler." },
+          { term: "Drawdown", def: "Percentage daling van de piek. BTC had -83% drawdown in 2022. Normaal in crypto." },
+          { term: "Dollar Cost Averaging (DCA)", def: "Elke periode (week/maand) een vast bedrag investeren, ongeacht prijs. Spreidt risico." },
+          { term: "Zwakke handen", def: "Traders die bij de eerste daling panikeren en verkopen. Versterken de volatiliteit door op het slechte moment te verkopen." },
+          { term: "Risk Capital", def: "Geld dat je kunt veroorloven volledig te verliezen. ALLEEN dit beleggen in crypto." },
+          { term: "HODL", def: "Crypto-slang voor 'vasthouden'. Strategie van lange-termijn beleggers die volatiliteit negeren." },
+        ],
+        termsEN: [
+          { term: "Volatility", def: "Degree of price fluctuation. BTC: 60-80% per year. Stocks: 15-20%. Crypto is 4-5× more volatile." },
+          { term: "Drawdown", def: "Percentage drop from peak. BTC had -83% drawdown in 2022. Normal in crypto." },
+          { term: "Dollar Cost Averaging (DCA)", def: "Investing a fixed amount every period (week/month) regardless of price. Spreads risk." },
+          { term: "Weak Hands", def: "Traders who panic and sell at the first drop. Amplify volatility by selling at the worst moment." },
+          { term: "Risk Capital", def: "Money you can afford to lose completely. ONLY invest this in crypto." },
+          { term: "HODL", def: "Crypto slang for 'hold'. Strategy of long-term investors who ignore volatility." },
+        ],
+        checkNL: {
+          q: "Je hebt €2.000 in BTC. BTC daalt 35% in twee weken door negatief nieuws. Wat is de meest professionele reactie?",
+          options: [
+            "Verkopen — 35% verlies is een duidelijk signaal dat BTC naar nul gaat",
+            "Alles verdubbelen — als het daalt moet je de gemiddelde prijs verlagen",
+            "Kijken of je stop-loss geraakt is. Zo ja: systeem werkt. Zo nee: wachten op je plan.",
+            "Niets doen want HODL is altijd de beste strategie",
+          ],
+          correct: 2,
+          explain: "Professioneel reageren = je systeem volgen. Had je een stop-loss? Dan is die geraakt of niet — beide zijn correct output van je plan. Geen stop-loss? Dan is dit het moment om te leren waarom dat essentieel is. 'Verdubbelen' zonder plan is gokken. 'HODL altijd' is geen systeem, het is hopen.",
+        },
+        checkEN: {
+          q: "You have €2,000 in BTC. BTC drops 35% in two weeks due to negative news. What is the most professional reaction?",
+          options: [
+            "Sell — 35% loss is a clear signal BTC is going to zero",
+            "Double down — when it drops you should lower the average price",
+            "Check if your stop-loss was hit. If yes: system works. If no: wait for your plan.",
+            "Do nothing because HODL is always the best strategy",
+          ],
+          correct: 2,
+          explain: "Reacting professionally = following your system. Did you have a stop-loss? Then it was hit or not — both are correct output of your plan. No stop-loss? Then this is the moment to learn why that's essential. 'Doubling down' without a plan is gambling. 'HODL always' isn't a system, it's hoping.",
+        },
+      },
+      {
+        id: "l1-exchange",
+        icon: "🏦",
+        titleNL: "Een exchange gebruiken — van account tot eerste aankoop",
+        titleEN: "Using an exchange — from account to first purchase",
+        contentNL: `Marcus vraagt: als je nu €200 in BTC wilt kopen, weet je dan exact hoe? Welke exchange? Wat is KYC? Wat kost het? En hoe voorkom je veelgemaakte fouten bij je eerste aankoop?
+
+Dit is de praktische les die de meeste beginners overslaan — en dan vast lopen bij stap één.
+
+WAT IS EEN EXCHANGE?
+
+Een exchange is een platform waar je crypto kunt kopen, verkopen en traden. Er zijn twee types:
+
+CENTRALIZED EXCHANGE (CEX): Bitvavo, Coinbase, Binance, Kraken.
+— Je maakt een account aan met je identiteit (KYC).
+— De exchange beheert jouw crypto (zij houden de private keys).
+— Gebruiksvriendelijk, goede klantenservice, geschikt voor beginners.
+— In Europa is Bitvavo populair vanwege Nederlandse licentie, lage fees en Nederlandstalige support.
+
+DECENTRALIZED EXCHANGE (DEX): Uniswap, PancakeSwap.
+— Geen account, geen KYC. Verbind je eigen wallet.
+— Peer-to-peer. Jij blijft altijd eigenaar van je private keys.
+— Complexer, geen klantenservice. Niet geschikt voor beginners.
+
+VOOR NU: gebruik een CEX (Bitvavo). Later, als je meer begrijpt, kun je DEX verkennen.
+
+HOE EEN BITVAVO ACCOUNT AANMAKEN:
+
+1. Ga naar bitvavo.com → "Registreer"
+2. Vul je gegevens in (naam, email, wachtwoord)
+3. Stel DIRECT 2FA in (Google Authenticator of Authy) — dit is verplicht voor veiligheid
+4. KYC verificatie: upload je identiteitsbewijs + selfie. Dit is wettelijk verplicht (AML/KYC wetgeving). Duurt 5-15 minuten.
+5. Koppel je bankrekening (IBAN) voor stortingen
+
+WAT IS KYC EN WAAROM IS HET VERPLICHT?
+
+KYC = Know Your Customer. Exchanges moeten wettelijk weten wie hun klanten zijn (anti-witwas wetgeving). Dit is hetzelfde als bij een bank.
+
+Jouw gegevens (ID, selfie) worden opgeslagen. Dit is niet anoniem. Als je anonimiteit wil, zijn er andere opties — maar dat is gevorderd.
+
+FEES — WAT KOST TRADEN?
+
+Bitvavo rekent 0.25% fee per transactie (kan dalen bij hogere volumes).
+Voorbeeld: je koopt €500 BTC → fee = €1,25.
+
+Spread: het verschil tussen de koop- en verkoopprijs. Op Bitvavo is die spread smal.
+
+Stortingskosten: SEPA-overschrijving is gratis op Bitvavo. iDEAL kost 1%.
+
+JE EERSTE AANKOOP — STAP VOOR STAP:
+
+1. Log in op Bitvavo
+2. Ga naar "Markt" → kies Bitcoin (BTC)
+3. Kies ordertype: "Markt" (direct kopen) of "Limiet" (kopen op specifieke prijs)
+4. Vul het bedrag in (€ of BTC)
+5. Controleer de fee en totaalprijs
+6. Bevestig — je hebt BTC
+
+VEELGEMAAKTE FOUTEN BIJ BEGINNERS:
+
+1. FOMO kopen: "BTC stijgt hard, ik MOET nu kopen." → Wacht op je plan.
+2. Geen stop-loss: je koopt, BTC daalt 30%, je weet niet wat te doen.
+3. Alle spaargeld: nooit meer dan je kunt veroorloven te verliezen.
+4. 2FA vergeten: account onbeveiligd. Eerste actie na registratie.
+5. Verkopen bij eerste dip: normale volatiliteit verkeerd interpreteren.
+
+Actie: maak een account aan op Bitvavo als je dat nog niet hebt. Verificeer je identiteit. Stel 2FA in. Doe een kleine teststorting van €10. Bekijk de interface.
+
+Marcus zegt: Je eerste aankoop doet iets met je. De prijs beweegt en je voelt het. Dat is de eerste les in trading-psychologie — die kan geen enkele les vervangen. Maar doe het met bedragen die je kunt verliezen.`,
+        contentEN: `Marcus asks: if you want to buy €200 in BTC right now, do you know exactly how? Which exchange? What is KYC? What does it cost? And how do you avoid common mistakes on your first purchase?
+
+This is the practical lesson most beginners skip — and then get stuck at step one.
+
+WHAT IS AN EXCHANGE?
+
+An exchange is a platform where you can buy, sell and trade crypto. There are two types:
+
+CENTRALIZED EXCHANGE (CEX): Bitvavo, Coinbase, Binance, Kraken.
+— You create an account with your identity (KYC).
+— The exchange manages your crypto (they hold the private keys).
+— User-friendly, good customer service, suitable for beginners.
+— In Europe, Bitvavo is popular for its Dutch license, low fees and Dutch support.
+
+DECENTRALIZED EXCHANGE (DEX): Uniswap, PancakeSwap.
+— No account, no KYC. Connect your own wallet.
+— Peer-to-peer. You always remain owner of your private keys.
+— More complex, no customer service. Not suitable for beginners.
+
+FOR NOW: use a CEX (Bitvavo). Later, as you understand more, you can explore DEX.
+
+HOW TO CREATE A BITVAVO ACCOUNT:
+
+1. Go to bitvavo.com → "Register"
+2. Fill in your details (name, email, password)
+3. IMMEDIATELY set up 2FA (Google Authenticator or Authy) — essential for security
+4. KYC verification: upload your ID + selfie. This is legally required (AML/KYC legislation). Takes 5-15 minutes.
+5. Link your bank account (IBAN) for deposits
+
+WHAT IS KYC AND WHY IS IT MANDATORY?
+
+KYC = Know Your Customer. Exchanges are legally required to know who their customers are (anti-money laundering legislation). This is the same as at a bank.
+
+Your data (ID, selfie) is stored. This is not anonymous. If you want anonymity, there are other options — but that's advanced.
+
+FEES — WHAT DOES TRADING COST?
+
+Bitvavo charges 0.25% fee per transaction (can decrease at higher volumes).
+Example: you buy €500 BTC → fee = €1.25.
+
+Spread: the difference between buy and sell price. On Bitvavo the spread is narrow.
+
+Deposit fees: SEPA transfer is free on Bitvavo. iDEAL costs 1%.
+
+YOUR FIRST PURCHASE — STEP BY STEP:
+
+1. Log in to Bitvavo
+2. Go to "Market" → choose Bitcoin (BTC)
+3. Choose order type: "Market" (buy immediately) or "Limit" (buy at specific price)
+4. Fill in the amount (€ or BTC)
+5. Check the fee and total price
+6. Confirm — you have BTC
+
+COMMON MISTAKES BY BEGINNERS:
+
+1. FOMO buying: "BTC is rising hard, I MUST buy now." → Wait for your plan.
+2. No stop-loss: you buy, BTC drops 30%, you don't know what to do.
+3. All savings: never more than you can afford to lose.
+4. Forgetting 2FA: account unsecured. First action after registration.
+5. Selling at first dip: misinterpreting normal volatility.
+
+Action: create an account on Bitvavo if you don't have one yet. Verify your identity. Set up 2FA. Make a small test deposit of €10. Explore the interface.
+
+Marcus says: Your first purchase does something to you. The price moves and you feel it. That's the first lesson in trading psychology — no lesson can replace that. But do it with amounts you can lose.`,
+        termsNL: [
+          { term: "Exchange (CEX)", def: "Gecentraliseerd platform om crypto te kopen/verkopen. Bitvavo, Binance, Coinbase. Vereist KYC." },
+          { term: "DEX", def: "Gedecentraliseerde exchange. Geen account nodig, jij behoudt private keys. Complexer, voor gevorderden." },
+          { term: "KYC (Know Your Customer)", def: "Wettelijke identiteitsverificatie. ID + selfie uploaden. Verplicht op alle legale exchanges." },
+          { term: "2FA (Two-Factor Authentication)", def: "Tweestaps-beveiliging via authenticator app. ALTIJD instellen. Beschermt je account als wachtwoord lekt." },
+          { term: "Trading Fee", def: "Kosten per transactie. Bitvavo: 0.25%. Vermindert je winst — tel dit mee in je R/R." },
+          { term: "SEPA-overboeking", def: "Bankovermaking binnen Europa. Gratis op Bitvavo. Duurt 1-2 werkdagen." },
+        ],
+        termsEN: [
+          { term: "Exchange (CEX)", def: "Centralized platform to buy/sell crypto. Bitvavo, Binance, Coinbase. Requires KYC." },
+          { term: "DEX", def: "Decentralized exchange. No account needed, you keep private keys. More complex, for advanced users." },
+          { term: "KYC (Know Your Customer)", def: "Legal identity verification. Upload ID + selfie. Mandatory on all legal exchanges." },
+          { term: "2FA (Two-Factor Authentication)", def: "Two-step security via authenticator app. ALWAYS set up. Protects account if password leaks." },
+          { term: "Trading Fee", def: "Cost per transaction. Bitvavo: 0.25%. Reduces your profit — factor this into your R/R." },
+          { term: "SEPA Transfer", def: "Bank transfer within Europe. Free on Bitvavo. Takes 1-2 business days." },
+        ],
+        checkNL: {
+          q: "Je registreert je op Bitvavo. Wat is de EERSTE actie na het aanmaken van je account?",
+          options: [
+            "Meteen BTC kopen want de prijs is laag",
+            "2FA instellen — je account is onbeveiligd zonder",
+            "KYC later doen want dat duurt te lang",
+            "Je wachtwoord opslaan in een notitie op je telefoon",
+          ],
+          correct: 1,
+          explain: "2FA als eerste. Zonder 2FA is je account beveiligd met alleen een wachtwoord — dat is onvoldoende. Als jouw email gehackt wordt of je wachtwoord lekt, kan iemand anders inloggen en je BTC weghalen. Google Authenticator of Authy instellen kost 2 minuten en beschermt alles.",
+        },
+        checkEN: {
+          q: "You register on Bitvavo. What is the FIRST action after creating your account?",
+          options: [
+            "Buy BTC immediately because the price is low",
+            "Set up 2FA — your account is unsecured without it",
+            "Do KYC later because it takes too long",
+            "Save your password in a note on your phone",
+          ],
+          correct: 1,
+          explain: "2FA first. Without 2FA your account is secured with just a password — that's insufficient. If your email gets hacked or your password leaks, someone else can log in and take your BTC. Setting up Google Authenticator or Authy takes 2 minutes and protects everything.",
+        },
+      },
     ],
   },
   {
@@ -1247,6 +1979,270 @@ Marcus says: The only trader guaranteed to go bankrupt is the trader who doesn't
           ],
           correct: 1,
           explain: "Formula: max loss = 1% × €8,000 = €80. Risk per BTC = €84,000 − €81,600 = €2,400. Position size = €80 ÷ €2,400 = 0.033 BTC. If stop-loss is hit: lose exactly €80. This is math, not feeling. And 'how certain you are' does NOT change the formula — your certainty determines whether you take the trade, not how big.",
+        },
+      },
+      {
+        id: "l2-volume",
+        icon: "📶",
+        titleNL: "Volume — de vergeten bevestiging",
+        titleEN: "Volume — the forgotten confirmation",
+        contentNL: `Marcus stelt je een vraag: twee breakouts. Bij de eerste doorbreekt BTC een resistance met 1.000 BTC verhandeld in die uur-kaars. Bij de tweede doorbreekt hij dezelfde resistance met 15.000 BTC in die kaars. Welke breakout vertrouw jij meer?
+
+Als je antwoord de tweede is — je hebt de kern van volume-analyse al begrepen.
+
+WAT IS VOLUME?
+
+Volume = het totale aantal coins dat in een bepaalde periode verhandeld is.
+
+Op de grafiek zie je volume als balkjes onderaan. Hoge balk = veel verhandeld. Lage balk = weinig verhandeld.
+
+Volume toont CONVICTION — hoeveel spelers actief waren en hoe sterk hun overtuiging was. Prijs zonder volume is een gerucht. Prijs met volume is een feit.
+
+DE 4 VOLUME-REGELS DIE ALLES VERKLAREN:
+
+1. STIJGENDE PRIJS + HOOG VOLUME = STERKE UPTREND
+Veel deelnemers kopen actief. De stijging is echt. Grote kans op continuatie.
+
+2. STIJGENDE PRIJS + LAAG VOLUME = ZWAKKE STIJGING
+Weinig deelnemers. Prijs stijgt maar niemand gelooft erin. Mogelijk vals signaal — "pump zonder fundament."
+
+3. DALENDE PRIJS + HOOG VOLUME = STERKE VERKOOPDRUK
+Veel deelnemers verkopen actief. De daling is echt. Gevaarlijk om ertegen in te gaan.
+
+4. DALENDE PRIJS + LAAG VOLUME = CORRECTIE IN UPTREND
+Weinig verkopers. Prijs daalt omdat kopers even wachten — niet omdat ze bang zijn. In een uptrend is dit normaal en potentieel een koopkans.
+
+VOLUME EN BREAKOUTS:
+
+Dit is waar volume het meest krachtig is. Een breakout DOOR resistance is pas geldig als er significant meer volume is dan normaal.
+
+Zonder volume-bevestiging: "fakeout" risico. Prijs breekt door, maar valt terug.
+Met volume-bevestiging: echte breakout. Grote spelers hebben besloten — de move is serieus.
+
+Vuistregel: het volume bij de breakout-kaars moet minstens 2-3× groter zijn dan het gemiddelde volume van de vorige 10 kaarsen.
+
+VOLUME EN TOPS/BODEMS:
+
+Volume piekt vaak bij markttops en -bodems. Dit zijn de momenten van maximale angst (bodem) of maximale hebzucht (top). Als je een extreme volumepiek ziet na een lange move → let op, een keerpunt kan nabij zijn.
+
+In Bitcoin Mentor: volume is zichtbaar als balkjes onderaan de grafiek. Vergelijk de balkjes bij de huidige kaars met die van de afgelopen week.
+
+Actie: open de BTC 4H grafiek. Zoek een moment van een grote prijsbeweging. Bekijk het volume op die specifieke kaars. Was het hoog of laag? Wat zegt dat over de kwaliteit van die move?
+
+Marcus zegt: Prijs is wat de markt wil dat je ziet. Volume is wat de markt eigenlijk doet. Kijk altijd naar beide.`,
+        contentEN: `Marcus asks you a question: two breakouts. In the first, BTC breaks a resistance with 1,000 BTC traded in that hourly candle. In the second, it breaks the same resistance with 15,000 BTC in that candle. Which breakout do you trust more?
+
+If your answer is the second — you've already understood the core of volume analysis.
+
+WHAT IS VOLUME?
+
+Volume = the total number of coins traded in a specific period.
+
+On the chart you see volume as bars at the bottom. High bar = a lot traded. Low bar = little traded.
+
+Volume shows CONVICTION — how many players were active and how strong their conviction was. Price without volume is a rumor. Price with volume is a fact.
+
+THE 4 VOLUME RULES THAT EXPLAIN EVERYTHING:
+
+1. RISING PRICE + HIGH VOLUME = STRONG UPTREND
+Many participants actively buying. The rise is real. High chance of continuation.
+
+2. RISING PRICE + LOW VOLUME = WEAK RISE
+Few participants. Price rises but nobody believes in it. Possibly false signal — "pump without foundation."
+
+3. FALLING PRICE + HIGH VOLUME = STRONG SELLING PRESSURE
+Many participants actively selling. The decline is real. Dangerous to trade against.
+
+4. FALLING PRICE + LOW VOLUME = CORRECTION IN UPTREND
+Few sellers. Price falls because buyers are briefly waiting — not because they're scared. In an uptrend this is normal and potentially a buying opportunity.
+
+VOLUME AND BREAKOUTS:
+
+This is where volume is most powerful. A breakout THROUGH resistance is only valid if there's significantly more volume than normal.
+
+Without volume confirmation: "fakeout" risk. Price breaks through but falls back.
+With volume confirmation: real breakout. Big players have decided — the move is serious.
+
+Rule of thumb: the volume on the breakout candle should be at least 2-3× larger than the average volume of the previous 10 candles.
+
+VOLUME AND TOPS/BOTTOMS:
+
+Volume often peaks at market tops and bottoms. These are the moments of maximum fear (bottom) or maximum greed (top). If you see an extreme volume spike after a long move → pay attention, a turning point may be near.
+
+In Bitcoin Mentor: volume is visible as bars at the bottom of the chart. Compare the bars at the current candle with those of the past week.
+
+Action: open the BTC 4H chart. Find a moment of a large price movement. Look at the volume on that specific candle. Was it high or low? What does that say about the quality of that move?
+
+Marcus says: Price is what the market wants you to see. Volume is what the market is actually doing. Always look at both.`,
+        termsNL: [
+          { term: "Volume", def: "Het aantal coins verhandeld in een tijdsperiode. Toont hoeveel deelnemers actief waren en hoe sterk hun overtuiging." },
+          { term: "Hoog Volume", def: "Veel deelnemers actief. Bevestigt de richting van de prijs. Maakt signalen betrouwbaarder." },
+          { term: "Laag Volume", def: "Weinig deelnemers. Prijs beweegt zonder grote overtuiging. Signalen minder betrouwbaar." },
+          { term: "Volume Breakout", def: "Breakout door resistance/support met significant hoger volume dan normaal. Veel betrouwbaarder dan breakout zonder volume." },
+          { term: "Fakeout", def: "Valse breakout zonder volume. Prijs breekt door een zone maar keert terug omdat er geen echte overtuiging was." },
+          { term: "Climactic Volume", def: "Extreme volumepiek na lange move. Signaal dat de move mogelijk eindigt — te veel deelnemers aan dezelfde kant." },
+        ],
+        termsEN: [
+          { term: "Volume", def: "Number of coins traded in a time period. Shows how many participants were active and how strong their conviction." },
+          { term: "High Volume", def: "Many participants active. Confirms price direction. Makes signals more reliable." },
+          { term: "Low Volume", def: "Few participants. Price moves without strong conviction. Signals less reliable." },
+          { term: "Volume Breakout", def: "Breakout through resistance/support with significantly higher volume than normal. Much more reliable than breakout without volume." },
+          { term: "Fakeout", def: "False breakout without volume. Price breaks through a zone but returns because there was no real conviction." },
+          { term: "Climactic Volume", def: "Extreme volume spike after long move. Signal that the move may be ending — too many participants on the same side." },
+        ],
+        checkNL: {
+          q: "BTC breekt door resistance €88.000. Maar het volume op die kaars is 30% lager dan het gemiddelde. Wat betekent dit?",
+          options: [
+            "Sterke breakout — prijs brak door, volume doet er niet toe",
+            "Zwakke breakout — weinig overtuiging. Risico op fakeout. Wacht op volumebevestiging.",
+            "Bearish signaal — laag volume bij stijging is altijd slecht",
+            "Koopsignaal — lage volume breakouts zijn makkelijker te timen",
+          ],
+          correct: 1,
+          explain: "Breakout zonder volume = fakeout-risico. Grote spelers waren er niet bij. De prijs brak door maar er is geen echte overtuiging. Professionele aanpak: wacht op een retest van €88.000 (nu als support) MET volume-bevestiging — dán is de entry veiliger.",
+        },
+        checkEN: {
+          q: "BTC breaks through resistance €88,000. But the volume on that candle is 30% below average. What does this mean?",
+          options: [
+            "Strong breakout — price broke through, volume doesn't matter",
+            "Weak breakout — little conviction. Fakeout risk. Wait for volume confirmation.",
+            "Bearish signal — low volume on a rise is always bad",
+            "Buy signal — low volume breakouts are easier to time",
+          ],
+          correct: 1,
+          explain: "Breakout without volume = fakeout risk. Big players weren't involved. Price broke through but there's no real conviction. Professional approach: wait for a retest of €88,000 (now as support) WITH volume confirmation — that's when the entry is safer.",
+        },
+      },
+      {
+        id: "l2-patterns",
+        icon: "🕯️",
+        titleNL: "Kaarsenpatronen — de 5 meest betrouwbare signalen",
+        titleEN: "Candle patterns — the 5 most reliable signals",
+        contentNL: `Marcus stelt je een vraag: als één kaars al een verhaal vertelt, wat vertelt een combinatie van twee of drie kaarsen? Dat is het principe achter kaarsenpatronen — en sommige hebben een treffscore van 60-70% over duizenden historische trades.
+
+Je hebt al geleerd hoe individuele kaarsen werken. Nu leer je de patronen die traders gebruiken om keerpunten te herkennen.
+
+DE 5 MEEST BETROUWBARE PATRONEN:
+
+1. BULLISH ENGULFING (Omsluitend patroon omhoog)
+Twee kaarsen: eerste rood, tweede groen die de eerste volledig omsluit.
+Betekenis: verkopers waren in controle, maar kopers namen de macht volledig over in de volgende periode. Krachtig keerpunt-signaal omhoog.
+Sterkst op: 4H of 1D, na een daling, op een support-zone.
+
+2. BEARISH ENGULFING (Omsluitend patroon omlaag)
+Twee kaarsen: eerste groen, tweede rood die de eerste volledig omsluit.
+Betekenis: kopers waren in controle, maar verkopers namen de macht over. Keerpunt-signaal omlaag.
+Sterkst op: 4H of 1D, na een stijging, op een resistance-zone.
+
+3. MORNING STAR (Ochtendster) — Bullish
+Drie kaarsen: grote rode kaars → kleine kaars met wick (doji of spinning top) → grote groene kaars.
+Betekenis: verkopers verloren kracht (kleine middenkaars = onzekerheid), kopers namen over.
+Sterkst: 1D grafiek, na een sterke daling.
+
+4. EVENING STAR (Avondster) — Bearish
+Tegenovergestelde van Morning Star: grote groene → kleine kaars → grote rode.
+Betekenis: kopers verloren kracht, verkopers namen over. Keerpunt omlaag.
+
+5. THREE WHITE SOLDIERS / THREE BLACK CROWS
+Drie opeenvolgende grote groene kaarsen (soldiers) of rode kaarsen (crows) met weinig wicks.
+Meaning: sterke, bevestigde trendrichting. Drie perioden achter elkaar dominantie van één kant.
+Soldiers: krachtig bullish. Crows: krachtig bearish.
+
+HOE GEBRUIK JE KAARSENPATRONEN GOED?
+
+REGEL 1: Kaarsenpatronen bevestigen — ze starten niet
+Een bullish engulfing op zichzelf is niet genoeg. Maar een bullish engulfing op een support-zone, met RSI onder 35, na een daling van 20% → dat is een sterke setup.
+
+REGEL 2: Hogere timeframes zijn betrouwbaarder
+Een engulfing op 1D is veel sterker dan op 15m. Hoe hoger de timeframe, hoe meer deelnemers het patroon "zagen" en erop reageerden.
+
+REGEL 3: Context is alles
+Elk patroon heeft een richting-context nodig. Bullish patronen werken het best NA een daling (niet midden in een uptrend). Bearish patronen werken het best NA een stijging.
+
+Actie: open de BTC 1D grafiek. Zoek de afgelopen 3 maanden één bullish engulfing en één bearish engulfing. Wat was de prijs de week erna?
+
+Marcus zegt: Kaarsenpatronen zijn geen magie — het zijn de voetafdrukken van grote spelers. Als je weet hoe institutionelen reageren op bepaalde patronen, zie je de markt van binnenuit.`,
+        contentEN: `Marcus asks you a question: if one candle already tells a story, what does a combination of two or three candles tell? That's the principle behind candle patterns — and some have a hit rate of 60-70% across thousands of historical trades.
+
+You've already learned how individual candles work. Now you'll learn the patterns traders use to recognize turning points.
+
+THE 5 MOST RELIABLE PATTERNS:
+
+1. BULLISH ENGULFING
+Two candles: first red, second green that completely engulfs the first.
+Meaning: sellers were in control, but buyers completely took over in the next period. Powerful reversal signal upward.
+Strongest on: 4H or 1D, after a decline, at a support zone.
+
+2. BEARISH ENGULFING
+Two candles: first green, second red that completely engulfs the first.
+Meaning: buyers were in control, but sellers took over. Reversal signal downward.
+Strongest on: 4H or 1D, after a rise, at a resistance zone.
+
+3. MORNING STAR — Bullish
+Three candles: large red candle → small candle with wick (doji or spinning top) → large green candle.
+Meaning: sellers lost strength (small middle candle = uncertainty), buyers took over.
+Strongest: 1D chart, after a strong decline.
+
+4. EVENING STAR — Bearish
+Opposite of Morning Star: large green → small candle → large red.
+Meaning: buyers lost strength, sellers took over. Reversal downward.
+
+5. THREE WHITE SOLDIERS / THREE BLACK CROWS
+Three consecutive large green candles (soldiers) or red candles (crows) with few wicks.
+Meaning: strong, confirmed trend direction. Three consecutive periods of dominance by one side.
+Soldiers: powerfully bullish. Crows: powerfully bearish.
+
+HOW TO USE CANDLE PATTERNS CORRECTLY?
+
+RULE 1: Candle patterns confirm — they don't start
+A bullish engulfing alone isn't enough. But a bullish engulfing at a support zone, with RSI below 35, after a 20% decline → that's a strong setup.
+
+RULE 2: Higher timeframes are more reliable
+An engulfing on 1D is much stronger than on 15m. The higher the timeframe, the more participants "saw" the pattern and reacted to it.
+
+RULE 3: Context is everything
+Every pattern needs a directional context. Bullish patterns work best AFTER a decline (not in the middle of an uptrend). Bearish patterns work best AFTER a rise.
+
+Action: open the BTC 1D chart. Find one bullish engulfing and one bearish engulfing in the past 3 months. What was the price the week after?
+
+Marcus says: Candle patterns aren't magic — they're the footprints of big players. When you know how institutions react to certain patterns, you see the market from the inside.`,
+        termsNL: [
+          { term: "Bullish Engulfing", def: "Rode kaars gevolgd door grotere groene kaars die de eerste omsluit. Keerpunt-signaal omhoog. Sterkst op support." },
+          { term: "Bearish Engulfing", def: "Groene kaars gevolgd door grotere rode kaars die de eerste omsluit. Keerpunt-signaal omlaag. Sterkst op resistance." },
+          { term: "Morning Star", def: "Drie-kaars bullish patroon: grote rode → kleine onzekere → grote groene. Signaleert einde van daling." },
+          { term: "Evening Star", def: "Drie-kaars bearish patroon: grote groene → kleine → grote rode. Signaleert einde van stijging." },
+          { term: "Three White Soldiers", def: "Drie opeenvolgende grote groene kaarsen. Bevestigt sterke bullish momentum." },
+          { term: "Confirmatie", def: "Kaarsenpatroon + ander signaal (RSI, support, volume). Samen zijn ze sterker dan afzonderlijk." },
+        ],
+        termsEN: [
+          { term: "Bullish Engulfing", def: "Red candle followed by larger green candle that engulfs the first. Reversal signal upward. Strongest at support." },
+          { term: "Bearish Engulfing", def: "Green candle followed by larger red candle that engulfs the first. Reversal signal downward. Strongest at resistance." },
+          { term: "Morning Star", def: "Three-candle bullish pattern: large red → small uncertain → large green. Signals end of decline." },
+          { term: "Evening Star", def: "Three-candle bearish pattern: large green → small → large red. Signals end of rise." },
+          { term: "Three White Soldiers", def: "Three consecutive large green candles. Confirms strong bullish momentum." },
+          { term: "Confirmation", def: "Candle pattern + another signal (RSI, support, volume). Together they're stronger than separately." },
+        ],
+        checkNL: {
+          q: "Op de BTC 1D grafiek, na een daling van 25%, verschijnt een bullish engulfing op de support bij €78.000. RSI = 31. Volume is 2× hoger dan normaal. Wat doe je?",
+          options: [
+            "Niets — één patroon is nooit genoeg",
+            "Verkopen — de markt daalt nog steeds",
+            "Serieuze koopsetup overwegen: drie bevestigingen (pattern + RSI oversold + support + volume). Stop-loss onder €78.000.",
+            "Wachten op een vierde bevestiging",
+          ],
+          correct: 2,
+          explain: "Dit is precies de setup die professionals zoeken. Bullish engulfing (pattern) + RSI 31 (oversold) + historische support (zone) + hoog volume (overtuiging) = vier samenkomende signalen. Dat is confluent. Stop-loss onder €78.000, want als die zone breekt was de setup fout. Risk/reward bepalen en uitvoeren.",
+        },
+        checkEN: {
+          q: "On the BTC 1D chart, after a 25% decline, a bullish engulfing appears at support at €78,000. RSI = 31. Volume is 2× higher than normal. What do you do?",
+          options: [
+            "Nothing — one pattern is never enough",
+            "Sell — the market is still declining",
+            "Seriously consider a buy setup: three confirmations (pattern + RSI oversold + support + volume). Stop-loss below €78,000.",
+            "Wait for a fourth confirmation",
+          ],
+          correct: 2,
+          explain: "This is exactly the setup professionals look for. Bullish engulfing (pattern) + RSI 31 (oversold) + historical support (zone) + high volume (conviction) = four converging signals. That's confluence. Stop-loss below €78,000, because if that zone breaks the setup was wrong. Determine risk/reward and execute.",
         },
       },
     ],
