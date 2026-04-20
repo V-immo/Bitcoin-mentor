@@ -11904,3 +11904,111 @@ html {
   background: #ffffff !important;
   border-color: var(--border) !important;
 }
+
+/* ── MARCUS DEBRIEF ── */
+.marcus-debrief-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 0 24px;
+  animation: fadeIn 0.2s ease;
+}
+@media (min-width: 600px) {
+  .marcus-debrief-overlay { align-items: center; }
+}
+.marcus-debrief-panel {
+  width: 100%; max-width: 480px; margin: 0 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 20px);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.marcus-debrief-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(233,30,99,0.1) 0%, transparent 60%);
+  border-bottom: 1px solid var(--border);
+}
+.marcus-debrief-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: #fff;
+}
+.marcus-debrief-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+}
+.marcus-debrief-subtitle {
+  font-size: 12px; color: var(--text-muted); margin-top: 2px;
+}
+.debrief-win  { color: var(--green); font-weight: 700; }
+.debrief-loss { color: var(--red);   font-weight: 700; }
+.marcus-debrief-close {
+  margin-left: auto; background: none; border: none;
+  color: var(--text-muted); font-size: 16px; cursor: pointer;
+  padding: 4px; line-height: 1;
+}
+.marcus-debrief-body {
+  padding: 20px;
+  min-height: 80px;
+}
+.marcus-debrief-loading {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text-muted); font-size: 14px;
+}
+.marcus-debrief-dots {
+  display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--primary);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.marcus-debrief-text {
+  font-size: 14px; line-height: 1.7;
+  color: var(--text); margin: 0;
+}
+.marcus-debrief-pro-gate {
+  text-align: center; padding: 8px 0;
+}
+.marcus-debrief-pro-icon {
+  font-size: 28px; margin-bottom: 10px; color: var(--primary);
+}
+.marcus-debrief-pro-text {
+  font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  margin-bottom: 14px;
+}
+.marcus-debrief-pro-btn {
+  display: inline-block;
+  background: var(--primary); color: #fff;
+  font-size: 13px; font-weight: 700;
+  padding: 9px 20px; border-radius: var(--radius-pill, 50px);
+  text-decoration: none;
+}
+.marcus-debrief-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+}
+.marcus-debrief-save-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  padding: 7px 14px;
+  font-size: 13px; color: var(--text-muted); cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.marcus-debrief-save-btn:hover { border-color: var(--primary); color: var(--text); }
+.marcus-debrief-dismiss-btn {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: var(--radius-sm, 8px);
+  padding: 8px 18px; font-size: 13px; font-weight: 700;
+  cursor: pointer;
+}
+.debrief-saved {
+  font-size: 13px; color: var(--green); font-weight: 600;
+}

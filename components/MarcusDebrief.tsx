@@ -66,7 +66,7 @@ export default function MarcusDebrief() {
 
     window.addEventListener("marcus-trade-debrief", onTradeClose);
     return () => window.removeEventListener("marcus-trade-debrief", onTradeClose);
-  }, []);
+  }, [isPro]);
 
   async function saveToJournal() {
     if (state.phase !== "done") return;
