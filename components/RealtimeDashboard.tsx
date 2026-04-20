@@ -345,8 +345,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           backoffMs = Math.min(backoffMs * 2, 30_000);
         };
       } else {
-        // ── Binance WebSocket — USD prijs ──
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@ticker`);
+        // ── Binance WebSocket — USD prijs (poort 443 want 9443 wordt soms geblokkeerd) ──
+        const ws = new WebSocket(`wss://stream.binance.com:443/ws/${asset.toLowerCase()}@ticker`);
         priceWsRef.current = ws;
         ws.onmessage = (e) => {
           try {
@@ -472,7 +472,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       if (destroyed) return;
       setKlineWsState("connecting");
       const ws = new WebSocket(
-        `wss://stream.binance.com:9443/ws/${asset.toLowerCase()}@kline_${wsInterval}`
+        `wss://stream.binance.com:443/ws/${asset.toLowerCase()}@kline_${wsInterval}`
       );
       klineWsRef.current = ws;
       ws.onmessage = (e) => {
@@ -584,7 +584,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const chartPrice = useMemo(() => livePrice || signal.price, [livePrice, signal.price]);
   const visibleCandles = useMemo(() => candleMap[activeInterval === "multi" ? "1d" : activeInterval] || [], [candleMap, activeInterval]);
   const activeTf = TIMEFRAMES.find((t) => t.key === activeInterval) ?? TIMEFRAMES[0];
-  const liveMode = isBinance ? priceWsState === "live" && klineWsState === "live" : priceWsState === "live";
+  const liveMode = priceWsState === "live";
 
   // Finnhub stocks: als chart leeg is voor huidig timeframe, toon melding en switch naar 1D
   const candlesEmpty = !isBinance && activeInterval !== "multi" && visibleCandles.length === 0;
