@@ -148,13 +148,7 @@ export default function FloatingMarcus() {
     if (hidden) return;
     const today = new Date().toISOString().slice(0, 10);
     const weekKey = `week${Math.floor(Date.now() / (7 * 86400000))}`;
-    const missionsDone = [
-      JSON.parse(localStorage.getItem("btcmentor-quiz-history") || "{}").lastQuizDate === today,
-      localStorage.getItem(`btcmentor-lesson-read-${today}`) === "1",
-      localStorage.getItem(`btcmentor-premarket-${today}`) === "1",
-      localStorage.getItem(`btcmentor-chartchallenge-${today}`) === "1",
-    ].filter(Boolean).length;
-    fetch(`/api/me/nudge?missions_done=${missionsDone}`)
+    fetch("/api/me/nudge")
       .then(r => r.ok ? r.json() : null)
       .then((data: NudgeData | null) => {
         if (!data) return;

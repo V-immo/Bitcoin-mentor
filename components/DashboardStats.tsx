@@ -26,7 +26,7 @@ export default function DashboardStats() {
           fetch("/api/me/quiz").then(r => r.ok ? r.json() : null),
           fetch("/api/me/paper?asset=BTCUSDT").then(r => r.ok ? r.json() : null),
           fetch("/api/me/journal").then(r => r.ok ? r.json() : null),
-          (() => { const today = new Date().toISOString().slice(0,10); const m=[JSON.parse(localStorage.getItem("btcmentor-quiz-history")||"{}").lastQuizDate===today,localStorage.getItem(`btcmentor-lesson-read-${today}`)==="1",localStorage.getItem(`btcmentor-premarket-${today}`)==="1",localStorage.getItem(`btcmentor-chartchallenge-${today}`)==="1"].filter(Boolean).length; return fetch(`/api/me/nudge?missions_done=${m}`).then(r=>r.ok?r.json():null); })(),
+          fetch("/api/me/nudge").then(r => r.ok ? r.json() : null),
         ]);
 
         // Haal alle paper trades op voor alle assets
