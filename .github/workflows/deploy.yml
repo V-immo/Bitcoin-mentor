@@ -53,6 +53,7 @@ jobs:
 
             # Build — als dit mislukt stopt het script (set -e) en blijft backup intact
             rm -f .next/lock
+            mkdir -p .next/static
             NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
               echo "Build mislukt — herstel backup"
               rm -rf .next || true
