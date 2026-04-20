@@ -1,6 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+function renderMarkdown(text: string): React.ReactNode {
+  return text.split("\n").map((line, i) => {
+    if (!line.trim()) return <div key={i} style={{ height: 6 }} />;
+    const parts = line.replace(/^#+\s/, "").split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+    const isHeading = /^#+\s/.test(line);
+    const rendered = parts.map((p, j) => {
+      if (p.startsWith("**") && p.endsWith("**")) return <strong key={j}>{p.slice(2, -2)}</strong>;
+      if (p.startsWith("*") && p.endsWith("*")) return <em key={j}>{p.slice(1, -1)}</em>;
+      return p;
+    });
+    return <div key={i} style={isHeading ? { fontWeight: 700, marginTop: 8 } : {}}>{rendered}</div>;
+  });
+}
 
 type Briefing = {
   briefing: string | null;
@@ -40,9 +54,10 @@ export default function DashboardBriefing() {
           </div>
         )}
       </div>
-      <p className="dash-briefing-text">
-        {expanded ? data.briefing : preview}{hasMore && !expanded ? "…" : ""}
-      </p>
+      <div className="dash-briefing-text">
+        {renderMarkdown(expanded ? data.briefing : preview)}
+        {hasMore && !expanded ? "…" : ""}
+      </div>
       {hasMore && (
         <button className="dash-briefing-toggle" onClick={() => setExpanded(e => !e)}>
           {expanded ? "Minder tonen ↑" : "Volledig lezen ↓"}
