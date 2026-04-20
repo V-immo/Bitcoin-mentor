@@ -222,6 +222,12 @@ export default function TerminalPaperPanel({
                     body: JSON.stringify(stateToApiPayload(s)),
                 }).catch(() => {});
             }, 300);
+            // Broadcast positie naar TradingChart voor live order lines
+            window.dispatchEvent(new CustomEvent("paper-position-update", {
+                detail: s.openBtc > 0
+                    ? { entryPrice: s.avgEntry, btcAmount: s.openBtc, stopLoss: s.activeSL, takeProfit: s.activeTP }
+                    : null,
+            }));
         },
         [asset]
     );

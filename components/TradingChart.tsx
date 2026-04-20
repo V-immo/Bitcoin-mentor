@@ -201,6 +201,13 @@ export default function TradingChart({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const macdHistRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const posEntryLineRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const posSlLineRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const posTpLineRef = useRef<any>(null);
+  const positionRef = useRef<{ entryPrice: number; btcAmount: number; stopLoss?: number; takeProfit?: number } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lineSeriesRef = useRef<any>(null);
 
   const candlesRef = useRef<Candle[]>(candles);
@@ -559,7 +566,79 @@ export default function TradingChart({
   // Live price line
   useEffect(() => {
     priceLineRef.current?.applyOptions({ price: currentPrice });
+    // Update P&L label op entry-lijn
+    const pos = positionRef.current;
+    if (pos && posEntryLineRef.current && currentPrice > 0) {
+      const pnl = (currentPrice - pos.entryPrice) * pos.btcAmount;
+      const sign = pnl >= 0 ? "+" : "";
+      posEntryLineRef.current.applyOptions({
+        title: `Entry €${pos.entryPrice.toLocaleString("nl-NL", { maximumFractionDigits: 0 })}  ${sign}€${Math.abs(pnl).toFixed(0)}`,
+        color: pnl >= 0 ? "#22c55e" : "#ef4444",
+      });
+    }
   }, [currentPrice]);
+
+  // Paper positie-lijnen — luistert naar events van TerminalPaperPanel
+  useEffect(() => {
+    function drawPositionLines(pos: { entryPrice: number; btcAmount: number; stopLoss?: number; takeProfit?: number } | null) {
+      const series = seriesRef.current;
+      if (!series) return;
+
+      // Verwijder bestaande lijnen
+      try { if (posEntryLineRef.current) series.removePriceLine(posEntryLineRef.current); } catch { /* ignore */ }
+      try { if (posSlLineRef.current)    series.removePriceLine(posSlLineRef.current);    } catch { /* ignore */ }
+      try { if (posTpLineRef.current)    series.removePriceLine(posTpLineRef.current);    } catch { /* ignore */ }
+      posEntryLineRef.current = null;
+      posSlLineRef.current    = null;
+      posTpLineRef.current    = null;
+      positionRef.current     = null;
+
+      if (!pos || pos.entryPrice <= 0) return;
+      positionRef.current = pos;
+
+      // Entry lijn
+      posEntryLineRef.current = series.createPriceLine({
+        price: pos.entryPrice,
+        color: "#3b82f6",
+        lineWidth: 2,
+        lineStyle: 0, // Solid
+        axisLabelVisible: true,
+        title: `Entry €${pos.entryPrice.toLocaleString("nl-NL", { maximumFractionDigits: 0 })}`,
+      });
+
+      // Stop-loss lijn
+      if (pos.stopLoss && pos.stopLoss > 0) {
+        posSlLineRef.current = series.createPriceLine({
+          price: pos.stopLoss,
+          color: "#ef4444",
+          lineWidth: 1,
+          lineStyle: 2, // Dashed
+          axisLabelVisible: true,
+          title: `SL €${pos.stopLoss.toLocaleString("nl-NL", { maximumFractionDigits: 0 })}`,
+        });
+      }
+
+      // Take-profit lijn
+      if (pos.takeProfit && pos.takeProfit > 0) {
+        posTpLineRef.current = series.createPriceLine({
+          price: pos.takeProfit,
+          color: "#22c55e",
+          lineWidth: 1,
+          lineStyle: 2, // Dashed
+          axisLabelVisible: true,
+          title: `TP €${pos.takeProfit.toLocaleString("nl-NL", { maximumFractionDigits: 0 })}`,
+        });
+      }
+    }
+
+    function onPositionUpdate(e: Event) {
+      const pos = (e as CustomEvent).detail as { entryPrice: number; btcAmount: number; stopLoss?: number; takeProfit?: number } | null;
+      drawPositionLines(pos);
+    }
+
+    window.addEventListener("paper-position-update", onPositionUpdate);
+    return () => window.removeEventListener("paper-position-update", onPositionUpdate);
+  }, [chartInitKey]); // herteken na chart re-init
 
   const isFast = mode === "fast";
   const rsiH = compact ? 60 : 100;
