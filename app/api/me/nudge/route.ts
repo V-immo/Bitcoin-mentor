@@ -35,12 +35,20 @@ function daysSince(dateStr: string | null): number | null {
   return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function getBtcSummary(): string {
+function getMarketSummary(): string {
   const { data } = sharedScanCache;
   if (!data || data.length === 0) return "";
-  const btc = data.find(a => a.ticker === "BTC" || a.symbol === "BTCUSDT");
-  if (!btc) return "";
-  return `Bitcoin ${btc.change24h >= 0 ? "+" : ""}${btc.change24h.toFixed(1)}% vandaag, trend: ${btc.trend}, score: ${btc.score}/100.`;
+
+  const sorted = [...data].sort((a, b) => Math.abs(b.change24h) - Math.abs(a.change24h));
+  const topMovers = sorted.slice(0, 5).map(a =>
+    `${a.ticker} ${a.change24h >= 0 ? "+" : ""}${a.change24h.toFixed(1)}% (${a.trend}, score ${a.score})`
+  ).join(", ");
+
+  const bulls = data.filter(a => a.color === "green").length;
+  const bears = data.filter(a => a.color === "red").length;
+  const sentiment = bulls > bears ? "bullish" : bears > bulls ? "bearish" : "neutraal";
+
+  return `Markt sentiment: ${sentiment} (${bulls} groen, ${bears} rood van ${data.length} assets). Top movers: ${topMovers}.`;
 }
 
 type TradeEntry = {
@@ -259,7 +267,7 @@ export async function GET(request: Request) {
   const daysSinceTrade   = daysSince(lastTradeDate);
   const daysSinceJournal = daysSince(lastJournal?.last ?? null);
   const daysSinceLogin   = calendarDaysSince(user?.last_login_at ?? null) ?? 0;
-  const btcSummary       = getBtcSummary();
+  const btcSummary       = getMarketSummary();
 
   // Slump detectie — quiz prestaties + login streak
   const quizRow = db.prepare(
