@@ -8528,6 +8528,15 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   font-size: 1rem; font-weight: 700; color: var(--text);
   margin: 10px 0 4px; letter-spacing: -0.01em;
 }
+.lesson-diagram {
+  margin: 16px 0;
+  padding: 16px;
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  justify-content: center;
+}
 
 /* Accountability Partner Page */
 .partner-page { max-width: 680px; margin: 0 auto; padding: var(--space-lg) var(--space-md) var(--space-2xl); }

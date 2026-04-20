@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,6 +23,7 @@ type Lesson = {
   termsEN?: { term: string; def: string }[];
   checkNL?: Check;
   checkEN?: Check;
+  diagram?: React.ReactNode;
 };
 
 type Level = {
@@ -33,6 +34,86 @@ type Level = {
   descEN: string;
   lessons: Lesson[];
 };
+
+const CandlestickDiagram = (
+  <svg viewBox="0 0 260 160" style={{ width: "100%", maxWidth: 340, height: "auto" }} aria-hidden>
+    {/* Bullish candle */}
+    <line x1="55" y1="18" x2="55" y2="42" stroke="#22c55e" strokeWidth="2" />
+    <rect x="40" y="42" width="30" height="60" fill="#22c55e" rx="2" />
+    <line x1="55" y1="102" x2="55" y2="130" stroke="#22c55e" strokeWidth="2" />
+    <text x="95" y="25" fill="#22c55e" fontSize="10" fontWeight="600">High</text>
+    <line x1="86" y1="22" x2="72" y2="22" stroke="#22c55e" strokeWidth="1" strokeDasharray="3,2" />
+    <text x="95" y="48" fill="#f0d8e8" fontSize="10">Close</text>
+    <line x1="86" y1="45" x2="72" y2="45" stroke="#f0d8e8" strokeWidth="1" strokeDasharray="3,2" />
+    <text x="95" y="108" fill="#f0d8e8" fontSize="10">Open</text>
+    <line x1="86" y1="105" x2="72" y2="105" stroke="#f0d8e8" strokeWidth="1" strokeDasharray="3,2" />
+    <text x="95" y="136" fill="#ef4444" fontSize="10">Low</text>
+    <line x1="86" y1="130" x2="72" y2="130" stroke="#ef4444" strokeWidth="1" strokeDasharray="3,2" />
+    <text x="38" y="155" fill="#22c55e" fontSize="10" fontWeight="700">Bullish (groen)</text>
+
+    {/* Bearish candle */}
+    <line x1="195" y1="18" x2="195" y2="42" stroke="#ef4444" strokeWidth="2" />
+    <rect x="180" y="42" width="30" height="60" fill="#ef4444" rx="2" />
+    <line x1="195" y1="102" x2="195" y2="130" stroke="#ef4444" strokeWidth="2" />
+    <text x="18" y="48" fill="#f0d8e8" fontSize="10">Open</text>
+    <text x="18" y="108" fill="#f0d8e8" fontSize="10">Close</text>
+    <text x="158" y="155" fill="#ef4444" fontSize="10" fontWeight="700">Bearish (rood)</text>
+
+    {/* Body label */}
+    <text x="110" y="78" fill="#b87095" fontSize="9" textAnchor="middle">← Body →</text>
+    {/* Wick label */}
+    <text x="125" y="13" fill="#b87095" fontSize="9" textAnchor="middle">wick</text>
+    <text x="125" y="140" fill="#b87095" fontSize="9" textAnchor="middle">wick</text>
+  </svg>
+);
+
+const WicksDiagram = (
+  <svg viewBox="0 0 260 160" style={{ width: "100%", maxWidth: 340, height: "auto" }} aria-hidden>
+    {/* Bullish wick candle — lange wick naar beneden */}
+    <line x1="55" y1="28" x2="55" y2="50" stroke="#22c55e" strokeWidth="2" />
+    <rect x="40" y="50" width="30" height="22" fill="#22c55e" rx="2" />
+    <line x1="55" y1="72" x2="55" y2="130" stroke="#22c55e" strokeWidth="2" />
+    <text x="88" y="34" fill="#b87095" fontSize="9">kleine body</text>
+    <text x="88" y="90" fill="#22c55e" fontSize="9" fontWeight="600">lange wick ↓</text>
+    <text x="88" y="102" fill="#22c55e" fontSize="9">= koopdruk</text>
+    <text x="28" y="153" fill="#22c55e" fontSize="10" fontWeight="700">Bullish signal</text>
+
+    {/* Bearish wick candle — lange wick naar boven */}
+    <line x1="195" y1="28" x2="195" y2="88" stroke="#ef4444" strokeWidth="2" />
+    <rect x="180" y="88" width="30" height="22" fill="#ef4444" rx="2" />
+    <line x1="195" y1="110" x2="195" y2="130" stroke="#ef4444" strokeWidth="2" />
+    <text x="145" y="48" fill="#ef4444" fontSize="9" fontWeight="600">lange wick ↑</text>
+    <text x="145" y="60" fill="#ef4444" fontSize="9">= verkoopdruk</text>
+    <text x="165" y="153" fill="#ef4444" fontSize="10" fontWeight="700">Bearish signal</text>
+  </svg>
+);
+
+const SupportResistanceDiagram = (
+  <svg viewBox="0 0 300 160" style={{ width: "100%", maxWidth: 400, height: "auto" }} aria-hidden>
+    {/* Resistance lijn */}
+    <line x1="10" y1="38" x2="290" y2="38" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="6,3" />
+    <text x="12" y="28" fill="#ef4444" fontSize="10" fontWeight="700">Resistance</text>
+
+    {/* Support lijn */}
+    <line x1="10" y1="130" x2="290" y2="130" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="6,3" />
+    <text x="12" y="148" fill="#22c55e" fontSize="10" fontWeight="700">Support</text>
+
+    {/* Prijs beweging — bounces op support, breakout door resistance */}
+    <polyline
+      points="10,100 40,65 60,128 90,62 110,130 145,58 175,132 210,40 240,18 280,24"
+      fill="none" stroke="#e91e63" strokeWidth="2" strokeLinejoin="round"
+    />
+
+    {/* Bounce markers op support */}
+    <circle cx="60" cy="128" r="4" fill="#22c55e" />
+    <circle cx="110" cy="130" r="4" fill="#22c55e" />
+    <circle cx="175" cy="132" r="4" fill="#22c55e" />
+
+    {/* Breakout marker boven resistance */}
+    <circle cx="210" cy="40" r="4" fill="#ef4444" />
+    <text x="215" y="30" fill="#ef4444" fontSize="9" fontWeight="700">Breakout!</text>
+  </svg>
+);
 
 const CURRICULUM: Level[] = [
   {
@@ -1386,6 +1467,7 @@ Marcus says: Candles aren't symbols — they're battle reports. When you learn t
           correct: 1,
           explain: "Well read. Close (€80,200) > open (€80,000) = green candle. But the wick up reaches €83,500 = buyers tried to go high but were pushed back. Wick down to €79,800 = sellers tried to go low but buyers came back. Small body = uncertain battle, no clear winner.",
         },
+        diagram: CandlestickDiagram,
       },
       {
         id: "l2-wicks",
@@ -1610,6 +1692,7 @@ Marcus says: Most losing trades are made on timeframes that are too low. Zoom ou
           correct: 2,
           explain: "This is the ideal situation. 1D uptrend = bullish bias. 4H buy zone + low RSI = setup present. 1H bullish candle = timing confirmed. All three timeframes aligned. This is exactly what you're looking for. Still: set stop-loss and determine risk.",
         },
+        diagram: WicksDiagram,
       },
       {
         id: "l2-orders",
@@ -2587,6 +2670,7 @@ Marcus says: Role reversal is the market honoring its own agreements. Zones have
           correct: 1,
           explain: "Role reversal downward. Broken support becomes resistance. Traders who bought at €45,000 and are stuck want to sell at €45,000 to reach break-even. That creates selling pressure. Traders who are short protect their position here. Result: €45,000 functions as a ceiling until there's a fundamental change.",
         },
+        diagram: SupportResistanceDiagram,
       },
       {
         id: "l3-rsi",
@@ -5277,6 +5361,9 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnl
               <p key={i} style={{ margin: "0 0 10px 0", lineHeight: 1.6 }}>{para}</p>
             ))}
           </div>
+          {lesson.diagram && (
+            <div className="lesson-diagram">{lesson.diagram}</div>
+          )}
           {terms && terms.length > 0 && (
             <div className="curriculum-terms">
               <div className="curriculum-terms-label">
