@@ -5209,13 +5209,16 @@ function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
 }
 
 // ── Lesson Card ─────────────────────────────────────────────────────────────
-function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
+function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnlocked, lessonNum, totalLessons }: {
   lesson: Lesson;
   lang: string;
   isRead: boolean;
   onRead: (id: string) => void;
   onQuizClick: () => void;
   isPublic?: boolean;
+  isUnlocked?: boolean;
+  lessonNum: number;
+  totalLessons: number;
 }) {
   const [open, setOpen] = useState(false);
   const title = lang === "en" ? lesson.titleEN : lesson.titleNL;
@@ -5223,8 +5226,10 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
   const terms = lang === "en" ? lesson.termsEN : lesson.termsNL;
   const check = lang === "en" ? lesson.checkEN : lesson.checkNL;
 
+  const locked = isPublic === false || isUnlocked === false;
+
   function toggle() {
-    if (isPublic === false) return;
+    if (locked) return;
     setOpen(o => {
       if (!o && !isRead) onRead(lesson.id);
       return !o;
@@ -5237,6 +5242,20 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
         <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
           <span className="curriculum-card-icon">🔒</span>
           <span className="curriculum-card-title">{title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isUnlocked === false) {
+    return (
+      <div className="curriculum-card curriculum-card-locked">
+        <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
+          <span className="curriculum-card-icon">🔒</span>
+          <span className="curriculum-card-title">{title}</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--color-muted)", marginLeft: "auto" }}>
+            {lang === "en" ? "Complete previous lesson first" : "Rond vorige les af"}
+          </span>
         </div>
       </div>
     );
@@ -5275,12 +5294,12 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic }: {
           )}
           {/* Inline check question */}
           {check && <CheckQuestion check={check} lang={lang} />}
-          {/* Quiz CTA na les lezen */}
-          {isRead && (
+          {/* Quiz CTA alleen na de laatste les van het niveau */}
+          {isRead && lessonNum === totalLessons && (
             <div className="curriculum-quiz-cta">
-              <span>✅ {lang === "en" ? "Lesson read! Ready to test yourself?" : "Les gelezen! Klaar om jezelf te testen?"}</span>
+              <span>✅ {lang === "en" ? "All lessons done — ready for the quiz?" : "Alle lessen klaar — klaar voor de quiz?"}</span>
               <button className="curriculum-quiz-cta-btn" onClick={onQuizClick}>
-                {lang === "en" ? "→ Do the quiz" : "→ Doe de quiz"}
+                {lang === "en" ? "Go to quiz →" : "Naar de quiz →"}
               </button>
             </div>
           )}
@@ -5420,6 +5439,8 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
             (!isLoggedIn && activeLevel === 1 && idx === 0) ||
             (isLoggedIn && activeLevel <= 3) ||
             (isLoggedIn && activeLevel >= 4 && isPro);
+          // Sequentieel: les 0 altijd open, les N pas open als les N-1 gelezen is
+          const lessonUnlocked = idx === 0 || !!readMap[levelData.lessons[idx - 1].id];
           return (
             <LessonCard
               key={lesson.id}
@@ -5429,6 +5450,9 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
               onRead={markRead}
               onQuizClick={() => onQuizTabClick?.()}
               isPublic={lessonPublic}
+              isUnlocked={lessonUnlocked}
+              lessonNum={idx + 1}
+              totalLessons={levelData.lessons.length}
             />
           );
         })}
