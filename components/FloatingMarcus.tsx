@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Edit2, Clock, Volume2, VolumeX, Mic, MicOff, X } from "lucide-react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -577,43 +578,27 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               {messages.length > 0 && (
                 <button
                   onClick={newChat}
-                  title="Nieuwe chat starten (huidige wordt opgeslagen)"
-                  style={{
-                    background: "transparent",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                    color: "var(--text-muted)", fontSize: 13, lineHeight: 1,
-                  }}
+                  title="Nieuwe chat starten"
+                  className="float-marcus-icon-btn"
                 >
-                  ✏️
+                  <Edit2 size={14} />
                 </button>
               )}
               {/* Geschiedenis */}
               <button
                 onClick={() => { setShowSessions(v => { if (!v) loadSessions(); return !v; }); }}
                 title="Vorige gesprekken"
-                style={{
-                  background: showSessions ? "rgba(233,30,99,0.12)" : "transparent",
-                  border: `1px solid ${showSessions ? "rgba(233,30,99,0.3)" : "rgba(255,255,255,0.1)"}`,
-                  borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                  color: showSessions ? "var(--primary)" : "var(--text-muted)", fontSize: 13, lineHeight: 1,
-                }}
+                className={`float-marcus-icon-btn${showSessions ? " active" : ""}`}
               >
-                📂
+                <Clock size={14} />
               </button>
               {/* Voice toggle */}
               <button
                 onClick={toggleVoice}
                 title={voiceEnabled ? "Stem uitzetten" : "Stem aanzetten"}
-                style={{
-                  background: voiceEnabled ? "rgba(233,30,99,0.15)" : "transparent",
-                  border: `1px solid ${voiceEnabled ? "var(--primary)" : "rgba(255,255,255,0.1)"}`,
-                  borderRadius: 8, padding: "4px 8px", cursor: "pointer",
-                  color: voiceEnabled ? "var(--primary)" : "var(--text-muted)",
-                  fontSize: 14, lineHeight: 1,
-                }}
+                className={`float-marcus-icon-btn${voiceEnabled ? " active" : ""}`}
               >
-                {voiceEnabled ? "🔊" : "🔇"}
+                {voiceEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
               </button>
               {/* Stop speaking */}
               {speaking && (
@@ -628,7 +613,7 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
                   ■ Stop
                 </button>
               )}
-              <button className="float-marcus-close" onClick={() => setOpen(false)}>✕</button>
+              <button className="float-marcus-close" onClick={() => setOpen(false)}><X size={16} /></button>
             </div>
           </div>
 
@@ -701,15 +686,9 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
               onClick={startListening}
               disabled={loading || listening}
               title="Spreek je vraag in"
-              style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: listening ? "rgba(233,30,99,0.2)" : "var(--surface)",
-                border: `1px solid ${listening ? "var(--primary)" : "var(--border)"}`,
-                cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
-                animation: listening ? "marcus-notify 1.2s ease-in-out infinite" : "none",
-              }}
+              className={`float-marcus-mic-btn${listening ? " active" : ""}`}
             >
-              {listening ? "🎤" : "🎙"}
+              {listening ? <MicOff size={16} /> : <Mic size={16} />}
             </button>
 
             <textarea

@@ -27,7 +27,7 @@ function XpBar({ xp, level }: { xp: number; level: number }) {
   const currentXp = xp % XP_PER_LEVEL;
   const xpToNext = XP_PER_LEVEL - currentXp;
   const pct = Math.min(100, (currentXp / XP_PER_LEVEL) * 100);
-  const nextLevel = Math.min(5, level + 1);
+  const nextLevel = Math.min(10, level + 1);
   const approxQuizzes = Math.ceil(xpToNext / AVG_XP_PER_QUIZ);
   return (
     <div className="quiz-xp-outer">
@@ -37,7 +37,7 @@ function XpBar({ xp, level }: { xp: number; level: number }) {
         </div>
         <span className="quiz-xp-label">{currentXp} / {XP_PER_LEVEL} XP</span>
       </div>
-      {level < 5 && (
+      {level < 10 && (
         <div className="quiz-xp-to-next">
           {t("quiz_approx_sessions")} ~{approxQuizzes} {t("quiz_approx_sessions2")} {nextLevel}
         </div>
@@ -107,6 +107,11 @@ export default function DailyQuiz() {
       t("quiz_level_experienced"),
       t("quiz_level_expert"),
       t("quiz_level_master"),
+      t("quiz_level_systems"),
+      t("quiz_level_analyst"),
+      t("quiz_level_onchain"),
+      t("quiz_level_portfolio"),
+      t("quiz_level_pro"),
     ][level] ?? t("quiz_level_beginner");
   }
 
@@ -224,7 +229,7 @@ export default function DailyQuiz() {
     const xpEarned = baseXp * luckyMult;
     const newXp = history.xp + xpEarned;
     const oldLevel = history.level;
-    const newLevel = Math.min(5, Math.floor(newXp / XP_PER_LEVEL) + 1);
+    const newLevel = Math.min(10, Math.floor(newXp / XP_PER_LEVEL) + 1);
     const didLevelUp = newLevel > oldLevel;
 
     const correctTopics = questions
@@ -584,7 +589,7 @@ export default function DailyQuiz() {
       <div className="quiz-section">
         <div className="quiz-section-title">{t("quiz_levels_title")}</div>
         <div className="quiz-levels-grid">
-          {[1, 2, 3, 4, 5].map((l) => (
+          {Array.from({ length: 10 }, (_, i) => i + 1).map((l) => (
             <div key={l} className={`quiz-level-card ${history.level >= l ? "unlocked" : "locked"}`}>
               <div className="quiz-level-card-num">{l}</div>
               <div className="quiz-level-card-name">{getLevelLabel(l)}</div>

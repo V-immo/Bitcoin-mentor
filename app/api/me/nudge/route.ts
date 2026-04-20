@@ -318,8 +318,8 @@ export async function GET(request: Request) {
 
     try {
       const systemPrompt = isSlump
-        ? `Je bent Marcus, directe tradingcoach. De trader scoort gemiddeld ${recentQuizAvg}% op de quizzen en heeft een streak van ${newStreak} dagen — ze zitten in een dip. Schrijf een eerlijke ochtendgroet in MAX 2 zinnen: erken dat het moeilijk gaat, geef één concrete actie voor vandaag. Geen valse hoop, geen aanmoedigingen — gewoon direct.`
-        : `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij".
+        ? `Je bent Marcus, directe tradingcoach. De trader scoort gemiddeld ${recentQuizAvg}% op de quizzen en heeft een streak van ${newStreak} dagen — ze zitten in een dip. Schrijf een eerlijke ochtendgroet in MAX 2 zinnen: erken dat het moeilijk gaat, geef één concrete actie voor vandaag. Geen valse hoop, geen aanmoedigingen — gewoon direct. Geen markdown, geen asterisken, geen bullets.`
+        : `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij". Geen markdown, geen asterisken, geen bullets.
 Context: ${btcSummary} ${openPos} ${planHint} ${streakHint}${friendHint ? ` Vrienden: ${friendHint}` : ""}`;
 
       const msg = await client.messages.create({
@@ -371,7 +371,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint}${friendHint ? ` Vrie
         const msg = await client.messages.create({
           model: "claude-haiku-4-5",
           max_tokens: 120,
-          system: `Je bent Marcus. Schrijf een KORTE avondreview (max 3 zinnen). Reflecteer op vandaag. Wees eerlijk. Sluit af met één ding voor morgen. ${btcSummary}`,
+          system: `Je bent Marcus. Schrijf een KORTE avondreview (max 3 zinnen). Reflecteer op vandaag. Wees eerlijk. Sluit af met één ding voor morgen. Geen markdown, geen asterisken, geen bullets. ${btcSummary}`,
           messages: [{ role: "user", content: context }],
         });
         eveningReview = (msg.content[0] as { text: string }).text.trim();
@@ -404,7 +404,7 @@ Context: ${btcSummary} ${openPos} ${planHint} ${streakHint}${friendHint ? ` Vrie
         const msg = await client.messages.create({
           model: "claude-haiku-4-5",
           max_tokens: 150,
-          system: `Je bent Marcus. Schrijf een KORT wekelijks rapport (max 4 zinnen). Wat ging goed, wat kan beter, één doel voor volgende week. ${btcSummary}`,
+          system: `Je bent Marcus. Schrijf een KORT wekelijks rapport (max 4 zinnen). Wat ging goed, wat kan beter, één doel voor volgende week. Geen markdown, geen asterisken, geen bullets, geen titels. ${btcSummary}`,
           messages: [{ role: "user", content: context }],
         });
         weeklyReport = (msg.content[0] as { text: string }).text.trim();

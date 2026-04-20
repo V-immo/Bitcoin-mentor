@@ -267,10 +267,13 @@ a { color: inherit; text-decoration: none; }
   cursor: default;
 }
 .daily-mission-check {
-  font-size: 16px;
   flex-shrink: 0;
   width: 20px;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
 }
+.daily-mission-row.done .daily-mission-check { color: var(--green); }
 .daily-mission-content {
   flex: 1;
   display: flex;
@@ -296,8 +299,7 @@ a { color: inherit; text-decoration: none; }
   font-weight: 600;
 }
 .daily-mission-arrow {
-  font-size: 13px;
-  color: var(--primary);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 .daily-missions-footer {
@@ -8255,9 +8257,35 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 .float-marcus-status { font-size: 11px; color: var(--text-muted); }
 .float-marcus-close {
   background: none; border: none; cursor: pointer;
-  color: var(--text-muted); font-size: 16px; padding: 4px; line-height: 1;
+  color: var(--text-muted); padding: 4px; line-height: 1;
+  display: flex; align-items: center;
 }
 .float-marcus-close:hover { color: var(--text); }
+.float-marcus-icon-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 5px 8px; cursor: pointer;
+  color: var(--text-muted); display: flex; align-items: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.float-marcus-icon-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.float-marcus-icon-btn.active {
+  background: rgba(233,30,99,0.12);
+  border-color: rgba(233,30,99,0.3);
+  color: var(--primary);
+}
+.float-marcus-mic-btn {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all 0.15s;
+}
+.float-marcus-mic-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.float-marcus-mic-btn.active {
+  background: rgba(233,30,99,0.2); border-color: var(--primary); color: var(--primary);
+  animation: marcus-notify 1.2s ease-in-out infinite;
+}
+.float-marcus-mic-btn:disabled { opacity: 0.4; cursor: default; }
 
 .float-marcus-messages {
   flex: 1;

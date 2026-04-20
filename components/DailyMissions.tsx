@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CheckCircle2, Circle, ChevronRight, Shield, AlertTriangle } from "lucide-react";
 
 // Vereenvoudigde les-directory voor aanbevelingen
 const LESSON_DIR: { id: string; level: number; titleNL: string; titleEN: string; topics: string[] }[] = [
@@ -197,7 +198,6 @@ export default function DailyMissions() {
       {/* Header */}
       <div className="daily-missions-header">
         <div className="daily-missions-title">
-          <span>🎯</span>
           <span>{lang === "nl" ? "Dagelijkse Missies" : "Daily Missions"}</span>
         </div>
         <div className="daily-missions-count">
@@ -213,25 +213,27 @@ export default function DailyMissions() {
       {/* Combo banner */}
       {showCombo && (
         <div className="daily-missions-combo-toast">
-          🎉 {lang === "nl" ? "Dagelijkse Combo!" : "Daily Combo!"} +100 XP
+          {lang === "nl" ? "Dagelijkse Combo — +100 XP" : "Daily Combo — +100 XP"}
         </div>
       )}
 
       {/* Streak freeze shield */}
       {streakFreeze > 0 && (
         <div className="daily-missions-freeze-badge">
-          🛡️ {lang === "nl"
-            ? "1 streak freeze beschikbaar — je streak is beschermd als je een dag mist"
-            : "1 streak freeze available — your streak is protected if you miss a day"}
+          <Shield size={13} />
+          {lang === "nl"
+            ? "Streak freeze beschikbaar"
+            : "Streak freeze available"}
         </div>
       )}
 
       {/* Streak dreigingswaarschuwing */}
       {streakAtRisk && (
         <div className="daily-missions-streak-warning">
-          ⚠️ {lang === "nl"
-            ? `Je streak staat op het spel — nog ${5 - doneCount} missie(s) te doen voor middernacht`
-            : `Your streak is at risk — ${5 - doneCount} mission(s) left before midnight`}
+          <AlertTriangle size={13} />
+          {lang === "nl"
+            ? `Streak op het spel — nog ${5 - doneCount} missie(s) voor middernacht`
+            : `Streak at risk — ${5 - doneCount} mission(s) before midnight`}
         </div>
       )}
 
@@ -243,16 +245,18 @@ export default function DailyMissions() {
           onClick={() => router.push("/leren")}
           disabled={status.quiz}
         >
-          <span className="daily-mission-check">{status.quiz ? "✅" : "⬜"}</span>
+          <span className="daily-mission-check">
+            {status.quiz ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+          </span>
           <div className="daily-mission-content">
             <span className="daily-mission-label">
               {lang === "nl" ? "Dagelijkse quiz" : "Daily quiz"}
             </span>
             {quizStreak >= 2 && (
-              <span className="daily-mission-streak">🔥 {quizStreak} {lang === "nl" ? "dagen" : "days"}</span>
+              <span className="daily-mission-streak">{quizStreak} {lang === "nl" ? "dagen" : "days"}</span>
             )}
           </div>
-          {!status.quiz && <span className="daily-mission-arrow">→</span>}
+          {!status.quiz && <ChevronRight size={15} className="daily-mission-arrow" />}
         </button>
 
         {/* Les */}
@@ -261,7 +265,9 @@ export default function DailyMissions() {
           onClick={() => router.push("/leren")}
           disabled={status.lesson}
         >
-          <span className="daily-mission-check">{status.lesson ? "✅" : "⬜"}</span>
+          <span className="daily-mission-check">
+            {status.lesson ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+          </span>
           <div className="daily-mission-content">
             <span className="daily-mission-label">
               {lang === "nl" ? "Vandaag's les" : "Today's lesson"}
@@ -270,7 +276,7 @@ export default function DailyMissions() {
               <span className="daily-mission-sub">{recommendedLesson.title}</span>
             )}
           </div>
-          {!status.lesson && <span className="daily-mission-arrow">→</span>}
+          {!status.lesson && <ChevronRight size={15} className="daily-mission-arrow" />}
         </button>
 
         {/* Journaal */}
@@ -279,7 +285,9 @@ export default function DailyMissions() {
           onClick={() => router.push("/agenda")}
           disabled={status.journal}
         >
-          <span className="daily-mission-check">{status.journal ? "✅" : "⬜"}</span>
+          <span className="daily-mission-check">
+            {status.journal ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+          </span>
           <div className="daily-mission-content">
             <span className="daily-mission-label">
               {lang === "nl" ? "Journaal schrijven" : "Write journal"}
@@ -290,7 +298,7 @@ export default function DailyMissions() {
               </span>
             )}
           </div>
-          {!status.journal && <span className="daily-mission-arrow">→</span>}
+          {!status.journal && <ChevronRight size={15} className="daily-mission-arrow" />}
         </button>
 
         {/* Pre-market */}
@@ -299,7 +307,9 @@ export default function DailyMissions() {
           onClick={() => router.push("/trade")}
           disabled={status.premarket}
         >
-          <span className="daily-mission-check">{status.premarket ? "✅" : "⬜"}</span>
+          <span className="daily-mission-check">
+            {status.premarket ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+          </span>
           <div className="daily-mission-content">
             <span className="daily-mission-label">
               {lang === "nl" ? "Pre-market ritueel" : "Pre-market ritual"}
@@ -310,7 +320,7 @@ export default function DailyMissions() {
               </span>
             )}
           </div>
-          {!status.premarket && <span className="daily-mission-arrow">→</span>}
+          {!status.premarket && <ChevronRight size={15} className="daily-mission-arrow" />}
         </button>
 
         {/* Chart challenge */}
@@ -319,7 +329,9 @@ export default function DailyMissions() {
           onClick={() => router.push("/leren/chart-challenge")}
           disabled={status.chart}
         >
-          <span className="daily-mission-check">{status.chart ? "✅" : "⬜"}</span>
+          <span className="daily-mission-check">
+            {status.chart ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+          </span>
           <div className="daily-mission-content">
             <span className="daily-mission-label">
               {lang === "nl" ? "Chart challenge" : "Chart challenge"}
@@ -330,26 +342,26 @@ export default function DailyMissions() {
               </span>
             )}
           </div>
-          {!status.chart && <span className="daily-mission-arrow">→</span>}
+          {!status.chart && <ChevronRight size={15} className="daily-mission-arrow" />}
         </button>
       </div>
 
       {/* Footer */}
       {!allDone && !comboGranted && (
         <div className="daily-missions-footer">
-          🎁 {lang === "nl" ? `Doe alle 5 voor +100 bonus XP vandaag` : `Complete all 5 for +100 bonus XP today`}
+          {lang === "nl" ? `Doe alle 5 voor +100 bonus XP` : `Complete all 5 for +100 bonus XP`}
         </div>
       )}
       {allDone && (
         <div className="daily-missions-footer complete">
-          🏆 {lang === "nl" ? "Alle missies voltooid! Geweldig werk vandaag." : "All missions complete! Great work today."}
+          {lang === "nl" ? "Alle missies voltooid." : "All missions complete."}
         </div>
       )}
 
       {/* Social proof */}
       {activeToday !== null && activeToday > 1 && (
         <div className="daily-missions-social-proof">
-          💬 {activeToday} {lang === "nl" ? "traders actief vandaag" : "traders active today"}
+          {activeToday} {lang === "nl" ? "traders actief vandaag" : "traders active today"}
         </div>
       )}
     </div>
