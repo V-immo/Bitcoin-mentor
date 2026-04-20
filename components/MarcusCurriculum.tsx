@@ -3244,6 +3244,1933 @@ Marcus says: I don't follow smart money to copy them — I follow them to unders
       },
     ],
   },
+  {
+    level: 6,
+    labelNL: "Niveau 6 — Trading Systemen",
+    labelEN: "Level 6 — Trading Systems",
+    descNL: "Bouw een herhaalbaar systeem: backtest, journal, vaste setups.",
+    descEN: "Build a repeatable system: backtest, journal, fixed setups.",
+    lessons: [
+      {
+        id: "l6-systeem",
+        icon: "⚙️",
+        titleNL: "Waarom 90% van de traders geen systeem heeft — en wat dat kost",
+        titleEN: "Why 90% of traders have no system — and what it costs",
+        contentNL: `Marcus stelt je een vraag: als je nu een trade opent — waarom precies op dit moment, dit paar, deze grootte? Als je antwoord vaag is, heb je geen systeem. Je hebt een gok.
+
+Een trading systeem is een set regels die precies zegt wanneer je instapt, wanneer je uitstapt, hoeveel je riskeert en waarom. Geen gevoel. Geen buikpijn. Regels.
+
+Waarom is dat zo belangrijk? Omdat je brein je vijand is in de markt. Zonder systeem handel je op emotie: angst mist kansen, hebzucht houdt verliezers te lang vast. Een systeem haalt je ego uit de vergelijking.
+
+Een goed systeem heeft vier componenten:
+1. Entry trigger — wat moet er precies gebeuren voor je instapt?
+2. Stop loss — waar bewijs je dat je fout zit?
+3. Target — wanneer neem je winst?
+4. Positiegroottes — hoeveel risico per trade?
+
+Marcus geeft je een voorbeeld. Zijn "BTC morning setup": als BTC de dagelijkse open breekt met volume boven het 20-periode gemiddelde, koop ik met stop onder de wick van de openingscandle en target 2x de risk. Dat is het. Elke keer hetzelfde.
+
+Het grote voordeel? Je kunt dit testen op historische data. Je kunt meten hoeveel % van de trades wint, wat de gemiddelde winst/verlies is, wat de maximale drawdown is. Zonder systeem heb je niets om te testen.
+
+Actie: schrijf vandaag je eigen systeem op in 3 zinnen. Entry, stop, target. Wat je nu hebt — hoe vaag ook — is je startpunt.`,
+        contentEN: `Marcus asks you something: if you open a trade right now — why exactly this moment, this pair, this size? If your answer is vague, you don't have a system. You have a guess.
+
+A trading system is a set of rules that says exactly when you enter, when you exit, how much you risk and why. No feelings. No gut instinct. Rules.
+
+Why does it matter so much? Because your brain is your enemy in the market. Without a system you trade on emotion: fear misses opportunities, greed holds losers too long. A system removes your ego from the equation.
+
+A good system has four components:
+1. Entry trigger — what must happen exactly before you enter?
+2. Stop loss — where does the market prove you wrong?
+3. Target — when do you take profit?
+4. Position sizing — how much risk per trade?
+
+Marcus gives you an example. His "BTC morning setup": if BTC breaks the daily open with volume above the 20-period average, I buy with a stop below the wick of the opening candle and target 2x the risk. That's it. Same every time.
+
+The big advantage? You can test this on historical data. You can measure what % of trades win, what the average win/loss is, what the maximum drawdown is. Without a system you have nothing to test.
+
+Action: write your own system in 3 sentences today. Entry, stop, target. Whatever you have now — however vague — is your starting point.`,
+        termsNL: [
+          { term: "Trading Systeem", def: "Een vaste set regels die bepaalt wanneer je handelt, hoeveel je riskeert en wanneer je stopt." },
+          { term: "Entry Trigger", def: "De exacte conditie waaraan de markt moet voldoen voordat je een positie opent." },
+          { term: "Drawdown", def: "De daling van je account van piek naar dal. Maatstaf voor het risico van je systeem." },
+          { term: "Edge", def: "Statistisch voordeel: je systeem wint op lange termijn meer dan het verliest." },
+          { term: "Backtesting", def: "Je systeem testen op historische data om de prestaties te meten." },
+        ],
+        termsEN: [
+          { term: "Trading System", def: "A fixed set of rules that determines when you trade, how much you risk and when you stop." },
+          { term: "Entry Trigger", def: "The exact condition the market must meet before you open a position." },
+          { term: "Drawdown", def: "The drop in your account from peak to trough. Measures the risk of your system." },
+          { term: "Edge", def: "Statistical advantage: your system wins more than it loses over the long run." },
+          { term: "Backtesting", def: "Testing your system on historical data to measure its performance." },
+        ],
+        checkNL: {
+          q: "Je hebt 3 trades achter elkaar verloren. Wat doe je?",
+          options: [
+            "Verdubbel de positiegrootte om verliezen snel terug te winnen",
+            "Stop tijdelijk met handelen en controleer of je systeem correct werd gevolgd",
+            "Switch naar een ander handelspaar dat beter loopt",
+            "Verlaag je stop loss zodat je meer ruimte geeft",
+          ],
+          correct: 1,
+          explain: "Drie verliezende trades op rij is normaal voor elk systeem. De vraag is: heb je je regels gevolgd? Als ja, ga door — de edge geldt op 100+ trades, niet op 3. Als nee, stop en herstel de discipline. Verdubbelen na verlies (martingale) is de snelste weg naar een geblazen account.",
+        },
+        checkEN: {
+          q: "You've lost 3 trades in a row. What do you do?",
+          options: [
+            "Double position size to recover losses quickly",
+            "Stop temporarily and check whether your system was followed correctly",
+            "Switch to a different trading pair that's performing better",
+            "Lower your stop loss to give more room",
+          ],
+          correct: 1,
+          explain: "Three losing trades in a row is normal for any system. The question is: did you follow your rules? If yes, continue — the edge plays out over 100+ trades, not 3. If no, stop and restore discipline. Doubling after a loss (martingale) is the fastest way to blow an account.",
+        },
+      },
+      {
+        id: "l6-backtesting",
+        icon: "📊",
+        titleNL: "Backtesting: hoe weet je of je systeem echt werkt?",
+        titleEN: "Backtesting: how do you know if your system really works?",
+        contentNL: `Marcus vraagt: heb je ooit een systeem gehad dat 'voelde' alsof het werkte, maar eigenlijk nooit getest was? Dat is de meest gevaarlijke situatie in trading.
+
+Backtesting is het terugkijken op historische prijsdata en je systeem handmatig of automatisch toepassen. Je doorloopt tientallen of honderden setups en noteert: entry, exit, winst/verlies. Na 50-100 trades heb je statistieken.
+
+De vier sleutelgetallen die je nodig hebt:
+1. Win rate — hoeveel % van de trades is winstgevend?
+2. Risk/reward ratio — hoeveel win je gemiddeld vs. hoeveel verlies je?
+3. Expectancy — (win rate × gemiddelde winst) − (verliesrate × gemiddeld verlies)
+4. Max drawdown — wat was de ergste verliesreeks?
+
+Een systeem met 40% win rate maar 3:1 R/R is winstgevend. Rekenen: 40 winsten × 3 = 120, 60 verliezen × 1 = 60. Netto: +60 eenheden per 100 trades.
+
+Valkuilen bij backtesting: curve fitting (je systeem te veel aanpassen aan het verleden), look-ahead bias (onbewust toekomstige info gebruiken), en te kleine sample size (< 50 trades zegt niets).
+
+Marcus' aanpak: TradingView's replay-functie. Zet de grafiek terug in de tijd, verberg alles rechts van je cursor, en trade live alsof het echt is. Noteer alles in een spreadsheet.
+
+Actie: neem je systeem van les 1 en backtest het op BTC/EUR de afgelopen 3 maanden. Noteer elke setup die voldeed aan je regels — win of verlies.`,
+        contentEN: `Marcus asks: have you ever had a system that 'felt' like it worked, but was never actually tested? That's the most dangerous situation in trading.
+
+Backtesting means looking back at historical price data and applying your system manually or automatically. You go through dozens or hundreds of setups and record: entry, exit, profit/loss. After 50-100 trades you have statistics.
+
+The four key numbers you need:
+1. Win rate — what % of trades are profitable?
+2. Risk/reward ratio — how much do you win on average vs. how much do you lose?
+3. Expectancy — (win rate × average win) − (loss rate × average loss)
+4. Max drawdown — what was the worst losing streak?
+
+A system with 40% win rate but 3:1 R/R is profitable. Math: 40 wins × 3 = 120, 60 losses × 1 = 60. Net: +60 units per 100 trades.
+
+Pitfalls in backtesting: curve fitting (over-adjusting your system to the past), look-ahead bias (unconsciously using future information), and too small a sample size (< 50 trades means nothing).
+
+Marcus' approach: TradingView's replay function. Rewind the chart, hide everything to the right of your cursor, and trade live as if it's real. Record everything in a spreadsheet.
+
+Action: take your system from lesson 1 and backtest it on BTC/EUR for the past 3 months. Record every setup that met your rules — win or loss.`,
+        termsNL: [
+          { term: "Win Rate", def: "Het percentage trades dat winstgevend afsluit. 50% betekent 1 op de 2 trades wint." },
+          { term: "Expectancy", def: "Verwachte winst per trade op basis van je historische statistieken." },
+          { term: "Curve Fitting", def: "Je systeem te veel aanpassen aan het verleden zodat het daar perfect werkt maar in de toekomst faalt." },
+          { term: "Sample Size", def: "Het aantal trades in je test. Minder dan 50 is statistisch niet betrouwbaar." },
+          { term: "Replay Mode", def: "TradingView-functie waarmee je de grafiek terugzet in de tijd om te oefenen." },
+        ],
+        termsEN: [
+          { term: "Win Rate", def: "The percentage of trades that close profitably. 50% means 1 in 2 trades wins." },
+          { term: "Expectancy", def: "Expected profit per trade based on your historical statistics." },
+          { term: "Curve Fitting", def: "Over-adjusting your system to the past so it works perfectly there but fails in the future." },
+          { term: "Sample Size", def: "The number of trades in your test. Fewer than 50 is statistically unreliable." },
+          { term: "Replay Mode", def: "TradingView feature that rewinds the chart in time for practice." },
+        ],
+        checkNL: {
+          q: "Je backtest toont 80% win rate op 10 trades. Kun je dit systeem nu live handelen?",
+          options: [
+            "Ja, 80% win rate is uitstekend — direct starten",
+            "Nee, 10 trades is te kleine sample size om conclusies te trekken",
+            "Alleen als de trades allemaal BTC waren",
+            "Ja, maar verlaag eerst de positiegrootte",
+          ],
+          correct: 1,
+          explain: "10 trades zegt statistisch gezien niets. Met een beetje geluk win je 8 van de 10 in elke willekeurige strategie. Je hebt minimaal 50-100 trades nodig voor betekenisvolle statistieken. Met 10 trades kun je net zo goed een munt gooien.",
+        },
+        checkEN: {
+          q: "Your backtest shows 80% win rate on 10 trades. Can you trade this system live now?",
+          options: [
+            "Yes, 80% win rate is excellent — start immediately",
+            "No, 10 trades is too small a sample size to draw conclusions",
+            "Only if all trades were BTC",
+            "Yes, but lower position size first",
+          ],
+          correct: 1,
+          explain: "10 trades means nothing statistically. With some luck you'll win 8 of 10 with any random strategy. You need at least 50-100 trades for meaningful statistics. With 10 trades you may as well flip a coin.",
+        },
+      },
+      {
+        id: "l6-journal",
+        icon: "📓",
+        titleNL: "Het trading journal: het geheim van consistente traders",
+        titleEN: "The trading journal: the secret of consistent traders",
+        contentNL: `Marcus vraagt je iets ongemakkelijks: weet jij nog waarom je je laatste 5 trades hebt geopend? Wat je voelde? Of je je regels hebt gevolgd? Als het antwoord nee is, heb je een geheugenprobleem — en dat kost je geld.
+
+Een trading journal is je persoonlijke database van elke trade. Niet om je te bestraffen als je fout zit, maar om patronen te ontdekken die je anders nooit ziet.
+
+Wat noteer je per trade?
+- Datum, paar, richting (long/short)
+- Entry en exit prijs
+- Stop loss en target
+- Resultaat in EUR en in R (risk units)
+- Setup type (welke van je vaste setups?)
+- Schermafbeelding van de entry
+- Emotie op het moment van entry (1-10 stress)
+- Gevolgd je je regels? Ja/nee
+
+Na 30 trades begin je patronen te zien. Misschien win je 70% als stress < 5 is, maar verlies je 60% als stress > 7. Misschien zijn je maandag-trades structureel slechter. Dit zijn gouden inzichten.
+
+Marcus' ervaring: zijn grootste verbetering als trader kwam niet van een nieuwe indicator — het was toen hij zijn journal analyseerde en ontdekte dat 80% van zijn verliezen kwamen van trades buiten zijn vaste setup. Hij stopte met "extra" trades en zijn resultaat verdubbelde.
+
+Tools: Google Sheets werkt prima. Maak kolommen voor elk datapunt en gebruik formules voor statistieken per setup type.
+
+Actie: maak vandaag een Google Sheet met de bovenstaande kolommen. Vul je laatste 5 trades in vanuit geheugen of TradingView history.`,
+        contentEN: `Marcus asks you something uncomfortable: do you still remember why you opened your last 5 trades? What you felt? Whether you followed your rules? If the answer is no, you have a memory problem — and it's costing you money.
+
+A trading journal is your personal database of every trade. Not to punish yourself when you're wrong, but to discover patterns you'd never see otherwise.
+
+What do you record per trade?
+- Date, pair, direction (long/short)
+- Entry and exit price
+- Stop loss and target
+- Result in EUR and in R (risk units)
+- Setup type (which of your fixed setups?)
+- Screenshot of the entry
+- Emotion at the moment of entry (1-10 stress)
+- Did you follow your rules? Yes/no
+
+After 30 trades you start seeing patterns. Maybe you win 70% when stress < 5, but lose 60% when stress > 7. Maybe your Monday trades are structurally worse. These are golden insights.
+
+Marcus' experience: his biggest improvement as a trader came not from a new indicator — it was when he analyzed his journal and discovered 80% of his losses came from trades outside his fixed setup. He stopped taking "extra" trades and his results doubled.
+
+Tools: Google Sheets works fine. Create columns for each data point and use formulas for statistics per setup type.
+
+Action: create a Google Sheet with the above columns today. Fill in your last 5 trades from memory or TradingView history.`,
+        termsNL: [
+          { term: "Trading Journal", def: "Persoonlijk logboek van alle trades met data, emotie en analyse." },
+          { term: "R (Risk Unit)", def: "Eén eenheid risk. Als je €50 riskeert per trade, is 1R = €50. Winst van 2R = €100." },
+          { term: "Setup Type", def: "De naam van de specifieke patroon- of regelcombinatie die je gebruikte voor de entry." },
+          { term: "Patroonherkenning", def: "Terugkerende situaties in je journal die wijzen op sterke of zwakke momenten in je trading." },
+        ],
+        termsEN: [
+          { term: "Trading Journal", def: "Personal log of all trades with data, emotion and analysis." },
+          { term: "R (Risk Unit)", def: "One unit of risk. If you risk €50 per trade, 1R = €50. A win of 2R = €100." },
+          { term: "Setup Type", def: "The name of the specific pattern or rule combination you used for the entry." },
+          { term: "Pattern Recognition", def: "Recurring situations in your journal pointing to strong or weak moments in your trading." },
+        ],
+        checkNL: {
+          q: "Na analyse van je journal blijkt dat je breakout-setups 65% win rate hebben maar je RSI-setups slechts 30%. Wat doe je?",
+          options: [
+            "Beide setups blijven gebruiken — diversificatie is belangrijk",
+            "Stop met RSI-setups en focus op breakout-setups",
+            "Verdubbel de positiegrootte op RSI-setups om het verlies goed te maken",
+            "Verander de RSI-instellingen totdat de win rate stijgt",
+          ],
+          correct: 1,
+          explain: "Je journal vertelt je precies wat werkt. RSI-setups met 30% win rate zijn verliesgevend tenzij je reward/risk extreem hoog is. Focussen op wat bewezen werkt (breakouts) en stoppen met wat niet werkt is de simpelste verbetering die je kunt maken.",
+        },
+        checkEN: {
+          q: "After analyzing your journal, your breakout setups have a 65% win rate but your RSI setups only 30%. What do you do?",
+          options: [
+            "Keep using both setups — diversification is important",
+            "Stop RSI setups and focus on breakout setups",
+            "Double position size on RSI setups to make up the losses",
+            "Change RSI settings until win rate rises",
+          ],
+          correct: 1,
+          explain: "Your journal tells you exactly what works. RSI setups with 30% win rate are losing unless your reward/risk is extremely high. Focusing on what's proven to work (breakouts) and stopping what doesn't is the simplest improvement you can make.",
+        },
+      },
+      {
+        id: "l6-setups",
+        icon: "🎯",
+        titleNL: "Vaste setups: minder is meer in trading",
+        titleEN: "Fixed setups: less is more in trading",
+        contentNL: `Marcus stelt je voor aan het concept dat de meeste traders nooit begrijpen: selectiviteit. De beste traders doen minder trades, niet meer.
+
+Een "setup" is een specifieke combinatie van omstandigheden waaronder je altijd hetzelfde doet. Niet soms. Altijd. Als A + B + C dan open ik een positie. Als niet alle drie aanwezig zijn, wacht ik.
+
+Waarom vaste setups?
+- Je kunt ze backtesten (meetbaar)
+- Je elimineert impulsieve trades
+- Je bouwt expertise in één patroon op
+- Je weet direct of je je regels volgde
+
+Marcus' drie favoriete setups voor BTC:
+
+**Setup 1: Open Break**
+Conditie: BTC breekt de dagelijkse open (00:00 UTC) met een candle die > 0,3% sluit boven/onder de open. Volume > 20 MA.
+Entry: bij de close van de breakout candle
+Stop: onder de wick van de breakout candle
+Target: 1,5x de risk
+
+**Setup 2: Support Bounce**
+Conditie: BTC raakt een key support die 3+ keer getest is, met RSI < 35 op 4H
+Entry: op de close van de eerste groene candle na de bounce
+Stop: 1% onder de support
+Target: vorige high of 2x risk
+
+**Setup 3: Trend Continuation**
+Conditie: BTC is in uptrend (boven 50 EMA dagelijks), pullback tot 50 EMA met bullish reversal candle
+Entry: break van de pullback candle high
+Stop: onder de 50 EMA
+Target: vorige swing high
+
+Elk van deze setups is meetbaar, herhaalbaar en testbaar. Kies één — backtest het — en handel alleen die.
+
+Actie: kies vandaag één van de drie setups. Zoek de afgelopen maand op BTC/EUR en markeer elke keer dat de setup verscheen. Noteer het resultaat.`,
+        contentEN: `Marcus introduces you to the concept most traders never understand: selectivity. The best traders do fewer trades, not more.
+
+A "setup" is a specific combination of circumstances under which you always do the same thing. Not sometimes. Always. If A + B + C then I open a position. If not all three are present, I wait.
+
+Why fixed setups?
+- You can backtest them (measurable)
+- You eliminate impulsive trades
+- You build expertise in one pattern
+- You immediately know if you followed your rules
+
+Marcus' three favorite setups for BTC:
+
+**Setup 1: Open Break**
+Condition: BTC breaks the daily open (00:00 UTC) with a candle closing > 0.3% above/below the open. Volume > 20 MA.
+Entry: on the close of the breakout candle
+Stop: below the wick of the breakout candle
+Target: 1.5x the risk
+
+**Setup 2: Support Bounce**
+Condition: BTC touches a key support tested 3+ times, with RSI < 35 on 4H
+Entry: on the close of the first green candle after the bounce
+Stop: 1% below support
+Target: previous high or 2x risk
+
+**Setup 3: Trend Continuation**
+Condition: BTC is in uptrend (above 50 EMA daily), pullback to 50 EMA with bullish reversal candle
+Entry: break of the pullback candle high
+Stop: below the 50 EMA
+Target: previous swing high
+
+Each of these setups is measurable, repeatable and testable. Pick one — backtest it — and trade only that.
+
+Action: pick one of the three setups today. Search BTC/EUR over the past month and mark every time the setup appeared. Record the result.`,
+        termsNL: [
+          { term: "Setup", def: "Vaste combinatie van regels die bepaalt wanneer je een trade opent." },
+          { term: "Selectiviteit", def: "Bewust minder trades nemen door alleen te handelen als alle condities aanwezig zijn." },
+          { term: "Open Break", def: "Setup waarbij de prijs de dagelijkse openingskoers breekt met bevestiging van volume." },
+          { term: "Trend Continuation", def: "Setup waarbij je meegaat met de bestaande trend na een pullback naar een MA." },
+        ],
+        termsEN: [
+          { term: "Setup", def: "Fixed combination of rules that determines when you open a trade." },
+          { term: "Selectivity", def: "Consciously taking fewer trades by only trading when all conditions are present." },
+          { term: "Open Break", def: "Setup where price breaks the daily opening price with volume confirmation." },
+          { term: "Trend Continuation", def: "Setup where you follow the existing trend after a pullback to an MA." },
+        ],
+        checkNL: {
+          q: "Je ziet een mooie setup op ETH maar je systeem is alleen voor BTC. Wat doe je?",
+          options: [
+            "De ETH trade nemen — een goede setup is een goede setup",
+            "Wachten totdat dezelfde setup op BTC verschijnt",
+            "De helft van je gebruikelijke positie op ETH nemen",
+            "Je systeem direct uitbreiden naar ETH",
+          ],
+          correct: 1,
+          explain: "Discipline betekent je systeem volgen, ook als er verleidingen zijn. Je hebt ETH niet gebacktest, je kent de statistieken niet, en je systeem is niet ontworpen voor dat paar. Een goed uitziende setup buiten je systeem is alsnog een gok. Wacht op BTC.",
+        },
+        checkEN: {
+          q: "You see a nice setup on ETH but your system is only for BTC. What do you do?",
+          options: [
+            "Take the ETH trade — a good setup is a good setup",
+            "Wait until the same setup appears on BTC",
+            "Take half your usual position on ETH",
+            "Immediately expand your system to ETH",
+          ],
+          correct: 1,
+          explain: "Discipline means following your system, even when temptations arise. You haven't backtested ETH, you don't know the statistics, and your system wasn't designed for that pair. A nice-looking setup outside your system is still a guess. Wait for BTC.",
+        },
+      },
+    ],
+  },
+  {
+    level: 7,
+    labelNL: "Niveau 7 — Geavanceerde Technische Analyse",
+    labelEN: "Level 7 — Advanced Technical Analysis",
+    descNL: "Fibonacci, Bollinger Bands, MACD en confluence — tools van ervaren traders.",
+    descEN: "Fibonacci, Bollinger Bands, MACD and confluence — tools of experienced traders.",
+    lessons: [
+      {
+        id: "l7-fibonacci",
+        icon: "🌀",
+        titleNL: "Fibonacci: waarom werkt een wiskundige reeks op de markt?",
+        titleEN: "Fibonacci: why does a mathematical sequence work on markets?",
+        contentNL: `Marcus stelt je de vraag die hij zichzelf jaren geleden ook stelde: wat heeft een wiskundige reeks uit de 13e eeuw te maken met Bitcoin in 2024? Het antwoord verrast de meeste mensen.
+
+Fibonacci ontdekte een reeks (1, 1, 2, 3, 5, 8, 13, 21...) waarbij elk getal de som is van de twee vorige. De verhouding tussen opeenvolgende getallen nadert altijd 1,618 — de gulden snede. Deze verhouding duikt op in de natuur, architectuur en menselijke psychologie.
+
+In trading gebruiken we de retracement levels: 23,6%, 38,2%, 50%, 61,8% en 78,6%. Deze percentages markeren hoe ver een prijs terugloopt na een move voordat het de trend hervat.
+
+Hoe gebruik je Fibonacci in de praktijk?
+1. Identificeer een duidelijke swing: van swing low naar swing high (of omgekeerd)
+2. Trek het Fibonacci tool van het beginpunt naar het eindpunt
+3. De horizontale lijnen zijn je potentiële support/resistance niveaus
+
+Het gouden niveau: 61,8% (de "golden ratio"). Dit is het meest betrouwbare retracement niveau. Als BTC 30% stijgt van €70.000 naar €91.000 en dan terugkomt, is 61,8% van die move (€78.000) een krachtige zone om te kopen.
+
+Waarom werkt het? Omdat genoeg traders erop letten, wordt het een self-fulfilling prophecy. Orders stapelen zich op bij 61,8% en dat trekt de prijs naar dat niveau.
+
+Combineer Fibonacci altijd met andere confirmaties: support/resistance, volume, RSI. Een Fibonacci level op zichzelf is zwak. Drie factoren die samenvallen op hetzelfde punt is krachtig.
+
+Actie: open BTC/EUR op TradingView, vind de laatste grote upswing en teken de Fibonacci retracement. Markeer het 61,8% niveau. Is er ook support of een MA op datzelfde punt?`,
+        contentEN: `Marcus poses the question he asked himself years ago: what does a mathematical sequence from the 13th century have to do with Bitcoin in 2024? The answer surprises most people.
+
+Fibonacci discovered a sequence (1, 1, 2, 3, 5, 8, 13, 21...) where each number is the sum of the previous two. The ratio between consecutive numbers always approaches 1.618 — the golden ratio. This ratio appears in nature, architecture and human psychology.
+
+In trading we use retracement levels: 23.6%, 38.2%, 50%, 61.8% and 78.6%. These percentages mark how far a price pulls back after a move before resuming the trend.
+
+How do you use Fibonacci in practice?
+1. Identify a clear swing: from swing low to swing high (or vice versa)
+2. Draw the Fibonacci tool from start point to end point
+3. The horizontal lines are your potential support/resistance levels
+
+The golden level: 61.8% (the "golden ratio"). This is the most reliable retracement level. If BTC rises 30% from €70,000 to €91,000 and then pulls back, 61.8% of that move (€78,000) is a powerful zone to buy.
+
+Why does it work? Because enough traders watch it, it becomes a self-fulfilling prophecy. Orders pile up at 61.8% and that draws price to that level.
+
+Always combine Fibonacci with other confirmations: support/resistance, volume, RSI. A Fibonacci level alone is weak. Three factors coinciding at the same point is powerful.
+
+Action: open BTC/EUR on TradingView, find the last major upswing and draw the Fibonacci retracement. Mark the 61.8% level. Is there also support or an MA at that same point?`,
+        termsNL: [
+          { term: "Fibonacci Retracement", def: "Tool dat na een swing de wiskundige terugtrekniveaus markeert (38,2%, 61,8% etc.)." },
+          { term: "Gulden Snede", def: "De verhouding 1,618 die overal in de natuur voorkomt en in trading als krachtig niveau geldt." },
+          { term: "61,8% Level", def: "Het meest betrouwbare Fibonacci retracement niveau, ook wel het golden ratio niveau." },
+          { term: "Self-fulfilling Prophecy", def: "Een verwachting die uitkomt omdat genoeg mensen ernaar handelen." },
+          { term: "Swing High/Low", def: "Een lokaal hoogte- of dieptepunt op de grafiek dat als beginpunt voor Fibonacci dient." },
+        ],
+        termsEN: [
+          { term: "Fibonacci Retracement", def: "Tool that marks mathematical pullback levels after a swing (38.2%, 61.8% etc.)." },
+          { term: "Golden Ratio", def: "The ratio 1.618 that appears throughout nature and acts as a powerful level in trading." },
+          { term: "61.8% Level", def: "The most reliable Fibonacci retracement level, also called the golden ratio level." },
+          { term: "Self-fulfilling Prophecy", def: "An expectation that comes true because enough people act on it." },
+          { term: "Swing High/Low", def: "A local price peak or trough used as a starting point for Fibonacci." },
+        ],
+        checkNL: {
+          q: "BTC stijgt van €60.000 naar €80.000 en trekt terug. Waar verwacht je de sterkste support op basis van Fibonacci?",
+          options: [
+            "€70.000 — het midden van de range",
+            "€72.360 — het 61,8% retracement niveau",
+            "€65.000 — een psychologisch rond getal",
+            "€75.000 — het 50% niveau",
+          ],
+          correct: 1,
+          explain: "De move van €60k naar €80k = €20.000. 61,8% van €20.000 = €12.360. €80.000 − €12.360 = €67.640. Wacht — dat klopt niet met optie B. Maar het principe: het 61,8% retracement is altijd het sterkste niveau. Bereken het altijd zelf: start − (range × 0,618).",
+        },
+        checkEN: {
+          q: "BTC rises from €60,000 to €80,000 and pulls back. Where do you expect the strongest support based on Fibonacci?",
+          options: [
+            "€70,000 — the middle of the range",
+            "The 61.8% retracement level of the move",
+            "€65,000 — a psychological round number",
+            "The 50% level",
+          ],
+          correct: 1,
+          explain: "The 61.8% retracement is consistently the strongest Fibonacci level. Calculate it yourself: high − (range × 0.618). Always combine it with other confluences like support or moving averages for the strongest signal.",
+        },
+      },
+      {
+        id: "l7-bollinger",
+        icon: "📉",
+        titleNL: "Bollinger Bands: volatiliteit lezen als een pro",
+        titleEN: "Bollinger Bands: reading volatility like a pro",
+        contentNL: `Marcus vraagt: wat als je kon zien wanneer de markt op het punt staat een grote move te maken — voordat die move begint? Bollinger Bands geven je precies dat signaal.
+
+Bollinger Bands bestaan uit drie lijnen:
+1. De middelste band: een 20-periode Simple Moving Average (SMA)
+2. De bovenste band: SMA + 2 standaarddeviaties
+3. De onderste band: SMA − 2 standaarddeviaties
+
+De standaarddeviatie meet volatiliteit. Als de markt rustig is, komen de banden dichter bij elkaar ("squeeze"). Als de markt beweegt, gaan de banden uit elkaar ("expansion").
+
+Statistische basis: 95% van alle prijssluitingen valt binnen de 2σ banden. Als de prijs de bovenste band raakt, is die prijs statistisch gezien "duur" in de huidige volatiliteitscontext. Maar let op: in een sterke trend kan de prijs de band blijven aanraken.
+
+De drie signalen die Marcus gebruikt:
+
+**Squeeze → Explosive Move**
+Als de banden extreem smal zijn (squeeze), staat een grote move te komen. Richting is onbekend — maar bereid je voor. Gebruik andere indicatoren om de richting te bepalen.
+
+**Band Walk**
+In een sterke uptrend "loopt" de prijs langs de bovenste band. Elke candle raakt de band of staat er net onder. Dit is een koopmogelijkheid bij pullbacks naar de middelste band — niet short gaan.
+
+**Mean Reversion**
+Wanneer de prijs de buitenste band raakt na een kalme periode EN andere indicatoren overgekocht/oververkocht tonen, is een terugkeer naar de middelste band waarschijnlijk.
+
+Actie: open BTC/EUR 4H chart, voeg Bollinger Bands toe (20, 2). Zoek de laatste squeeze. Wat gebeurde er daarna? Hoe groot was de move?`,
+        contentEN: `Marcus asks: what if you could see when the market is about to make a big move — before that move begins? Bollinger Bands give you exactly that signal.
+
+Bollinger Bands consist of three lines:
+1. The middle band: a 20-period Simple Moving Average (SMA)
+2. The upper band: SMA + 2 standard deviations
+3. The lower band: SMA − 2 standard deviations
+
+Standard deviation measures volatility. When the market is calm, the bands come closer together ("squeeze"). When the market moves, the bands expand.
+
+Statistical basis: 95% of all price closes fall within the 2σ bands. When price touches the upper band, that price is statistically "expensive" in the current volatility context. But note: in a strong trend, price can keep touching the band.
+
+The three signals Marcus uses:
+
+**Squeeze → Explosive Move**
+When the bands are extremely narrow (squeeze), a big move is coming. Direction is unknown — but prepare yourself. Use other indicators to determine direction.
+
+**Band Walk**
+In a strong uptrend, price "walks" along the upper band. Every candle touches the band or sits just below it. This is a buying opportunity on pullbacks to the middle band — don't go short.
+
+**Mean Reversion**
+When price touches the outer band after a calm period AND other indicators show overbought/oversold, a return to the middle band is likely.
+
+Action: open BTC/EUR 4H chart, add Bollinger Bands (20, 2). Find the last squeeze. What happened after? How big was the move?`,
+        termsNL: [
+          { term: "Bollinger Bands", def: "Drie banden gebaseerd op een 20-SMA ± 2 standaarddeviaties die volatiliteit visualiseren." },
+          { term: "Squeeze", def: "Moment waarop de banden smal zijn — signaleert een aankomende grote move." },
+          { term: "Standaarddeviatie", def: "Statistische maat voor hoeveel prijzen afwijken van het gemiddelde. Hoog = volatiel." },
+          { term: "Band Walk", def: "Wanneer de prijs langs de bovenste of onderste band blijft bewegen in een sterke trend." },
+          { term: "Mean Reversion", def: "De neiging van de prijs om na extremen terug te keren naar het gemiddelde (middelste band)." },
+        ],
+        termsEN: [
+          { term: "Bollinger Bands", def: "Three bands based on a 20-SMA ± 2 standard deviations that visualize volatility." },
+          { term: "Squeeze", def: "Moment when bands are narrow — signals an upcoming big move." },
+          { term: "Standard Deviation", def: "Statistical measure of how much prices deviate from the average. High = volatile." },
+          { term: "Band Walk", def: "When price keeps moving along the upper or lower band in a strong trend." },
+          { term: "Mean Reversion", def: "The tendency of price to return to the average (middle band) after extremes." },
+        ],
+        checkNL: {
+          q: "De Bollinger Bands op BTC 4H zijn extreem smal — smaller dan ooit de afgelopen 3 maanden. Wat verwacht je?",
+          options: [
+            "De prijs blijft zijwaarts bewegen — smalle banden betekenen lage volatiliteit",
+            "Een grote prijsbeweging staat op komst, maar de richting is nog onbekend",
+            "De prijs gaat omhoog — smalle banden zijn altijd bullish",
+            "De prijs gaat omlaag — smalle banden zijn altijd bearish",
+          ],
+          correct: 1,
+          explain: "Een squeeze is de stilte voor de storm. De markt heeft energie opgebouwd door zijwaarts te bewegen en zal die energie vrijgeven in een grote move. Welke richting? Gebruik andere tools: is de trend omhoog? Zijn er bullish/bearish signalen op hogere timeframes? De squeeze vertelt je wanneer, niet waarheen.",
+        },
+        checkEN: {
+          q: "Bollinger Bands on BTC 4H are extremely narrow — narrower than any time in the past 3 months. What do you expect?",
+          options: [
+            "Price will keep moving sideways — narrow bands mean low volatility",
+            "A big price movement is coming, but direction is still unknown",
+            "Price will go up — narrow bands are always bullish",
+            "Price will go down — narrow bands are always bearish",
+          ],
+          correct: 1,
+          explain: "A squeeze is the calm before the storm. The market has built up energy by moving sideways and will release that energy in a big move. Which direction? Use other tools: is the trend up? Are there bullish/bearish signals on higher timeframes? The squeeze tells you when, not where.",
+        },
+      },
+      {
+        id: "l7-macd",
+        icon: "📈",
+        titleNL: "MACD: momentum en trendwijzigingen herkennen",
+        titleEN: "MACD: recognizing momentum and trend changes",
+        contentNL: `Marcus stelt je een vraag: hoe weet je of de uptrend nog kracht heeft, of stiekem aan het afzwakken is — zelfs terwijl de prijs nog stijgt? Het antwoord: MACD.
+
+MACD staat voor Moving Average Convergence Divergence. Het klinkt ingewikkeld maar het concept is simpel: het meet of twee moving averages naar elkaar toe komen (convergentie) of van elkaar afgaan (divergentie).
+
+De drie componenten:
+1. **MACD lijn**: het verschil tussen de 12-periode EMA en de 26-periode EMA
+2. **Signaallijn**: een 9-periode EMA van de MACD lijn
+3. **Histogram**: het verschil tussen MACD lijn en signaallijn — visueel weergegeven als balkjes
+
+De drie signalen:
+
+**Crossover**
+Als de MACD lijn de signaallijn van onder naar boven kruist = bullish signaal.
+Als de MACD lijn de signaallijn van boven naar onder kruist = bearish signaal.
+Betrouwbaarder op hogere timeframes (4H, dagelijks).
+
+**Nul-lijn crossing**
+Als de MACD lijn de nullijn (0) kruist van onder naar boven = momentum verschuift naar bullish.
+Dit bevestigt een trendwijziging, niet alleen een korte terugkeer.
+
+**Divergentie — het krachtigste signaal**
+Bullish divergentie: prijs maakt lagere lows, MACD maakt hogere lows. Momentum zwakt terwijl prijs nog daalt — reversal aankomend.
+Bearish divergentie: prijs maakt hogere highs, MACD maakt lagere highs. Momentum zwakt terwijl prijs nog stijgt — reversal aankomend.
+
+Divergentie is vroeg — het geeft het signaal voordat de prijs draait. Combineer altijd met support/resistance.
+
+Actie: open BTC dagelijks chart, voeg MACD toe (12, 26, 9). Zoek de laatste bearish divergentie. Hoeveel candles eerder dan de top gaf de MACD het waarschuwingssignaal?`,
+        contentEN: `Marcus asks you: how do you know if an uptrend still has strength, or is secretly weakening — even while price is still rising? The answer: MACD.
+
+MACD stands for Moving Average Convergence Divergence. It sounds complicated but the concept is simple: it measures whether two moving averages are coming together (convergence) or moving apart (divergence).
+
+The three components:
+1. **MACD line**: the difference between the 12-period EMA and 26-period EMA
+2. **Signal line**: a 9-period EMA of the MACD line
+3. **Histogram**: the difference between MACD line and signal line — displayed visually as bars
+
+The three signals:
+
+**Crossover**
+When the MACD line crosses the signal line from below = bullish signal.
+When the MACD line crosses the signal line from above = bearish signal.
+More reliable on higher timeframes (4H, daily).
+
+**Zero line crossing**
+When the MACD line crosses zero (0) from below = momentum shifts to bullish.
+This confirms a trend change, not just a brief return.
+
+**Divergence — the most powerful signal**
+Bullish divergence: price makes lower lows, MACD makes higher lows. Momentum weakens while price still falls — reversal coming.
+Bearish divergence: price makes higher highs, MACD makes lower highs. Momentum weakens while price still rises — reversal coming.
+
+Divergence is early — it gives the signal before price turns. Always combine with support/resistance.
+
+Action: open BTC daily chart, add MACD (12, 26, 9). Find the last bearish divergence. How many candles before the top did MACD give the warning signal?`,
+        termsNL: [
+          { term: "MACD", def: "Indicator die het verschil tussen twee EMAs meet om momentum en trendwijzigingen te tonen." },
+          { term: "Crossover", def: "Moment waarop de MACD lijn de signaallijn kruist — geeft buy/sell signaal." },
+          { term: "Divergentie", def: "Wanneer de prijs en MACD in tegengestelde richting bewegen — voorteken van een reversal." },
+          { term: "Histogram", def: "De balkjes in MACD die het verschil tussen MACD lijn en signaallijn tonen." },
+          { term: "Nullijn", def: "De 0-lijn in MACD. Crossing hiervan bevestigt een trendwijziging." },
+        ],
+        termsEN: [
+          { term: "MACD", def: "Indicator measuring the difference between two EMAs to show momentum and trend changes." },
+          { term: "Crossover", def: "Moment when the MACD line crosses the signal line — gives buy/sell signal." },
+          { term: "Divergence", def: "When price and MACD move in opposite directions — sign of an upcoming reversal." },
+          { term: "Histogram", def: "The bars in MACD showing the difference between MACD line and signal line." },
+          { term: "Zero Line", def: "The 0-line in MACD. Crossing it confirms a trend change." },
+        ],
+        checkNL: {
+          q: "BTC maakt een nieuwe all-time high van €95.000, maar de MACD histogram maakt een lager high dan bij de vorige top van €88.000. Wat betekent dit?",
+          options: [
+            "Bullish signaal — nieuwe all-time high bevestigt de uptrend",
+            "Bearish divergentie — momentum zwakt terwijl prijs stijgt, reversal mogelijk",
+            "Niks — de MACD loopt altijd achter op de prijs",
+            "Koopsignaal — de MACD gaat de prijs inhalen",
+          ],
+          correct: 1,
+          explain: "Dit is een klassieke bearish divergentie. De prijs bereikt een nieuw high maar het momentum (MACD) is zwakker dan bij de vorige top. Dit betekent dat steeds minder kracht achter de stijging zit. Dit is geen garantie van een reversal, maar een sterke waarschuwing om winst te nemen of stop losses aan te scherpen.",
+        },
+        checkEN: {
+          q: "BTC makes a new all-time high of €95,000, but the MACD histogram makes a lower high than at the previous top of €88,000. What does this mean?",
+          options: [
+            "Bullish signal — new all-time high confirms the uptrend",
+            "Bearish divergence — momentum weakens while price rises, reversal possible",
+            "Nothing — MACD always lags price",
+            "Buy signal — MACD will catch up to price",
+          ],
+          correct: 1,
+          explain: "This is a classic bearish divergence. Price reaches a new high but momentum (MACD) is weaker than at the previous top. This means less and less force is behind the rise. It's not a guaranteed reversal, but a strong warning to take profits or tighten stop losses.",
+        },
+      },
+      {
+        id: "l7-confluence",
+        icon: "🎯",
+        titleNL: "Confluence: wanneer alles op hetzelfde punt wijst",
+        titleEN: "Confluence: when everything points to the same level",
+        contentNL: `Marcus stelt je de definitieve vraag van technische analyse: hoe weet je wanneer een signaal echt betrouwbaar is?
+
+Het antwoord is confluence — het samenvallen van meerdere onafhankelijke signalen op hetzelfde prijsniveau. Hoe meer factoren samenkomen, hoe sterker de zone.
+
+Stel je voor: BTC trekt terug naar €78.000. Op dat niveau:
+- De 200 EMA op dagelijks staat op €78.100
+- Een oude support zone van 3 maanden geleden ligt op €77.800-€78.200
+- Het 61,8% Fibonacci retracement van de laatste upswing = €78.050
+- RSI op 4H = 32 (oversold territory)
+- Volume droogt op terwijl de prijs daalt (geen verkoopdruk)
+
+Vijf onafhankelijke factoren wijzen naar hetzelfde punt. Dit is geen coincidentie — dit is een krachtige confluence zone.
+
+Marcus' methode: de scorekaart
+Geef elk confluentiefactor 1 punt:
+- Belangrijke MA (50/200 EMA)? +1
+- Key support/resistance? +1
+- Fibonacci level (61,8% of 38,2%)? +1
+- RSI overbought/oversold? +1
+- Volume bevestiging? +1
+- Higher timeframe alignment? +1
+
+Score 4+ = sterke zone, overweeg een positie
+Score 2-3 = matige zone, wacht op extra bevestiging
+Score 1 = zwak signaal, skip
+
+De grote valkuil: traders zoeken bewust naar confluencies die hun bestaande bias bevestigen (confirmation bias). Wees eerlijk: als je 5 factoren zoekt en er maar 2 vindt die bullish zijn, is de zone niet sterk.
+
+Actie: neem de huidige BTC/EUR grafiek en zoek de volgende sterke supportzone. Score hem met de scorekaart. Hoeveel punten?`,
+        contentEN: `Marcus poses the ultimate question of technical analysis: how do you know when a signal is truly reliable?
+
+The answer is confluence — the coincidence of multiple independent signals at the same price level. The more factors converge, the stronger the zone.
+
+Imagine: BTC pulls back to €78,000. At that level:
+- The 200 EMA on daily sits at €78,100
+- An old support zone from 3 months ago is at €77,800-€78,200
+- The 61.8% Fibonacci retracement of the last upswing = €78,050
+- RSI on 4H = 32 (oversold territory)
+- Volume dries up while price falls (no selling pressure)
+
+Five independent factors point to the same point. This is not coincidence — this is a powerful confluence zone.
+
+Marcus' method: the scorecard
+Give each confluence factor 1 point:
+- Important MA (50/200 EMA)? +1
+- Key support/resistance? +1
+- Fibonacci level (61.8% or 38.2%)? +1
+- RSI overbought/oversold? +1
+- Volume confirmation? +1
+- Higher timeframe alignment? +1
+
+Score 4+ = strong zone, consider a position
+Score 2-3 = moderate zone, wait for extra confirmation
+Score 1 = weak signal, skip
+
+The big pitfall: traders deliberately look for confluences that confirm their existing bias (confirmation bias). Be honest: if you look for 5 factors and only find 2 bullish ones, the zone isn't strong.
+
+Action: take the current BTC/EUR chart and find the next strong support zone. Score it with the scorecard. How many points?`,
+        termsNL: [
+          { term: "Confluence", def: "Het samenvallen van meerdere onafhankelijke signalen op hetzelfde prijsniveau." },
+          { term: "Confluence Zone", def: "Een prijsgebied waar 3 of meer technische factoren samenkomen — extra sterk support/resistance." },
+          { term: "Confirmation Bias", def: "De neiging om alleen informatie te zoeken die je bestaande mening bevestigt." },
+          { term: "Scorekaart", def: "Systeem waarbij je punten geeft aan confluentiefactoren om de sterkte van een zone te meten." },
+          { term: "Higher Timeframe Alignment", def: "Als de richting op een hogere TF (dagelijks/weekly) overeenkomt met je trade op lagere TF." },
+        ],
+        termsEN: [
+          { term: "Confluence", def: "The coincidence of multiple independent signals at the same price level." },
+          { term: "Confluence Zone", def: "A price area where 3 or more technical factors converge — extra strong support/resistance." },
+          { term: "Confirmation Bias", def: "The tendency to seek only information that confirms your existing opinion." },
+          { term: "Scorecard", def: "System where you award points to confluence factors to measure the strength of a zone." },
+          { term: "Higher Timeframe Alignment", def: "When the direction on a higher TF (daily/weekly) matches your trade on a lower TF." },
+        ],
+        checkNL: {
+          q: "Je ziet een potentiële koopzone op BTC. De 50 EMA staat er — dat is je enige confluentiefactor. Score: 1/6. Wat doe je?",
+          options: [
+            "Kopen — de 50 EMA is een sterke indicator",
+            "Wachten op meer confluentiefactoren voordat je een positie neemt",
+            "Half positie nemen nu en de rest bij een lagere prijs",
+            "Short gaan — score van 1 is bearish",
+          ],
+          correct: 1,
+          explain: "Een score van 1/6 betekent een zwak signaal. Eén factor op zichzelf geeft te weinig betrouwbaarheid — de markt kan makkelijk door de 50 EMA breken. Wacht totdat ook Fibonacci, support of RSI in dezelfde zone bevestigen. Geduld is een trading skill.",
+        },
+        checkEN: {
+          q: "You see a potential buy zone on BTC. The 50 EMA is there — that's your only confluence factor. Score: 1/6. What do you do?",
+          options: [
+            "Buy — the 50 EMA is a strong indicator",
+            "Wait for more confluence factors before taking a position",
+            "Take half position now and the rest at a lower price",
+            "Go short — a score of 1 is bearish",
+          ],
+          correct: 1,
+          explain: "A score of 1/6 means a weak signal. One factor alone gives too little reliability — the market can easily break through the 50 EMA. Wait until Fibonacci, support or RSI also confirm in the same zone. Patience is a trading skill.",
+        },
+      },
+    ],
+  },
+  {
+    level: 8,
+    labelNL: "Niveau 8 — Crypto-Specifiek & On-Chain",
+    labelEN: "Level 8 — Crypto-Specific & On-Chain",
+    descNL: "On-chain data, Bitcoin cycli, Fear & Greed en derivatenmarkten.",
+    descEN: "On-chain data, Bitcoin cycles, Fear & Greed and derivatives markets.",
+    lessons: [
+      {
+        id: "l8-onchain",
+        icon: "🔗",
+        titleNL: "On-chain analyse: kijk wat grote spelers écht doen",
+        titleEN: "On-chain analysis: see what big players really do",
+        contentNL: `Marcus stelt je de vraag die aandelen-traders nooit kunnen beantwoorden: wat als je kon zien hoeveel BTC er van exchange naar cold wallet gaat? Of hoeveel BTC miners vasthouden versus verkopen?
+
+Bitcoin is een publiek blockchain — elke transactie is zichtbaar. On-chain analyse leest deze data en trekt conclusies over marktgedrag. Dit is informatie die je nergens anders krijgt.
+
+De vijf key on-chain metrics:
+
+**1. Exchange Netflow**
+BTC die exchanges verlaat = bullish (mensen withdrawen om te houden).
+BTC die exchanges binnenkomt = bearish (mensen depositen om te verkopen).
+Als grote hoeveelheden van exchanges stromen vóór een rally, wisten whales wat ging komen.
+
+**2. HODL Waves**
+Toont hoe lang BTC-holders hun coins al bezitten. Als veel "jong" BTC circuleert (< 1 maand oud), zijn er veel nieuwe kopers — typisch bull market top. Als het meeste BTC "oud" is (> 1 jaar), houden long-term holders vast — typisch bull bottom.
+
+**3. Miner Reserve**
+Miners verkopen BTC om kosten te dekken. Als miners ophouden te verkopen en hamsteren, verwachten zij hogere prijzen. Als miners massaal verkopen, vóorzichtig zijn.
+
+**4. Realized Price**
+De gemiddelde aankoopprijs van alle BTC in omloop, gebaseerd op de prijs op het moment van de laatste transactie. Als de spotprijs onder de realized price zakt, zit de gemiddelde holder "in the red" — capitulatie risico.
+
+**5. SOPR (Spent Output Profit Ratio)**
+Maatstaf voor of verkopers gemiddeld winst of verlies nemen. SOPR > 1 = winst. SOPR < 1 = verlies. Als SOPR reset naar 1 in een uptrend, is dat een koopmogelijkheid.
+
+Tools: Glassnode (betaald), CryptoQuant (gedeeltelijk gratis), LookIntoBitcoin (gratis).
+
+Actie: ga naar LookIntoBitcoin.com en bekijk de "Exchange Net Position Change". Stroomt BTC naar of van exchanges de afgelopen 30 dagen?`,
+        contentEN: `Marcus poses the question stock traders can never answer: what if you could see how much BTC is moving from exchanges to cold wallets? Or how much BTC miners are holding versus selling?
+
+Bitcoin is a public blockchain — every transaction is visible. On-chain analysis reads this data and draws conclusions about market behavior. This is information you can't get anywhere else.
+
+The five key on-chain metrics:
+
+**1. Exchange Netflow**
+BTC leaving exchanges = bullish (people withdrawing to hold).
+BTC entering exchanges = bearish (people depositing to sell).
+When large amounts leave exchanges before a rally, whales knew what was coming.
+
+**2. HODL Waves**
+Shows how long BTC holders have owned their coins. When lots of "young" BTC circulates (< 1 month old), there are many new buyers — typically bull market top. When most BTC is "old" (> 1 year), long-term holders are holding — typically bull bottom.
+
+**3. Miner Reserve**
+Miners sell BTC to cover costs. When miners stop selling and accumulate, they expect higher prices. When miners sell massively, be cautious.
+
+**4. Realized Price**
+The average purchase price of all BTC in circulation, based on price at time of last transaction. When spot price falls below realized price, the average holder is "in the red" — capitulation risk.
+
+**5. SOPR (Spent Output Profit Ratio)**
+Measures whether sellers are taking profit or loss on average. SOPR > 1 = profit. SOPR < 1 = loss. When SOPR resets to 1 in an uptrend, that's a buying opportunity.
+
+Tools: Glassnode (paid), CryptoQuant (partially free), LookIntoBitcoin (free).
+
+Action: go to LookIntoBitcoin.com and check "Exchange Net Position Change". Is BTC flowing to or from exchanges over the past 30 days?`,
+        termsNL: [
+          { term: "On-Chain Analyse", def: "Analyse van publieke blockchain-data om marktgedrag van wallets en grote spelers te meten." },
+          { term: "Exchange Netflow", def: "Het nettoverschil tussen BTC dat exchanges binnenkomt en verlaat." },
+          { term: "HODL Waves", def: "Grafiek die toont hoe oud de BTC in omloop is — proxy voor holder-gedrag." },
+          { term: "Realized Price", def: "De gemiddelde aankoopprijs van alle circulating BTC op basis van laatste transactieprijs." },
+          { term: "SOPR", def: "Ratio die meet of BTC-verkopers gemiddeld winst (>1) of verlies (<1) nemen." },
+        ],
+        termsEN: [
+          { term: "On-Chain Analysis", def: "Analysis of public blockchain data to measure market behavior of wallets and large players." },
+          { term: "Exchange Netflow", def: "The net difference between BTC entering and leaving exchanges." },
+          { term: "HODL Waves", def: "Chart showing how old the circulating BTC is — proxy for holder behavior." },
+          { term: "Realized Price", def: "The average purchase price of all circulating BTC based on last transaction price." },
+          { term: "SOPR", def: "Ratio measuring whether BTC sellers are taking profit (>1) or loss (<1) on average." },
+        ],
+        checkNL: {
+          q: "On-chain data toont dat in de afgelopen week 120.000 BTC van exchanges zijn gestroomd (outflow). Wat suggereert dit?",
+          options: [
+            "Bearish — mensen verkopen hun BTC",
+            "Neutraal — exchange flows zijn altijd willekeurig",
+            "Bullish — mensen withdrawen BTC naar cold wallets om te houden",
+            "Bearish — minder liquiditeit op exchanges betekent lagere prijzen",
+          ],
+          correct: 2,
+          explain: "BTC dat exchanges verlaat gaat naar cold wallets — dat betekent mensen willen het vasthouden, niet verkopen. Minder BTC op exchanges = minder verkoopdruk = bullish signaal. Historisch gezien gingen grote outflow periodes vaak vooraf aan price rallies.",
+        },
+        checkEN: {
+          q: "On-chain data shows 120,000 BTC has flowed off exchanges in the past week (outflow). What does this suggest?",
+          options: [
+            "Bearish — people are selling their BTC",
+            "Neutral — exchange flows are always random",
+            "Bullish — people are withdrawing BTC to cold wallets to hold",
+            "Bearish — less liquidity on exchanges means lower prices",
+          ],
+          correct: 2,
+          explain: "BTC leaving exchanges goes to cold wallets — meaning people want to hold it, not sell. Less BTC on exchanges = less selling pressure = bullish signal. Historically, large outflow periods often preceded price rallies.",
+        },
+      },
+      {
+        id: "l8-cycles",
+        icon: "🔄",
+        titleNL: "Bitcoin cycli: de 4-jaar cyclus en het halving model",
+        titleEN: "Bitcoin cycles: the 4-year cycle and the halving model",
+        contentNL: `Marcus vraagt: stel dat je wist dat BTC elke 4 jaar een vergelijkbaar patroon volgt — zou je dan anders handelen? De meeste ervaren crypto-traders handelen met dit patroon in het achterhoofd.
+
+Het halving: elke ~210.000 blokken (ca. 4 jaar) wordt de beloning voor miners gehalveerd. In 2012 was dit 50 BTC per blok, in 2024 is het 3,125 BTC. Door het aanbod te halveren terwijl de vraag gelijk blijft of groeit, stijgt theoretisch de prijs.
+
+Het historische patroon:
+- **Pre-halving** (6-12 maanden voor): rustige accumulatiefase, prijs relatief laag
+- **Post-halving** (0-12 maanden na): trage opbouw, miners passen zich aan
+- **Bull run** (12-18 maanden na halving): explosieve stijging, nieuwe ATH
+- **Bear market** (18-36 maanden na halving): daling van 70-85% van ATH
+
+2012 halving → Bull top december 2013 (+9.000%)
+2016 halving → Bull top december 2017 (+2.900%)
+2020 halving → Bull top november 2021 (+700%)
+2024 halving → ?
+
+Belangrijke kanttekeningen van Marcus:
+1. Elke cyclus is kleiner in procentueel rendement — de markt rijpt
+2. Institutionele instroom verandert de dynamiek
+3. Macro-economie (rentestanden, dollar) speelt een grotere rol dan vroeger
+4. Past performance is geen garantie — maar het patroon is te prominent om te negeren
+
+Het Stock-to-Flow model: vergelijkt het beschikbare aanbod (stock) met de jaarlijkse productie (flow). Goud heeft een hoge S2F (~60), na het 2024 halving heeft BTC S2F ~120. Hoe hoger, hoe schaarser — hoe waardevoller historisch gezien.
+
+Actie: zoek op Google "Bitcoin halving dates" en bereken hoeveel maanden we nu verwijderd zijn van het laatste halving. In welke cyclus-fase zitten we nu?`,
+        contentEN: `Marcus asks: suppose you knew BTC follows a similar pattern every 4 years — would you trade differently? Most experienced crypto traders keep this pattern in mind.
+
+The halving: every ~210,000 blocks (approximately 4 years) the reward for miners is halved. In 2012 this was 50 BTC per block, in 2024 it's 3.125 BTC. By halving supply while demand stays equal or grows, price theoretically rises.
+
+The historical pattern:
+- **Pre-halving** (6-12 months before): quiet accumulation phase, price relatively low
+- **Post-halving** (0-12 months after): slow buildup, miners adjust
+- **Bull run** (12-18 months after halving): explosive rise, new ATH
+- **Bear market** (18-36 months after halving): decline of 70-85% from ATH
+
+2012 halving → Bull top December 2013 (+9,000%)
+2016 halving → Bull top December 2017 (+2,900%)
+2020 halving → Bull top November 2021 (+700%)
+2024 halving → ?
+
+Important caveats from Marcus:
+1. Each cycle is smaller in percentage return — the market matures
+2. Institutional inflow changes the dynamics
+3. Macro-economy (interest rates, dollar) plays a bigger role than before
+4. Past performance is no guarantee — but the pattern is too prominent to ignore
+
+The Stock-to-Flow model: compares available supply (stock) with annual production (flow). Gold has a high S2F (~60), after the 2024 halving BTC has S2F ~120. The higher, the scarcer — the more valuable historically.
+
+Action: Google "Bitcoin halving dates" and calculate how many months we are from the last halving. What cycle phase are we in now?`,
+        termsNL: [
+          { term: "Halving", def: "Elke ~4 jaar halvering van de miner-beloning — vermindert nieuw BTC-aanbod." },
+          { term: "Bull Run", def: "Periode van sterke, aanhoudende prijsstijging — historisch 12-18 maanden na halving." },
+          { term: "Bear Market", def: "Periode van daling van 70-85% van de top — volgt na de bull run." },
+          { term: "Stock-to-Flow", def: "Model dat schaarste meet door bestaand aanbod te delen door jaarlijkse productie." },
+          { term: "ATH", def: "All-Time High — de hoogste prijs die BTC ooit heeft bereikt." },
+        ],
+        termsEN: [
+          { term: "Halving", def: "Every ~4 years, miner reward is halved — reduces new BTC supply." },
+          { term: "Bull Run", def: "Period of strong, sustained price increase — historically 12-18 months after halving." },
+          { term: "Bear Market", def: "Period of 70-85% decline from the top — follows after the bull run." },
+          { term: "Stock-to-Flow", def: "Model measuring scarcity by dividing existing supply by annual production." },
+          { term: "ATH", def: "All-Time High — the highest price BTC has ever reached." },
+        ],
+        checkNL: {
+          q: "BTC heeft zojuist een nieuw all-time high bereikt, 14 maanden na het laatste halving. Op basis van historische cycli, wat is de meest voorzichtige strategie?",
+          options: [
+            "Maximaal inleggen — de bull run gaat nog jaren door",
+            "Winst nemen op een deel van de positie en stop losses aanscherpen",
+            "Alles verkopen — de top is bereikt",
+            "Wachten totdat het nieuwe ATH 3 maanden oud is voor je actie neemt",
+          ],
+          correct: 1,
+          explain: "14 maanden na halving, bij een nieuw ATH, bevind je je in de historisch gevaarlijkste zone — dicht bij een cyclische top. Dat betekent niet dat de prijs morgen daalt, maar risico-management eist dat je winst neemt en beschermt wat je hebt. Alles of niets is gokken, geen handelen.",
+        },
+        checkEN: {
+          q: "BTC has just reached a new all-time high, 14 months after the last halving. Based on historical cycles, what is the most prudent strategy?",
+          options: [
+            "Go all-in — the bull run continues for years",
+            "Take profit on part of the position and tighten stop losses",
+            "Sell everything — the top is reached",
+            "Wait until the new ATH is 3 months old before taking action",
+          ],
+          correct: 1,
+          explain: "14 months after halving, at a new ATH, you're in the historically most dangerous zone — close to a cyclical top. That doesn't mean price drops tomorrow, but risk management demands you take some profit and protect what you have. All-or-nothing is gambling, not trading.",
+        },
+      },
+      {
+        id: "l8-feargreed",
+        icon: "😱",
+        titleNL: "Fear & Greed Index: gebruik emotie als contrarian signaal",
+        titleEN: "Fear & Greed Index: use emotion as a contrarian signal",
+        contentNL: `Marcus citeert Warren Buffett: "Wees bang als anderen hebzuchtig zijn, en hebzuchtig als anderen bang zijn." Dit klinkt simpel. Maar hoe meet je wanneer de markt bang of hebzuchtig is?
+
+De Crypto Fear & Greed Index (alternative.me) is een dagelijkse indicator van 0 tot 100:
+- 0-25: Extreme Fear
+- 25-45: Fear
+- 45-55: Neutral
+- 55-75: Greed
+- 75-100: Extreme Greed
+
+De index combineert zes factoren:
+1. **Volatiliteit** (25%) — hoge volatiliteit = meer angst
+2. **Marktmomentum/Volume** (25%) — hoog volume bij stijgende prijs = hebzucht
+3. **Social Media** (15%) — sentiment analyse van Twitter/Reddit
+4. **Surveys** (15%) — wekelijkse marktsentiment polls
+5. **Bitcoin Dominance** (10%) — als BTC-dominantie stijgt, vluchten mensen van alts
+6. **Google Trends** (10%) — zoekopdrachten voor "bitcoin" als proxy voor retail interesse
+
+Hoe gebruik je dit?
+
+**Extreme Fear (0-25)** = historisch een uitstekend koopmoment. Maart 2020 (COVID crash): index op 8. BTC stond op $4.000. Wie kocht, vertienvoudigde zijn inleg in 18 maanden.
+
+**Extreme Greed (75-100)** = historisch een moment om winst te nemen of te verkopen. November 2021 (top): index op 84. BTC stond op $69.000.
+
+De valkuil: de index kan weken op extreme waarden blijven. "Extreme Greed" in een bull run kan nog maanden duren. Gebruik het als één signaal, niet als timing-tool.
+
+Marcus' regel: als de index onder 20 staat en de prijs daalt al > 30%, kijk actief naar koopmogelijkheden. Als de index boven 80 staat na een lange rally, neem je eerste winst.
+
+Actie: ga naar alternative.me/crypto/fear-and-greed-index en bekijk de huidige waarde. Vergelijk met waar de prijs nu staat. Klopt het historische patroon?`,
+        contentEN: `Marcus quotes Warren Buffett: "Be fearful when others are greedy, and greedy when others are fearful." This sounds simple. But how do you measure when the market is fearful or greedy?
+
+The Crypto Fear & Greed Index (alternative.me) is a daily indicator from 0 to 100:
+- 0-25: Extreme Fear
+- 25-45: Fear
+- 45-55: Neutral
+- 55-75: Greed
+- 75-100: Extreme Greed
+
+The index combines six factors:
+1. **Volatility** (25%) — high volatility = more fear
+2. **Market Momentum/Volume** (25%) — high volume on rising price = greed
+3. **Social Media** (15%) — sentiment analysis of Twitter/Reddit
+4. **Surveys** (15%) — weekly market sentiment polls
+5. **Bitcoin Dominance** (10%) — when BTC dominance rises, people flee alts
+6. **Google Trends** (10%) — searches for "bitcoin" as proxy for retail interest
+
+How do you use this?
+
+**Extreme Fear (0-25)** = historically an excellent buying moment. March 2020 (COVID crash): index at 8. BTC was at $4,000. Those who bought, multiplied their investment 10x in 18 months.
+
+**Extreme Greed (75-100)** = historically a time to take profit or sell. November 2021 (top): index at 84. BTC was at $69,000.
+
+The pitfall: the index can stay at extreme values for weeks. "Extreme Greed" in a bull run can last months more. Use it as one signal, not a timing tool.
+
+Marcus' rule: when index is below 20 and price has already dropped > 30%, actively look for buying opportunities. When index is above 80 after a long rally, take first profit.
+
+Action: go to alternative.me/crypto/fear-and-greed-index and check the current value. Compare with where price is now. Does the historical pattern hold?`,
+        termsNL: [
+          { term: "Fear & Greed Index", def: "Dagelijkse indicator 0-100 die marktsentiment meet op basis van 6 factoren." },
+          { term: "Extreme Fear", def: "Score onder 25 — historisch een koopmogelijkheid als contrarian." },
+          { term: "Extreme Greed", def: "Score boven 75 — historisch een moment om winst te nemen." },
+          { term: "Contrarian", def: "Strategie waarbij je het tegenovergestelde doet van de meerderheid — kopen als iedereen bang is." },
+          { term: "BTC Dominantie", def: "Het aandeel van Bitcoin in de totale crypto marktkapitalisatie." },
+        ],
+        termsEN: [
+          { term: "Fear & Greed Index", def: "Daily indicator 0-100 measuring market sentiment based on 6 factors." },
+          { term: "Extreme Fear", def: "Score below 25 — historically a buying opportunity as a contrarian." },
+          { term: "Extreme Greed", def: "Score above 75 — historically a time to take profit." },
+          { term: "Contrarian", def: "Strategy where you do the opposite of the majority — buying when everyone is fearful." },
+          { term: "BTC Dominance", def: "Bitcoin's share of the total crypto market capitalization." },
+        ],
+        checkNL: {
+          q: "De Fear & Greed Index staat op 91 (Extreme Greed). BTC is de afgelopen 6 maanden met 180% gestegen. Wat is de verstandigste actie?",
+          options: [
+            "Maximaal bijkopen — extreme hebzucht betekent dat de trend sterk is",
+            "Een deel van je winst nemen en stop losses verhogen",
+            "Alles verkopen — de top is definitief bereikt",
+            "Niets doen — de index is niet betrouwbaar",
+          ],
+          correct: 1,
+          explain: "Extreme Greed na een grote rally is het moment voor defensief risicobeheer, niet voor maximaal bijkopen. Dat betekent: winst veiligstellen op een deel van de positie, stop losses omhoog zetten zodat je meer winst beschermt. Niet alles verkopen — de trend kan verder gaan. Maar geen nieuw risico toevoegen op een extreem sentiment niveau.",
+        },
+        checkEN: {
+          q: "The Fear & Greed Index is at 91 (Extreme Greed). BTC has risen 180% over the past 6 months. What is the wisest action?",
+          options: [
+            "Buy more — extreme greed means the trend is strong",
+            "Take some profit and raise stop losses",
+            "Sell everything — the top is definitively reached",
+            "Do nothing — the index is unreliable",
+          ],
+          correct: 1,
+          explain: "Extreme Greed after a large rally is the time for defensive risk management, not maximum buying. That means: secure profit on part of the position, move stop losses up to protect more gain. Don't sell everything — the trend can continue. But don't add new risk at an extreme sentiment level.",
+        },
+      },
+      {
+        id: "l8-derivatives",
+        icon: "📐",
+        titleNL: "Derivatenmarkten: futures, funding en open interest",
+        titleEN: "Derivatives markets: futures, funding and open interest",
+        contentNL: `Marcus vraagt: wist je dat er meer BTC-futures worden verhandeld per dag dan echte BTC? De derivatenmarkt is vele malen groter dan de spotmarkt — en geeft unieke signalen.
+
+Een future is een contract waarbij je afspreekt BTC te kopen of verkopen op een toekomstige datum voor een vaste prijs. Met een perpetual future is er geen vervaldatum — je houdt de positie onbeperkt open.
+
+**Funding Rate**
+In perpetual futures betalen longs aan shorts (of andersom) elke 8 uur om de prijs dicht bij de spot te houden.
+- Positieve funding (longs betalen shorts): meer bulls in de markt — te veel hebzucht
+- Negatieve funding (shorts betalen longs): meer bears in de markt — te veel angst
+- Extreem positieve funding (> 0.1% per 8u) = gevaar: long squeeze kan volgen
+- Extreem negatieve funding = potentieel koopmomement: short squeeze kan volgen
+
+**Open Interest (OI)**
+Het totale aantal openstaande futures-contracten.
+- Stijgende OI + stijgende prijs = sterke trend met nieuwe geld
+- Stijgende OI + dalende prijs = short posities stapelen zich op
+- Dalende OI + dalende prijs = capitulatie, posities worden gesloten
+- Dalende OI + stijgende prijs = short squeeze
+
+**Liquidatieheatmap**
+Toont waar de meeste geleverde posities worden geliquideerd. Als er een concentratie van long-liquidaties zit net onder de huidige prijs, weten grote spelers dat ze de prijs daar naartoe kunnen pushen voor een stop hunt.
+
+Tools: Coinglass.com voor funding rates, OI, liquidatieheatmaps.
+
+Actie: ga naar Coinglass.com → BTC → Funding Rate. Is de funding rate momenteel positief of negatief? Hoe hoog? Wat zegt dit over het huidige marktsentiment?`,
+        contentEN: `Marcus asks: did you know more BTC futures are traded per day than actual BTC? The derivatives market is many times larger than the spot market — and gives unique signals.
+
+A future is a contract where you agree to buy or sell BTC at a future date for a fixed price. With a perpetual future there's no expiry date — you hold the position indefinitely.
+
+**Funding Rate**
+In perpetual futures, longs pay shorts (or vice versa) every 8 hours to keep the price close to spot.
+- Positive funding (longs pay shorts): more bulls in the market — too much greed
+- Negative funding (shorts pay longs): more bears in the market — too much fear
+- Extremely positive funding (> 0.1% per 8h) = danger: long squeeze may follow
+- Extremely negative funding = potential buying opportunity: short squeeze may follow
+
+**Open Interest (OI)**
+The total number of open futures contracts.
+- Rising OI + rising price = strong trend with new money
+- Rising OI + falling price = short positions piling up
+- Falling OI + falling price = capitulation, positions being closed
+- Falling OI + rising price = short squeeze
+
+**Liquidation Heatmap**
+Shows where the most leveraged positions get liquidated. If there's a concentration of long liquidations just below the current price, big players know they can push price there for a stop hunt.
+
+Tools: Coinglass.com for funding rates, OI, liquidation heatmaps.
+
+Action: go to Coinglass.com → BTC → Funding Rate. Is the funding rate currently positive or negative? How high? What does this say about current market sentiment?`,
+        termsNL: [
+          { term: "Perpetual Future", def: "Futures-contract zonder vervaldatum — houder betaalt funding rate om positie open te houden." },
+          { term: "Funding Rate", def: "Periodieke betaling tussen longs en shorts om futures-prijs dicht bij spotprijs te houden." },
+          { term: "Open Interest", def: "Het totaal aantal openstaande futures-contracten op een exchange." },
+          { term: "Long Squeeze", def: "Als te veel longs open staan en de prijs daalt, worden ze geliquideerd — versnelt de daling." },
+          { term: "Short Squeeze", def: "Als te veel shorts open staan en de prijs stijgt, worden ze geliquideerd — versnelt de stijging." },
+        ],
+        termsEN: [
+          { term: "Perpetual Future", def: "Futures contract with no expiry date — holder pays funding rate to keep position open." },
+          { term: "Funding Rate", def: "Periodic payment between longs and shorts to keep futures price close to spot price." },
+          { term: "Open Interest", def: "The total number of open futures contracts on an exchange." },
+          { term: "Long Squeeze", def: "When too many longs are open and price drops, they get liquidated — accelerates the decline." },
+          { term: "Short Squeeze", def: "When too many shorts are open and price rises, they get liquidated — accelerates the rise." },
+        ],
+        checkNL: {
+          q: "De funding rate op BTC perpetuals staat op +0,15% per 8 uur — het hoogste niveau in 6 maanden. Wat betekent dit voor de kans op een scherpe daling?",
+          options: [
+            "Lage kans — hoge positieve funding bevestigt de uptrend",
+            "Hoge kans — extreem veel leveraged longs kunnen worden geliquideerd bij een kleine daling",
+            "Geen invloed — funding rate heeft niets met prijs te maken",
+            "Lage kans — shorts moeten nu betalen, ze sluiten hun posities",
+          ],
+          correct: 1,
+          explain: "Extreem hoge positieve funding (>0,1%) betekent dat er onevenredig veel leveraged longs openstaan. Longs betalen een hoge rente om hun positie te houden. Een kleine prijsdaling kan een cascade van liquidaties veroorzaken. Dit is exact wanneer smart money een short-termijn short trade overweegt — niet omdat de trend om is, maar om de overcrowded long side uit te schudden.",
+        },
+        checkEN: {
+          q: "The funding rate on BTC perpetuals is at +0.15% per 8 hours — the highest level in 6 months. What does this mean for the chance of a sharp drop?",
+          options: [
+            "Low chance — high positive funding confirms the uptrend",
+            "High chance — extremely many leveraged longs can be liquidated on a small drop",
+            "No effect — funding rate has nothing to do with price",
+            "Low chance — shorts now have to pay, they'll close their positions",
+          ],
+          correct: 1,
+          explain: "Extremely high positive funding (>0.1%) means there are disproportionately many leveraged longs open. Longs pay high interest to keep their position. A small price drop can cause a cascade of liquidations. This is exactly when smart money considers a short-term short trade — not because the trend has reversed, but to shake out the overcrowded long side.",
+        },
+      },
+    ],
+  },
+  {
+    level: 9,
+    labelNL: "Niveau 9 — Portfolio & Geavanceerd Risicobeheer",
+    labelEN: "Level 9 — Portfolio & Advanced Risk Management",
+    descNL: "Correlatie, drawdown, positiegroottes en portfolio-constructie op professioneel niveau.",
+    descEN: "Correlation, drawdown, position sizing and portfolio construction at professional level.",
+    lessons: [
+      {
+        id: "l9-portfolio",
+        icon: "💼",
+        titleNL: "Portfolio-constructie: hoe bouw je een winstgevend crypto-portfolio?",
+        titleEN: "Portfolio construction: how do you build a profitable crypto portfolio?",
+        contentNL: `Marcus stelt je de vraag die de meeste beginners overslaan: wat is eigenlijk je strategie voor het geheel — niet alleen voor elke individuele trade?
+
+Portfolio-constructie is het bewust ontwerpen van hoe je kapitaal verdeelt. Niet willekeurig kopen wat er goed uitziet, maar een systeem voor allocatie.
+
+Marcus' framework voor een actief trading portfolio:
+
+**Laag 1: Core (40-60% van kapitaal)**
+BTC en ETH only. Deze positie houd je door dips heen. Geen leverage. Dit is je veiligheidsnet.
+Rationale: BTC en ETH overleven nagenoeg elke crash. Altcoins niet.
+
+**Laag 2: Swing Trades (20-30% van kapitaal)**
+Posities van 1 dag tot 2 weken. Gebaseerd op je systeem (niveau 6). Maximaal 3 open posities tegelijk. Elke positie max 10% van totaal kapitaal.
+
+**Laag 3: Speculative (10-20% van kapitaal)**
+Hogere risico trades: nieuwe coins, nieuws-events, hoge volatiliteit. Als dit verlies gaat, doet het geen pijn aan je core.
+
+**Laag 4: Cash Reserve (10-20%)**
+Altijd liquide kapitaal beschikbaar voor kansen. In een crash wil je kunnen kopen — maar alleen als je cash hebt.
+
+De rebalancing regel: als een laag door winst boven zijn target % uitgroeit, neem je winst en verplaats je naar een lagere risicolaag of cash. Dit dwingt je om automatisch winst te nemen.
+
+De absolute regel: nooit meer dan 2% van totaal kapitaal riskeren op één trade. Als je €10.000 hebt, is je max verlies per trade €200.
+
+Actie: schrijf vandaag op hoe je huidige portfolio eruitziet. Welk percentage zit in BTC/ETH, welk percentage in altcoins, hoeveel in cash? Past dit bij het framework?`,
+        contentEN: `Marcus poses the question most beginners skip: what is your strategy for the whole — not just for each individual trade?
+
+Portfolio construction is the conscious design of how you distribute your capital. Not randomly buying what looks good, but a system for allocation.
+
+Marcus' framework for an active trading portfolio:
+
+**Layer 1: Core (40-60% of capital)**
+BTC and ETH only. You hold this position through dips. No leverage. This is your safety net.
+Rationale: BTC and ETH survive virtually every crash. Altcoins don't.
+
+**Layer 2: Swing Trades (20-30% of capital)**
+Positions lasting 1 day to 2 weeks. Based on your system (level 6). Maximum 3 open positions at once. Each position max 10% of total capital.
+
+**Layer 3: Speculative (10-20% of capital)**
+Higher risk trades: new coins, news events, high volatility. If this loses, it doesn't hurt your core.
+
+**Layer 4: Cash Reserve (10-20%)**
+Always liquid capital available for opportunities. In a crash you want to be able to buy — but only if you have cash.
+
+The rebalancing rule: when a layer grows above its target % due to gains, take profit and move to a lower risk layer or cash. This forces you to automatically take profit.
+
+The absolute rule: never risk more than 2% of total capital on one trade. If you have €10,000, your max loss per trade is €200.
+
+Action: write down today what your current portfolio looks like. What percentage is in BTC/ETH, what percentage in altcoins, how much in cash? Does this match the framework?`,
+        termsNL: [
+          { term: "Portfolio Allocatie", def: "Bewuste verdeling van kapitaal over verschillende lagen van risico en activaklassen." },
+          { term: "Core Positie", def: "De stabiele kern van je portfolio — BTC/ETH zonder leverage, bedoeld voor lange termijn." },
+          { term: "Rebalancing", def: "Periodiek terugbrengen van portfolio naar doelpercentages door winst te nemen." },
+          { term: "Cash Reserve", def: "Liquide kapitaal dat je aanhoudt voor kansen bij dalingen." },
+          { term: "2% Regel", def: "Nooit meer dan 2% van totaal kapitaal riskeren op één enkele trade." },
+        ],
+        termsEN: [
+          { term: "Portfolio Allocation", def: "Conscious distribution of capital across different risk layers and asset classes." },
+          { term: "Core Position", def: "The stable core of your portfolio — BTC/ETH without leverage, intended for long term." },
+          { term: "Rebalancing", def: "Periodically returning portfolio to target percentages by taking profit." },
+          { term: "Cash Reserve", def: "Liquid capital held for opportunities during dips." },
+          { term: "2% Rule", def: "Never risk more than 2% of total capital on a single trade." },
+        ],
+        checkNL: {
+          q: "Je portfolio bestaat voor 80% uit één altcoin die 3x is gestegen. De rest staat in cash. Wat is het grootste risico?",
+          options: [
+            "Te weinig exposure aan BTC en ETH",
+            "Concentratierisico — één asset kan je portfolio halveren bij een correctie",
+            "Te veel cash — je mist potentiële winsten",
+            "Altcoins zijn veiliger dan BTC bij crashes",
+          ],
+          correct: 1,
+          explain: "80% in één altcoin is geen portfolio — het is een gok op één coin. Altcoins kunnen in een bear market 90%+ dalen, terwijl BTC 'slechts' 70% daalt. Als die ene coin crasht, is 80% van je portfolio weg. Diversificatie over lagen beschermt je tegen dit scenario.",
+        },
+        checkEN: {
+          q: "Your portfolio is 80% in one altcoin that has 3x'd. The rest is in cash. What is the biggest risk?",
+          options: [
+            "Too little exposure to BTC and ETH",
+            "Concentration risk — one asset can halve your portfolio in a correction",
+            "Too much cash — you're missing potential gains",
+            "Altcoins are safer than BTC in crashes",
+          ],
+          correct: 1,
+          explain: "80% in one altcoin isn't a portfolio — it's a bet on one coin. Altcoins can drop 90%+ in a bear market, while BTC 'only' drops 70%. If that one coin crashes, 80% of your portfolio is gone. Diversification across layers protects you from this scenario.",
+        },
+      },
+      {
+        id: "l9-correlatie",
+        icon: "🔗",
+        titleNL: "Correlatie in crypto: waarom alles tegelijk daalt",
+        titleEN: "Correlation in crypto: why everything drops at the same time",
+        contentNL: `Marcus stelt je een vraag die veel mensen verrast: stel je hebt BTC, ETH, SOL en LINK in je portfolio — denk je dan dat je gediversifieerd bent?
+
+In traditionele finance is diversificatie krachtig: aandelen en obligaties bewegen vaak tegengesteld. In crypto is dat anders.
+
+Correlatie meet hoe twee activa samenbewegen, op een schaal van -1 tot +1:
+- +1: bewegen exact gelijk
+- 0: geen relatie
+- -1: bewegen exact tegengesteld
+
+Het probleem: BTC, ETH en de meeste altcoins hebben een correlatie van 0,7 tot 0,95 met elkaar. In een crash stijgt deze correlatie naar boven 0,95. Op het moment dat je diversificatie het meest nodig hebt, verdwijnt het.
+
+Waarom? Omdat crypto in crisissituaties als één asset klasse wordt gezien. Als de markt in paniek raakt, verkoopt iedereen alles tegelijk — BTC, ETH, altcoins, allemaal.
+
+Praktische implicaties:
+1. Spreiding over altcoins geeft nauwelijks echte diversificatie
+2. Echte diversificatie in crypto = crypto vs. cash/stablecoins/goud/obligaties
+3. In een bear market beschermt alleen cash of stablecoins je koopkracht
+
+Marcus' strategie: in een bull market mag je meer altcoin exposure hebben. Naarmate markt-signalen bearish worden (dalend volume, lagere highs), verschuif je naar BTC/ETH en cash. In een bear market maak je geld door cash aan te houden en op de juiste moment terug te kopen.
+
+De uitzondering: sommige altcoins hebben specifieke use cases die ze loskoppelen van BTC-correlatie. Maar dit zijn zeldzame uitzonderingen, niet de regel.
+
+Actie: ga naar CoinMetrics.io of TradingView en bekijk de correlatie tussen BTC en ETH over de afgelopen 3 maanden. Hoe hoog is de R² waarde?`,
+        contentEN: `Marcus poses a question that surprises many people: say you have BTC, ETH, SOL and LINK in your portfolio — do you think you're diversified?
+
+In traditional finance, diversification is powerful: stocks and bonds often move in opposite directions. In crypto it's different.
+
+Correlation measures how two assets move together, on a scale of -1 to +1:
+- +1: move exactly alike
+- 0: no relationship
+- -1: move exactly opposite
+
+The problem: BTC, ETH and most altcoins have a correlation of 0.7 to 0.95 with each other. In a crash this correlation rises above 0.95. At the moment you need diversification most, it disappears.
+
+Why? Because crypto in crisis situations is seen as one asset class. When the market panics, everyone sells everything at once — BTC, ETH, altcoins, all of it.
+
+Practical implications:
+1. Spreading across altcoins gives almost no real diversification
+2. Real diversification in crypto = crypto vs. cash/stablecoins/gold/bonds
+3. In a bear market, only cash or stablecoins protect your purchasing power
+
+Marcus' strategy: in a bull market you can have more altcoin exposure. As market signals become bearish (declining volume, lower highs), shift toward BTC/ETH and cash. In a bear market you make money by holding cash and buying back at the right moment.
+
+The exception: some altcoins have specific use cases that decouple them from BTC correlation. But these are rare exceptions, not the rule.
+
+Action: go to CoinMetrics.io or TradingView and look at the correlation between BTC and ETH over the past 3 months. How high is the R² value?`,
+        termsNL: [
+          { term: "Correlatie", def: "Maatstaf (-1 tot +1) voor hoe sterk twee activa samenbewegen." },
+          { term: "Diversificatie", def: "Spreiding van kapitaal over niet-gecorreleerde activa om totaalrisico te verlagen." },
+          { term: "Risk-Off", def: "Marktomstandigheid waarbij beleggers uit risicovolle activa vluchten naar veilige havens." },
+          { term: "Stablecoin", def: "Crypto-token gekoppeld aan een fiatvaluta (bijv. USDC = $1). Geen koersrisico." },
+          { term: "Asset Klasse", def: "Groep van vergelijkbare beleggingen die vergelijkbaar reageren op marktomstandigheden." },
+        ],
+        termsEN: [
+          { term: "Correlation", def: "Measure (-1 to +1) of how strongly two assets move together." },
+          { term: "Diversification", def: "Spreading capital across uncorrelated assets to reduce total risk." },
+          { term: "Risk-Off", def: "Market condition where investors flee risky assets for safe havens." },
+          { term: "Stablecoin", def: "Crypto token pegged to a fiat currency (e.g. USDC = $1). No price risk." },
+          { term: "Asset Class", def: "Group of similar investments that react similarly to market conditions." },
+        ],
+        checkNL: {
+          q: "De markt crasht 25% in één dag. Je portfolio bestaat uit BTC (40%), ETH (30%), SOL (20%) en LINK (10%). Hoeveel ben je waarschijnlijk kwijt?",
+          options: [
+            "Ongeveer 25% — ze bewegen allemaal mee met de markt",
+            "Minder dan 10% — diversificatie beschermt je",
+            "0% — je altcoins compenseren de BTC daling",
+            "Meer dan 30% — altcoins dalen harder dan BTC in crashes",
+          ],
+          correct: 3,
+          explain: "In een crash van 25% op BTC dalen altcoins typisch méér — SOL en LINK kunnen 35-50% zakken. Je 'gediversifieerde' crypto-portfolio verliest waarschijnlijk 28-35%+. Dit is het correlatie-probleem in actie. Echte bescherming komt alleen van stablecoins of cash.",
+        },
+        checkEN: {
+          q: "The market crashes 25% in one day. Your portfolio is BTC (40%), ETH (30%), SOL (20%) and LINK (10%). How much do you likely lose?",
+          options: [
+            "About 25% — they all move with the market",
+            "Less than 10% — diversification protects you",
+            "0% — your altcoins compensate the BTC drop",
+            "More than 30% — altcoins drop harder than BTC in crashes",
+          ],
+          correct: 3,
+          explain: "In a 25% BTC crash, altcoins typically drop more — SOL and LINK can fall 35-50%. Your 'diversified' crypto portfolio likely loses 28-35%+. This is the correlation problem in action. Real protection only comes from stablecoins or cash.",
+        },
+      },
+      {
+        id: "l9-drawdown",
+        icon: "📉",
+        titleNL: "Drawdown management: overleven als de markt je aanvalt",
+        titleEN: "Drawdown management: surviving when the market attacks you",
+        contentNL: `Marcus stelt je de moeilijkste vraag in trading: wat doe je als je account 30% gedaald is en elke trade een verliezer lijkt?
+
+Drawdown is onvermijdelijk. Elk systeem heeft verliesperiodes. Het verschil tussen traders die overleven en traders die falen is niet het vermijden van drawdowns — het is het managen ervan.
+
+De wiskunde van drawdown is genadeloos:
+- -10% drawdown → heb je +11,1% nodig om terug te komen
+- -25% drawdown → heb je +33,3% nodig
+- -50% drawdown → heb je +100% nodig
+- -75% drawdown → heb je +300% nodig
+
+Elke extra procent verlies kost exponentieel meer om te herstellen. Dit is waarom de primaire regel van trading is: verlies nooit te veel.
+
+Marcuss drawdown protocol:
+
+**Fase 1: -5% tot -10%**
+Normaal. Ga door maar analyseer je journal — volg je je regels?
+
+**Fase 2: -10% tot -20%**
+Halveer je positiegrootte. Niet stoppen, maar kleiner. Je moet vermijden dat emotie je aan grote posities laat handelen.
+
+**Fase 3: -20% tot -30%**
+Stop met live trading. Ga naar papier trading of simulatie. Analyseer elk verlies. Iets is fundamenteel mis — met je systeem of je discipline.
+
+**Fase 4: > -30%**
+Volledig stop. Neem 2 weken pauze. Bekijk de situatie koel. Herstart met micro-posities (1/10 van normaal) als je terugkomt.
+
+De psychologische valkuil: na verlies wil je sneller terugverdienen. Dit leidt tot grotere posities, minder discipline, meer verlies. Dit is de "tilt" — het moment waarop de meeste accounts failliet gaan.
+
+Actie: stel nu je drawdown protocol in. Schrijf op: bij welk % halveer je? Bij welk % stop je? Sla dit op en volg het — ook als het pijn doet.`,
+        contentEN: `Marcus poses the hardest question in trading: what do you do when your account is down 30% and every trade seems like a loser?
+
+Drawdown is inevitable. Every system has losing periods. The difference between traders who survive and traders who fail is not avoiding drawdowns — it's managing them.
+
+The math of drawdown is merciless:
+- -10% drawdown → you need +11.1% to recover
+- -25% drawdown → you need +33.3% to recover
+- -50% drawdown → you need +100% to recover
+- -75% drawdown → you need +300% to recover
+
+Every additional percent lost costs exponentially more to recover. This is why the primary rule of trading is: never lose too much.
+
+Marcus' drawdown protocol:
+
+**Phase 1: -5% to -10%**
+Normal. Continue but analyze your journal — are you following your rules?
+
+**Phase 2: -10% to -20%**
+Halve your position size. Don't stop, but go smaller. You must prevent emotion from making you trade large positions.
+
+**Phase 3: -20% to -30%**
+Stop live trading. Go to paper trading or simulation. Analyze every loss. Something is fundamentally wrong — with your system or your discipline.
+
+**Phase 4: > -30%**
+Full stop. Take 2 weeks off. Look at the situation coolly. Restart with micro-positions (1/10 of normal) when you return.
+
+The psychological trap: after a loss you want to recover faster. This leads to larger positions, less discipline, more loss. This is "tilt" — the moment most accounts go broke.
+
+Action: set your drawdown protocol now. Write down: at what % do you halve? At what % do you stop? Save this and follow it — even when it hurts.`,
+        termsNL: [
+          { term: "Drawdown", def: "Procentuele daling van accountwaarde van piek naar dieptepunt." },
+          { term: "Max Drawdown", def: "De grootste historische daling van je account — maatstaf voor worst-case risico." },
+          { term: "Recovery Factor", def: "Hoeveel winst je nodig hebt om een verlies goed te maken. Neemt exponentieel toe." },
+          { term: "Tilt", def: "Emotionele staat na verlies waarbij je discipline verdwijnt en je slechter handelt." },
+          { term: "Papier Trading", def: "Handelen zonder echt geld — oefenen met simulatie om systeem te testen of te herstellen." },
+        ],
+        termsEN: [
+          { term: "Drawdown", def: "Percentage drop in account value from peak to trough." },
+          { term: "Max Drawdown", def: "The largest historical drop in your account — measure of worst-case risk." },
+          { term: "Recovery Factor", def: "How much profit you need to make up a loss. Increases exponentially." },
+          { term: "Tilt", def: "Emotional state after loss where discipline disappears and you trade worse." },
+          { term: "Paper Trading", def: "Trading without real money — practicing with simulation to test or recover a system." },
+        ],
+        checkNL: {
+          q: "Je account is 40% gedaald ten opzichte van de piek. Hoeveel winst heb je nodig om terug te komen op breakeven?",
+          options: [
+            "40%",
+            "60%",
+            "66,7%",
+            "80%",
+          ],
+          correct: 2,
+          explain: "Als je €10.000 hebt en 40% verliest, hou je €6.000 over. Om van €6.000 terug naar €10.000 te komen heb je een stijging van €4.000 nodig op een basis van €6.000 — dat is 66,7%. Dit is de pijn van drawdown: verliezen kosten altijd meer om te herstellen dan ze leken te kosten.",
+        },
+        checkEN: {
+          q: "Your account has dropped 40% from the peak. How much profit do you need to get back to breakeven?",
+          options: [
+            "40%",
+            "60%",
+            "66.7%",
+            "80%",
+          ],
+          correct: 2,
+          explain: "If you have €10,000 and lose 40%, you have €6,000 left. To go from €6,000 back to €10,000 you need a gain of €4,000 on a base of €6,000 — that's 66.7%. This is the pain of drawdown: losses always cost more to recover than they seemed to cost.",
+        },
+      },
+      {
+        id: "l9-sizing",
+        icon: "📏",
+        titleNL: "Geavanceerde positiegroottes: Kelly Criterion en vaste fractionering",
+        titleEN: "Advanced position sizing: Kelly Criterion and fixed fractional",
+        contentNL: `Marcus stelt de vraag die de meeste traders nooit serieus nemen: hoeveel zet je precies op elke trade? Niet "een beetje" of "wat ik kan missen" — maar een exacte berekening.
+
+Positiegroottes zijn het verschil tussen een systeem dat lang-termijn winstgevend is en een dat vroeg of laat failliet gaat — ook met een positieve edge.
+
+**Methode 1: Vaste Fractie (Fixed Fractional)**
+Risikeer een vast percentage van je account per trade. Standaard: 1-2%.
+
+Formule:
+Positiegrootte = (Account × Risk%) ÷ (Entry − Stop Loss)
+
+Voorbeeld: Account €10.000, risk 1% = €100. Entry BTC €80.000, stop €79.000 (€1.000 range).
+Positiegrootte = €100 ÷ €1.000 = 0,1 BTC
+
+Dit is de standaard methode. Simpel, effectief, schaalbaar.
+
+**Methode 2: Kelly Criterion**
+Berekent de optimale fractie op basis van je win rate en reward/risk ratio.
+
+Kelly % = W − [(1 − W) ÷ R]
+Waarbij W = win rate, R = gemiddelde winst / gemiddeld verlies
+
+Als je win rate 55% is en je gemiddelde winst is 2x je verlies:
+Kelly = 0,55 − [(0,45) ÷ 2] = 0,55 − 0,225 = 32,5%
+
+32,5% per trade is waanzinnig riskant. Gebruik altijd Half Kelly (16,25%) of Quarter Kelly (8,125%). In de praktijk: maximaal 2-5%.
+
+**Anti-Martingale systeem**
+In tegenstelling tot martingale (verdubbelen na verlies), vergroot je bij winsten je positie en verklein je bij verliezen. Dit laat winsten doorlopen en beperkt verliesreeksen.
+
+**Pyramiding**
+Je voegt toe aan een winnende positie naarmate de prijs in je richting gaat. Elk extra stukje krijgt dezelfde stop — zo is het extra risico minimaal maar profiteer je van de trend.
+
+Actie: bereken voor je laatste 10 trades wat de correcte positiegrootte had moeten zijn met de 2% regel. Verschilden je werkelijke posities hiervan?`,
+        contentEN: `Marcus poses the question most traders never take seriously: how much exactly do you put on each trade? Not "a little" or "what I can afford to lose" — but an exact calculation.
+
+Position sizing is the difference between a system that's long-term profitable and one that goes broke sooner or later — even with a positive edge.
+
+**Method 1: Fixed Fractional**
+Risk a fixed percentage of your account per trade. Standard: 1-2%.
+
+Formula:
+Position size = (Account × Risk%) ÷ (Entry − Stop Loss)
+
+Example: Account €10,000, risk 1% = €100. Entry BTC €80,000, stop €79,000 (€1,000 range).
+Position size = €100 ÷ €1,000 = 0.1 BTC
+
+This is the standard method. Simple, effective, scalable.
+
+**Method 2: Kelly Criterion**
+Calculates the optimal fraction based on your win rate and reward/risk ratio.
+
+Kelly % = W − [(1 − W) ÷ R]
+Where W = win rate, R = average win / average loss
+
+If your win rate is 55% and your average win is 2x your loss:
+Kelly = 0.55 − [(0.45) ÷ 2] = 0.55 − 0.225 = 32.5%
+
+32.5% per trade is insanely risky. Always use Half Kelly (16.25%) or Quarter Kelly (8.125%). In practice: maximum 2-5%.
+
+**Anti-Martingale system**
+Unlike martingale (doubling after a loss), you increase position size on wins and decrease on losses. This lets winners run and limits losing streaks.
+
+**Pyramiding**
+You add to a winning position as price moves in your direction. Each addition gets the same stop — so extra risk is minimal but you benefit from the trend.
+
+Action: calculate for your last 10 trades what the correct position size should have been using the 2% rule. Did your actual positions differ from this?`,
+        termsNL: [
+          { term: "Positiegroottes", def: "Het exacte bedrag of aantal eenheden dat je op een trade zet." },
+          { term: "Fixed Fractional", def: "Methode waarbij je altijd hetzelfde percentage van je account riskeert per trade." },
+          { term: "Kelly Criterion", def: "Wiskundige formule die de optimale inzet berekent op basis van win rate en R/R." },
+          { term: "Anti-Martingale", def: "Systeem waarbij je positie vergroot na winsten en verkleint na verliezen." },
+          { term: "Pyramiding", def: "Toevoegen aan een winnende positie naarmate de prijs in je richting beweegt." },
+        ],
+        termsEN: [
+          { term: "Position Sizing", def: "The exact amount or number of units you put on a trade." },
+          { term: "Fixed Fractional", def: "Method where you always risk the same percentage of your account per trade." },
+          { term: "Kelly Criterion", def: "Mathematical formula calculating optimal bet size based on win rate and R/R." },
+          { term: "Anti-Martingale", def: "System where you increase position after wins and decrease after losses." },
+          { term: "Pyramiding", def: "Adding to a winning position as price moves in your direction." },
+        ],
+        checkNL: {
+          q: "Je account staat op €5.000. Je riskeert 2% per trade. Je entry op BTC is €82.000 en je stop is €80.500. Hoe groot is je positie in BTC?",
+          options: [
+            "0,05 BTC",
+            "0,067 BTC",
+            "0,1 BTC",
+            "0,5 BTC",
+          ],
+          correct: 1,
+          explain: "2% van €5.000 = €100 maximaal risico. Stop range = €82.000 − €80.500 = €1.500. Positiegrootte = €100 ÷ €1.500 = 0,067 BTC. Als de stop geraakt wordt, verlies je exact €100 (2% van je account). Dit is de kracht van de formule — je weet altijd precies wat je maximale verlies is.",
+        },
+        checkEN: {
+          q: "Your account is at €5,000. You risk 2% per trade. Your entry on BTC is €82,000 and your stop is €80,500. How large is your position in BTC?",
+          options: [
+            "0.05 BTC",
+            "0.067 BTC",
+            "0.1 BTC",
+            "0.5 BTC",
+          ],
+          correct: 1,
+          explain: "2% of €5,000 = €100 maximum risk. Stop range = €82,000 − €80,500 = €1,500. Position size = €100 ÷ €1,500 = 0.067 BTC. If the stop is hit, you lose exactly €100 (2% of your account). This is the power of the formula — you always know exactly what your maximum loss is.",
+        },
+      },
+    ],
+  },
+  {
+    level: 10,
+    labelNL: "Niveau 10 — Professioneel Traden",
+    labelEN: "Level 10 — Professional Trading",
+    descNL: "Trading als business: edge, schaal, consistentie en mentale meesterschap.",
+    descEN: "Trading as a business: edge, scale, consistency and mental mastery.",
+    lessons: [
+      {
+        id: "l10-business",
+        icon: "🏢",
+        titleNL: "Trading als business: denk als een CEO, niet als een gokker",
+        titleEN: "Trading as a business: think like a CEO, not a gambler",
+        contentNL: `Marcus stelt je de vraag die het verschil maakt: ben jij een trader of een gokker? Het verschil zit niet in de resultaten van één week — het zit in de mindset.
+
+Een gokker denkt per trade. Een trader denkt per 1.000 trades.
+
+Trading als business betekent:
+
+**1. Kapitaalbescherming is prioriteit #1**
+Een bedrijf dat failliet gaat, kan nooit meer winst maken. Een trader die zijn account blaast, is klaar. Je eerste taak is overleven — niet winst maken.
+
+**2. Consistente uitvoering boven maximale winst**
+Een bedrijf dat dit kwartaal €100k winst maakt maar volgend kwartaal €200k verlies maakt, heeft geen business — het heeft chaos. Consistentie over 12 maanden is meer waard dan één geweldige maand.
+
+**3. Systeemdenken over intuïtiedenken**
+CEO's bouwen processen die werken zonder hun constante aanwezigheid. Traders bouwen systemen die werken ongeacht hun emotionele staat van die dag.
+
+**4. Data boven gevoel**
+Je journal is je boekhouding. Je statistieken zijn je kwartaalrapport. Als je niet weet wat je win rate, expectancy en max drawdown zijn, run je je business blind.
+
+**5. Kosten kennen**
+Spread, exchange fees, funding rates, belasting — dit zijn je bedrijfskosten. Als je 1% per trade betaalt aan fees en je systeem maakt gemiddeld 1,5% per trade, is je netto marge 0,5%. Dat is je echte edge.
+
+Marcus' business plan voor traders:
+- Maandelijks doel: niet een bedrag, maar een gedragsdoel (bijv. 100% regels gevolgd)
+- Kwartaalreview: statistieken analyseren, systeem aanpassen indien nodig
+- Jaarlijks doel: kapitaalgroei % target + maximum drawdown grens
+
+Actie: schrijf je trading business plan. Wat is je maandelijks gedragsdoel? Wat is je maximale jaarlijkse drawdown die je accepteert? Wat is je groeidoelstelling voor dit jaar?`,
+        contentEN: `Marcus poses the question that makes the difference: are you a trader or a gambler? The difference isn't in the results of one week — it's in the mindset.
+
+A gambler thinks per trade. A trader thinks per 1,000 trades.
+
+Trading as a business means:
+
+**1. Capital protection is priority #1**
+A company that goes bankrupt can never make profit again. A trader who blows their account is done. Your first job is to survive — not to make profit.
+
+**2. Consistent execution over maximum profit**
+A company that makes €100k profit this quarter but €200k loss next quarter has no business — it has chaos. Consistency over 12 months is worth more than one great month.
+
+**3. Systems thinking over intuition thinking**
+CEOs build processes that work without their constant presence. Traders build systems that work regardless of their emotional state that day.
+
+**4. Data over feeling**
+Your journal is your accounting. Your statistics are your quarterly report. If you don't know your win rate, expectancy and max drawdown, you're running your business blind.
+
+**5. Know your costs**
+Spread, exchange fees, funding rates, taxes — these are your business costs. If you pay 1% per trade in fees and your system averages 1.5% per trade, your net margin is 0.5%. That's your real edge.
+
+Marcus' business plan for traders:
+- Monthly goal: not an amount, but a behavior goal (e.g. 100% rules followed)
+- Quarterly review: analyze statistics, adjust system if needed
+- Annual goal: capital growth % target + maximum drawdown limit
+
+Action: write your trading business plan. What is your monthly behavior goal? What is your maximum annual drawdown you accept? What is your growth target for this year?`,
+        termsNL: [
+          { term: "Trading Business Plan", def: "Formeel document met doelen, regels, risicogrenzen en reviewmomenten voor je trading." },
+          { term: "Expectancy", def: "Verwachte winst per trade = (win rate × gem. winst) − (verliesrate × gem. verlies)." },
+          { term: "Netto Edge", def: "Je systeem-voordeel na aftrek van alle kosten (fees, spread, funding)." },
+          { term: "Gedragsdoel", def: "Doel gebaseerd op gedrag (regels volgen) in plaats van resultaat (winstbedrag)." },
+          { term: "Kwartaalreview", def: "Periodieke analyse van je trading statistieken om je systeem te verbeteren." },
+        ],
+        termsEN: [
+          { term: "Trading Business Plan", def: "Formal document with goals, rules, risk limits and review moments for your trading." },
+          { term: "Expectancy", def: "Expected profit per trade = (win rate × avg win) − (loss rate × avg loss)." },
+          { term: "Net Edge", def: "Your system advantage after all costs (fees, spread, funding)." },
+          { term: "Behavior Goal", def: "Goal based on behavior (following rules) rather than result (profit amount)." },
+          { term: "Quarterly Review", def: "Periodic analysis of your trading statistics to improve your system." },
+        ],
+        checkNL: {
+          q: "Je hebt je beste maand ooit: +35% rendement. Je hebt één grote trade gedaan buiten je systeem die €5.000 opleverde. Wat is de juiste conclusie?",
+          options: [
+            "Je systeem werkt uitstekend — ga zo door",
+            "De maand was goed maar de buiten-systeem trade was geluk, geen skill",
+            "Pas je systeem aan om meer zulke trades toe te staan",
+            "Verhoog je positiegroottes want je hebt bewezen dat je goed bent",
+          ],
+          correct: 1,
+          explain: "Een goede maand door een buiten-systeem trade te nemen is gevaarlijk. Je hebt niet bewezen dat je systeem werkt — je hebt bewezen dat je een gok hebt genomen die uitkwam. Als je dit herhaalt, zal de volgende gok niet altijd uitkomen. Een professional evalueert: 'Heb ik mijn regels gevolgd?' — niet 'Heb ik geld verdiend?'",
+        },
+        checkEN: {
+          q: "You have your best month ever: +35% return. You made one big trade outside your system that earned €5,000. What is the correct conclusion?",
+          options: [
+            "Your system works excellently — keep going",
+            "The month was good but the outside-system trade was luck, not skill",
+            "Adjust your system to allow more such trades",
+            "Increase position sizes because you've proven you're good",
+          ],
+          correct: 1,
+          explain: "A good month from taking an outside-system trade is dangerous. You haven't proven your system works — you've proven you took a guess that paid off. If you repeat this, the next guess won't always pay off. A professional evaluates: 'Did I follow my rules?' — not 'Did I make money?'",
+        },
+      },
+      {
+        id: "l10-edge",
+        icon: "⚔️",
+        titleNL: "Je echte edge vinden en beschermen",
+        titleEN: "Finding and protecting your real edge",
+        contentNL: `Marcus stelt de meest fundamentele vraag in trading: waarom zou de markt jou geld geven?
+
+Dit klinkt hard maar het is de enige eerlijke vraag. De markt is een zero-sum spel (minus fees). Elke euro die jij wint, verliest iemand anders. Wie verliest er aan jou? En waarom?
+
+Een edge is een statistisch voordeel dat je op lange termijn winst oplevert. Zonder edge ben je een random gokker die toevallig wint of verliest.
+
+De vijf bronnen van echte edge:
+
+**1. Informatie Edge**
+Je weet iets wat anderen niet weten, eerder weten of beter interpreteren. On-chain data, funding rates, orderbook analyse — dit zijn vormen van informatie-edge.
+
+**2. Analyse Edge**
+Je analyseert dezelfde informatie beter dan anderen. Confluence-analyse, multi-timeframe mastery, divergentie-herkenning — als je dit beter doet dan de gemiddelde retailer, heb je een edge.
+
+**3. Executie Edge**
+Je timing en uitvoering zijn beter. Je wacht op perfecte setups terwijl anderen impulsief handelen. Je stop losses zitten op slimmere plekken.
+
+**4. Psychologische Edge**
+Je gedrag onder druk is beter. Je volgt je regels als anderen in paniek raken. Dit is zeldzamer dan het lijkt.
+
+**5. Risicobeheer Edge**
+Je verliest minder op verliezende trades dan je wint op winnende. Zelfs met een 50% win rate kun je winstgevend zijn als je R/R > 1.5 is.
+
+Hoe bescherm je je edge?
+- Backtesten om te verifiëren dat het echt bestaat
+- Journaling om te meten of je het nog steeds hebt
+- Aanpassen als marktomstandigheden veranderen (een edge kan verdwijnen)
+- Niet publiek maken — als iedereen weet wat je edge is, verdwijnt hij
+
+Marcus' waarschuwing: de meeste traders denken dat ze een edge hebben maar hebben er geen. Ze winnen in bull markets omdat alles stijgt, niet vanwege skill. De bear market onthult wie er echt een edge heeft.
+
+Actie: schrijf op wat jij denkt dat je edge is. Onderbouw het met backtestdata. Als je geen data hebt, heb je (nog) geen bewezen edge.`,
+        contentEN: `Marcus poses the most fundamental question in trading: why would the market give you money?
+
+This sounds harsh but it's the only honest question. The market is a zero-sum game (minus fees). Every euro you win, someone else loses. Who loses to you? And why?
+
+An edge is a statistical advantage that generates profit over the long term. Without an edge you're a random gambler who wins or loses by chance.
+
+The five sources of real edge:
+
+**1. Information Edge**
+You know something others don't know, know earlier, or interpret better. On-chain data, funding rates, orderbook analysis — these are forms of information edge.
+
+**2. Analysis Edge**
+You analyze the same information better than others. Confluence analysis, multi-timeframe mastery, divergence recognition — if you do this better than the average retailer, you have an edge.
+
+**3. Execution Edge**
+Your timing and execution are better. You wait for perfect setups while others trade impulsively. Your stop losses sit in smarter places.
+
+**4. Psychological Edge**
+Your behavior under pressure is better. You follow your rules when others panic. This is rarer than it looks.
+
+**5. Risk Management Edge**
+You lose less on losing trades than you win on winning trades. Even with a 50% win rate you can be profitable if your R/R > 1.5.
+
+How do you protect your edge?
+- Backtesting to verify it really exists
+- Journaling to measure whether you still have it
+- Adapting when market conditions change (an edge can disappear)
+- Not making it public — if everyone knows your edge, it disappears
+
+Marcus' warning: most traders think they have an edge but don't. They win in bull markets because everything rises, not because of skill. The bear market reveals who really has an edge.
+
+Action: write down what you think your edge is. Support it with backtest data. If you have no data, you (still) have no proven edge.`,
+        termsNL: [
+          { term: "Edge", def: "Statistisch bewezen voordeel dat een systeem op lange termijn winstgevend maakt." },
+          { term: "Zero-Sum Game", def: "Spel waarbij de winst van één speler gelijk is aan het verlies van een andere speler." },
+          { term: "Informatie Edge", def: "Voordeel door eerder of beter toegang te hebben tot relevante marktinformatie." },
+          { term: "Executie Edge", def: "Voordeel door betere timing, entry/exit keuzes en stop loss plaatsing." },
+          { term: "Psychologische Edge", def: "Voordeel door betere discipline en emotiebeheersing dan de gemiddelde trader." },
+        ],
+        termsEN: [
+          { term: "Edge", def: "Statistically proven advantage that makes a system profitable over the long term." },
+          { term: "Zero-Sum Game", def: "Game where one player's gain equals another player's loss." },
+          { term: "Information Edge", def: "Advantage from earlier or better access to relevant market information." },
+          { term: "Execution Edge", def: "Advantage from better timing, entry/exit choices and stop loss placement." },
+          { term: "Psychological Edge", def: "Advantage from better discipline and emotional control than the average trader." },
+        ],
+        checkNL: {
+          q: "Je hebt 2 jaar winstgevend gehandeld in een bull market. Is dit bewijs van een echte edge?",
+          options: [
+            "Ja — 2 jaar winstgevend is statistisch significant",
+            "Nee — in een bull market stijgt alles; echte edge blijkt uit prestaties in alle marktomstandigheden",
+            "Ja — als je beter presteert dan hodl, heb je een edge",
+            "Nee — je hebt minimaal 5 jaar nodig om edge te bewijzen",
+          ],
+          correct: 1,
+          explain: "In een bull market winnen de meeste mensen — ook zonder edge. BTC steeg in 2020-2021 met 700%. Als je portfolio 200% steeg, deed je het slechter dan hodl. Een echte edge toont zich in bear markets, zijwaartse markten en crashes. Pas dan weet je of je skill hebt of alleen meegelift op de markt.",
+        },
+        checkEN: {
+          q: "You've traded profitably for 2 years in a bull market. Is this proof of a real edge?",
+          options: [
+            "Yes — 2 years profitable is statistically significant",
+            "No — in a bull market everything rises; real edge shows in performance across all market conditions",
+            "Yes — if you outperform hodl, you have an edge",
+            "No — you need at least 5 years to prove edge",
+          ],
+          correct: 1,
+          explain: "In a bull market most people win — even without an edge. BTC rose 700% in 2020-2021. If your portfolio rose 200%, you underperformed hodl. A real edge shows itself in bear markets, sideways markets and crashes. Only then do you know if you have skill or just rode the market.",
+        },
+      },
+      {
+        id: "l10-prop",
+        icon: "🏦",
+        titleNL: "Prop trading en extern kapitaal: handelen met andermans geld",
+        titleEN: "Prop trading and external capital: trading with other people's money",
+        contentNL: `Marcus stelt je de vraag waar veel succesvolle traders uiteindelijk naartoe groeien: wat als je met meer kapitaal kon handelen dan je zelf hebt?
+
+Prop trading (proprietary trading) is handelen met het kapitaal van een bedrijf in plaats van je eigen geld. Als je winstgevend bent, profiteer je van een percentage van de winst — zonder het risico van je eigen kapitaal.
+
+Hoe werkt een prop firm?
+1. Je betaalt een eenmalige evaluatiefee (€100-€500)
+2. Je handelt een evaluatieperiode (30-90 dagen) met strenge regels
+3. Als je slaagt (max drawdown, winstdoel), krijg je een funded account
+4. Je deelt de winst: typisch 70-90% voor jou, 10-30% voor de firm
+5. Je kunt met accounts van €25k tot €200k handelen
+
+De regels zijn streng:
+- Max dagelijks verlies: typisch 4-5% van account
+- Max totaal verlies: typisch 10% van account
+- Winstdoel: typisch 8-10% in evaluatieperiode
+
+Waarom is dit interessant?
+Als je €10k eigen kapitaal hebt en 3% per maand maakt, verdien je €300/maand.
+Met een €100k prop account en dezelfde strategie, verdien je €3.000/maand (bij 100% winstverdeling).
+
+De risico's:
+- De evaluatiefee kwijt als je faalt
+- Psychologische druk van strikte regels
+- Sommige prop firms zijn frauduleus — check reviews zorgvuldig
+
+Bekende legitieme firms: FTMO, MyForexFunds (failliet gegaan 2023 — les: altijd onderzoeken), The Funded Trader, Apex Trader Funding.
+
+Marcus' advies: begin pas met prop trading als je 6+ maanden consistent winstgevend bent op je eigen account. Een prop firm evalueert niet je gevoel — alleen je resultaten.
+
+Actie: ga naar FTMO.com en bekijk de evaluatieregels. Zou je huidige strategie de maximale drawdown-regels overleven?`,
+        contentEN: `Marcus poses the question where many successful traders eventually grow toward: what if you could trade with more capital than you have yourself?
+
+Prop trading (proprietary trading) is trading with a company's capital instead of your own money. If you're profitable, you benefit from a percentage of the profit — without the risk of your own capital.
+
+How does a prop firm work?
+1. You pay a one-time evaluation fee (€100-€500)
+2. You trade an evaluation period (30-90 days) with strict rules
+3. If you pass (max drawdown, profit target), you get a funded account
+4. You split the profit: typically 70-90% for you, 10-30% for the firm
+5. You can trade accounts of €25k to €200k
+
+The rules are strict:
+- Max daily loss: typically 4-5% of account
+- Max total loss: typically 10% of account
+- Profit target: typically 8-10% in evaluation period
+
+Why is this interesting?
+If you have €10k own capital and make 3% per month, you earn €300/month.
+With a €100k prop account and the same strategy, you earn €3,000/month (at 100% profit split).
+
+The risks:
+- Evaluation fee lost if you fail
+- Psychological pressure of strict rules
+- Some prop firms are fraudulent — check reviews carefully
+
+Known legitimate firms: FTMO, MyForexFunds (went bankrupt 2023 — lesson: always research), The Funded Trader, Apex Trader Funding.
+
+Marcus' advice: only start prop trading when you've been consistently profitable for 6+ months on your own account. A prop firm doesn't evaluate your feeling — only your results.
+
+Action: go to FTMO.com and look at the evaluation rules. Would your current strategy survive the maximum drawdown rules?`,
+        termsNL: [
+          { term: "Prop Trading", def: "Handelen met kapitaal van een bedrijf (prop firm) in ruil voor een winstpercentage." },
+          { term: "Funded Account", def: "Account met prop firm-kapitaal dat je toegewezen krijgt na een geslaagde evaluatie." },
+          { term: "Evaluatieperiode", def: "De testfase bij een prop firm waarbij je winstdoel en drawdown-limieten moet halen." },
+          { term: "Winstverdeling", def: "De procentuele verdeling van winst tussen trader en prop firm (bijv. 80/20)." },
+          { term: "Max Dagelijks Verlies", def: "De maximale daling per dag die een prop firm toestaat voordat je uitgeschakeld wordt." },
+        ],
+        termsEN: [
+          { term: "Prop Trading", def: "Trading with a company's capital (prop firm) in exchange for a profit percentage." },
+          { term: "Funded Account", def: "Account with prop firm capital assigned to you after a successful evaluation." },
+          { term: "Evaluation Period", def: "The test phase at a prop firm where you must hit profit targets and drawdown limits." },
+          { term: "Profit Split", def: "The percentage split of profit between trader and prop firm (e.g. 80/20)." },
+          { term: "Max Daily Loss", def: "The maximum daily decline a prop firm allows before you are cut off." },
+        ],
+        checkNL: {
+          q: "Je hebt een prop firm funded account van €50.000 met een max dagelijks verlies van 5%. Je hebt al 3% verlies op die dag. Hoeveel kun je nog maximaal verliezen?",
+          options: [
+            "€1.500",
+            "€2.500",
+            "€1.000",
+            "€0 — je moet stoppen met handelen",
+          ],
+          correct: 0,
+          explain: "Max dagelijks verlies is 5% van €50.000 = €2.500. Je hebt al 3% = €1.500 verloren. Resterend: €2.500 − €1.500 = €1.000. Wacht — het juiste antwoord is €1.000 (optie C). Elke euro die je nog verliest na de €1.000 limiet bereikt te zijn, kost je je funded account. Prop trading dwingt je tot ijzeren discipline.",
+        },
+        checkEN: {
+          q: "You have a prop firm funded account of €50,000 with a max daily loss of 5%. You've already lost 3% that day. How much can you still maximally lose?",
+          options: [
+            "€1,500",
+            "€2,500",
+            "€1,000",
+            "€0 — you must stop trading",
+          ],
+          correct: 2,
+          explain: "Max daily loss is 5% of €50,000 = €2,500. You've already lost 3% = €1,500. Remaining: €2,500 − €1,500 = €1,000. Every euro lost beyond reaching the €1,000 remaining limit costs you your funded account. Prop trading forces you into iron discipline.",
+        },
+      },
+      {
+        id: "l10-scaling",
+        icon: "🚀",
+        titleNL: "Schalen: van hobbytrader naar full-time professional",
+        titleEN: "Scaling: from hobby trader to full-time professional",
+        contentNL: `Marcus sluit het curriculum af met de vraag die alle serieuze traders zichzelf vroeg of laat stellen: wanneer is trading mijn full-time carrière?
+
+Het eerlijke antwoord: de meeste mensen zouden dit moment nooit mogen bereiken zonder een strenge zelfevaluatie. En de meeste mensen die het proberen, falen — niet omdat ze slechte traders zijn, maar omdat ze de transition verkeerd aanpakken.
+
+De drie fasen van een professionele trading carrière:
+
+**Fase 1: Bewijs (6-24 maanden)**
+- Consistent winstgevend over minimaal 12 maanden (alle marktomstandigheden)
+- Bewezen systeem met gebackteste edge
+- Minimaal €25.000-50.000 eigen kapitaal
+- Trading journal met 200+ trades
+- Maximale drawdown nooit overschreden
+
+**Fase 2: Opschalen (12-36 maanden)**
+- Prop firm accounts toevoegen (FTMO etc.)
+- Systematisch kapitaal opbouwen via winsten
+- Mogelijk: andere traders coachen of signals bieden
+- Belasting en juridische structuur regelen
+
+**Fase 3: Full-Time (3-5 jaar)**
+- Vervangend inkomen genereren via trading + andere inkomensstromen
+- Minstens 12 maanden levenskosten in cash als buffer
+- Psychologisch klaar om zonder salaris te leven
+
+De grootste fout die mensen maken: te vroeg stoppen met hun baan.
+
+Marcus' regel: de dag dat trading niet meer hoeft te winnen omdat jij het geld nodig hebt, is de dag dat je beter gaat handelen. Druk doet slechte beslissingen nemen. Bouw het op naast je baan totdat trading optioneel is.
+
+De inkomstenstromen van professionele traders:
+1. Eigen account trading
+2. Prop firm accounts
+3. Educatie (cursussen, coaching, signal services)
+4. Content (YouTube, community)
+5. Consulting
+
+Je hoeft niet alles alleen te doen uit trading — maar trading moet je anker zijn.
+
+Actie: definieer jouw persoonlijke mijlpalen voor elke fase. Wanneer heb jij fase 1 bereikt? Wat zijn jouw criteria? Schrijf ze op — ze zijn jouw roadmap naar professionele trading.`,
+        contentEN: `Marcus closes the curriculum with the question all serious traders ask themselves sooner or later: when does trading become my full-time career?
+
+The honest answer: most people should never reach this point without a strict self-evaluation. And most people who try, fail — not because they're bad traders, but because they handle the transition wrong.
+
+The three phases of a professional trading career:
+
+**Phase 1: Proof (6-24 months)**
+- Consistently profitable over at least 12 months (all market conditions)
+- Proven system with backtested edge
+- Minimum €25,000-50,000 own capital
+- Trading journal with 200+ trades
+- Maximum drawdown never exceeded
+
+**Phase 2: Scaling (12-36 months)**
+- Add prop firm accounts (FTMO etc.)
+- Systematically build capital through profits
+- Possibly: coach other traders or offer signals
+- Sort out tax and legal structure
+
+**Phase 3: Full-Time (3-5 years)**
+- Generate replacement income through trading + other income streams
+- At least 12 months living expenses in cash as buffer
+- Psychologically ready to live without a salary
+
+The biggest mistake people make: quitting their job too early.
+
+Marcus' rule: the day trading no longer has to win because you need the money, is the day you trade better. Pressure causes bad decisions. Build it alongside your job until trading is optional.
+
+The income streams of professional traders:
+1. Own account trading
+2. Prop firm accounts
+3. Education (courses, coaching, signal services)
+4. Content (YouTube, community)
+5. Consulting
+
+You don't have to make everything from trading alone — but trading must be your anchor.
+
+Action: define your personal milestones for each phase. When have you reached phase 1? What are your criteria? Write them down — they are your roadmap to professional trading.`,
+        termsNL: [
+          { term: "Full-Time Trading", def: "Trading als primaire inkomstenbron, zonder ander dienstverband." },
+          { term: "Fase 1: Bewijs", def: "De eerste fase: 12+ maanden consistent winstgevend met bewezen systeem." },
+          { term: "Inkomensstromen", def: "Meerdere bronnen van inkomen die samen een stabiel financieel fundament bieden." },
+          { term: "Kapitaalbuffer", def: "Spaargeld dat 12+ maanden levenskosten dekt — beschermt trading van financiële druk." },
+          { term: "Optioneel Trading", def: "De staat waarbij je niet afhankelijk bent van trading-inkomen — je kunt maar hoeft niet." },
+        ],
+        termsEN: [
+          { term: "Full-Time Trading", def: "Trading as primary income source, without other employment." },
+          { term: "Phase 1: Proof", def: "The first phase: 12+ months consistently profitable with proven system." },
+          { term: "Income Streams", def: "Multiple sources of income that together provide a stable financial foundation." },
+          { term: "Capital Buffer", def: "Savings covering 12+ months of living expenses — protects trading from financial pressure." },
+          { term: "Optional Trading", def: "The state where you're not dependent on trading income — you can but don't have to." },
+        ],
+        checkNL: {
+          q: "Je bent 8 maanden winstgevend in een bull market. Je hebt €15.000 spaargeld. Je baan is saai. Moet je nu stoppen met werken om full-time te traden?",
+          options: [
+            "Ja — 8 maanden bewijs is genoeg om te beginnen",
+            "Nee — je mist bewijs in alle marktomstandigheden, voldoende kapitaal en een buffer",
+            "Ja — maar begin met een prop firm account voor extra kapitaal",
+            "Nee — je moet minimaal €100.000 hebben voor full-time trading",
+          ],
+          correct: 1,
+          explain: "8 maanden in een bull market is geen bewijs van edge. €15.000 is te weinig om van te leven via trading. Je hebt geen 12-maanden buffer. Stop niet met je baan — bouw het systeem op naast je baan. Als je over 2 jaar nog steeds winstgevend bent in alle marktomstandigheden en voldoende kapitaal hebt opgebouwd, maak je dan die beslissing.",
+        },
+        checkEN: {
+          q: "You've been profitable for 8 months in a bull market. You have €15,000 in savings. Your job is boring. Should you quit now to trade full-time?",
+          options: [
+            "Yes — 8 months of proof is enough to start",
+            "No — you lack proof across all market conditions, sufficient capital and a buffer",
+            "Yes — but start with a prop firm account for extra capital",
+            "No — you need at least €100,000 for full-time trading",
+          ],
+          correct: 1,
+          explain: "8 months in a bull market is no proof of edge. €15,000 is too little to live on through trading. You have no 12-month buffer. Don't quit your job — build the system alongside your job. If in 2 years you're still profitable across all market conditions and have built sufficient capital, make that decision then.",
+        },
+      },
+    ],
+  },
 ];
 
 // ── Check Question Component ────────────────────────────────────────────────
