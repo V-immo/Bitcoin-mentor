@@ -450,7 +450,13 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         if (!res.ok || cancelled) return;
         const data = await res.json() as { price?: string };
         const p = parseFloat(data.price ?? "0");
-        if (p > 0 && !cancelled) setBitvavoEurPrice(p);
+        if (p > 0 && !cancelled) {
+          setBitvavoEurPrice(p);
+          // REST-fallback: altijd livePrice updaten (WS overschrijft dit als hij verbindt)
+          setLivePrice(p / 0.92);
+          setPriceWsState("live");
+          setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
+        }
       } catch { /* ignore */ }
     }
     fetchBitvavoPrice();
