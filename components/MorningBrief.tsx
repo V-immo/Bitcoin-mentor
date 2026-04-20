@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 type BriefData = {
@@ -11,6 +11,17 @@ type BriefData = {
   content: string | null;
   createdAt?: string;
 };
+
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**"))
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("*") && part.endsWith("*"))
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    return part;
+  });
+}
 
 const GROUP_LABEL: Record<number, string> = {
   1: "Beginner (level 1–2)",
@@ -87,11 +98,15 @@ export default function MorningBrief() {
         <div className="morning-brief-body">
           <div className="morning-brief-avatar">M</div>
           <div className="morning-brief-content">
-            {data.content.split("\n").map((line, i) => (
-              line.trim()
-                ? <p key={i} className="morning-brief-para">{line}</p>
-                : <div key={i} className="morning-brief-spacer" />
-            ))}
+            {data.content.split("\n").map((line, i) => {
+              if (!line.trim()) return <div key={i} className="morning-brief-spacer" />;
+              // Heading
+              if (line.startsWith("# ") || line.startsWith("## ") || line.startsWith("### ")) {
+                const text = line.replace(/^#+\s/, "");
+                return <p key={i} className="morning-brief-heading">{renderInline(text)}</p>;
+              }
+              return <p key={i} className="morning-brief-para">{renderInline(line)}</p>;
+            })}
           </div>
         </div>
       )}
