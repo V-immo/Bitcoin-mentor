@@ -326,10 +326,10 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         ws.onmessage = (e) => {
           try {
             const data = JSON.parse(e.data);
-            if (data.event === "ticker") {
-              // lastPrice is null bij bid/ask updates — gebruik bestAsk als fallback
-              const eurPrice = parseFloat(data.lastPrice ?? data.bestAsk ?? "0");
+            if (data.event === "ticker" && data.lastPrice) {
+              const eurPrice = parseFloat(data.lastPrice);
               if (Number.isFinite(eurPrice) && eurPrice > 0) {
+                // Sla op als USD-equivalent zodat CurrencyContext correct converteert
                 const rate = eurRateRef.current > 0 ? eurRateRef.current : 0.92;
                 setLivePrice(eurPrice / rate);
                 setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
@@ -462,7 +462,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       } catch { /* ignore */ }
     }
     fetchBitvavoPrice();
-    const iv = setInterval(fetchBitvavoPrice, 5_000);
+    const iv = setInterval(fetchBitvavoPrice, 30_000);
     return () => { cancelled = true; clearInterval(iv); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset]);
