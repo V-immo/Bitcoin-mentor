@@ -5513,7 +5513,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
                 ? "Multi-timeframe analysis, smart money, trading psychology and building your own system. Available with PRO."
                 : "Multi-timeframe analyse, smart money, trading psychologie en het bouwen van jouw eigen systeem. Beschikbaar met PRO."}
             </p>
-            <Link href="/upgrade" className="curriculum-gate-cta">
+            <Link href="/pro" className="curriculum-gate-cta">
               {lang === "en" ? "Upgrade to PRO →" : "Upgrade naar PRO →"}
             </Link>
           </div>

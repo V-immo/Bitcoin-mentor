@@ -25,7 +25,8 @@
       "Bash(ssh root@202.71.14.150 \"while fuser /var/www/bitcoin-mentor/.next/lock 2>/dev/null; do sleep 5; done; echo 'Build klaar'; pm2 delete bitcoin-mentor 2>/dev/null; pm2 start npm --name bitcoin-mentor -- start; pm2 save; pm2 list | grep bitcoin\")",
       "Bash(ssh root@202.71.14.150 \"pm2 delete all; pm2 start npm --name bitcoin-mentor -- start; pm2 save; pm2 list\")",
       "Bash(ssh root@202.71.14.150 \"pm2 list && pm2 logs bitcoin-mentor --lines 20 --nostream 2>&1\")",
-      "Bash(ssh root@202.71.14.150 \"pm2 delete all; cd /var/www/bitcoin-mentor && pm2 start npm --name bitcoin-mentor --cwd /var/www/bitcoin-mentor -- start && pm2 save && pm2 list\")"
+      "Bash(ssh root@202.71.14.150 \"pm2 delete all; cd /var/www/bitcoin-mentor && pm2 start npm --name bitcoin-mentor --cwd /var/www/bitcoin-mentor -- start && pm2 save && pm2 list\")",
+      "Bash(grep -rn \"split.*\\\\\\\\\\\\\\\\n\\\\|\\\\.split\\(\\\\\"\\\\\\\\\\\\\\\\n\\\\\"\\)\" C:/Users/devel/bitcoin-mentor/.claude/worktrees/nervous-shamir-44e2ba/components --include=\"*.tsx\")"
     ]
   }
 }
