@@ -220,6 +220,8 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
   const priceWsRef = useRef<WebSocket | null>(null);
   const klineWsRef = useRef<WebSocket | null>(null);
+  const eurRateRef = useRef<number>(eurRate);
+  eurRateRef.current = eurRate;
   const wasInZoneRef = useRef(false);
   const alertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -328,7 +330,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               const eurPrice = parseFloat(data.lastPrice);
               if (Number.isFinite(eurPrice) && eurPrice > 0) {
                 // Sla op als USD-equivalent zodat CurrencyContext correct converteert
-                const rate = eurRate > 0 ? eurRate : 0.92;
+                const rate = eurRateRef.current > 0 ? eurRateRef.current : 0.92;
                 setLivePrice(eurPrice / rate);
                 setLastTickLabel(new Date().toLocaleTimeString("nl-BE"));
                 setPriceWsState("live");
@@ -378,7 +380,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       if (timer) clearTimeout(timer);
       priceWsRef.current?.close();
     };
-  }, [asset, isBinance, currency, eurRate]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [asset, isBinance, currency]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Finnhub: WebSocket voor realtime prijs + REST fallback
   const finnhubWsRef = useRef<WebSocket | null>(null);
