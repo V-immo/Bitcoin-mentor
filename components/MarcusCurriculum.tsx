@@ -115,6 +115,34 @@ const SupportResistanceDiagram = (
   </svg>
 );
 
+const TrendStructureDiagram = (
+  <svg viewBox="0 0 300 160" style={{ width: "100%", maxWidth: 400, height: "auto" }} aria-hidden>
+    {/* Uptrend — HH/HL */}
+    <polyline points="10,130 50,95 80,110 120,65 150,80 195,35 225,50" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinejoin="round" />
+    <circle cx="50"  cy="95"  r="3.5" fill="#22c55e" />
+    <circle cx="80"  cy="110" r="3.5" fill="#22c55e" />
+    <circle cx="120" cy="65"  r="3.5" fill="#22c55e" />
+    <circle cx="150" cy="80"  r="3.5" fill="#22c55e" />
+    <circle cx="195" cy="35"  r="3.5" fill="#22c55e" />
+    <text x="44"  y="88"  fill="#22c55e" fontSize="8.5" fontWeight="700">HH</text>
+    <text x="75"  y="125" fill="#22c55e" fontSize="8.5" fontWeight="700">HL</text>
+    <text x="114" y="58"  fill="#22c55e" fontSize="8.5" fontWeight="700">HH</text>
+    <text x="145" y="96"  fill="#22c55e" fontSize="8.5" fontWeight="700">HL</text>
+    <text x="189" y="28"  fill="#22c55e" fontSize="8.5" fontWeight="700">HH</text>
+    <text x="5"   y="155" fill="#22c55e" fontSize="10"  fontWeight="700">Uptrend ↗</text>
+
+    {/* Downtrend — LH/LL */}
+    <polyline points="230,30 255,65 265,50 285,95 295,80" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinejoin="round" />
+    <circle cx="255" cy="65"  r="3.5" fill="#ef4444" />
+    <circle cx="265" cy="50"  r="3.5" fill="#ef4444" />
+    <circle cx="285" cy="95"  r="3.5" fill="#ef4444" />
+    <text x="247" cy="58"  fill="#ef4444" fontSize="8.5" fontWeight="700">LL</text>
+    <text x="258" y="44"   fill="#ef4444" fontSize="8.5" fontWeight="700">LH</text>
+    <text x="278" y="108"  fill="#ef4444" fontSize="8.5" fontWeight="700">LL</text>
+    <text x="237" y="155"  fill="#ef4444" fontSize="10"  fontWeight="700">Downtrend ↘</text>
+  </svg>
+);
+
 const CURRICULUM: Level[] = [
   {
     level: 1,
@@ -2460,6 +2488,7 @@ Marcus says: Everyone sees a chart. But who sees the structure behind the chart?
           correct: 1,
           explain: "Sharp analysis! Peaks: €70k → €85k → €95k ✓ (HH, HH). But €95k → €88k = LH ⚠️. Bottoms: €60k → €72k → €80k ✓ (HL, HL). But €80k → €78k = LL ⚠️. Both signals present: LH + LL = trend break confirmed. Uptrend structure is broken. No new long trades until a HH is formed.",
         },
+        diagram: TrendStructureDiagram,
       },
       {
         id: "l3-sr",
