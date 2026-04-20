@@ -51,14 +51,19 @@ jobs:
             rm -rf .next-backup || true
             cp -r .next .next-backup 2>/dev/null || true
 
-            # Build — als dit mislukt stopt het script (set -e) en blijft backup intact
+            # Build — eerste poging kan falen door Turbopack race condition, dan retry
             rm -f .next/lock
             mkdir -p .next/static
             NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-              echo "Build mislukt — herstel backup"
+              echo "Eerste build mislukt — retry..."
               rm -rf .next || true
-              mv .next-backup .next || true
-              exit 1
+              mkdir -p .next/static
+              NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
+                echo "Build mislukt — herstel backup"
+                rm -rf .next || true
+                mv .next-backup .next || true
+                exit 1
+              }
             }
 
             # Build geslaagd — backup opruimen en herstart
