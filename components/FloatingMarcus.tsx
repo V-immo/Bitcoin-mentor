@@ -208,16 +208,11 @@ export default function FloatingMarcus() {
 
     // Nieuw: welkomstbericht voor gloednieuwe gebruikers (nog nooit een bericht gehad)
     if (!text && !localStorage.getItem("marcus-first-message-shown")) {
-      text = `Hoi! Ik ben **Marcus**, jouw persoonlijke trading coach. 👋
+      text = `Ik ben Marcus, jouw persoonlijke trading coach. Ik begeleid je stap voor stap — van je eerste trade tot een consistente strategie.
 
-Ik begeleid je stap voor stap — van je eerste trade tot een consistente strategie.
+Begin hier: kies je tradingstijl in /profiel, vul je tradingplan in (max risico, max dagverlies), en doe je eerste quiz in /leren zodat ik je niveau ken.
 
-**Waar begin je?**
-1. 🎯 **Kies je tradingstijl** in /profiel — zo pas ik mijn coaching direct op jou aan
-2. 📋 **Vul je tradingplan in** — max risico per trade, max dagverlies. Zonder dit is het gokken
-3. 🎓 **Doe je eerste quiz** in /leren — ik leer je niveau kennen en pas alles aan
-
-Stel me gerust een vraag — over Bitcoin, trading strategie, of hoe je moet beginnen. Ik ben er altijd.`;
+Stel me gerust een vraag over Bitcoin, trading of hoe je moet starten.`;
       type = "welcome";
     }
 
@@ -251,80 +246,7 @@ Stel me gerust een vraag — over Bitcoin, trading strategie, of hoe je moet beg
     }
   }, [open]);
 
-  // Luister naar trade-close events van TerminalPaperPanel
-  useEffect(() => {
-    if (hidden) return;
-    function handleTradeDebrief(e: Event) {
-      const { pnl, entryPrice, exitPrice, asset, reason, btcAmount } = (e as CustomEvent).detail as {
-        pnl: number; entryPrice: number; exitPrice: number;
-        asset: string; reason: "manual" | "sl" | "tp"; btcAmount: number;
-      };
-      const ticker = asset.replace("USDT", "").replace("EUR", "");
-      const pnlSign = pnl >= 0 ? "+" : "-";
-      const pnlAbs = Math.abs(pnl).toFixed(2);
-      const reasonText = reason === "sl" ? "Stop Loss geraakt 🛑" : reason === "tp" ? "Take Profit geraakt 🎯" : "handmatig gesloten";
-      const entryFmt = entryPrice.toLocaleString("en-US", { maximumFractionDigits: 0 });
-      const exitFmt  = exitPrice.toLocaleString("en-US", { maximumFractionDigits: 0 });
-      const btcFmt   = btcAmount.toFixed(6);
-      const msg = `[TRADE GESLOTEN — DEBRIEF GEVRAAGD]
-Asset: ${ticker}
-Positie: ${btcFmt} ${ticker}
-Entry: $${entryFmt} → Exit: $${exitFmt}
-Reden: ${reasonText}
-P&L: ${pnlSign}€${pnlAbs}
-
-Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is mijn concrete volgende stap?`;
-      setPendingDebrief(msg);
-      setOpen(true);
-    }
-    window.addEventListener("marcus-trade-debrief", handleTradeDebrief);
-    return () => window.removeEventListener("marcus-trade-debrief", handleTradeDebrief);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hidden]);
-
-  // Auto-verstuur debrief zodra Marcus open staat en niet bezig is
-  useEffect(() => {
-    if (!open || !pendingDebrief || loading) return;
-    const msg = pendingDebrief;
-    setPendingDebrief(null);
-    send(msg);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, pendingDebrief, loading]);
-
-  // Luister naar significante marktbewegingen van het dashboard
-  useEffect(() => {
-    if (hidden) return;
-    function handleMarketMove(e: Event) {
-      const { asset, changePct, price } = (e as CustomEvent).detail as {
-        asset: string; changePct: number; price: number;
-      };
-      const ticker = asset.replace("USDT", "").replace("EUR", "");
-      const dir = changePct > 0 ? "gestegen" : "gedaald";
-      const abs = Math.abs(changePct).toFixed(1);
-      const msg = `[LIVE MARKTBEWEGING GEDETECTEERD]\n${ticker} is ${Math.abs(changePct) >= 3 ? "explosief " : ""}${dir} met ${abs}% — nu $${price.toLocaleString("en-US", { maximumFractionDigits: 0 })}.\n\nWat betekent dit en moet ik iets doen?`;
-      setPendingDebrief(msg);
-      setOpen(true);
-    }
-    window.addEventListener("marcus-market-move", handleMarketMove);
-    return () => window.removeEventListener("marcus-market-move", handleMarketMove);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hidden]);
-
-  // Luister naar getriggerde prijsalerts
-  useEffect(() => {
-    if (hidden) return;
-    function handlePriceAlert(e: Event) {
-      const { message } = (e as CustomEvent).detail as { message: string };
-      if (!message) return;
-      setPendingDebrief(message);
-      setOpen(true);
-    }
-    window.addEventListener("marcus-price-alert", handlePriceAlert);
-    return () => window.removeEventListener("marcus-price-alert", handlePriceAlert);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hidden]);
-
-  // Leren-opdracht: check localStorage voor prompt vanuit MarcusCurriculum
+  // Leren-opdracht: check localStorage voor prompt vanuit MarcusCurriculum (user-initiated)
   useEffect(() => {
     if (hidden) return;
     const prompt = localStorage.getItem("btcmentor-marcus-prompt");
@@ -335,6 +257,15 @@ Geef mij nu direct een debrief: wat ging goed, wat had beter gekund, en wat is m
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden, pathname]);
+
+  // Auto-verstuur alleen bij user-initiated prompts (curriculum "Vraag Marcus")
+  useEffect(() => {
+    if (!open || !pendingDebrief || loading) return;
+    const msg = pendingDebrief;
+    setPendingDebrief(null);
+    send(msg);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, pendingDebrief, loading]);
 
   // TTS via ElevenLabs (premium) of browser fallback
   async function speakText(text: string) {

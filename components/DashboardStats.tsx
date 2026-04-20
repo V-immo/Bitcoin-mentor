@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Flame, GraduationCap, BarChart3, TrendingUp, Calendar, type LucideProps } from "lucide-react";
+import type { ComponentType } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { toast } from "@/lib/toast";
 
@@ -14,6 +16,15 @@ type Stats = {
   winRate: number;
   openPositions: number;
   journalCount: number;
+};
+
+type CardData = {
+  Icon: ComponentType<LucideProps>;
+  label: string;
+  value: string;
+  sub: string;
+  color: string;
+  href: string | null;
 };
 
 export default function DashboardStats() {
@@ -29,7 +40,6 @@ export default function DashboardStats() {
           fetch("/api/me/nudge").then(r => r.ok ? r.json() : null),
         ]);
 
-        // Haal alle paper trades op voor alle assets
         const allPapers = await Promise.all(
           SCAN_ASSETS.map(a => fetch(`/api/me/paper?asset=${a.symbol}`).then(r => r.ok ? r.json() : null).catch(() => null))
         );
@@ -56,25 +66,25 @@ export default function DashboardStats() {
     load();
   }, []);
 
-  const cards = stats ? [
+  const cards: CardData[] = stats ? [
     {
-      icon: "🔥",
+      Icon: Flame,
       label: "Login streak",
       value: `${stats.loginStreak} dagen`,
-      sub: stats.loginStreak >= 7 ? "Week streak! 🏅" : stats.loginStreak >= 3 ? "Goed bezig" : "Log elke dag in",
+      sub: stats.loginStreak >= 7 ? "Week streak" : stats.loginStreak >= 3 ? "Goed bezig" : "Log elke dag in",
       color: "var(--orange)",
       href: null,
     },
     {
-      icon: "🎓",
+      Icon: GraduationCap,
       label: "Quiz niveau",
       value: `Level ${stats.quizLevel}`,
-      sub: `${stats.quizXp} XP verzameld`,
+      sub: `${stats.quizXp} XP`,
       color: "#8b5cf6",
       href: "/leren",
     },
     {
-      icon: "📊",
+      Icon: BarChart3,
       label: "Paper P&L",
       value: stats.totalPnl === 0 ? "€0" : `${stats.totalPnl >= 0 ? "+" : ""}€${Math.abs(stats.totalPnl).toFixed(0)}`,
       sub: `${stats.closedTrades} trades · ${stats.winRate}% winrate`,
@@ -82,7 +92,7 @@ export default function DashboardStats() {
       href: "/trade",
     },
     {
-      icon: "📈",
+      Icon: TrendingUp,
       label: "Open posities",
       value: String(stats.openPositions),
       sub: stats.openPositions > 0 ? "Actief in de markt" : "Geen open trades",
@@ -90,51 +100,50 @@ export default function DashboardStats() {
       href: "/trade",
     },
     {
-      icon: "📅",
+      Icon: Calendar,
       label: "Journal entries",
       value: String(stats.journalCount),
       sub: stats.journalCount >= 5 ? "Goede gewoonte" : "Schrijf elke dag",
       color: "#06b6d4",
       href: "/agenda",
     },
-  ] : Array(5).fill(null);
+  ] : [];
+
+  if (!stats) {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12, marginBottom: 20 }}>
+        {Array(5).fill(null).map((_, i) => (
+          <div key={i} className="card" style={{ height: 90, animation: "pulse 1.5s ease-in-out infinite" }} />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-      gap: 12,
-      marginBottom: 20,
-    }}>
-      {cards.map((card, i) => (
-        card === null ? (
-          <div key={i} className="card" style={{
-            height: 90,
-            animation: "pulse 1.5s ease-in-out infinite",
-          }} />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12, marginBottom: 20 }}>
+      {cards.map(card => (
+        card.href ? (
+          <Link key={card.label} href={card.href} style={{ textDecoration: "none" }}>
+            <StatCard card={card} />
+          </Link>
         ) : (
-          card.href ? (
-            <Link key={card.label} href={card.href} style={{ textDecoration: "none" }}>
-              <StatCard card={card} />
-            </Link>
-          ) : (
-            <StatCard key={card.label} card={card} />
-          )
+          <StatCard key={card.label} card={card} />
         )
       ))}
     </div>
   );
 }
 
-type CardData = { icon: string; label: string; value: string; sub: string; color: string; href: string | null };
-
 function StatCard({ card }: { card: CardData }) {
   return (
-    <div className="card"
+    <div
+      className="card"
       onMouseEnter={e => (e.currentTarget.style.borderColor = card.color + "55")}
       onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
     >
-      <div style={{ fontSize: 20, marginBottom: 6 }}>{card.icon}</div>
+      <div style={{ marginBottom: 8, color: card.color }}>
+        <card.Icon size={18} />
+      </div>
       <div style={{ fontSize: 18, fontWeight: 800, color: card.color, lineHeight: 1.1, marginBottom: 3 }}>
         {card.value}
       </div>
