@@ -168,14 +168,14 @@ const translations = {
     settings_capital_hint: "Neem contact op met de admin om je startkapitaal te wijzigen.",
     settings_title_language: "AI communicatie",
     settings_desc_language: "In welke taal wil je dat de AI met je praat?",
-    settings_title_currency: "💱 Valuta weergave",
+    settings_title_currency: "Valuta weergave",
     settings_desc_currency: "In welke valuta wil je prijzen zien? EUR voor Europa, USD voor Amerika.",
-    settings_currency_eur: "🇪🇺 Euro (EUR)",
+    settings_currency_eur: "Euro (EUR)",
     settings_currency_eur_desc: "Prijzen in euro's",
-    settings_currency_usd: "🇺🇸 Dollar (USD)",
+    settings_currency_usd: "Dollar (USD)",
     settings_currency_usd_desc: "Prijzen in dollars",
     settings_save_btn: "Instellingen opslaan",
-    settings_title_bitvavo: "🔗 Bitvavo koppeling",
+    settings_title_bitvavo: "Bitvavo koppeling",
     settings_desc_bitvavo: "Koppel je Bitvavo account om je echte saldo te zien.",
     settings_bitvavo_connected: "✓ Bitvavo gekoppeld",
     settings_bitvavo_no_balance: "Geen saldo gevonden (alle posities zijn 0)",
@@ -188,7 +188,7 @@ const translations = {
     settings_bitvavo_saving: "Opslaan…",
     settings_bitvavo_loading: "Laden…",
     settings_bitvavo_error: "Verbinding mislukt — controleer je API keys.",
-    settings_title_password: "🔒 Wachtwoord wijzigen",
+    settings_title_password: "Wachtwoord wijzigen",
     settings_desc_password: "Kies een sterk wachtwoord van minimaal 8 tekens.",
     settings_pw_current: "Huidig wachtwoord",
     settings_pw_new: "Nieuw wachtwoord",
@@ -244,7 +244,7 @@ const translations = {
     chart_buy_zone_label: "Koopzone",
     chart_stop_label: "Stop",
     chart_resistance_label: "Resistance",
-    chart_live_label: "⚡ Live chart",
+    chart_live_label: "Live chart",
     chart_analysis_label: "Analyse chart",
     chart_candle_label: "Candle",
     chart_line_label: "Lijn",
@@ -303,7 +303,7 @@ const translations = {
 
     // === ONBOARDING ===
     // Onboarding stap 1 – Marcus intro
-    onboarding_marcus_title: "Hoi, ik ben Marcus 👋",
+    onboarding_marcus_title: "Hoi, ik ben Marcus",
     onboarding_marcus_subtitle: "Jouw persoonlijke trading coach",
     onboarding_marcus_body1: "Mijn missie: jou elke dag een betere trader maken — stap voor stap, zonder bullshit.",
     onboarding_marcus_body2: "Ik analyseer de markt voor je, geef je dagelijkse opdrachten en leg alles uit op jouw niveau. Je hoeft niks te weten om te beginnen.",
@@ -357,8 +357,8 @@ const translations = {
     // === TAAL KEUZE ===
     lang_choose_title: "Kies je taal",
     lang_choose_subtitle: "Je kunt dit later aanpassen in instellingen",
-    lang_nl: "🇳🇱 Nederlands",
-    lang_en: "🇬🇧 English",
+    lang_nl: "Nederlands",
+    lang_en: "English",
 
     // === LEREN PAGINA ===
     leren_back: "← Terug naar Traden",
@@ -420,7 +420,7 @@ const translations = {
 
     // === HELP PAGINA ===
     help_back: "← Terug naar Traden",
-    help_title: "❓ Hoe werkt Bitcoin Mentor?",
+    help_title: "Hoe werkt Bitcoin Mentor?",
     help_subtitle: "Alles uitgelegd voor beginners. Klik op een vraag om het antwoord te zien.",
     help_footer_text: "Kom je er niet uit? Vraag het gewoon aan Marcus — hij legt alles uit op jouw niveau.",
     help_footer_btn: "→ Ga naar Traden",
@@ -557,7 +557,7 @@ const translations = {
     stats_panel_by_day: "P/L per weekdag",
     stats_panel_by_asset: "Per asset",
     stats_panel_winrate: "winrate",
-    stats_panel_psychology: "🧠 Psychologie per emotie",
+    stats_panel_psychology: "Psychologie per emotie",
     stats_emo_1: "Angstig",
     stats_emo_2: "Onzeker",
     stats_emo_3: "Neutraal",
@@ -1228,12 +1228,12 @@ const translations = {
     settings_desc_language: "In which language do you want the AI to talk to you?",
     settings_title_currency: "💱 Currency display",
     settings_desc_currency: "In which currency do you want to see prices? EUR for Europe, USD for America.",
-    settings_currency_eur: "🇪🇺 Euro (EUR)",
+    settings_currency_eur: "Euro (EUR)",
     settings_currency_eur_desc: "Prices in euros",
-    settings_currency_usd: "🇺🇸 Dollar (USD)",
+    settings_currency_usd: "Dollar (USD)",
     settings_currency_usd_desc: "Prices in dollars",
     settings_save_btn: "Save settings",
-    settings_title_bitvavo: "🔗 Bitvavo connection",
+    settings_title_bitvavo: "Bitvavo connection",
     settings_desc_bitvavo: "Connect your Bitvavo account to see your real balance.",
     settings_bitvavo_connected: "✓ Bitvavo connected",
     settings_bitvavo_no_balance: "No balance found (all positions are 0)",
@@ -1246,7 +1246,7 @@ const translations = {
     settings_bitvavo_saving: "Saving…",
     settings_bitvavo_loading: "Loading…",
     settings_bitvavo_error: "Connection failed — check your API keys.",
-    settings_title_password: "🔒 Change password",
+    settings_title_password: "Change password",
     settings_desc_password: "Choose a strong password of at least 8 characters.",
     settings_pw_current: "Current password",
     settings_pw_new: "New password",
@@ -1302,7 +1302,7 @@ const translations = {
     chart_buy_zone_label: "Buy zone",
     chart_stop_label: "Stop",
     chart_resistance_label: "Resistance",
-    chart_live_label: "⚡ Live chart",
+    chart_live_label: "Live chart",
     chart_analysis_label: "Analysis chart",
     chart_candle_label: "Candle",
     chart_line_label: "Line",
@@ -1361,7 +1361,7 @@ const translations = {
 
     // === ONBOARDING ===
     // Onboarding step 1 – Marcus intro
-    onboarding_marcus_title: "Hey, I'm Marcus 👋",
+    onboarding_marcus_title: "Hey, I'm Marcus",
     onboarding_marcus_subtitle: "Your personal trading coach",
     onboarding_marcus_body1: "My mission: make you a better trader every day — step by step, no BS.",
     onboarding_marcus_body2: "I analyze the market for you, give you daily assignments and explain everything at your level. You don't need to know anything to start.",
@@ -1415,8 +1415,8 @@ const translations = {
     // === TAAL KEUZE ===
     lang_choose_title: "Choose your language",
     lang_choose_subtitle: "You can change this later in settings",
-    lang_nl: "🇳🇱 Nederlands",
-    lang_en: "🇬🇧 English",
+    lang_nl: "Nederlands",
+    lang_en: "English",
 
     // === LEREN PAGINA ===
     leren_back: "← Back to Trading",
@@ -1478,7 +1478,7 @@ const translations = {
 
     // === HELP PAGINA ===
     help_back: "← Back to Trading",
-    help_title: "❓ How does Bitcoin Mentor work?",
+    help_title: "How does Bitcoin Mentor work?",
     help_subtitle: "Everything explained for beginners. Click a question to see the answer.",
     help_footer_text: "Can't figure it out? Just ask Marcus — he explains everything at your level.",
     help_footer_btn: "→ Go to Trading",
@@ -1615,7 +1615,7 @@ const translations = {
     stats_panel_by_day: "P/L per weekday",
     stats_panel_by_asset: "Per asset",
     stats_panel_winrate: "win rate",
-    stats_panel_psychology: "🧠 Psychology per emotion",
+    stats_panel_psychology: "Psychology per emotion",
     stats_emo_1: "Fearful",
     stats_emo_2: "Uncertain",
     stats_emo_3: "Neutral",
