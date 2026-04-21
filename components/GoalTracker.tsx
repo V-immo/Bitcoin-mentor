@@ -132,7 +132,7 @@ export default function GoalTracker() {
                     €{totalBalance.toFixed(0)}
                   </div>
                 </div>
-                <div className="goal-arrow">→</div>
+                <div className="goal-arrow">›</div>
                 <div className="goal-target">
                   <div className="goal-amount-label">{t("goal_target_label")}</div>
                   <div className="goal-amount-value">€{goal.toFixed(0)}</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CheckCircle2, AlertTriangle, XCircle, Lightbulb } from "lucide-react";
 
 type Props = {
     currentPrice: number;
@@ -24,10 +25,10 @@ type Check = {
     priority: number; // lager = meer zichtbaar
 };
 
-function icon(s: CheckStatus) {
-    if (s === "green") return "✅";
-    if (s === "orange") return "⚠️";
-    return "❌";
+function StatusIcon({ s }: { s: CheckStatus }) {
+    if (s === "green") return <CheckCircle2 size={14} />;
+    if (s === "orange") return <AlertTriangle size={14} />;
+    return <XCircle size={14} />;
 }
 
 function rrNumber(rr: unknown): number {
@@ -211,7 +212,7 @@ export default function EntryChecklist({
             <div className="terminal-label">{t("checklist_label")}</div>
 
             <div className={`terminal-checklist-score terminal-checklist-score-${overallStatus}`}>
-                <span className="terminal-checklist-score-icon">{icon(overallStatus)}</span>
+                <span className="terminal-checklist-score-icon"><StatusIcon s={overallStatus} /></span>
                 <div>
                     <div className="terminal-checklist-score-label">{overallLabel}</div>
                     <div className="terminal-checklist-score-sub">{greenCount}/{checks.length} {t("checklist_green_count")}</div>
@@ -224,13 +225,13 @@ export default function EntryChecklist({
                     {sorted.map((check) => (
                         <div key={check.label} className={`terminal-checklist-item terminal-checklist-item-${check.status}`}>
                             <div className="terminal-checklist-item-top">
-                                <span className="terminal-checklist-icon">{icon(check.status)}</span>
+                                <span className="terminal-checklist-icon"><StatusIcon s={check.status} /></span>
                                 <div className="terminal-checklist-content">
                                     <div className="terminal-checklist-name">{check.label}</div>
                                     <div className="terminal-checklist-detail">{check.detail}</div>
                                 </div>
                             </div>
-                            <div className="terminal-checklist-why">💡 {check.why}</div>
+                            <div className="terminal-checklist-why"><Lightbulb size={12} style={{ marginRight: 4, verticalAlign: "middle" }} />{check.why}</div>
                         </div>
                     ))}
                 </div>

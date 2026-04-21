@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePro } from "@/contexts/ProContext";
 import type { TradeCloseDetail } from "@/components/TerminalPaperPanel";
+import { X, BookOpen } from "lucide-react";
 
 type State =
   | { phase: "idle" }
@@ -118,7 +119,7 @@ export default function MarcusDebrief() {
               {detail.reason === "sl" ? "Stop-loss" : detail.reason === "tp" ? "Take-profit" : "Manueel gesloten"}
             </div>
           </div>
-          <button className="marcus-debrief-close" onClick={dismiss}>✕</button>
+          <button className="marcus-debrief-close" onClick={dismiss}><X size={16} /></button>
         </div>
 
         {/* Body */}
@@ -148,7 +149,7 @@ export default function MarcusDebrief() {
               <span className="debrief-saved">✓ Opgeslagen in journal</span>
             ) : (
               <button className="marcus-debrief-save-btn" onClick={saveToJournal}>
-                📔 Sla op in journal
+                <BookOpen size={14} style={{ marginRight: 4 }} /> Sla op in journal
               </button>
             )}
             <button className="marcus-debrief-dismiss-btn" onClick={dismiss}>

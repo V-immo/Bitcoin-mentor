@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Medal } from "lucide-react";
 
 type LeaderboardEntry = {
   rank: number;
@@ -13,7 +14,7 @@ type LeaderboardEntry = {
   xp: number;
 };
 
-const MEDAL: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+const MEDAL_COLORS: Record<number, string> = { 1: "#FFD700", 2: "#C0C0C0", 3: "#CD7F32" };
 
 function SkeletonRow() {
   return (
@@ -148,8 +149,8 @@ export default function Leaderboard() {
               : entries.map((entry) => (
                 <tr key={entry.rank} className="lb-row" style={{ borderBottom: "1px solid #1a0f18" }}>
                   <td style={{ padding: "10px 8px" }}>
-                    {MEDAL[entry.rank] ? (
-                      <span style={{ fontSize: 18 }}>{MEDAL[entry.rank]}</span>
+                    {MEDAL_COLORS[entry.rank] ? (
+                      <Medal size={18} color={MEDAL_COLORS[entry.rank]} />
                     ) : (
                       <span className="lb-rank-badge">{entry.rank}</span>
                     )}

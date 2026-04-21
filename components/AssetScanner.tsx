@@ -219,9 +219,9 @@ export default function AssetScanner() {
           <div className="dash-stat-pill dash-signals-pill">
             <span className="dash-stat-label">Signalen</span>
             <span className="dash-stat-value" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: "var(--green)" }}>🟢 {counts.green}</span>
-              <span style={{ color: "var(--orange)" }}>🟡 {counts.yellow}</span>
-              <span style={{ color: "var(--red)" }}>🔴 {counts.red}</span>
+              <span style={{ color: "var(--green)" }}>{counts.green}</span>
+              <span style={{ color: "var(--orange)" }}>{counts.yellow}</span>
+              <span style={{ color: "var(--red)" }}>{counts.red}</span>
             </span>
           </div>
         )}

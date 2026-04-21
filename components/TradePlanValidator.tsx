@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Tip from "@/components/Tip";
+import { Target, CheckCircle2, AlertTriangle, XCircle, Dumbbell, Lightbulb } from "lucide-react";
 
 type Verdict = "GOED" | "AANPASSEN" | "NIET_DOEN";
 
@@ -78,7 +79,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
   }
 
   const verdictColor = result?.verdict === "GOED" ? "var(--green)" : result?.verdict === "AANPASSEN" ? "var(--orange)" : "var(--red)";
-  const verdictIcon = result?.verdict === "GOED" ? "✅" : result?.verdict === "AANPASSEN" ? "⚠️" : "❌";
+  const VerdictIcon = result?.verdict === "GOED" ? CheckCircle2 : result?.verdict === "AANPASSEN" ? AlertTriangle : XCircle;
   const verdictLabel = result?.verdict === "GOED" ? "GOED PLAN" : result?.verdict === "AANPASSEN" ? "AANPASSEN" : "NIET DOEN";
 
   return (
@@ -87,7 +88,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16 }}>🎯</span>
+          <Target size={16} />
           <span style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>Trade Plan Validator</span>
         </div>
         <div style={{ fontSize: 12, color: "var(--text-secondary)", background: "var(--surface-2)", padding: "2px 8px", borderRadius: 6 }}>
@@ -107,7 +108,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
             marginBottom: 12,
             textAlign: "center",
           }}>
-            <div style={{ fontSize: 22, marginBottom: 4 }}>{verdictIcon}</div>
+            <div style={{ marginBottom: 4 }}><VerdictIcon size={22} color={verdictColor} /></div>
             <div style={{ fontWeight: 800, fontSize: 18, color: verdictColor, letterSpacing: 1 }}>{verdictLabel}</div>
             <div style={{ display: "flex", justifyContent: "center", gap: 4, marginTop: 6 }}>
               {Array.from({ length: 10 }).map((_, i) => (
@@ -141,9 +142,9 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
 
           {/* Feedback cards */}
           {[
-            { icon: "💪", label: "STERK", value: result.sterk, color: "var(--green)" },
-            { icon: "⚠️", label: "ZWAK",  value: result.zwak,  color: "var(--orange)" },
-            { icon: "💡", label: "TIP",   value: result.tip,   color: "#3b82f6" },
+            { Icon: Dumbbell, label: "STERK", value: result.sterk, color: "var(--green)" },
+            { Icon: AlertTriangle, label: "ZWAK",  value: result.zwak,  color: "var(--orange)" },
+            { Icon: Lightbulb, label: "TIP",   value: result.tip,   color: "#3b82f6" },
           ].map(item => (
             <div key={item.label} style={{
               display: "flex", gap: 10, alignItems: "flex-start",
@@ -151,7 +152,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
               padding: "9px 12px", marginBottom: 8,
               borderLeft: `3px solid ${item.color}`,
             }}>
-              <span style={{ fontSize: 14, lineHeight: 1.4 }}>{item.icon}</span>
+              <item.Icon size={14} style={{ lineHeight: 1.4, flexShrink: 0, marginTop: 2 }} />
               <div>
                 <div style={{ fontSize: 10, color: item.color, fontWeight: 700, marginBottom: 2 }}>{item.label}</div>
                 <div style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.5 }}>{item.value}</div>
@@ -270,7 +271,7 @@ export default function TradePlanValidator({ asset, currentPrice }: Props) {
               transition: "all 0.15s",
             }}
           >
-            {loading ? "Marcus beoordeelt…" : "🎯 Laat Marcus beoordelen"}
+            {loading ? "Marcus beoordeelt…" : "Laat Marcus beoordelen"}
           </button>
         </div>
       )}

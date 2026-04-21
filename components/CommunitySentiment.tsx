@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Globe, TrendingUp, BarChart3, TrendingDown, Flame } from "lucide-react";
 
 type SentimentData = {
   bullishPct: number;
@@ -31,9 +32,9 @@ export default function CommunitySentiment() {
   const sentimentColor = bullishPct >= 65 ? "var(--green)"
     : bullishPct >= 45 ? "var(--orange)"
     : "var(--red)";
-  const sentimentLabel = bullishPct >= 65 ? "Bullish 📈"
-    : bullishPct >= 45 ? "Gemengd 📊"
-    : "Bearish 📉";
+  const sentimentLabel = bullishPct >= 65 ? "Bullish"
+    : bullishPct >= 45 ? "Gemengd"
+    : "Bearish";
 
   const totalRecent = recentBuys + recentSells;
 
@@ -46,7 +47,7 @@ export default function CommunitySentiment() {
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>🌐 Community Sentiment</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", display: "flex", alignItems: "center", gap: 6 }}><Globe size={14} /> Community Sentiment</div>
           <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
             {activeTraders > 0 ? `${activeTraders} actieve trader${activeTraders !== 1 ? "s" : ""}` : "Community data"}
           </div>
@@ -71,8 +72,8 @@ export default function CommunitySentiment() {
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {/* Bull/Bear labels */}
         <div style={{ display: "flex", gap: 12, alignItems: "center", flex: 1 }}>
-          <span style={{ fontSize: 12, color: "var(--green)", fontWeight: 600 }}>🟢 Bull {bullishPct}%</span>
-          <span style={{ fontSize: 12, color: "var(--red)", fontWeight: 600 }}>🔴 Bear {bearishPct}%</span>
+          <span style={{ fontSize: 12, color: "var(--green)", fontWeight: 600, display: "flex", alignItems: "center", gap: 3 }}><TrendingUp size={12} /> Bull {bullishPct}%</span>
+          <span style={{ fontSize: 12, color: "var(--red)", fontWeight: 600, display: "flex", alignItems: "center", gap: 3 }}><TrendingDown size={12} /> Bear {bearishPct}%</span>
         </div>
 
         {/* Recente activiteit */}
@@ -88,7 +89,7 @@ export default function CommunitySentiment() {
       {/* Hot assets */}
       {hotAssets.length > 0 && (
         <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, color: "var(--text-muted)", alignSelf: "center" }}>🔥 Trending:</span>
+          <span style={{ fontSize: 11, color: "var(--text-muted)", alignSelf: "center", display: "flex", alignItems: "center", gap: 3 }}><Flame size={11} /> Trending:</span>
           {hotAssets.map(a => (
             <span key={a.asset} style={{
               fontSize: 11, fontWeight: 600,

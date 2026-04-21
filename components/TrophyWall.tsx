@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { Flame, Medal, BarChart3, PenLine, Calendar, Zap } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 type Achievement = {
   id: string;
@@ -30,10 +32,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   setup:       "Voorbereiding",
 };
 
-const WEEKLY_CHALLENGES = [
-  { id: "weekly_trades_3",  icon: "📊", name: "3 trades deze week",         target: 3, unit: "trades" },
-  { id: "weekly_journal_3", icon: "✍️", name: "3 journal entries",           target: 3, unit: "entries" },
-  { id: "weekly_login_5",   icon: "📅", name: "5 dagen ingelogd",            target: 5, unit: "dagen" },
+const WEEKLY_CHALLENGES: { id: string; icon: LucideIcon; name: string; target: number; unit: string }[] = [
+  { id: "weekly_trades_3",  icon: BarChart3, name: "3 trades deze week",  target: 3, unit: "trades" },
+  { id: "weekly_journal_3", icon: PenLine,   name: "3 journal entries",   target: 3, unit: "entries" },
+  { id: "weekly_login_5",   icon: Calendar,  name: "5 dagen ingelogd",    target: 5, unit: "dagen" },
 ];
 
 const LEVEL_XP = [0, 0, 200, 600, 1200, 2000]; // XP nodig voor elk level
@@ -119,7 +121,7 @@ export default function TrophyWall() {
           {/* Streak */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: 32, lineHeight: 1 }}>
-              {loginStreak >= 7 ? "🔥🔥" : loginStreak >= 3 ? "🔥" : "💤"}
+              {loginStreak >= 7 ? <><Flame size={28} color="#f97316" /><Flame size={28} color="#f97316" /></> : loginStreak >= 3 ? <Flame size={28} color="#f97316" /> : <span style={{ fontSize: 24 }}>—</span>}
             </div>
             <div>
               <div style={{ fontSize: 22, fontWeight: 800, color: "var(--orange)", lineHeight: 1 }}>
@@ -139,8 +141,8 @@ export default function TrophyWall() {
             <div style={{ fontSize: 11, color: "var(--orange)", marginTop: 2 }}>
               {xp.toLocaleString("nl-NL")} XP
             </div>
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
-              🏅 {earned}/{total} badges
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+              <Medal size={11} /> {earned}/{total} badges
             </div>
           </div>
         </div>
@@ -190,7 +192,7 @@ export default function TrophyWall() {
               color: activeTab === tab ? "var(--orange)" : "var(--text-muted)",
               transition: "all 0.15s",
             }}>
-              {tab === "badges" ? `🏅 Badges ${newIds.size > 0 ? `(${newIds.size} nieuw!)` : ""}` : "⚡ Challenges"}
+              {tab === "badges" ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Medal size={13} /> Badges {newIds.size > 0 ? `(${newIds.size} nieuw!)` : ""}</span> : <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Zap size={13} /> Challenges</span>}
             </button>
           ))}
         </div>
@@ -296,7 +298,7 @@ export default function TrophyWall() {
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 18 }}>{ch.icon}</span>
+                      <ch.icon size={18} />
                       <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
                         {ch.name}
                       </div>

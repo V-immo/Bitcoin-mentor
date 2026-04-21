@@ -5,6 +5,7 @@ import { usePushNotifications } from "@/lib/usePushNotifications";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { Currency } from "@/contexts/CurrencyContext";
+import { CheckCircle2, XCircle, AlertTriangle, FlaskConical, Lock } from "lucide-react";
 
 type TradingMode = "day" | "swing" | "long";
 type RiskLevel = "low" | "medium" | "high";
@@ -523,7 +524,7 @@ export default function SettingsPanel() {
 
         {bybitConnected === true && (
           <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
-            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6 }}>✅ Bybit gekoppeld</div>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Bybit gekoppeld</div>
             {bybitBalance && bybitBalance.length > 0 ? (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {bybitBalance.map((b) => (
@@ -589,7 +590,7 @@ export default function SettingsPanel() {
                 setBybitChecking(false);
               }}
             >
-              {bybitSaving ? (bybitChecking ? "Testen…" : "Opslaan…") : bybitSaved ? "✅ Gekoppeld!" : "Opslaan & testen"}
+              {bybitSaving ? (bybitChecking ? "Testen…" : "Opslaan…") : bybitSaved ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Gekoppeld!</span> : "Opslaan & testen"}
             </button>
             {bybitConnected && (
               <button
@@ -611,7 +612,7 @@ export default function SettingsPanel() {
 
       {/* Binance Testnet */}
       <section className="settings-card">
-        <div className="settings-card-title">🔬 Binance Testnet</div>
+        <div className="settings-card-title" style={{ display: "flex", alignItems: "center", gap: 6 }}><FlaskConical size={16} /> Binance Testnet</div>
         <div className="settings-card-desc">
           Oefenen met echte orders op Binance Testnet — gratis nep-geld, geen risico.{" "}
           <a href="https://testnet.binance.vision" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
@@ -621,7 +622,7 @@ export default function SettingsPanel() {
 
         {testnetConnected && (
           <div style={{ marginTop: 12, padding: "8px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8, color: "var(--green)", fontSize: 13, fontWeight: 600 }}>
-            ✅ Binance Testnet gekoppeld
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Binance Testnet gekoppeld</span>
           </div>
         )}
 
@@ -647,7 +648,7 @@ export default function SettingsPanel() {
             />
           </div>
           {testnetError && (
-            <div style={{ color: "var(--red)", fontSize: 13 }}>❌ {testnetError}</div>
+            <div style={{ color: "var(--red)", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}><XCircle size={13} /> {testnetError}</div>
           )}
           <button
             className="terminal-btn terminal-btn-primary"
@@ -673,7 +674,7 @@ export default function SettingsPanel() {
               setTestnetSaving(false);
             }}
           >
-            {testnetSaving ? "Testen…" : testnetSaved ? "✅ Gekoppeld!" : "Opslaan & testen"}
+            {testnetSaving ? "Testen…" : testnetSaved ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Gekoppeld!</span> : "Opslaan & testen"}
           </button>
         </div>
       </section>
@@ -766,7 +767,7 @@ export default function SettingsPanel() {
 
       {/* Tweestapsverificatie (2FA) */}
       <section className="settings-card">
-        <div className="settings-card-title">🔐 Tweestapsverificatie (2FA)</div>
+        <div className="settings-card-title" style={{ display: "flex", alignItems: "center", gap: 6 }}><Lock size={16} /> Tweestapsverificatie (2FA)</div>
         <div className="settings-card-desc">
           Extra beveiliging met een authenticator app (Google Authenticator, Authy, etc.). Verplicht bij live trading met Bitvavo.
         </div>
@@ -776,7 +777,7 @@ export default function SettingsPanel() {
         ) : twoFaEnabled && twoFaStep === "idle" ? (
           <div style={{ marginTop: 12 }}>
             <div style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8, padding: "8px 14px", color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
-              ✅ Tweestapsverificatie is ingeschakeld
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Tweestapsverificatie is ingeschakeld</span>
             </div>
             <button
               className="admin-btn"
@@ -830,7 +831,7 @@ export default function SettingsPanel() {
                 style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 20, letterSpacing: 8, textAlign: "center" }}
               />
             </div>
-            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8, display: "flex", alignItems: "center", gap: 4 }}><XCircle size={13} /> {twoFaError}</div>}
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 className="admin-btn"
@@ -883,7 +884,7 @@ export default function SettingsPanel() {
                 style={{ background: "var(--surface-2)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
               />
             </div>
-            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {twoFaError}</div>}
+            {twoFaError && <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8, display: "flex", alignItems: "center", gap: 4 }}><XCircle size={13} /> {twoFaError}</div>}
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 className="admin-btn"
@@ -927,7 +928,7 @@ export default function SettingsPanel() {
 
       {/* Account verwijderen */}
       <section className="settings-card" style={{ borderColor: "color-mix(in srgb, var(--red) 25%, transparent)" }}>
-        <div className="settings-card-title" style={{ color: "var(--red)" }}>⚠️ Gevaarzone</div>
+        <div className="settings-card-title" style={{ color: "var(--red)", display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={16} /> Gevaarzone</div>
         <div className="settings-card-desc">
           Permanent je account en alle data verwijderen. Dit kan niet ongedaan worden gemaakt.
         </div>
@@ -942,7 +943,7 @@ export default function SettingsPanel() {
         ) : (
           <div style={{ marginTop: 12 }}>
             <div style={{ background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "12px 14px", marginBottom: 12, fontSize: 13, color: "var(--red)", lineHeight: 1.6 }}>
-              ⚠️ Je staat op het punt je account <strong>permanent te verwijderen</strong>. Alle trades, quiz voortgang, berichten met Marcus en instellingen worden definitief gewist.
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><AlertTriangle size={13} /></span> Je staat op het punt je account <strong>permanent te verwijderen</strong>. Alle trades, quiz voortgang, berichten met Marcus en instellingen worden definitief gewist.
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
               <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bevestig met je wachtwoord</label>
@@ -955,7 +956,7 @@ export default function SettingsPanel() {
               />
             </div>
             {deleteError && (
-              <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8 }}>❌ {deleteError}</div>
+              <div style={{ color: "var(--red)", fontSize: 13, marginBottom: 8, display: "flex", alignItems: "center", gap: 4 }}><XCircle size={13} /> {deleteError}</div>
             )}
             <div style={{ display: "flex", gap: 8 }}>
               <button

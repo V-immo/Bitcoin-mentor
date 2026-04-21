@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Target, ClipboardList, GraduationCap, TrendingUp, X, type LucideIcon } from "lucide-react";
 
 type Step = {
   id: string;
-  icon: string;
+  icon: LucideIcon;
   title: string;
   desc: string;
   action: string;
@@ -49,7 +50,7 @@ export default function FirstSteps() {
       const built: Step[] = [
         {
           id: "tradingmode",
-          icon: "🎯",
+          icon: Target,
           title: "Kies je tradingstijl",
           desc: "Day trading, swing of long term? Marcus past zijn coaching hier op aan.",
           action: "Instellen →",
@@ -58,7 +59,7 @@ export default function FirstSteps() {
         },
         {
           id: "plan",
-          icon: "📋",
+          icon: ClipboardList,
           title: "Maak je tradingplan",
           desc: "Vul je regels in: max risico per trade, max dagverlies. Zonder plan gok je.",
           action: "Plan invullen →",
@@ -67,7 +68,7 @@ export default function FirstSteps() {
         },
         {
           id: "quiz",
-          icon: "🎓",
+          icon: GraduationCap,
           title: "Doe je eerste quiz",
           desc: "Marcus leert je niveau kennen en past zijn coaching direct aan.",
           action: "Quiz starten →",
@@ -76,7 +77,7 @@ export default function FirstSteps() {
         },
         {
           id: "trade",
-          icon: "📈",
+          icon: TrendingUp,
           title: "Open je eerste paper trade",
           desc: "Echt handelen met nep-geld. Geen risico — wel echte ervaring.",
           action: "Paper trade →",
@@ -139,9 +140,9 @@ export default function FirstSteps() {
         </div>
         <button
           onClick={dismiss}
-          style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 18, lineHeight: 1, padding: 4 }}
+          style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", lineHeight: 1, padding: 4, display: "flex", alignItems: "center" }}
           title="Verbergen"
-        >×</button>
+        ><X size={16} /></button>
       </div>
 
       {/* Voortgangsbalk */}
@@ -211,7 +212,7 @@ export default function FirstSteps() {
               {step.done ? "✓" : i + 1}
             </div>
 
-            <span style={{ fontSize: 18, flexShrink: 0 }}>{step.icon}</span>
+            <span style={{ flexShrink: 0, color: "var(--text-muted)" }}><step.icon size={18} /></span>
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{

@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
+import { BarChart3, Newspaper, DollarSign, ClipboardList, Target, Brain, Hourglass, Ban, CheckCircle2, Sunrise, Rocket } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const CHECKLIST = [
-  { id: "market",  icon: "📊", label: "BTC trend & marktoverzicht bekeken" },
-  { id: "news",    icon: "📰", label: "Nieuws gecheckt — geen grote events verwacht" },
-  { id: "capital", icon: "💰", label: "Mijn kapitaal en open posities gecheckt" },
-  { id: "plan",    icon: "📋", label: "Trading plan gelezen — ik weet mijn regels" },
-  { id: "risk",    icon: "🎯", label: "Max verlies voor vandaag bepaald" },
-  { id: "mental",  icon: "🧠", label: "Mentale staat oké — niet gestrest of moe" },
-  { id: "patience",icon: "⏳", label: "Ik wacht op goede setups, forceer niets" },
-  { id: "nodumb",  icon: "🚫", label: "Geen impuls-trades, geen FOMO" },
+const CHECKLIST: { id: string; icon: LucideIcon; label: string }[] = [
+  { id: "market",  icon: BarChart3,    label: "BTC trend & marktoverzicht bekeken" },
+  { id: "news",    icon: Newspaper,    label: "Nieuws gecheckt — geen grote events verwacht" },
+  { id: "capital", icon: DollarSign,   label: "Mijn kapitaal en open posities gecheckt" },
+  { id: "plan",    icon: ClipboardList,label: "Trading plan gelezen — ik weet mijn regels" },
+  { id: "risk",    icon: Target,       label: "Max verlies voor vandaag bepaald" },
+  { id: "mental",  icon: Brain,        label: "Mentale staat oké — niet gestrest of moe" },
+  { id: "patience",icon: Hourglass,    label: "Ik wacht op goede setups, forceer niets" },
+  { id: "nodumb",  icon: Ban,          label: "Geen impuls-trades, geen FOMO" },
 ];
 
 type Props = { asset?: string };
@@ -102,7 +104,7 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 20 }}>{done ? "✅" : "🌅"}</span>
+          <span style={{ fontSize: 20 }}>{done ? <CheckCircle2 size={20} color="var(--green)" /> : <Sunrise size={20} />}</span>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Pre-market ritueel
@@ -160,8 +162,8 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
                   }}>
                     {isChecked && <span style={{ fontSize: 11, color: "var(--text)", lineHeight: 1 }}>✓</span>}
                   </div>
-                  <span style={{ fontSize: 13, lineHeight: 1.4 }}>
-                    {item.icon} {" "}
+                  <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, lineHeight: 1.4 }}>
+                    <item.icon size={14} style={{ flexShrink: 0, color: "var(--text-muted)" }} />
                     <span style={{ color: isChecked ? "var(--green)" : "var(--text)", textDecoration: isChecked ? "line-through" : "none", opacity: isChecked ? 0.7 : 1 }}>
                       {item.label}
                     </span>
@@ -185,7 +187,7 @@ export default function PreMarketRitual({ asset = "BTCUSDT" }: Props) {
               transition: "all 0.2s",
             }}
           >
-            {loading ? "Marcus denkt na…" : allChecked ? "🚀 Ritueel voltooien — vraag Marcus focus" : `Nog ${total - checkedCount} items over`}
+            {loading ? "Marcus denkt na…" : allChecked ? <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Rocket size={14} /> Ritueel voltooien — vraag Marcus focus</span> : `Nog ${total - checkedCount} items over`}
           </button>
         </div>
       )}

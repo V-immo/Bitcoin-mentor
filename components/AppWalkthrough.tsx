@@ -2,75 +2,76 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Brain, Radio, LayoutDashboard, TrendingUp, GraduationCap, Calendar, ClipboardList, BarChart3, MessageSquare, Target, type LucideIcon } from "lucide-react";
 
 const STORAGE_KEY = "walkthrough-v3";
 
-const STEPS = [
+const STEPS: { icon: LucideIcon; title: string; text: string; route: string | null; selector: string | null }[] = [
   {
-    icon: "🧠",
+    icon: Brain,
     title: "Welkom — ik ben Marcus",
     text: "Ik ben jouw persoonlijke tradingcoach. Geen valse beloftes, geen hype. Ik leer je nadenken vóór je handelt. Laten we beginnen.",
     route: null,
     selector: null,
   },
   {
-    icon: "📡",
+    icon: Radio,
     title: "De Scanner",
     text: "Hier zie je welke assets klaar zijn voor een setup. Score 70+ betekent een technisch interessant moment. Klik een asset aan — ik analyseer hem voor je.",
     route: "/scanner",
     selector: "table, .scanner-grid, main > div",
   },
   {
-    icon: "📊",
+    icon: LayoutDashboard,
     title: "Jouw Dashboard",
     text: "Elke ochtend stuur ik je een persoonlijk bericht en een marktbriefing. Check dit als eerste wanneer je de app opent — het zet je in de juiste mindset.",
     route: "/dashboard",
     selector: ".dash-briefing-card, .dash-layout",
   },
   {
-    icon: "📈",
+    icon: TrendingUp,
     title: "Paper Trading",
     text: "Hier handel je met nepgeld. Stel altijd een stop-loss in. Ik controleer na elke trade of je je plan hebt gevolgd — eerlijk en direct.",
     route: "/trade",
     selector: "main, .container-page",
   },
   {
-    icon: "🎓",
+    icon: GraduationCap,
     title: "Leren",
     text: "Dagelijkse quizzes. Groeien van level 1 naar 5. Hoe meer je weet, hoe beter mijn coaching op jou afgestemd is. Doe het elke dag — ook als je weinig tijd hebt.",
     route: "/leren",
     selector: "main, .container-page",
   },
   {
-    icon: "📅",
+    icon: Calendar,
     title: "De Agenda",
     text: "Log je trades, je emoties, je gedachten. Ik gebruik dit om patronen te herkennen — wanneer handel je het beste? Wanneer mak je impulsieve beslissingen?",
     route: "/agenda",
     selector: "main, .container-page",
   },
   {
-    icon: "📋",
+    icon: ClipboardList,
     title: "Jouw Tradingplan",
     text: "Dit is de basis. Vul je regels in: max risico, entry-condities, exit-condities. Zonder plan ben je aan het gokken — met plan ben je aan het traden.",
     route: "/profiel",
     selector: "main, .container-page",
   },
   {
-    icon: "📊",
+    icon: BarChart3,
     title: "Stats & Signalen",
     text: "Je winrate per weekdag, gedragspatronen, revenge-trading detectie. En live signalen die je kunt volgen of analyseren. Kennis van jezelf is het grootste voordeel.",
     route: "/stats",
     selector: "main, .container-page",
   },
   {
-    icon: "💬",
+    icon: MessageSquare,
     title: "Ik ben altijd bereikbaar",
     text: "Die roze M-knop rechtsonder — dat ben ik. Vraag me alles over de markt, jouw trade, of je plan. Ik ben er 24/7.",
     route: null,
     selector: ".float-marcus-btn",
   },
   {
-    icon: "🎯",
+    icon: Target,
     title: "Klaar om te beginnen",
     text: "Begin bij je tradingplan in Profiel. Daarna je eerste paper trade. Verwacht geen snelle winsten — verwacht groei. Ik ben er bij elke stap.",
     route: null,
@@ -216,7 +217,7 @@ export default function AppWalkthrough() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 16, flexShrink: 0, boxShadow: "0 0 10px rgba(233,30,99,0.4)",
                 }}>M</div>
-                <div style={{ fontSize: 22, flexShrink: 0 }}>{current.icon}</div>
+                <current.icon size={22} style={{ flexShrink: 0, color: "var(--text-secondary)" }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
@@ -238,7 +239,7 @@ export default function AppWalkthrough() {
                   </button>
                 )}
                 <button onClick={() => goTo(step! + 1)} style={{ fontSize: 13, padding: "7px 18px", borderRadius: 8, background: "var(--primary)", color: "var(--text)", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
-                  {step === STEPS.length - 1 ? "Klaar 🎉" : "Volgende →"}
+                  {step === STEPS.length - 1 ? "Klaar" : "Volgende →"}
                 </button>
               </div>
             </div>

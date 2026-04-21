@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useSession } from "next-auth/react";
 import { toast } from "@/lib/toast";
+import { Bell, TrendingDown, TrendingUp, Mail, Smartphone, X } from "lucide-react";
 
 type Alert = {
   id: number;
@@ -192,7 +193,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 20 }}>🔔</span>
+          <Bell size={20} />
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Prijsalerts
@@ -281,8 +282,8 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                   border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 10px", fontSize: 13,
                 }}
               >
-                <option value="below" style={{ background: "var(--surface)" }}>📉 Daalt onder</option>
-                <option value="above" style={{ background: "var(--surface)" }}>📈 Stijgt boven</option>
+                <option value="below" style={{ background: "var(--surface)" }}>Daalt onder</option>
+                <option value="above" style={{ background: "var(--surface)" }}>Stijgt boven</option>
               </select>
             </div>
             <div>
@@ -346,7 +347,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
               transition: "all 0.2s",
             }}
           >
-            {saving ? "Opslaan…" : "🔔 Alert aanmaken"}
+            {saving ? "Opslaan…" : <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Bell size={14} /> Alert aanmaken</span>}
           </button>
         </form>
       </div>
@@ -396,13 +397,13 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                         ${alert.target_price.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                       </span>
                       {recentlyTriggered && (
-                        <span style={{ marginLeft: 6, fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>
-                          🔔 GETRIGGERD
+                        <span style={{ marginLeft: 6, fontSize: 10, color: "var(--primary)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                          <Bell size={10} /> GETRIGGERD
                         </span>
                       )}
                     </div>
                     <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
-                      {alert.email ? `📧 ${alert.email}` : "📱 In-app melding"}
+                      {alert.email ? <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}><Mail size={10} /> {alert.email}</span> : <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}><Smartphone size={10} /> In-app melding</span>}
                       {alert.last_triggered_at && (
                         <span style={{ marginLeft: 6, color: "var(--orange)" }}>
                           · {new Date(alert.last_triggered_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
@@ -423,7 +424,7 @@ export default function PriceAlerts({ currentAsset, currentPrice }: Props) {
                       flexShrink: 0,
                     }}
                   >
-                    ✕
+                    <X size={11} />
                   </button>
                 </div>
               );

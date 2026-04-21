@@ -237,7 +237,7 @@ Marcus' insight: most people buy Bitcoin without understanding what it is. You'r
       },
       {
         id: "l1-prijs",
-        icon: "📈",
+        icon: "↑",
         titleNL: "Waarom stijgt en daalt de prijs? Het echte mechanisme",
         titleEN: "Why does the price rise and fall? The real mechanism",
         contentNL: `Marcus stelt je een vraag: Bitcoin heeft geen fabrikant, geen winstcijfers, geen dividend. Geen enkel 'fundamenteel' gegeven zoals bij een aandeel. Hoe wordt de prijs dan bepaald?
@@ -803,7 +803,7 @@ Marcus says: The altcoin market is an amplified version of Bitcoin. When BTC sne
       },
       {
         id: "l1-marktcap",
-        icon: "📊",
+        icon: "≡",
         titleNL: "Marktkapitalisatie — de echte maatstaf",
         titleEN: "Market capitalization — the real measure",
         contentNL: `Marcus stelt je een vraag die veel beginners verkeerd beantwoorden: een coin staat op €0,002. Een andere op €80.000. Welke is 'goedkoper' om te kopen?
@@ -1605,7 +1605,7 @@ Marcus says: The wick is the market being honest. The body is what ultimately co
       },
       {
         id: "l2-timeframes",
-        icon: "🔍",
+        icon: "◎",
         titleNL: "Timeframes — door welk venster kijk jij?",
         titleEN: "Timeframes — through which window are you looking?",
         contentNL: `Marcus stelt je een test: kijk naar BTC op de 1-minuut grafiek. Je ziet chaos — rood, groen, rood, groen, omhoog, omlaag. Schakel dan naar de 1D grafiek. Plotseling zie je een rustige, stijgende trend. Welk timeframe toont de 'echte' markt?
@@ -1724,7 +1724,7 @@ Marcus says: Most losing trades are made on timeframes that are too low. Zoom ou
       },
       {
         id: "l2-orders",
-        icon: "📋",
+        icon: "▤",
         titleNL: "Orders — hoe je koopt en verkoopt als een professional",
         titleEN: "Orders — how you buy and sell like a professional",
         contentNL: `Marcus stelt je een scenario: BTC staat nu op €83.000. Je denkt dat hij terugkomt naar €79.500 voordat hij verder stijgt — dat is jouw koopzone. Maar je kunt niet de hele dag achter je scherm zitten wachten. Hoe koop je precies op €79.500 terwijl je gewoon aan het werk bent?
@@ -1954,7 +1954,7 @@ Marcus says: I don't judge a trader by their win rate. I judge them by how quick
       },
       {
         id: "l2-risico",
-        icon: "🛡️",
+        icon: "◇",
         titleNL: "Risicobeheer — de #1 skill die niemand je leert",
         titleEN: "Risk management — the #1 skill nobody teaches you",
         contentNL: `Marcus vraagt je twee traders te vergelijken:
@@ -2703,7 +2703,7 @@ Marcus says: Role reversal is the market honoring its own agreements. Zones have
       },
       {
         id: "l3-rsi",
-        icon: "📊",
+        icon: "≡",
         titleNL: "RSI — meten of de markt te ver gegaan is",
         titleEN: "RSI — measuring if the market has gone too far",
         contentNL: `De RSI (Relative Strength Index) is een getal tussen 0 en 100 dat meet hoe hard de prijs gestegen of gedaald is in de afgelopen 14 perioden.
@@ -3442,7 +3442,7 @@ Action: write your own system in 3 sentences today. Entry, stop, target. Whateve
       },
       {
         id: "l6-backtesting",
-        icon: "📊",
+        icon: "≡",
         titleNL: "Backtesting: hoe weet je of je systeem echt werkt?",
         titleEN: "Backtesting: how do you know if your system really works?",
         contentNL: `Marcus vraagt: heb je ooit een systeem gehad dat 'voelde' alsof het werkte, maar eigenlijk nooit getest was? Dat is de meest gevaarlijke situatie in trading.
@@ -3600,7 +3600,7 @@ Action: create a Google Sheet with the above columns today. Fill in your last 5 
       },
       {
         id: "l6-setups",
-        icon: "🎯",
+        icon: "◉",
         titleNL: "Vaste setups: minder is meer in trading",
         titleEN: "Fixed setups: less is more in trading",
         contentNL: `Marcus stelt je voor aan het concept dat de meeste traders nooit begrijpen: selectiviteit. De beste traders doen minder trades, niet meer.
@@ -3881,7 +3881,7 @@ Action: open BTC/EUR 4H chart, add Bollinger Bands (20, 2). Find the last squeez
       },
       {
         id: "l7-macd",
-        icon: "📈",
+        icon: "↑",
         titleNL: "MACD: momentum en trendwijzigingen herkennen",
         titleEN: "MACD: recognizing momentum and trend changes",
         contentNL: `Marcus stelt je een vraag: hoe weet je of de uptrend nog kracht heeft, of stiekem aan het afzwakken is — zelfs terwijl de prijs nog stijgt? Het antwoord: MACD.
@@ -3977,7 +3977,7 @@ Action: open BTC daily chart, add MACD (12, 26, 9). Find the last bearish diverg
       },
       {
         id: "l7-confluence",
-        icon: "🎯",
+        icon: "◉",
         titleNL: "Confluence: wanneer alles op hetzelfde punt wijst",
         titleEN: "Confluence: when everything points to the same level",
         contentNL: `Marcus stelt je de definitieve vraag van technische analyse: hoe weet je wanneer een signaal echt betrouwbaar is?
@@ -5166,7 +5166,7 @@ Action: go to FTMO.com and look at the evaluation rules. Would your current stra
       },
       {
         id: "l10-scaling",
-        icon: "🚀",
+        icon: "▲",
         titleNL: "Schalen: van hobbytrader naar full-time professional",
         titleEN: "Scaling: from hobby trader to full-time professional",
         contentNL: `Marcus sluit het curriculum af met de vraag die alle serieuze traders zichzelf vroeg of laat stellen: wanneer is trading mijn full-time carrière?
@@ -5313,7 +5313,7 @@ function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
       </div>
       {answered && (
         <div className={`lesson-check-feedback${correct ? " correct" : " wrong"}`}>
-          <span>{correct ? "✅" : "❌"}</span>
+          <span>{correct ? "✓" : "✗"}</span>
           <span>{check.explain}</span>
         </div>
       )}
@@ -5413,7 +5413,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnl
           {/* Quiz CTA alleen na de laatste les van het niveau */}
           {isRead && lessonNum === totalLessons && (
             <div className="curriculum-quiz-cta">
-              <span>✅ {lang === "en" ? "All lessons done — ready for the quiz?" : "Alle lessen klaar — klaar voor de quiz?"}</span>
+              <span>{lang === "en" ? "All lessons done — ready for the quiz?" : "Alle lessen klaar — klaar voor de quiz?"}</span>
               <button className="curriculum-quiz-cta-btn" onClick={onQuizClick}>
                 {lang === "en" ? "Go to quiz →" : "Naar de quiz →"}
               </button>
@@ -5493,7 +5493,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
               onClick={() => !locked && setActiveLevel(lvl.level)}
               title={locked ? lockTitle : ""}
             >
-              {proLocked ? "⭐" : progressLocked ? "🔒" : label}
+              {proLocked ? "PRO" : progressLocked ? "—" : label}
             </button>
           );
         })}
@@ -5518,7 +5518,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         <div className="curriculum-gate-banner">
           <div className="curriculum-gate-content">
             <div className="curriculum-gate-title">
-              🔒 {lang === "en" ? "This is Level 1 of 5" : "Dit is Niveau 1 van 5"}
+              {lang === "en" ? "This is Level 1 of 5" : "Dit is Niveau 1 van 5"}
             </div>
             <p className="curriculum-gate-desc">
               {lang === "en"
@@ -5535,7 +5535,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         <div className="curriculum-gate-banner">
           <div className="curriculum-gate-content">
             <div className="curriculum-gate-title">
-              ⭐ {lang === "en" ? "PRO content — Level 4 and 5" : "PRO inhoud — Niveau 4 en 5"}
+              {lang === "en" ? "PRO content — Level 4 and 5" : "PRO inhoud — Niveau 4 en 5"}
             </div>
             <p className="curriculum-gate-desc">
               {lang === "en"

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Star } from "lucide-react";
 
 function escape(s: string) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -387,7 +388,7 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                         }}
                         disabled={userSending}
                     >
-                        {q.isPrimary ? "⭐ " : ""}{t(q.labelKey)}
+                        {q.isPrimary ? <><Star size={12} style={{ marginRight: 3, verticalAlign: "middle" }} /></> : ""}{t(q.labelKey)}
                     </button>
                 ))}
             </div>

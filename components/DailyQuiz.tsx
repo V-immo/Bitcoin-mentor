@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { QuizQuestion, QuizResponse } from "@/app/api/quiz/route";
 import QuizChat from "@/components/QuizChat";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Flame, AlertTriangle } from "lucide-react";
 
 const XP_PER_CORRECT = 40;
 const XP_PER_LEVEL = 500;
@@ -398,7 +399,7 @@ export default function DailyQuiz() {
             <span className="quiz-result-stat-val">
               +{xpEarned}
               {luckyMultiplier > 1 && (
-                <span className="quiz-lucky-badge">⚡{luckyMultiplier}×</span>
+                <span className="quiz-lucky-badge">{luckyMultiplier}×</span>
               )}
             </span>
             <span className="quiz-result-stat-key">{t("quiz_xp_earned")}</span>
@@ -483,7 +484,7 @@ export default function DailyQuiz() {
           )}
         </div>
         <div className="quiz-streak">
-          <span className="quiz-streak-fire">🔥</span>
+          <span className="quiz-streak-fire"><Flame size={16} /></span>
           <span className="quiz-streak-count">{history.streak}</span>
           <span className="quiz-streak-label">{t("quiz_streak_label")}</span>
         </div>
@@ -497,7 +498,7 @@ export default function DailyQuiz() {
         const hoursLeft = 23 - h;
         return (
           <div className="quiz-streak-risk">
-            <span className="quiz-streak-risk-icon">⚠️</span>
+            <span className="quiz-streak-risk-icon"><AlertTriangle size={16} /></span>
             <div className="quiz-streak-risk-body">
               <div className="quiz-streak-risk-title">
                 {lang === "nl"

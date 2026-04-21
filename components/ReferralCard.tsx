@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Gift, ClipboardList, Zap, Shield } from "lucide-react";
 
 type ReferralData = {
   code: string;
@@ -44,7 +45,7 @@ export default function ReferralCard() {
   return (
     <div className="referral-card card">
       <div className="referral-header">
-        <span className="referral-title">🎁 {isNL ? "Vrienden uitnodigen" : "Invite friends"}</span>
+        <span className="referral-title" style={{ display: "flex", alignItems: "center", gap: 6 }}><Gift size={16} /> {isNL ? "Vrienden uitnodigen" : "Invite friends"}</span>
         {data.referredCount > 0 && (
           <span className="referral-count-badge">{data.referredCount} {isNL ? "uitgenodigd" : "invited"}</span>
         )}
@@ -63,7 +64,7 @@ export default function ReferralCard() {
           </span>
         </div>
         <button className="referral-copy-btn" onClick={copyLink}>
-          {copied ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!") : (isNL ? "📋 Kopieer" : "📋 Copy")}
+          {copied ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!") : <span style={{ display: "flex", alignItems: "center", gap: 4 }}><ClipboardList size={13} />{isNL ? "Kopieer" : "Copy"}</span>}
         </button>
       </div>
 
@@ -74,7 +75,7 @@ export default function ReferralCard() {
 
       {data.xpEarned > 0 && (
         <div className="referral-xp-earned">
-          ⚡ {isNL ? `+${data.xpEarned} XP verdiend via referrals` : `+${data.xpEarned} XP earned via referrals`}
+          <Zap size={13} style={{ flexShrink: 0 }} /> {isNL ? `+${data.xpEarned} XP verdiend via referrals` : `+${data.xpEarned} XP earned via referrals`}
         </div>
       )}
 
@@ -90,7 +91,7 @@ export default function ReferralCard() {
         </div>
         <div className="referral-reward-divider">+</div>
         <div className="referral-reward-item">
-          <span className="referral-reward-val">🛡️ ×2</span>
+          <span className="referral-reward-val" style={{ display: "flex", alignItems: "center", gap: 4 }}><Shield size={14} /> ×2</span>
           <span className="referral-reward-label">Streak Freeze</span>
         </div>
       </div>

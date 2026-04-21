@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Zap } from "lucide-react";
 
 type LuckyEvent = { multiplier: number; xp: number };
 
@@ -26,7 +27,7 @@ export default function LuckyXPToast() {
   return (
     <div className="lucky-xp-overlay" aria-live="polite">
       <div className="lucky-xp-card">
-        <div className="lucky-xp-emoji">⚡</div>
+        <div className="lucky-xp-emoji"><Zap size={28} /></div>
         <div className="lucky-xp-title">
           {lang === "nl" ? "Lucky Bonus!" : "Lucky Bonus!"}
         </div>

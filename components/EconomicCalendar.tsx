@@ -14,11 +14,7 @@ const HOUR_LABEL: Record<string, string> = {
   "":  "",
 };
 
-const STOCK_EMOJI: Record<string, string> = {
-  NVDA: "🖥", AAPL: "🍎", TSLA: "⚡", MSFT: "🪟",
-  GOOGL: "🔍", AMZN: "📦", META: "👤", AMD: "💻",
-  NFLX: "🎬", PLTR: "🔭",
-};
+const STOCK_EMOJI: Record<string, string> = {};
 
 const DAY_NAMES = ["zo", "ma", "di", "wo", "do", "vr", "za"];
 const MONTH_NAMES = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
@@ -75,7 +71,7 @@ function marcusWarning(events: EconEvent[], earnings: EarningsEvent[]): string |
   });
   if (nearEarnings.length > 0) {
     const names = nearEarnings.map(e => `${STOCK_EMOJI[e.symbol] ?? ""}${e.symbol}`).join(", ");
-    parts.push(`📊 Earnings vandaag/morgen: ${names} — verwacht volatiliteit.`);
+    parts.push(`Earnings vandaag/morgen: ${names} — verwacht volatiliteit.`);
   }
 
   return parts.length > 0 ? parts.join(" ") : null;
@@ -177,8 +173,8 @@ export default function EconomicCalendar() {
               }}
             >
               {t === "macro"
-                ? `🌍 Macro (${economic.length})`
-                : `📊 Earnings (${earnings.length})`}
+                ? `Macro (${economic.length})`
+                : `Earnings (${earnings.length})`}
             </button>
           ))}
         </div>
@@ -306,7 +302,7 @@ function MacroRow({ event }: { event: EconEvent }) {
 }
 
 function EarningsRow({ event }: { event: EarningsEvent }) {
-  const emoji = STOCK_EMOJI[event.symbol] ?? "📈";
+  const emoji = STOCK_EMOJI[event.symbol] ?? "";
   const hourLabel = HOUR_LABEL[event.hour ?? ""] || "";
   const beat = event.epsActual !== null && event.epsEstimate !== null
     ? event.epsActual >= event.epsEstimate : null;

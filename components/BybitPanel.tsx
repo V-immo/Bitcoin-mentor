@@ -137,9 +137,9 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
   if (!symbol) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>💛 Bybit Live Trading</div>
+        <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Bybit Live Trading</div>
         <div style={{ fontSize: 13, color: "var(--orange)", background: "color-mix(in srgb, var(--orange) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--orange) 25%, transparent)", borderRadius: 8, padding: "10px 12px" }}>
-          ⚠️ <strong>{asset}</strong> is niet beschikbaar als USDT-paar op Bybit Spot.<br />
+          <strong>{asset}</strong> is niet beschikbaar als USDT-paar op Bybit Spot.<br />
           Kies een crypto asset (BTC, ETH, SOL…) voor live trading.
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
 
       {/* Waarschuwing echte USDT */}
       <div style={{ background: "color-mix(in srgb, var(--red) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 25%, transparent)", borderRadius: 8, padding: "8px 12px", marginBottom: 14, fontSize: 12, color: "var(--red)" }}>
-        ⚠️ <strong>ECHTE USDT</strong> — dit zijn geen testorders. Handel verantwoord.
+        <strong>ECHTE USDT</strong> — dit zijn geen testorders. Handel verantwoord.
       </div>
 
       {/* Balances */}
@@ -186,7 +186,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
               color: side === s ? "var(--text)" : "var(--text-secondary)",
             }}
           >
-            {s === "Buy" ? "🟢 KOOP" : "🔴 VERKOOP"}
+            {s === "Buy" ? "KOOP" : "VERKOOP"}
           </button>
         ))}
       </div>
@@ -259,7 +259,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
       ) : (
         <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 40%, transparent)", borderRadius: 8, padding: "12px 14px", marginBottom: 10 }}>
           <div style={{ fontWeight: 700, color: "var(--red)", fontSize: 13, marginBottom: 8 }}>
-            ⚠️ Bevestig — ECHTE USDT
+            Bevestig — ECHTE USDT
           </div>
           <div style={{ fontSize: 12, color: "var(--text)", marginBottom: 10 }}>
             {side === "Buy"
@@ -289,7 +289,7 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
       {/* Fout */}
       {orderError && (
         <div style={{ background: "color-mix(in srgb, var(--red) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "var(--red)" }}>
-          ❌ {orderError}
+          {orderError}
         </div>
       )}
 
@@ -309,10 +309,10 @@ export default function BybitPanel({ currentPrice, asset }: Props) {
             fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", gap: 6
           }}>
             {lastOrder.orderStatus === "Filled"
-              ? "✅ Order uitgevoerd!"
+              ? "Order uitgevoerd!"
               : lastOrder.orderStatus === "Cancelled"
-                ? "❌ Order geannuleerd"
-                : polling ? "⏳ Wacht op uitvoering…" : "🕐 Order geplaatst"}
+                ? "Order geannuleerd"
+                : polling ? "Wacht op uitvoering…" : "Order geplaatst"}
             {polling && <span style={{ fontSize: 11, fontWeight: 400, color: "var(--orange)" }}>live update…</span>}
           </div>
           <div style={{ color: lastOrder.orderStatus === "Filled" ? "var(--green)" : "var(--text)" }}>

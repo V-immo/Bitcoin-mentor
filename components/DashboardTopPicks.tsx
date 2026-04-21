@@ -49,7 +49,7 @@ export default function DashboardTopPicks() {
       {/* Beste kansen */}
       {green.length > 0 && (
         <section className="dash-picks-section">
-          <div className="dash-picks-label">🟢 Beste kansen nu</div>
+          <div className="dash-picks-label">Beste kansen nu</div>
           <div className="dash-picks-grid">
             {green.map(r => {
               const live = livePrices.get(r.symbol);
@@ -80,7 +80,7 @@ export default function DashboardTopPicks() {
       {/* Vermijden */}
       {red.length > 0 && (
         <section className="dash-picks-section">
-          <div className="dash-picks-label">🔴 Vermijden nu</div>
+          <div className="dash-picks-label">Vermijden nu</div>
           <div className="dash-picks-grid">
             {red.map(r => {
               const live = livePrices.get(r.symbol);

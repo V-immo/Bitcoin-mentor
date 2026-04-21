@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePro } from "@/contexts/ProContext";
+import { Trophy, Medal, ChevronUp, ChevronDown } from "lucide-react";
 
 type LeagueEntry = { rank: number; display: string; score: number; isMe: boolean };
 
@@ -52,7 +53,7 @@ export default function LeagueWidget() {
       <div className="card league-card">
         <div className="league-header">
           <div className="league-title-row">
-            <span className="league-icon">🏆</span>
+            <span className="league-icon"><Trophy size={18} /></span>
             <span className="league-title">{isNL ? "Liga" : "League"}</span>
           </div>
           <span className="nav-pro-badge">PRO</span>
@@ -64,9 +65,9 @@ export default function LeagueWidget() {
               : "Compete every week with traders at your level. Top 3 advance to a higher league."}
           </p>
           <div className="league-pro-gate-preview">
-            {["🥇 CryptoNinja", "🥈 BitcoinBob", "🥉 TraderAlex"].map((name, i) => (
+            {["CryptoNinja", "BitcoinBob", "TraderAlex"].map((name, i) => (
               <div key={i} className="league-pro-preview-row" style={{ opacity: 1 - i * 0.2 }}>
-                <span>{name}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Medal size={14} color={["#FFD700","#C0C0C0","#CD7F32"][i]} /> {name}</span>
                 <span style={{ color: "var(--text-muted)", fontSize: 12 }}>{320 - i * 80} pt</span>
               </div>
             ))}
@@ -92,7 +93,7 @@ export default function LeagueWidget() {
     <div className="card league-card">
       <div className="league-header">
         <div className="league-title-row">
-          <span className="league-icon">🏆</span>
+          <span className="league-icon"><Trophy size={18} /></span>
           <span className="league-title">{isNL ? "Liga" : "League"}</span>
         </div>
         <div className="league-tier-badge" style={{ color: tierColor, borderColor: tierColor }}>
@@ -116,8 +117,8 @@ export default function LeagueWidget() {
       {(isPromotion || isDegradation) && (
         <div className={`league-zone-banner ${isPromotion ? "league-zone-promote" : "league-zone-degrade"}`}>
           {isPromotion
-            ? (isNL ? `🔼 Promotie zone — top ${data.promoteZone}` : `🔼 Promotion zone — top ${data.promoteZone}`)
-            : (isNL ? `🔽 Degradatie zone — eindig hoger` : `🔽 Relegation zone — finish higher`)}
+            ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><ChevronUp size={14} />{isNL ? `Promotie zone — top ${data.promoteZone}` : `Promotion zone — top ${data.promoteZone}`}</span>
+            : <span style={{ display: "flex", alignItems: "center", gap: 4 }}><ChevronDown size={14} />{isNL ? `Degradatie zone — eindig hoger` : `Relegation zone — finish higher`}</span>}
         </div>
       )}
 
@@ -125,7 +126,7 @@ export default function LeagueWidget() {
         {data.top5.map((entry, i) => (
           <div key={i} className={`league-row ${entry.isMe ? "league-row--me" : ""}`}>
             <span className="league-row-rank">
-              {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : `#${entry.rank}`}
+              {entry.rank <= 3 ? <Medal size={14} color={["#FFD700","#C0C0C0","#CD7F32"][entry.rank - 1]} /> : `#${entry.rank}`}
             </span>
             <span className="league-row-name">{entry.display}</span>
             <span className="league-row-score">{entry.score} {isNL ? "pt" : "pt"}</span>

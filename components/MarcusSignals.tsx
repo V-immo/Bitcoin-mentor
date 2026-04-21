@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Radio, Zap, CheckCircle2, StopCircle, Clock } from "lucide-react";
 
 type Signal = {
   id: number; asset: string; symbol: string; direction: string;
@@ -69,7 +70,7 @@ export default function MarcusSignals() {
   return (
     <section className="card" style={{ marginTop: 24 }}>
       <div style={{ marginBottom: 16 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)", margin: 0 }}>📡 Marcus Signalen</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}><Radio size={18} /> Marcus Signalen</h2>
         <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "4px 0 0" }}>Marcus genereert automatisch trade-signalen op basis van zijn marktanalyse. Jij besluit of je volgt.</p>
       </div>
 
@@ -82,7 +83,7 @@ export default function MarcusSignals() {
       }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
-            ⚡ Automatisch kopiëren {copyEnabled ? "— AAN" : "— UIT"}
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Zap size={13} /> Automatisch kopiëren {copyEnabled ? "— AAN" : "— UIT"}</span>
           </div>
           <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
             Als Marcus een signaal geeft, opent hij automatisch een paper trade voor jou (5% van je cash).
@@ -171,14 +172,14 @@ export default function MarcusSignals() {
               const pnlPct = s.close_price
                 ? parseFloat((((s.close_price - s.entry_price) / s.entry_price) * 100).toFixed(1))
                 : null;
-              const icon = s.status === "hit_target" ? "✅" : s.status === "hit_stop" ? "🛑" : "⏰";
+              const StatusIcon = s.status === "hit_target" ? CheckCircle2 : s.status === "hit_stop" ? StopCircle : Clock;
               const label = s.status === "hit_target" ? "Target geraakt" : s.status === "hit_stop" ? "Stop geraakt" : "Verlopen";
               return (
                 <div key={s.id} className="card" style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                   padding: "8px 12px", fontSize: 12,
                 }}>
-                  <span style={{ color: "var(--text)" }}>{icon} {s.asset} — {label}</span>
+                  <span style={{ color: "var(--text)", display: "flex", alignItems: "center", gap: 4 }}><StatusIcon size={13} /> {s.asset} — {label}</span>
                   {pnlPct !== null && (
                     <span style={{ fontWeight: 600, color: pnlPct >= 0 ? "var(--green)" : "var(--red)" }}>
                       {pnlPct >= 0 ? "+" : ""}{pnlPct}%

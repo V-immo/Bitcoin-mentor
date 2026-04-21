@@ -148,14 +148,14 @@ const VIDEOS: VideoResource[] = [
 ];
 
 const NEWS_SOURCES: NewsSource[] = [
-  { name: "CoinDesk",          url: "https://www.coindesk.com",           descKey: "news_desc_coindesk",      icon: "📰", category: "crypto" },
-  { name: "The Block",         url: "https://www.theblock.co",            descKey: "news_desc_theblock",      icon: "🔗", category: "crypto" },
-  { name: "Cointelegraph",     url: "https://cointelegraph.com",          descKey: "news_desc_cointelegraph", icon: "📡", category: "crypto" },
-  { name: "TradingView Ideas", url: "https://www.tradingview.com/ideas/", descKey: "news_desc_tradingview",   icon: "📊", category: "education" },
-  { name: "Investopedia",      url: "https://www.investopedia.com",       descKey: "news_desc_investopedia",  icon: "📚", category: "education" },
-  { name: "Bloomberg Crypto",  url: "https://www.bloomberg.com/crypto",   descKey: "news_desc_bloomberg",     icon: "🏦", category: "macro" },
-  { name: "Glassnode Insights",url: "https://insights.glassnode.com",     descKey: "news_desc_glassnode",     icon: "🔭", category: "crypto" },
-  { name: "MacroAxis",         url: "https://www.macroaxis.com",          descKey: "news_desc_macroaxis",     icon: "🌍", category: "macro" },
+  { name: "CoinDesk",          url: "https://www.coindesk.com",           descKey: "news_desc_coindesk",      icon: "", category: "crypto" },
+  { name: "The Block",         url: "https://www.theblock.co",            descKey: "news_desc_theblock",      icon: "", category: "crypto" },
+  { name: "Cointelegraph",     url: "https://cointelegraph.com",          descKey: "news_desc_cointelegraph", icon: "", category: "crypto" },
+  { name: "TradingView Ideas", url: "https://www.tradingview.com/ideas/", descKey: "news_desc_tradingview",   icon: "", category: "education" },
+  { name: "Investopedia",      url: "https://www.investopedia.com",       descKey: "news_desc_investopedia",  icon: "", category: "education" },
+  { name: "Bloomberg Crypto",  url: "https://www.bloomberg.com/crypto",   descKey: "news_desc_bloomberg",     icon: "", category: "macro" },
+  { name: "Glassnode Insights",url: "https://insights.glassnode.com",     descKey: "news_desc_glassnode",     icon: "", category: "crypto" },
+  { name: "MacroAxis",         url: "https://www.macroaxis.com",          descKey: "news_desc_macroaxis",     icon: "", category: "macro" },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -215,7 +215,7 @@ function VideoCard({ v, testLabel, lang, onQuiz }: {
             onClick={() => onQuiz(v.topic, v.level)}
             className="resources-quiz-btn resources-quiz-btn-full"
           >
-            🎓 {testLabel}
+            {testLabel}
           </button>
         </div>
       </div>

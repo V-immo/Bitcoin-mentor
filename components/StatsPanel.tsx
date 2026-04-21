@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import EquityCurve from "@/components/EquityCurve";
+import { Brain } from "lucide-react";
 
 type PaperTrade = {
     id: string;
@@ -15,11 +16,11 @@ type PaperTrade = {
 };
 
 const EMOTION_DATA = [
-    { value: 1, emoji: "😨", labelKey: "stats_emo_1" as const },
-    { value: 2, emoji: "😟", labelKey: "stats_emo_2" as const },
-    { value: 3, emoji: "😐", labelKey: "stats_emo_3" as const },
-    { value: 4, emoji: "😊", labelKey: "stats_emo_4" as const },
-    { value: 5, emoji: "🔥", labelKey: "stats_emo_5" as const },
+    { value: 1, labelKey: "stats_emo_1" as const },
+    { value: 2, labelKey: "stats_emo_2" as const },
+    { value: 3, labelKey: "stats_emo_3" as const },
+    { value: 4, labelKey: "stats_emo_4" as const },
+    { value: 5, labelKey: "stats_emo_5" as const },
 ];
 
 export default function StatsPanel() {
@@ -224,9 +225,9 @@ export default function StatsPanel() {
                                 background: "rgba(233,30,99,0.07)", border: "1px solid rgba(233,30,99,0.2)",
                                 borderRadius: 8, padding: "8px 12px", marginBottom: 10, fontSize: 12, color: "var(--text)", lineHeight: 1.6,
                             }}>
-                                🧠 {lang === "en"
-                                    ? <>Best: {bestEmo?.emoji} <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (avg +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Worst: {worstEmo?.emoji} <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (avg −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
-                                    : <>Best: {bestEmo?.emoji} <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (gem. +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Slechtst: {worstEmo?.emoji} <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (gem. −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
+                                <Brain size={13} style={{ marginRight: 4, verticalAlign: "middle" }} />{lang === "en"
+                                    ? <>Best: <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (avg +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Worst: <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (avg −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
+                                    : <>Best: <strong>{bestEmo ? t(bestEmo.labelKey) : ""}</strong> (gem. +€{Math.abs(psychInsight.best.avg).toFixed(0)}, {psychInsight.best.wr}% wr) — Slechtst: <strong>{worstEmo ? t(worstEmo.labelKey) : ""}</strong> (gem. −€{Math.abs(psychInsight.worst.avg).toFixed(0)})</>
                                 }
                             </div>
                         );
@@ -244,7 +245,7 @@ export default function StatsPanel() {
                                 const barW = Math.round((Math.abs(avg) / maxAbs) * 100);
                                 return (
                                     <div key={e.value} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
-                                        <span style={{ fontSize: 16, flexShrink: 0 }}>{e.emoji}</span>
+                                        <span style={{ fontSize: 11, flexShrink: 0, color: "var(--text-secondary)", fontWeight: 700 }}>{e.value}</span>
                                         <span style={{ width: 68, color: "var(--text-secondary)", flexShrink: 0 }}>{t(e.labelKey)}</span>
                                         <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 3, height: 6, overflow: "hidden" }}>
                                             <div style={{ width: `${barW}%`, height: "100%", background: isPos ? "var(--green)" : "var(--red)", borderRadius: 3 }} />

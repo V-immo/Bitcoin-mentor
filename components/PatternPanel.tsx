@@ -127,7 +127,7 @@ export default function PatternPanel() {
               borderRadius: 8, padding: "10px 14px", fontSize: 13,
             }}>
               <div style={{ fontWeight: 700, color: "var(--red)", marginBottom: 4 }}>
-                ⚠️ Revenge Trading Patroon
+                Revenge Trading Patroon
               </div>
               <div style={{ color: "var(--text)", lineHeight: 1.5 }}>
                 {data.revengeTrades.count}× trade geopend binnen 24u na een verlies.

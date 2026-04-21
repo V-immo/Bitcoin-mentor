@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Users, Flame, Medal, ClipboardList } from "lucide-react";
 
 type Friend = {
   id: number;
@@ -71,8 +72,8 @@ export default function FriendsStreaks() {
     <div className="card friends-streaks-card">
       {/* Header */}
       <div className="friends-streaks-header">
-        <span className="friends-streaks-title">
-          🤝 {isNL ? "Vrienden" : "Friends"}
+        <span className="friends-streaks-title" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Users size={16} /> {isNL ? "Vrienden" : "Friends"}
         </span>
         <button className="friends-streaks-invite-btn" onClick={copyLink}>
           {copied
@@ -84,7 +85,7 @@ export default function FriendsStreaks() {
       {/* Vriend ligt voor — waarschuwingsbanner */}
       {friendsAhead > 0 && (
         <div className="friends-streaks-ahead-banner">
-          🔥 {isNL
+          <Flame size={14} style={{ flexShrink: 0 }} /> {isNL
             ? `${friendsAhead === 1 ? "Een vriend heeft" : `${friendsAhead} vrienden hebben`} een langere streak — haal ze in!`
             : `${friendsAhead === 1 ? "A friend has" : `${friendsAhead} friends have`} a longer streak — catch up!`}
         </div>
@@ -101,7 +102,7 @@ export default function FriendsStreaks() {
           <button className="friends-streaks-copy-link" onClick={copyLink}>
             {copied
               ? (isNL ? "✓ Link gekopieerd!" : "✓ Link copied!")
-              : (isNL ? "📋 Kopieer uitnodigingslink" : "📋 Copy invite link")}
+              : <span style={{ display: "flex", alignItems: "center", gap: 4 }}><ClipboardList size={13} />{isNL ? "Kopieer uitnodigingslink" : "Copy invite link"}</span>}
           </button>
         </div>
       ) : (
@@ -113,7 +114,7 @@ export default function FriendsStreaks() {
               className={`friends-streaks-row${row.isMe ? " friends-streaks-row--me" : ""}${row.isAhead ? " friends-streaks-row--ahead" : ""}`}
             >
               <span className="friends-streaks-rank">
-                {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`}
+                {i <= 2 ? <Medal size={14} color={["#FFD700","#C0C0C0","#CD7F32"][i]} /> : `#${i + 1}`}
               </span>
               <div className="friends-streaks-info">
                 <span className="friends-streaks-name">
@@ -130,7 +131,7 @@ export default function FriendsStreaks() {
                 )}
               </div>
               <div className="friends-streaks-streak">
-                <span className="friends-streaks-fire">🔥</span>
+                <span className="friends-streaks-fire"><Flame size={14} /></span>
                 <span className="friends-streaks-days">{row.streak}</span>
               </div>
             </div>
@@ -144,7 +145,7 @@ export default function FriendsStreaks() {
           <button className="friends-streaks-copy-link" onClick={copyLink}>
             {copied
               ? (isNL ? "✓ Link gekopieerd!" : "✓ Link copied!")
-              : (isNL ? "📋 Vriend uitnodigen" : "📋 Invite a friend")}
+              : <span style={{ display: "flex", alignItems: "center", gap: 4 }}><ClipboardList size={13} />{isNL ? "Vriend uitnodigen" : "Invite a friend"}</span>}
           </button>
         </div>
       )}

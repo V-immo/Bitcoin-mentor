@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Lightbulb } from "lucide-react";
 
 type BriefingData = {
   briefing: string | null;
@@ -53,7 +54,7 @@ export default function MarcusBriefing({ defaultExpanded = true }: { defaultExpa
 
   if (!data?.briefing) return (
     <div style={{ padding: "20px 16px", textAlign: "center" }}>
-      <div style={{ fontSize: 28, marginBottom: 10 }}>💡</div>
+      <div style={{ fontSize: 28, marginBottom: 10 }}><Lightbulb size={28} /></div>
       <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>Nog geen briefing vandaag</div>
       <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
         Marcus genereert elke ochtend om 08:00 een dagelijkse briefing.<br />

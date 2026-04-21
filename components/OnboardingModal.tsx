@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { TrendingUp, Zap, Landmark } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 const STORAGE_KEY = "btcmentor-onboarded-v2";
 const TOTAL_STEPS = 4;
 
-const TRADING_STYLES = [
-  { key: "swing", label: "Swing trading", desc: "Trades van 2-14 dagen. Rustig, weinig schermtijd.", icon: "📈" },
-  { key: "day",   label: "Day trading",   desc: "Alles open en sluiten op dezelfde dag. Actief.", icon: "⚡" },
-  { key: "long",  label: "Long term",     desc: "Maanden vasthouden. Geduld is je strategie.", icon: "🏦" },
+const TRADING_STYLES: { key: string; label: string; desc: string; icon: LucideIcon }[] = [
+  { key: "swing", label: "Swing trading", desc: "Trades van 2-14 dagen. Rustig, weinig schermtijd.", icon: TrendingUp },
+  { key: "day",   label: "Day trading",   desc: "Alles open en sluiten op dezelfde dag. Actief.", icon: Zap },
+  { key: "long",  label: "Long term",     desc: "Maanden vasthouden. Geduld is je strategie.", icon: Landmark },
 ];
 
 export default function OnboardingModal() {
@@ -92,7 +94,7 @@ export default function OnboardingModal() {
                     background: tradingStyle === s.key ? "rgba(233,30,99,0.12)" : "transparent",
                   }}
                 >
-                  <span style={{ fontSize: 22 }}>{s.icon}</span>
+                  <s.icon size={22} />
                   <div style={{ textAlign: "left" }}>
                     <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 14 }}>{s.label}</div>
                     <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>{s.desc}</div>
@@ -130,7 +132,7 @@ export default function OnboardingModal() {
               Ok, je bent er klaar voor. Jouw eerste opdracht:
             </p>
             <div style={styles.assignment}>
-              📌 Ga naar <strong>Handelen</strong>, kijk naar de Bitcoin grafiek en zeg mij wat de trend is. Stijgt of daalt hij?
+              Ga naar <strong>Handelen</strong>, kijk naar de Bitcoin grafiek en zeg mij wat de trend is. Stijgt of daalt hij?
             </div>
             <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "12px 0 0" }}>
               Geen juist of fout antwoord — ik wil gewoon weten hoe jij de markt ziet.

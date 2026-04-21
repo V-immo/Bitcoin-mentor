@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { TrendingUp, Target, GraduationCap, Bell, Trophy } from "lucide-react";
 
 const copy = {
   nl: {
@@ -92,11 +93,11 @@ const TICKER_ITEMS = [
 
 const FEATURES = (c: typeof copy["nl"]) => [
   { icon: "M", label: "Marcus", t: c.feat1_t, s: c.feat1_s, accent: true },
-  { icon: "📈", t: c.feat2_t, s: c.feat2_s, accent: false },
-  { icon: "🎯", t: c.feat3_t, s: c.feat3_s, accent: false },
-  { icon: "🎓", t: c.feat4_t, s: c.feat4_s, accent: false },
-  { icon: "🔔", t: c.feat5_t, s: c.feat5_s, accent: false },
-  { icon: "🏆", t: c.feat6_t, s: c.feat6_s, accent: false },
+  { icon: <TrendingUp size={22} />, t: c.feat2_t, s: c.feat2_s, accent: false },
+  { icon: <Target size={22} />, t: c.feat3_t, s: c.feat3_s, accent: false },
+  { icon: <GraduationCap size={22} />, t: c.feat4_t, s: c.feat4_s, accent: false },
+  { icon: <Bell size={22} />, t: c.feat5_t, s: c.feat5_s, accent: false },
+  { icon: <Trophy size={22} />, t: c.feat6_t, s: c.feat6_s, accent: false },
 ];
 
 export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }) {

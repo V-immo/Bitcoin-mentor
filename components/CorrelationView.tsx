@@ -148,13 +148,13 @@ export default function CorrelationView({ currentAsset = "BTCUSDT" }: Props) {
     const riskOff = stockAvg.avg < -1 && btcPct < -1;
     const riskOn  = stockAvg.avg > 1  && btcPct > 1;
     let marketNote = "";
-    if (riskOff) marketNote = "📉 Risk-off omgeving — aandelen én crypto dalen samen.";
-    if (riskOn)  marketNote = "📈 Risk-on — aandelen en crypto bewegen samen omhoog.";
+    if (riskOff) marketNote = "Risk-off omgeving — aandelen én crypto dalen samen.";
+    if (riskOn)  marketNote = "Risk-on — aandelen en crypto bewegen samen omhoog.";
 
     // Goud als vlucht
     const gold = entries.find(e => e.symbol === "GC=F");
     let goldNote = "";
-    if (gold && btcPct < -2 && gold.change24h > 1) goldNote = "🥇 Goud stijgt terwijl BTC daalt — safe haven vraag zichtbaar.";
+    if (gold && btcPct < -2 && gold.change24h > 1) goldNote = "Goud stijgt terwijl BTC daalt — safe haven vraag zichtbaar.";
 
     return [`BTC ${dir} ${abs}%.`, altNote, marketNote, goldNote].filter(Boolean).join(" ");
   }
@@ -176,7 +176,7 @@ export default function CorrelationView({ currentAsset = "BTCUSDT" }: Props) {
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 20 }}>📡</span>
+            <span style={{ fontSize: 20 }}>◎</span>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
                 Markt Correlatie
@@ -220,8 +220,8 @@ export default function CorrelationView({ currentAsset = "BTCUSDT" }: Props) {
         }}>
           {[
             { label: "Crypto",       data: cryptoAvg, icon: "₿" },
-            { label: "Aandelen",     data: stockAvg,  icon: "📈" },
-            { label: "Grondstoffen", data: metalAvg,  icon: "🥇" },
+            { label: "Aandelen",     data: stockAvg,  icon: "↑" },
+            { label: "Grondstoffen", data: metalAvg,  icon: "◈" },
           ].map(s => (
             <div key={s.label} style={{
               background: pctBg(s.data.avg),

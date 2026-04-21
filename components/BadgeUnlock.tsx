@@ -11,7 +11,7 @@ const MILESTONES = [
     key: "lesson_1",
     labelNL: "Eerste les gelezen",
     labelEN: "First lesson read",
-    emoji: "📖",
+    emoji: "★",
     xp: 50,
     check: () => {
       try {
@@ -23,7 +23,7 @@ const MILESTONES = [
     key: "lessons_5",
     labelNL: "5 lessen gelezen",
     labelEN: "5 lessons read",
-    emoji: "🎓",
+    emoji: "★★",
     xp: 150,
     check: () => {
       try {
@@ -33,9 +33,9 @@ const MILESTONES = [
   },
   {
     key: "streak_7",
-    labelNL: "7-daagse streak 🔥",
-    labelEN: "7-day streak 🔥",
-    emoji: "🏅",
+    labelNL: "7-daagse streak",
+    labelEN: "7-day streak",
+    emoji: "★★★",
     xp: 200,
     check: () => {
       try {

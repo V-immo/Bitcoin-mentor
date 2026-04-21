@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Trophy, Medal } from "lucide-react";
 
 type Trader = {
   codename: string;
@@ -42,7 +43,7 @@ export default function CommunityScoreboard() {
     }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
         <div>
-          <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)" }}>🏆 Traders Scoreboard</div>
+          <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}><Trophy size={16} /> Traders Scoreboard</div>
           <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>Community — anoniem</div>
         </div>
         <div style={{ textAlign: "right" }}>
@@ -90,8 +91,8 @@ export default function CommunityScoreboard() {
                 border: `1px solid ${i === 0 ? "rgba(234,179,8,0.2)" : "rgba(255,255,255,0.05)"}`,
                 borderRadius: 8,
               }}>
-                <div style={{ fontSize: 14, width: 20, textAlign: "center", flexShrink: 0 }}>
-                  {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`}
+                <div style={{ width: 20, textAlign: "center", flexShrink: 0 }}>
+                  {i <= 2 ? <Medal size={14} color={["#FFD700","#C0C0C0","#CD7F32"][i]} /> : `${i + 1}.`}
                 </div>
                 <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{t.codename}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: t.winRate >= 60 ? "var(--green)" : t.winRate >= 40 ? "#f0a500" : "#f05252" }}>

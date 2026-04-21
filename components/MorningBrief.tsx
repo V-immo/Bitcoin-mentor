@@ -56,7 +56,7 @@ export default function MorningBrief() {
 
   const handleCopy = () => {
     const text = [
-      `📊 Marcus Morning Brief — ${data.date}`,
+      `Marcus Morning Brief — ${data.date}`,
       "",
       data.content,
       "",
@@ -72,7 +72,7 @@ export default function MorningBrief() {
     <div className={`morning-brief-card${open ? "" : " morning-brief-card--collapsed"}`}>
       <div className="morning-brief-header" onClick={() => setOpen(v => !v)}>
         <div className="morning-brief-header-left">
-          <span className="morning-brief-icon">☀️</span>
+          <span className="morning-brief-icon">○</span>
           <div>
             <div className="morning-brief-title">
               {isNL ? "Morning Brief" : "Morning Brief"}

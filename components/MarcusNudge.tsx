@@ -153,7 +153,7 @@ export default function MarcusNudge() {
             background: "rgba(233,30,99,0.15)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 16, flexShrink: 0,
-          }}>🌙</div>
+          }}>M</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 2 }}>Marcus · Dagafsluiting</div>
             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4, color: "var(--text-secondary)" }}>

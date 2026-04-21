@@ -17,6 +17,7 @@ import PreMarketRitual from "./PreMarketRitual";
 import PriceAlerts from "./PriceAlerts";
 import CorrelationView from "./CorrelationView";
 import Tip from "./Tip";
+import { Bell, X } from "lucide-react";
 
 type Props = { initialData: MentorSignal; initialAsset?: string };
 
@@ -137,14 +138,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   ];
   const ASSET_GROUPS = ASSET_GROUPS_DEF.map(g => ({ label: t(g.key), types: g.types }));
   const BOTTOM_TABS: { key: BottomTab; label: string; icon: string; mobileOnly?: boolean }[] = [
-    { key: "chat",      label: t("nav_marcus_ai"), icon: "👤", mobileOnly: true },
-    { key: "paper",     label: t("tab_trade"),      icon: "📊" },
-    { key: "plan",      label: "Plan Check",         icon: "🎯" },
-    { key: "ritual",    label: "Ritueel",            icon: "🌅" },
-    { key: "alerts",     label: "Alerts",             icon: "🔔" },
-    { key: "correlatie", label: "Correlatie",         icon: "📡" },
-    { key: "checklist", label: t("nav_checklist"), icon: "✅" },
-    { key: "briefing",  label: t("tab_briefing"),  icon: "💡" },
+    { key: "chat",      label: t("nav_marcus_ai"), icon: "", mobileOnly: true },
+    { key: "paper",     label: t("tab_trade"),      icon: "" },
+    { key: "plan",      label: "Plan Check",         icon: "" },
+    { key: "ritual",    label: "Ritueel",            icon: "" },
+    { key: "alerts",     label: "Alerts",             icon: "" },
+    { key: "correlatie", label: "Correlatie",         icon: "" },
+    { key: "checklist", label: t("nav_checklist"), icon: "" },
+    { key: "briefing",  label: t("tab_briefing"),  icon: "" },
   ];
 
   const [asset, setAsset] = useState<string>(initialAsset);
@@ -534,7 +535,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
     const inZone = (signalAsset === asset) && livePrice >= signal.entryZoneLow && livePrice <= signal.entryZoneHigh;
     if (inZone && !wasInZoneRef.current) {
       const ticker = assetDef?.ticker ?? asset.replace("USDT", "");
-      const msg = `🟢 ${ticker} is in de koopzone! ${fmtCurrency(Math.round(livePrice), asset)} — overweeg een entry.`;
+      const msg = `${ticker} is in de koopzone! ${fmtCurrency(Math.round(livePrice), asset)} — overweeg een entry.`;
       setZoneAlert(msg);
       if (alertTimerRef.current) clearTimeout(alertTimerRef.current);
       alertTimerRef.current = setTimeout(() => setZoneAlert(null), 8000);
@@ -747,7 +748,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
           <div className="asset-overlay-panel" onClick={e => e.stopPropagation()}>
             <div className="asset-overlay-header">
               <span>{t("asset_picker_title")}</span>
-              <button className="asset-overlay-close" onClick={() => setAssetPickerOpen(false)}>✕</button>
+              <button className="asset-overlay-close" onClick={() => setAssetPickerOpen(false)}><X size={16} /></button>
             </div>
             {ASSET_GROUPS.map((group) => {
               const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
@@ -779,7 +780,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
         {/* Links: asset-knop + prijs */}
         <div className="terminal-topbar-left">
           <button className="asset-select-btn" onClick={() => setAssetPickerOpen(true)}>
-            <span>{assetDef?.emoji ?? "💰"}</span>
+            <span>{assetDef?.emoji ?? ""}</span>
             <span className="asset-select-ticker">{assetDef?.ticker ?? asset}</span>
             <span className="asset-select-caret">▾</span>
           </button>
@@ -809,7 +810,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                   border: `1px solid ${tradingMode === "day" ? "#3b82f640" : tradingMode === "long" ? "#8b5cf640" : "#6b728040"}`,
                   borderRadius: 4, padding: "0px 5px",
                 }}>
-                  {tradingMode === "day" ? "⚡ Day" : tradingMode === "long" ? "🏦 Long" : "📈 Swing"}
+                  {tradingMode === "day" ? "Day" : tradingMode === "long" ? "Long" : "Swing"}
                 </span>
               )}
             </div>
@@ -828,7 +829,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
               className="topbar-icon-btn"
               onClick={requestNotifPermission}
               title="Meldingen inschakelen"
-            >🔔</button>
+            ><Bell size={16} /></button>
           )}
           <button
             className="topbar-icon-btn"
@@ -940,7 +941,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                     <div className="ssd-item"><span className="ssd-label">Trend 4H<Tip text="Trendrichting op de 4-uurs grafiek — de primaire timeframe voor swing entries." /></span><span className="ssd-val">{nlTrend(signal.trend4h, lang)}</span></div>
                     <div className="ssd-item"><span className="ssd-label">Trend 1D<Tip text="Trendrichting op de dagelijkse grafiek — geeft de grotere context. Trade altijd mee met de daagse trend." wide /></span><span className="ssd-val">{nlTrend(signal.trend1d, lang)}</span></div>
                     {signal.blockers.length > 0 && (
-                      <div className="ssd-item ssd-full"><span className="ssd-label">⚠ Blockers<Tip text="Redenen waarom deze setup risicovol is. Los deze op of wacht op een betere kans." /></span><span className="ssd-val ssd-red">{signal.blockers.join(" · ")}</span></div>
+                      <div className="ssd-item ssd-full"><span className="ssd-label">Blockers<Tip text="Redenen waarom deze setup risicovol is. Los deze op of wacht op een betere kans." /></span><span className="ssd-val ssd-red">{signal.blockers.join(" · ")}</span></div>
                     )}
                   </div>
                   <button className="signal-strip-trade-btn" onClick={() => { setBottomTab("paper"); setSignalStripOpen(false); }}>
@@ -993,7 +994,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                   />
                 )}
                 <details className="accordion-details">
-                  <summary className="accordion-details-summary">🧮 {t("trade_accordion_calculator")}</summary>
+                  <summary className="accordion-details-summary">{t("trade_accordion_calculator")}</summary>
                   <div className="accordion-details-body">
                     <RisicoCalculator currentPrice={chartPrice} stopLoss={signal.stopLoss} />
                   </div>
@@ -1014,7 +1015,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
       {zoneAlert && (
         <div className="terminal-zone-toast" onClick={() => setZoneAlert(null)}>
           <span>{zoneAlert}</span>
-          <span className="terminal-zone-toast-close">✕</span>
+          <span className="terminal-zone-toast-close"><X size={14} /></span>
         </div>
       )}
     </main>
