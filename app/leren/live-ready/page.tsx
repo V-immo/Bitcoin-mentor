@@ -56,7 +56,7 @@ function Requirement({
   return (
     <div className={`liveready-req${done ? " done" : ""}`}>
       <div className="liveready-req-header">
-        <span className="liveready-req-icon">{done ? "✅" : icon}</span>
+        <span className="liveready-req-icon">{done ? "✓" : icon}</span>
         <div className="liveready-req-info">
           <div className="liveready-req-title">{title}</div>
           <div className="liveready-req-subtitle">{subtitle}</div>
@@ -165,8 +165,8 @@ export default function LiveReadyPage() {
   function share() {
     if (!data?.certificate) return;
     const text = isNL
-      ? `Marcus heeft mij Live Ready verklaard op Bitcoin Mentor 🏆\n\n"${data.certificate}"\n\n📊 ${data.trades.count} paper trades · 🔥 ${data.streak.days} dagen streak · 5 niveaus voltooid\n\nhttps://bitcoinmentor.be`
-      : `Marcus declared me Live Ready on Bitcoin Mentor 🏆\n\n"${data.certificate}"\n\n📊 ${data.trades.count} paper trades · 🔥 ${data.streak.days} day streak · 5 levels completed\n\nhttps://bitcoinmentor.be`;
+      ? `Marcus heeft mij Live Ready verklaard op Bitcoin Mentor\n\n"${data.certificate}"\n\n${data.trades.count} paper trades · ${data.streak.days} dagen streak · 5 niveaus voltooid\n\nhttps://bitcoinmentor.be`
+      : `Marcus declared me Live Ready on Bitcoin Mentor\n\n"${data.certificate}"\n\n${data.trades.count} paper trades · ${data.streak.days} day streak · 5 levels completed\n\nhttps://bitcoinmentor.be`;
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
@@ -212,7 +212,7 @@ export default function LiveReadyPage() {
       <div className="liveready-hero no-print">
         {data.allDone ? (
           <>
-            <div className="liveready-hero-seal">🏆</div>
+            <div className="liveready-hero-seal">▲</div>
             <h1 className="liveready-title">
               {isNL ? "Je bent Live Ready" : "You're Live Ready"}
             </h1>
@@ -224,7 +224,7 @@ export default function LiveReadyPage() {
           </>
         ) : (
           <>
-            <div className="liveready-hero-seal" style={{ fontSize: 48 }}>🎯</div>
+            <div className="liveready-hero-seal" style={{ fontSize: 48 }}>◉</div>
             <h1 className="liveready-title">
               {isNL ? "Ben jij Live Ready?" : "Are you Live Ready?"}
             </h1>
@@ -264,7 +264,7 @@ export default function LiveReadyPage() {
         />
 
         <Requirement
-          icon="📊"
+          icon="≡"
           title={isNL ? "20 paper trades" : "20 paper trades"}
           subtitle={isNL
             ? `Min. ${data.trades.countMin} afgeronde trades · Gem. R/R ≥ 1:${data.trades.rrMin}`
@@ -279,7 +279,7 @@ export default function LiveReadyPage() {
         />
 
         <Requirement
-          icon="🔥"
+          icon="↑"
           title={isNL ? "14 dagen consistentie" : "14 days consistency"}
           subtitle={isNL ? "14 aaneengesloten dagen dagelijks actief" : "14 consecutive days of daily activity"}
           value={data.streak.days}
@@ -310,14 +310,14 @@ export default function LiveReadyPage() {
             )}
             {!data.trades.done && (
               <Link href="/trade" className="liveready-action-link">
-                📊 {isNL
+                {isNL
                   ? `Doe paper trades (${data.trades.countMin - data.trades.count > 0 ? `nog ${data.trades.countMin - data.trades.count}` : "R/R verbeteren"})`
                   : `Do paper trades (${data.trades.countMin - data.trades.count > 0 ? `${data.trades.countMin - data.trades.count} more` : "improve R/R"})`}
               </Link>
             )}
             {!data.streak.done && (
               <Link href="/dashboard" className="liveready-action-link">
-                🔥 {isNL ? `Houd je streak bij (nog ${data.streak.daysMin - data.streak.days} dagen)` : `Keep your streak (${data.streak.daysMin - data.streak.days} days to go)`}
+                {isNL ? `Houd je streak bij (nog ${data.streak.daysMin - data.streak.days} dagen)` : `Keep your streak (${data.streak.daysMin - data.streak.days} days to go)`}
               </Link>
             )}
           </div>
@@ -332,7 +332,7 @@ export default function LiveReadyPage() {
               <span className="liveready-cert-brand">Bitcoin Mentor</span>
               <span className="liveready-cert-tag">Live Ready</span>
             </div>
-            <div className="liveready-cert-seal">🏆</div>
+            <div className="liveready-cert-seal">▲</div>
             <h2 className="liveready-cert-name">{data.username}</h2>
             <p className="liveready-cert-label">
               {isNL ? "is Live Ready verklaard door Marcus" : "has been declared Live Ready by Marcus"}
@@ -366,7 +366,7 @@ export default function LiveReadyPage() {
             <button className="liveready-btn-primary" onClick={share}>
               {copied
                 ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!")
-                : (isNL ? "📋 Deel op social media" : "📋 Share on social media")}
+                : (isNL ? "Deel op social media" : "Share on social media")}
             </button>
             <button className="liveready-btn-secondary" onClick={() => window.print()}>
               {isNL ? "🖨️ Print / Download" : "🖨️ Print / Download"}

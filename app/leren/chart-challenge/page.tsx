@@ -335,7 +335,7 @@ export default function ChartChallengePage() {
 
       <div className="chart-challenge-hero">
         <div className="chart-challenge-tag">
-          📊 {isNL ? "Dagelijkse Chart Challenge" : "Daily Chart Challenge"}
+          {isNL ? "Dagelijkse Chart Challenge" : "Daily Chart Challenge"}
         </div>
         <h1 className="chart-challenge-title">
           {isNL ? "Analyseer deze chart" : "Analyze this chart"}
@@ -349,7 +349,7 @@ export default function ChartChallengePage() {
 
       {alreadyDone && selected === null ? (
         <div className="card chart-challenge-done-card">
-          <div className="chart-challenge-done-icon">✅</div>
+          <div className="chart-challenge-done-icon">✓</div>
           <p className="chart-challenge-done-text">
             {isNL
               ? "Je hebt de chart challenge van vandaag al voltooid. Kom morgen terug voor een nieuw patroon."

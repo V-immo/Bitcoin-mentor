@@ -80,10 +80,10 @@ export default function LerenPage() {
   const levelName = LEVEL_NAMES[quizLevel] ?? `Level ${quizLevel}`;
 
   const TABS = [
-    { id: "lessons",   label: t("leren_tab_lessons"),   icon: "📖" },
-    { id: "quiz",      label: t("leren_tab_quiz"),       icon: "🎓" },
-    { id: "resources", label: t("leren_tab_resources"),  icon: "📺" },
-    { id: "league",    label: lang === "nl" ? "Liga" : "League", icon: "🏆" },
+    { id: "lessons",   label: t("leren_tab_lessons"),   icon: "" },
+    { id: "quiz",      label: t("leren_tab_quiz"),       icon: "" },
+    { id: "resources", label: t("leren_tab_resources"),  icon: "" },
+    { id: "league",    label: lang === "nl" ? "Liga" : "League", icon: "" },
   ];
 
   return (
@@ -114,7 +114,7 @@ export default function LerenPage() {
               <span className="lp2-level-pill">Level {quizLevel}</span>
               <span className="lp2-level-name">{levelName}</span>
               {quizStreak >= 2 && (
-                <span className="lp2-streak-badge">🔥 {quizStreak}</span>
+                <span className="lp2-streak-badge">{quizStreak} dagen</span>
               )}
             </div>
             <span className="lp2-xp-count">{currentXp} <span className="lp2-xp-slash">/</span> {XP_PER_LEVEL} XP</span>
@@ -140,7 +140,7 @@ export default function LerenPage() {
             <div className="lp2-rec-glow" aria-hidden="true" />
             <div className="lp2-rec-top">
               <span className="lp2-rec-label">
-                {lang === "nl" ? "📚 Vandaag aanbevolen" : "📚 Recommended today"}
+                {lang === "nl" ? "Vandaag aanbevolen" : "Recommended today"}
               </span>
             </div>
             <div className="lp2-rec-title">{recommendedLesson.title}</div>
@@ -153,7 +153,7 @@ export default function LerenPage() {
         )}
 
         <Link href="/leren/live-ready" className="lp2-liveready-card">
-          <div className="lp2-liveready-icon">🏆</div>
+          <div className="lp2-liveready-icon">▲</div>
           <div className="lp2-liveready-body">
             <div className="lp2-liveready-title">
               {lang === "nl" ? "Ben jij Live Ready?" : "Are you Live Ready?"}
