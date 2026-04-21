@@ -1,40 +1,49 @@
+/**
+ * GET /api/me/unsubscribe-reminders?token=<hmac>
+ * Zet reminder_opt_out = 1 voor de gebruiker die via de e-maillink uitschrijft.
+ */
+
 import { NextRequest } from "next/server";
 import { getDb } from "@/db/db";
+import { createHmac } from "crypto";
 
-export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get("token");
+function reminderToken(userId: number): string {
+  const secret = process.env.CRON_SECRET ?? "bitcoin-mentor-reminder";
+  return createHmac("sha256", secret).update(String(userId)).digest("hex").slice(0, 32);
+}
+
+export async function GET(req: NextRequest) {
+  const token = req.nextUrl.searchParams.get("token") ?? "";
   if (!token) {
-    return new Response("Ongeldige link.", { status: 400, headers: { "Content-Type": "text/plain" } });
-  }
-
-  let userId: number;
-  try {
-    userId = parseInt(Buffer.from(token, "base64url").toString());
-    if (!isFinite(userId) || userId <= 0) throw new Error("invalid");
-  } catch {
-    return new Response("Ongeldige token.", { status: 400, headers: { "Content-Type": "text/plain" } });
+    return new Response("Ongeldige link.", { status: 400, headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
 
   const db = getDb();
-  const user = db.prepare("SELECT id FROM users WHERE id = ?").get(userId);
-  if (!user) {
-    return new Response("Gebruiker niet gevonden.", { status: 404, headers: { "Content-Type": "text/plain" } });
+  const users = db.prepare("SELECT id FROM users").all() as { id: number }[];
+  const match = users.find(u => reminderToken(u.id) === token);
+
+  if (!match) {
+    return new Response("Link ongeldig of verlopen.", { status: 400, headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
 
-  db.prepare("UPDATE users SET reminder_opt_out = 1 WHERE id = ?").run(userId);
+  db.prepare("UPDATE users SET reminder_opt_out = 1 WHERE id = ?").run(match.id);
 
   const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Uitgeschreven</title></head>
-<body style="font-family: -apple-system, sans-serif; background: #0e0810; color: #e5d4e7; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">
-  <div style="text-align: center; padding: 40px;">
-    <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-    <h1 style="color: #e91e63; margin: 0 0 8px 0;">Uitgeschreven</h1>
-    <p style="color: #bf7a99;">Je ontvangt geen dagelijkse reminders meer van Bitcoin Mentor.</p>
-    <a href="https://bitcoinmentor.be" style="color: #e91e63;">← Terug naar Bitcoin Mentor</a>
-  </div>
+<html lang="nl">
+<head><meta charset="utf-8"><title>Uitgeschreven</title>
+<style>body{font-family:system-ui,sans-serif;background:#0e0810;color:#e5d4e7;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#1a0f18;border:1px solid #3d2a3b;border-radius:12px;padding:32px;max-width:420px;text-align:center}
+h1{color:#e91e63;margin:0 0 12px}p{color:#bf7a99;margin:0 0 20px}
+a{color:#e91e63;text-decoration:none;font-weight:600}</style>
+</head>
+<body>
+<div class="card">
+  <h1>Uitgeschreven</h1>
+  <p>Je ontvangt geen dagelijkse herinneringen meer van Bitcoin Mentor.</p>
+  <a href="https://bitcoinmentor.be">Terug naar Bitcoin Mentor</a>
+</div>
 </body>
 </html>`;
 
-  return new Response(html, { status: 200, headers: { "Content-Type": "text/html" } });
+  return new Response(html, { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } });
 }

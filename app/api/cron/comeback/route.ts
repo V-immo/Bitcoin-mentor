@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     const body = await generateComebackMessage(user.username, days);
 
     const pushed = await sendPushToUser(user.id, {
-      title: "Marcus roept je terug 🔥",
+      title: "Marcus roept je terug",
       body,
       icon: "/icon-192.png",
       url: "/dashboard",

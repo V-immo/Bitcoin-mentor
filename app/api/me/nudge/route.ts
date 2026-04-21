@@ -193,6 +193,11 @@ export async function GET(request: Request) {
   if (!session?.user) return Response.json({ nudge: null });
   const userId = parseInt((session.user as { id?: string }).id ?? "0");
   const db = getDb();
+
+  // Client-side context (missions, recommended lesson)
+  const url = new URL(request.url);
+  const missionsDone = parseInt(url.searchParams.get("missions_done") ?? "0") || 0;
+  const recommendedLesson = url.searchParams.get("recommended_lesson") ?? "";
   const user = db.prepare(
     "SELECT last_login_at, username, login_streak, last_streak_date, last_greeting_date, streak_freeze FROM users WHERE id = ?"
   ).get(userId) as {
@@ -307,6 +312,10 @@ export async function GET(request: Request) {
       ? `Max ${tradingPlan.risk_per_trade ?? 1}% risico/trade, max ${tradingPlan.max_trades_per_day ?? 3} trades/dag.`
       : "";
     const streakHint = newStreak >= 2 ? `Streak: ${newStreak} dagen.` : "";
+    const missionsHint = missionsDone > 0
+      ? `Al ${missionsDone}/3 missies gedaan vandaag.`
+      : "Nog geen missies gedaan vandaag.";
+    const lessonHint = recommendedLesson ? `Aanbevolen les: ${recommendedLesson}.` : "";
 
     // Vriend-streak context — wie ligt voor?
     let friendHint = "";
@@ -328,7 +337,7 @@ export async function GET(request: Request) {
       const systemPrompt = isSlump
         ? `Je bent Marcus, directe tradingcoach. De trader scoort gemiddeld ${recentQuizAvg}% op de quizzen en heeft een streak van ${newStreak} dagen — ze zitten in een dip. Schrijf een eerlijke ochtendgroet in MAX 2 zinnen: erken dat het moeilijk gaat, geef één concrete actie voor vandaag. Geen valse hoop, geen aanmoedigingen — gewoon direct. Geen markdown, geen asterisken, geen bullets.`
         : `Je bent Marcus, directe tradingcoach. Ochtendgroet in MAX 2 zinnen. Direct, persoonlijk, geen aanhef. Gebruik "je/jij". Geen markdown, geen asterisken, geen bullets.
-Context: ${btcSummary} ${openPos} ${planHint} ${streakHint}${friendHint ? ` Vrienden: ${friendHint}` : ""}`;
+Context: ${btcSummary} ${openPos} ${planHint} ${streakHint} ${missionsHint}${lessonHint ? ` ${lessonHint}` : ""}${friendHint ? ` Vrienden: ${friendHint}` : ""}`;
 
       const msg = await client.messages.create({
         model: "claude-haiku-4-5",

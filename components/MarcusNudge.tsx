@@ -96,7 +96,7 @@ export default function MarcusNudge() {
               : "linear-gradient(135deg, #e91e63, #9c27b0)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 16, flexShrink: 0,
-          }}>{isSlump ? "📉" : "🌅"}</div>
+          }}>M</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
               fontSize: 12, fontWeight: 700, marginBottom: 3,
@@ -122,7 +122,7 @@ export default function MarcusNudge() {
             background: "linear-gradient(135deg, #e91e63, #9c27b0)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 18, flexShrink: 0,
-          }}>🧠</div>
+          }}>M</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--primary)" }}>Marcus</span>

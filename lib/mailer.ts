@@ -24,8 +24,8 @@ export async function sendAlertEmail(opts: {
   const { transport, from } = createTransport();
 
   const dir = opts.condition === "above" ? "boven" : "onder";
-  const dirEmoji = opts.condition === "above" ? "📈" : "📉";
-  const subject = `${dirEmoji} Alert: ${opts.asset} is ${dir} €${opts.targetPrice.toLocaleString("nl-NL")}`;
+  const dirSymbol = opts.condition === "above" ? "↑" : "↓";
+  const subject = `${dirSymbol} Alert: ${opts.asset} is ${dir} €${opts.targetPrice.toLocaleString("nl-NL")}`;
 
   const html = `
 <!DOCTYPE html>
@@ -33,7 +33,7 @@ export async function sendAlertEmail(opts: {
 <head><meta charset="utf-8"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0e0810; color: #e5d4e7; max-width: 480px; margin: 0 auto; padding: 24px;">
   <div style="background: linear-gradient(135deg, #1a0f18, #2a1a28); border: 1px solid #3d2a3b; border-radius: 12px; padding: 28px;">
-    <div style="font-size: 32px; margin-bottom: 12px;">${dirEmoji}</div>
+    <div style="font-size: 32px; margin-bottom: 12px;">${dirSymbol}</div>
     <h1 style="color: #e91e63; font-size: 22px; margin: 0 0 8px 0;">Prijsalert getriggerd!</h1>
     <p style="color: #bf7a99; font-size: 15px; margin: 0 0 20px 0;">
       <strong style="color: #e5d4e7;">${opts.asset}</strong> staat nu op
@@ -59,7 +59,7 @@ export async function sendAlertEmail(opts: {
 export async function sendReminderEmail(opts: { to: string; name: string; token: string }) {
   const { transport, from } = createTransport();
 
-  const subject = `${opts.name}, je streak staat op het spel 🔥`;
+  const subject = `${opts.name}, je streak staat op het spel`;
   const unsubUrl = `https://bitcoinmentor.be/api/me/unsubscribe-reminders?token=${opts.token}`;
 
   const html = `
@@ -68,7 +68,7 @@ export async function sendReminderEmail(opts: { to: string; name: string; token:
 <head><meta charset="utf-8"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0e0810; color: #e5d4e7; max-width: 480px; margin: 0 auto; padding: 24px;">
   <div style="background: linear-gradient(135deg, #1a0f18, #2a1a28); border: 1px solid #3d2a3b; border-radius: 12px; padding: 28px;">
-    <div style="font-size: 32px; margin-bottom: 12px;">🔥</div>
+    <div style="font-size: 32px; margin-bottom: 12px; color: #e91e63; font-weight: 700;">!</div>
     <h1 style="color: #e91e63; font-size: 22px; margin: 0 0 8px 0;">Hey ${opts.name},</h1>
     <p style="color: #bf7a99; font-size: 15px; margin: 0 0 20px 0;">
       Je hebt vandaag je dagelijkse missies nog niet afgerond.<br>
