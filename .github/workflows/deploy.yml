@@ -51,27 +51,26 @@ jobs:
             rm -rf .next-backup || true
             cp -r .next .next-backup 2>/dev/null || true
 
-            # Build — eerste poging kan falen door Turbopack race condition, dan retry
+            # Build — stop server VOOR de build zodat .next niet gelockt is
+            pm2 delete bitcoin-mentor 2>/dev/null || true
             rm -f .next/lock
-            mkdir -p .next/static
+
+            # Eerste poging: maakt .next/static/<hash>/ subdirectory aan (ook al faalt build)
             NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-              echo "Eerste build mislukt — retry..."
-              rm -rf .next || true
-              mkdir -p .next/static
+              echo "Eerste build mislukt (Turbopack race) — retry zonder rm -rf..."
+              rm -f .next/lock
               NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-                echo "Build mislukt — herstel backup"
+                echo "Build mislukt na retry — herstel backup"
                 rm -rf .next || true
                 mv .next-backup .next || true
                 exit 1
               }
             }
 
-            # Build geslaagd — backup opruimen en herstart
+            # Build geslaagd — backup opruimen en starten
             rm -rf .next-backup || true
 
-            # Schone herstart: verwijder eventueel vastgelopen process en start opnieuw
-            pm2 delete bitcoin-mentor 2>/dev/null || true
             pm2 start ecosystem.config.js --env production
             pm2 save
 
-            echo "✅ Deploy klaar"
+            echo "Deploy klaar"
