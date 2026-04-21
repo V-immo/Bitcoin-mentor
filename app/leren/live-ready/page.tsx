@@ -35,7 +35,7 @@ const EXCHANGES = {
   },
   bybit: {
     name: "Bybit",
-    flag: "🌍",
+    flag: "",
     taglineNL: "Wereldwijde exchange · Futures & spot · 0,1% fee",
     taglineEN: "Global exchange · Futures & spot · 0.1% fee",
     url: "https://www.bybit.com/invite?ref=BITCOINMENTOR",
@@ -248,7 +248,7 @@ export default function LiveReadyPage() {
       {/* Vereisten */}
       <div className="liveready-requirements">
         <Requirement
-          icon="📚"
+          icon="○"
           title={isNL ? "Curriculum niveau 1–5" : "Curriculum levels 1–5"}
           subtitle={isNL ? "Alle niveaus afgerond · Gemiddelde quizscore ≥ 70%" : "All levels completed · Average quiz score ≥ 70%"}
           value={Math.min(100,
@@ -296,7 +296,7 @@ export default function LiveReadyPage() {
       {!data.allDone && (
         <div className="card liveready-next no-print">
           <div className="liveready-affiliate-teaser">
-            🏦 {isNL
+            {isNL
               ? "Als je Live Ready bent, geeft Marcus je persoonlijk advies over de beste exchange voor jouw regio."
               : "When you're Live Ready, Marcus will personally recommend the best exchange for your region."}</div>
           <p className="liveready-next-text">
@@ -305,7 +305,7 @@ export default function LiveReadyPage() {
           <div className="liveready-next-actions">
             {!data.curriculum.done && (
               <Link href="/leren" className="liveready-action-link">
-                📚 {isNL ? "Ga verder met leren" : "Continue learning"}
+                {isNL ? "Ga verder met leren" : "Continue learning"}
               </Link>
             )}
             {!data.trades.done && (
