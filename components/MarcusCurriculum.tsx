@@ -5656,12 +5656,12 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
         <div className="curriculum-gate-banner">
           <div className="curriculum-gate-content">
             <div className="curriculum-gate-title">
-              {lang === "en" ? "PRO content — Level 4 and 5" : "PRO inhoud — Niveau 4 en 5"}
+              {lang === "en" ? "PRO content — Levels 4 to 10" : "PRO inhoud — Niveau 4 t/m 10"}
             </div>
             <p className="curriculum-gate-desc">
               {lang === "en"
-                ? "Multi-timeframe analysis, smart money, trading psychology and building your own system. Available with PRO."
-                : "Multi-timeframe analyse, smart money, trading psychologie en het bouwen van jouw eigen systeem. Beschikbaar met PRO."}
+                ? "Multi-timeframe analysis, smart money, advanced TA, crypto on-chain, portfolio management and professional trading. Available with PRO."
+                : "Multi-timeframe analyse, smart money, geavanceerde TA, crypto on-chain, portfoliobeheer en professioneel traden. Beschikbaar met PRO."}
             </p>
             <Link href="/pro" className="curriculum-gate-cta">
               {lang === "en" ? "Upgrade to PRO →" : "Upgrade naar PRO →"}

@@ -151,6 +151,7 @@ export default function LiveReadyPage() {
   const [data, setData] = useState<LiveReadyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isPro, setIsPro] = useState(false);
   const certRef = useRef<HTMLDivElement>(null);
   const isNL = lang === "nl";
 
@@ -160,6 +161,10 @@ export default function LiveReadyPage() {
       .then(d => { if (d) setData(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
+    fetch("/api/me/pro")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.isPro) setIsPro(true); })
+      .catch(() => {});
   }, []);
 
   function share() {
@@ -324,8 +329,25 @@ export default function LiveReadyPage() {
         </div>
       )}
 
-      {/* Certificaat */}
-      {data.allDone && data.certificate && (
+      {/* Certificaat — alleen voor PRO */}
+      {data.allDone && !isPro && (
+        <div className="card liveready-pro-gate">
+          <div className="liveready-pro-gate-seal">▲</div>
+          <h2 className="liveready-pro-gate-title">
+            {isNL ? "Je bent klaar — haal je certificaat" : "You're ready — claim your certificate"}
+          </h2>
+          <p className="liveready-pro-gate-text">
+            {isNL
+              ? "Je hebt alle vereisten behaald. Upgrade naar Marcus Pro om je Live Ready certificaat te genereren en te delen."
+              : "You've met all requirements. Upgrade to Marcus Pro to generate and share your Live Ready certificate."}
+          </p>
+          <Link href="/pro" className="liveready-pro-gate-cta">
+            {isNL ? "▲ Upgrade naar Marcus Pro" : "▲ Upgrade to Marcus Pro"}
+          </Link>
+        </div>
+      )}
+
+      {data.allDone && isPro && data.certificate && (
         <>
           <div className="liveready-certificate" ref={certRef}>
             <div className="liveready-cert-header">

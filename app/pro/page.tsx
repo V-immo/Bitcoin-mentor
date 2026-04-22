@@ -14,7 +14,7 @@ const FEATURES_FREE = [
 ];
 
 const FEATURES_PRO = [
-  { nl: "Alle 6 niveaus curriculum", en: "All 6 levels curriculum", star: true },
+  { nl: "Alle 10 niveaus curriculum", en: "All 10 levels curriculum", star: true },
   { nl: "Onbeperkte Marcus chat", en: "Unlimited Marcus chat", star: true },
   { nl: "Road to Live Trading certificaat", en: "Road to Live Trading certificate", star: true },
   { nl: "League systeem", en: "League system" },
@@ -80,8 +80,8 @@ export default function ProPage() {
         </h1>
         <p className="pro-hero-sub">
           {isNL
-            ? "Niveau 3-6, onbeperkte coaching, certificaat en alles wat je nodig hebt om klaar te zijn voor live trading."
-            : "Levels 3-6, unlimited coaching, certificate and everything you need to be ready for live trading."}
+            ? "Niveau 3-10, onbeperkte coaching, certificaat en alles wat je nodig hebt om klaar te zijn voor live trading."
+            : "Levels 3-10, unlimited coaching, certificate and everything you need to be ready for live trading."}
         </p>
       </div>
 
