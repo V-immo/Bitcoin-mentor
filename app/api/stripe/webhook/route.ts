@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { getDb } from "@/db/db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-  apiVersion: "2025-03-31.basil",
+  apiVersion: "2026-03-25.dahlia",
 });
 
 export async function POST(request: Request) {
@@ -35,16 +35,17 @@ export async function POST(request: Request) {
       .run(proUntil, parseInt(userId));
   }
 
-  if (event.type === "customer.subscription.deleted" || event.type === "invoice.payment_failed") {
-    const obj = event.data.object as Stripe.Subscription | Stripe.Invoice;
-    const meta = (obj as Stripe.Subscription).metadata
-      ?? (obj as Stripe.Invoice).subscription_details?.metadata;
-    const userId = meta?.userId;
+  if (event.type === "customer.subscription.deleted") {
+    const sub = event.data.object as Stripe.Subscription;
+    const userId = sub.metadata?.userId;
     if (userId) {
       db.prepare("UPDATE users SET is_pro = 0, pro_until = '' WHERE id = ?")
         .run(parseInt(userId));
     }
   }
+
+  // invoice.payment_failed: Stripe cancelt het abonnement automatisch na X retries
+  // en stuurt dan customer.subscription.deleted — dat verwerken we hierboven al.
 
   return new Response("ok");
 }

@@ -484,11 +484,18 @@ export default function TradingChart({
     if (!seriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
 
     const prev = prevCandlesRef.current;
-    // Detecteer live kline-update: zelfde startcandle, max 1 nieuwe candle, laatste candle gewijzigd
+    // Detecteer live kline-update op basis van de LAATSTE candle — niet de eerste.
+    // De WebSocket bewaart max 500 candles en gooit oude eraf, waardoor candles[0]
+    // regelmatig verandert. Dat maakte de oude check onbetrouwbaar en triggerde
+    // telkens een volledige setData() reset + view-spring.
+    const lastPrevTime   = prev[prev.length - 1]?.openTime;
+    const lastNewTime    = candles[candles.length - 1]?.openTime;
+    const secondLastNew  = candles[candles.length - 2]?.openTime;
     const isLiveUpdate =
-      prev.length >= candles.length - 1 &&
       prev.length > 0 &&
-      prev[0]?.openTime === candles[0]?.openTime;
+      candles.length > 0 &&
+      (lastNewTime === lastPrevTime ||   // zelfde candle die live update
+       secondLastNew === lastPrevTime);  // nieuwe candle-periode gestart
 
     if (isLiveUpdate) {
       // Alleen de laatste candle updaten — geen setData(), geen range-reset
