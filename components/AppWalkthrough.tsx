@@ -101,7 +101,7 @@ export default function AppWalkthrough() {
       const el = document.querySelector(selector as string);
       if (!el) {
         missed++;
-        if (missed < 20) rafRef.current = requestAnimationFrame(update); // wacht max ~330ms
+        if (missed < 80) rafRef.current = requestAnimationFrame(update); // wacht max ~1300ms
         else setHighlightRect(null);
         return;
       }
@@ -137,7 +137,7 @@ export default function AppWalkthrough() {
     if (target.route) {
       navigatingRef.current = true;
       router.push(target.route);
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1400));
       navigatingRef.current = false;
     }
     setStep(newStep);

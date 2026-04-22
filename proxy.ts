@@ -20,6 +20,8 @@ export default auth((req) => {
     pathname === "/help" ||
     pathname === "/leren" ||
     pathname === "/pro" ||
+    pathname === "/pro/success" ||
+    pathname === "/api/stripe/webhook" ||
     pathname.startsWith("/api/auth") ||
     pathname === "/api/me/unsubscribe-reminders" ||
     pathname.startsWith("/api/stats/") ||

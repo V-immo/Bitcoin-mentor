@@ -41,34 +41,21 @@ export default function ProPage() {
   async function upgrade() {
     if (!session?.user) { window.location.href = "/auth/register"; return; }
     setLoading(true);
-    await fetch("/api/me/pro", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
-    });
-    setDone(true);
-    setLoading(false);
-  }
-
-  if (done) {
-    return (
-      <div className="pro-page">
-        <div className="pro-success-card">
-          <div className="pro-success-icon">★</div>
-          <h1 className="pro-success-title">
-            {isNL ? "Aanvraag ontvangen!" : "Request received!"}
-          </h1>
-          <p className="pro-success-text">
-            {isNL
-              ? "Je ontvangt binnen 24 uur een e-mail met je betalingslink. Vragen? Mail naar pro@bitcoinmentor.be."
-              : "You will receive a payment link by email within 24 hours. Questions? Email pro@bitcoinmentor.be."}
-          </p>
-          <Link href="/dashboard" className="pro-success-back">
-            {isNL ? "Terug naar dashboard" : "Back to dashboard"}
-          </Link>
-        </div>
-      </div>
-    );
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setLoading(false);
+      }
+    } catch {
+      setLoading(false);
+    }
   }
 
   return (
