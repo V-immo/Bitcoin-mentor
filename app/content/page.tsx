@@ -66,7 +66,7 @@ export default function ContentPage() {
     <div className="content-page">
       <div className="content-header">
         <h1 className="content-title">
-          {isNL ? "📱 Vandaag's analyse — deel het" : "📱 Today's analysis — share it"}
+          {isNL ? "Vandaag's analyse — deel het" : "Today's analysis — share it"}
         </h1>
         <p className="content-subtitle">
           {isNL
@@ -81,7 +81,7 @@ export default function ContentPage() {
           <button className="content-generate-btn" onClick={generate} disabled={loading}>
             {loading
               ? (isNL ? "Marcus analyseert…" : "Marcus is analyzing…")
-              : (isNL ? "✨ Genereer vandaag's script" : "✨ Generate today's script")}
+              : (isNL ? "Genereer vandaag's script" : "Generate today's script")}
           </button>
           {error && <p className="content-error">{error}</p>}
           <p className="content-generate-hint">
@@ -115,7 +115,7 @@ export default function ContentPage() {
                 className="content-copy-btn"
                 onClick={() => copyText(data.script, "full")}
               >
-                {copied === "full" ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!") : (isNL ? "📋 Kopieer alles" : "📋 Copy all")}
+                {copied === "full" ? (isNL ? "✓ Gekopieerd!" : "✓ Copied!") : (isNL ? "Kopieer alles" : "Copy all")}
               </button>
             </div>
 
@@ -140,7 +140,7 @@ export default function ContentPage() {
                 className="content-copy-small"
                 onClick={() => copyText(data.hashtags, "tags")}
               >
-                {copied === "tags" ? "✓" : "📋"}
+                {copied === "tags" ? "✓" : "→"}
               </button>
             </div>
           </div>
