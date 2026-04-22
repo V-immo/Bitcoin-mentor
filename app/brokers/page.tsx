@@ -20,7 +20,7 @@ const BROKERS: Broker[] = [
   {
     name: "eToro",
     url: "https://www.etoro.com",
-    logo: "🟢",
+    logo: "ET",
     tagline: "Sociaal traden voor beginners — aandelen, crypto, grondstoffen",
     assets: ["Crypto", "Aandelen", "ETFs", "Olie", "Goud"],
     pros: ["Gratis aandelen", "Copy trading van toptraders", "Grote community", "Demo account"],
@@ -32,7 +32,7 @@ const BROKERS: Broker[] = [
   {
     name: "IG Group",
     url: "https://www.ig.com",
-    logo: "🔵",
+    logo: "IG",
     tagline: "Professionele CFD-broker — aandelen, indices, forex, grondstoffen",
     assets: ["Aandelen", "ETFs", "Olie", "Goud", "Forex", "Indices"],
     pros: ["Breed aanbod (17.000+ markten)", "Scherpe spreads", "Gevorderde tools", "Gereguleerd"],
@@ -44,7 +44,7 @@ const BROKERS: Broker[] = [
   {
     name: "Pepperstone",
     url: "https://www.pepperstone.com",
-    logo: "🟠",
+    logo: "PP",
     tagline: "Lage spreads voor actieve traders — forex, crypto, CFDs",
     assets: ["Forex", "Crypto CFD", "Aandelen CFD", "Olie", "Goud"],
     pros: ["Razor-lage spreads", "MT4/MT5 ondersteuning", "Snel uitvoering", "cTrader"],
@@ -56,7 +56,7 @@ const BROKERS: Broker[] = [
   {
     name: "Capital.com",
     url: "https://capital.com",
-    logo: "⚫",
+    logo: "CC",
     tagline: "AI-powered trading app — groot aanbod CFDs",
     assets: ["Crypto CFD", "Aandelen CFD", "Olie", "Goud", "ETFs CFD"],
     pros: ["AI trading suggesties", "Geen commissie", "Breed aanbod", "Goede app"],
@@ -67,7 +67,7 @@ const BROKERS: Broker[] = [
   {
     name: "XTB",
     url: "https://www.xtb.com",
-    logo: "🔴",
+    logo: "XB",
     tagline: "Europese broker met echte aandelen én CFDs",
     assets: ["Aandelen", "ETFs", "Forex", "Crypto CFD", "Olie", "Goud"],
     pros: ["Echte aandelen (geen CFD)", "Geen bewaarkosten", "Goede educatie", "Scherpe spreads"],
@@ -79,7 +79,7 @@ const BROKERS: Broker[] = [
   {
     name: "DEGIRO",
     url: "https://www.degiro.nl",
-    logo: "🟡",
+    logo: "DG",
     tagline: "Goedkoopste broker voor aandelen en ETFs in Europa",
     assets: ["Aandelen", "ETFs", "Obligaties", "Opties"],
     pros: ["Laagste kosten Europa", "Breed aanbod", "Betrouwbaar", "Echte aandelen"],
@@ -91,7 +91,7 @@ const BROKERS: Broker[] = [
   {
     name: "Trade Republic",
     url: "https://traderepublic.com",
-    logo: "⚪",
+    logo: "TR",
     tagline: "Mobiele neo-broker — aandelen, ETFs, crypto",
     assets: ["Aandelen", "ETFs", "Crypto", "Obligaties"],
     pros: ["€1 per trade", "Rente op cash (4%)", "Spaarplannen", "Eenvoudige app"],
@@ -102,7 +102,7 @@ const BROKERS: Broker[] = [
   {
     name: "Interactive Brokers",
     url: "https://www.interactivebrokers.com",
-    logo: "🏦",
+    logo: "IB",
     tagline: "Professionele wereldwijde broker voor serieuze traders",
     assets: ["Aandelen", "ETFs", "Opties", "Futures", "Forex", "Obligaties"],
     pros: ["Laagste commissies ter wereld", "Alle markten", "Geavanceerde tools", "IBKR Lite gratis"],
@@ -126,7 +126,7 @@ const BROKERS: Broker[] = [
   {
     name: "Kraken",
     url: "https://www.kraken.com",
-    logo: "🐙",
+    logo: "KR",
     tagline: "Veilige crypto exchange voor beginners en gevorderden",
     assets: ["Crypto"],
     pros: ["Sterke beveiliging", "Breed crypto aanbod", "Futures beschikbaar", "Staking"],
@@ -137,7 +137,7 @@ const BROKERS: Broker[] = [
   {
     name: "Coinbase",
     url: "https://www.coinbase.com",
-    logo: "🔷",
+    logo: "CB",
     tagline: "Meest gebruikte crypto platform ter wereld",
     assets: ["Crypto"],
     pros: ["Eenvoudig", "Betrouwbaar", "Grote naam", "Coinbase Pro voor gevorderden"],
@@ -148,7 +148,7 @@ const BROKERS: Broker[] = [
   {
     name: "Bitpanda",
     url: "https://www.bitpanda.com",
-    logo: "🐼",
+    logo: "BP",
     tagline: "Europese neo-broker voor crypto, aandelen en metalen",
     assets: ["Crypto", "Aandelen", "ETFs", "Goud", "Zilver"],
     pros: ["Alles op één platform", "Europees gereguleerd", "Goud/zilver in fractie", "Spaarplannen"],
@@ -160,7 +160,7 @@ const BROKERS: Broker[] = [
   {
     name: "Gold Avenue",
     url: "https://www.goldavenue.com",
-    logo: "🥇",
+    logo: "GA",
     tagline: "Fysiek goud en zilver online kopen",
     assets: ["Goud", "Zilver"],
     pros: ["Écht fysiek metaal", "Veilige opslag", "MKS Pamp (Zwitsers)", "Vaste spread"],
@@ -171,7 +171,7 @@ const BROKERS: Broker[] = [
   {
     name: "BullionVault",
     url: "https://www.bullionvault.com",
-    logo: "🏅",
+    logo: "BV",
     tagline: "Grootste online goud/zilver marktplaats ter wereld",
     assets: ["Goud", "Zilver", "Platina"],
     pros: ["Laagste edelmetaal kosten", "24/7 handel", "Veilige opslag (Londen, NYC, Zürich)"],

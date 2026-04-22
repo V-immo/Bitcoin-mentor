@@ -177,7 +177,7 @@ export default function ContentPage() {
           {/* How to use */}
           <div className="content-howto">
             <h3 className="content-howto-title">
-              {isNL ? "💡 Zo gebruik je dit" : "💡 How to use this"}
+              {isNL ? "Zo gebruik je dit" : "How to use this"}
             </h3>
             <ol className="content-howto-list">
               <li>{isNL ? "Open TikTok, Reels of Shorts en start een video-opname" : "Open TikTok, Reels or Shorts and start recording"}</li>

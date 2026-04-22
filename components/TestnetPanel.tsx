@@ -76,7 +76,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
   if (!connected) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ marginBottom: 10, fontWeight: 600, color: "var(--text)" }}>🔬 Binance Testnet</div>
+        <div style={{ marginBottom: 10, fontWeight: 600, color: "var(--text)" }}>Binance Testnet</div>
         <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
           Koppel je Binance Testnet API keys in{" "}
           <a href="/instellingen" style={{ color: "var(--primary)", textDecoration: "none" }}>Instellingen</a>{" "}
@@ -126,7 +126,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
               color: side === s ? "#fff" : "var(--text-secondary)",
             }}
           >
-            {s === "BUY" ? "🟢 KOOP" : "🔴 VERKOOP"}
+            {s === "BUY" ? "KOOP" : "VERKOOP"}
           </button>
         ))}
       </div>
@@ -179,14 +179,14 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
       {/* Fout */}
       {orderError && (
         <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "var(--red)" }}>
-          ❌ {orderError}
+          ✗ {orderError}
         </div>
       )}
 
       {/* Succesbericht */}
       {lastOrder && (
         <div style={{ background: "rgba(38,197,124,0.1)", border: "1px solid rgba(38,197,124,0.25)", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>
-          <div style={{ color: "var(--green)", fontWeight: 600, marginBottom: 4 }}>✅ Order geplaatst!</div>
+          <div style={{ color: "var(--green)", fontWeight: 600, marginBottom: 4 }}>✓ Order geplaatst!</div>
           <div style={{ color: "var(--green)" }}>
             {lastOrder.side} {parseFloat(lastOrder.executedQty ?? "0").toFixed(6)} {ticker}
             {" "}voor ${parseFloat(lastOrder.cummulativeQuoteQty ?? "0").toFixed(2)}
@@ -196,7 +196,7 @@ export default function TestnetPanel({ currentPrice, asset }: Props) {
       )}
 
       <div style={{ fontSize: 11, color: "var(--surface-1)", marginTop: 10, textAlign: "center" }}>
-        🔬 Dit zijn testnet orders — geen echt geld
+        Dit zijn testnet orders — geen echt geld
       </div>
     </div>
   );

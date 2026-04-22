@@ -300,7 +300,7 @@ export default function ProfielPage() {
           {/* ── Voortgang naar zelfstandig traden ── */}
           <div className="card" style={{ marginBottom: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>🎯 Voortgang naar zelfstandig traden</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>Voortgang naar zelfstandig traden</div>
               <div style={{ fontSize: 12, color: "var(--primary)", fontWeight: 700 }}>
                 {Math.min(100, Math.round(
                   ((quiz?.level ?? 1) / 5 * 40) +
@@ -323,9 +323,9 @@ export default function ProfielPage() {
               }} />
             </div>
             <div style={{ display: "flex", gap: 16, marginTop: 10, fontSize: 11, color: "var(--text-secondary)", flexWrap: "wrap" }}>
-              <span>📚 Kennis: niveau {quiz?.level ?? 1}/5</span>
-              <span>📊 Trades: {Math.min(closedTrades.length, 20)}/20</span>
-              <span>🔥 Streak: {Math.min(quiz?.streak ?? 0, 7)}/7 dagen</span>
+              <span>Kennis: niveau {quiz?.level ?? 1}/5</span>
+              <span>Trades: {Math.min(closedTrades.length, 20)}/20</span>
+              <span>Streak: {Math.min(quiz?.streak ?? 0, 7)}/7 dagen</span>
             </div>
           </div>
 
@@ -339,7 +339,6 @@ export default function ProfielPage() {
           {!partnerLoading && (
             <div className="card" style={{ marginBottom: 4 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                <span style={{ fontSize: 20 }}>🤝</span>
                 <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>Accountability Partner</div>
                 {partner && (
                   <span style={{
@@ -373,7 +372,7 @@ export default function ProfielPage() {
               {partnerOptedIn && !partner && (
                 <div>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 12px", lineHeight: 1.5 }}>
-                    ⏳ Marcus is op zoek naar een goede match voor je. Dit kan tot 24 uur duren. Kom later terug!
+                    Marcus is op zoek naar een goede match voor je. Dit kan tot 24 uur duren. Kom later terug!
                   </p>
                   <button
                     onClick={togglePartnerOptIn}
@@ -405,7 +404,7 @@ export default function ProfielPage() {
                       <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{partner.codename}</div>
                       <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                         Gekoppeld op {new Date(partner.matchedAt).toLocaleDateString("nl-NL")}
-                        {partner.active7d && " · 🟢 actief deze week"}
+                        {partner.active7d && " · actief deze week"}
                       </div>
                     </div>
                   </div>
@@ -458,7 +457,7 @@ export default function ProfielPage() {
             background: "var(--surface)", border: "1px solid var(--border)",
             borderRadius: 12, padding: "14px 16px", textDecoration: "none",
           }}>
-            <span style={{ fontSize: 22 }}>🏦</span>
+            <span style={{ fontSize: 22 }}>▤</span>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>Platforms & Brokers</div>
               <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>Waar kun je écht traden? Overzicht van 14 platforms.</div>
@@ -475,7 +474,7 @@ export default function ProfielPage() {
 
           {/* ── Persoonlijk tradingplan ── */}
           <div className="card">
-            <div style={sectionTitle}>📋 Persoonlijk Tradingplan</div>
+            <div style={sectionTitle}>Persoonlijk Tradingplan</div>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 16px", lineHeight: 1.5 }}>
               Marcus gebruikt dit plan om jou te coachen. Als je een trade wil doen die niet klopt met je eigen regels, zal hij je direct aanspreken.
             </p>
@@ -583,7 +582,7 @@ export default function ProfielPage() {
 
           {/* ── Marcus Profiel (M4) ── */}
           <div className="card">
-            <div style={sectionTitle}>🧠 Marcus Profiel</div>
+            <div style={sectionTitle}>Marcus Profiel</div>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 16px", lineHeight: 1.5 }}>
               Hoe beter Marcus jou kent, hoe persoonlijker zijn coaching. Dit profiel wordt geladen bij elk gesprek.
             </p>
@@ -905,7 +904,7 @@ export default function ProfielPage() {
                   color: "var(--primary)", textDecoration: "none", cursor: "pointer",
                 }}
               >
-                📥 {t("profiel_export_trades")}
+                ↓ {t("profiel_export_trades")}
               </a>
               <a
                 href="/api/me/export?type=journal"
@@ -917,7 +916,7 @@ export default function ProfielPage() {
                   color: "var(--text-secondary)", textDecoration: "none", cursor: "pointer",
                 }}
               >
-                📓 {t("profiel_export_journal")}
+                ↓ {t("profiel_export_journal")}
               </a>
             </div>
           </div>

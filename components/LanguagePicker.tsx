@@ -66,7 +66,7 @@ export default function LanguagePicker() {
           onMouseEnter={e => (e.currentTarget.style.background = "rgba(191,122,153,0.18)")}
           onMouseLeave={e => (e.currentTarget.style.background = "rgba(191,122,153,0.08)")}
         >
-          <span style={{ fontSize: 32 }}>🇳🇱</span>
+          <span style={{ fontSize: 32 }}>NL</span>
           <span>Nederlands</span>
         </button>
 
@@ -88,7 +88,7 @@ export default function LanguagePicker() {
           onMouseEnter={e => (e.currentTarget.style.background = "rgba(191,122,153,0.18)")}
           onMouseLeave={e => (e.currentTarget.style.background = "rgba(191,122,153,0.08)")}
         >
-          <span style={{ fontSize: 32 }}>🇬🇧</span>
+          <span style={{ fontSize: 32 }}>EN</span>
           <span>English</span>
         </button>
       </div>

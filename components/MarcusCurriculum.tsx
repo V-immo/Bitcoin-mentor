@@ -4958,7 +4958,7 @@ Action: write your trading business plan. What is your monthly behavior goal? Wh
       },
       {
         id: "l10-edge",
-        icon: "⚔️",
+        icon: "◈",
         titleNL: "Je echte edge vinden en beschermen",
         titleEN: "Finding and protecting your real edge",
         contentNL: `Marcus stelt de meest fundamentele vraag in trading: waarom zou de markt jou geld geven?

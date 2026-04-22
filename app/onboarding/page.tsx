@@ -17,21 +17,21 @@ type TradingMode = "day" | "swing" | "long";
 const TRADING_MODES: { id: TradingMode; icon: string; label: string; desc: string; tip: string }[] = [
   {
     id: "day",
-    icon: "⚡",
+    icon: "▲",
     label: "Day Trading",
     desc: "Trades open en sluit je dezelfde dag",
     tip: "Elke dag actief, snelle beslissingen, strakke stops. Geschikt als je dagelijks tijd hebt.",
   },
   {
     id: "swing",
-    icon: "🌊",
+    icon: "↔",
     label: "Swing Trading",
     desc: "Posities houd je 2 tot 14 dagen aan",
     tip: "Minder stress dan day trading. Je hoeft niet elke minuut te kijken. Populair voor beginners.",
   },
   {
     id: "long",
-    icon: "🏔️",
+    icon: "→",
     label: "Long Term",
     desc: "Investeren voor weken tot maanden",
     tip: "Geduld is je voordeel. Minder trades, meer rust. Fundamentals tellen meer dan korte bewegingen.",
@@ -127,8 +127,8 @@ export default function OnboardingPage() {
   }
 
   const exchangeInfo = {
-    bitvavo: { name: "Bitvavo", flag: "🇪🇺", desc: "EU-gereguleerd · EUR-paren · ideaal voor Europese traders" },
-    bybit:   { name: "Bybit",   flag: "🌍", desc: "Globaal beschikbaar · USDT-paren · lage fees" },
+    bitvavo: { name: "Bitvavo", flag: "EU", desc: "EU-gereguleerd · EUR-paren · ideaal voor Europese traders" },
+    bybit:   { name: "Bybit",   flag: "Global", desc: "Globaal beschikbaar · USDT-paren · lage fees" },
   };
 
   return (
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
         {/* Stap 1: Regio + valuta */}
         {step === 1 && (
           <div className="onboarding-step">
-            <div className="onboarding-icon">🌍</div>
+            <div className="onboarding-icon">◉</div>
             <h1 className="onboarding-title">Jouw regio</h1>
             <p className="onboarding-subtitle">Marcus past zijn aanbevelingen aan op jouw locatie.</p>
             {regionLoading ? (
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
               <>
                 {region?.detected && region.country && (
                   <div style={{ textAlign: "center", fontSize: 14, color: "var(--text-secondary)", marginBottom: 16 }}>
-                    📍 We zien dat je uit <strong style={{ color: "var(--text)" }}>{region.country}</strong> verbindt
+                    We zien dat je uit <strong style={{ color: "var(--text)" }}>{region.country}</strong> verbindt
                   </div>
                 )}
                 <div style={{ marginBottom: 20 }}>
@@ -186,7 +186,7 @@ export default function OnboardingPage() {
                         color: currency === c ? "#fff" : "var(--text-secondary)",
                         transition: "all 0.15s",
                       }}>
-                        {c === "EUR" ? "🇪🇺 EUR" : "🇺🇸 USD"}
+                        {c === "EUR" ? "EUR" : "USD"}
                       </button>
                     ))}
                   </div>
@@ -243,7 +243,7 @@ export default function OnboardingPage() {
                   <div style={{ fontSize: 12, color: "var(--text-secondary)", marginLeft: 30 }}>{m.desc}</div>
                   {tradingMode === m.id && (
                     <div style={{ fontSize: 11, color: "var(--accent, #e91e63)", marginLeft: 30, marginTop: 6, lineHeight: 1.5 }}>
-                      💬 {m.tip}
+                      {m.tip}
                     </div>
                   )}
                 </button>
@@ -322,15 +322,15 @@ export default function OnboardingPage() {
         {/* Stap 4: App overzicht */}
         {step === 4 && (
           <div className="onboarding-step">
-            <div className="onboarding-icon">📱</div>
+            <div className="onboarding-icon">◉</div>
             <h1 className="onboarding-title">{t("onboarding_app_title")}</h1>
             <p className="onboarding-subtitle">{t("onboarding_app_subtitle")}</p>
             <div className="onboarding-features">
               {[
-                { icon: "📊", label: "Dashboard", desc: "Dagelijkse briefing en marktoverzicht" },
-                { icon: "⚡", label: "Scanner", desc: "Welke assets zijn klaar voor een setup?" },
-                { icon: "📈", label: "Paper Trade", desc: "Handel met nepgeld — leer zonder risico" },
-                { icon: "🎓", label: "Leren", desc: "Dagelijkse quizzes op jouw niveau" },
+                { icon: "≡", label: "Dashboard", desc: "Dagelijkse briefing en marktoverzicht" },
+                { icon: "▲", label: "Scanner", desc: "Welke assets zijn klaar voor een setup?" },
+                { icon: "↑", label: "Paper Trade", desc: "Handel met nepgeld — leer zonder risico" },
+                { icon: "★", label: "Leren", desc: "Dagelijkse quizzes op jouw niveau" },
               ].map(f => (
                 <div key={f.label} className="onboarding-feature-item">
                   <span className="onboarding-feature-icon">{f.icon}</span>

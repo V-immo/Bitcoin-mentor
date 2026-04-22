@@ -60,7 +60,7 @@ export default function InvitePage() {
   return (
     <main className="container-page" style={{ maxWidth: 480, margin: "0 auto" }}>
       <div className="card" style={{ textAlign: "center", padding: "40px 24px" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🤝</div>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>◉</div>
 
         {state === "success" && (
           <>

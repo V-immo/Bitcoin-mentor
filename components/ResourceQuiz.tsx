@@ -101,7 +101,7 @@ export default function ResourceQuiz({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18 }}>
           <div>
             <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text)", marginBottom: 3 }}>
-              🎓 {t("resources_test_yourself")}
+              {t("resources_test_yourself")}
             </div>
             <div style={{ fontSize: 12, color: "var(--accent)", fontWeight: 600 }}>{topic}</div>
           </div>
@@ -315,7 +315,7 @@ export default function ResourceQuiz({
         {phase === "result" && (
           <div style={{ textAlign: "center", padding: "8px 0 8px" }}>
             <div style={{ fontSize: 44, marginBottom: 10 }}>
-              {score === total ? "🎯" : score >= Math.ceil(total / 2) ? "👍" : "📖"}
+              {score === total ? "★" : score >= Math.ceil(total / 2) ? "✓" : "○"}
             </div>
             <div
               style={{

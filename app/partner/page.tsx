@@ -134,7 +134,7 @@ export default function PartnerPage() {
     <div className="partner-page">
       <div className="partner-header">
         <div>
-          <h1 className="partner-title">🤝 {isNL ? "Accountability Partner" : "Accountability Partner"}</h1>
+          <h1 className="partner-title">{isNL ? "Accountability Partner" : "Accountability Partner"}</h1>
           <p className="partner-subtitle">
             {isNL
               ? "Marcus koppelt je anoniem aan een trader op jouw niveau. Jullie volgen elkaars voortgang."
@@ -159,7 +159,7 @@ export default function PartnerPage() {
       {/* Geen opt-in */}
       {partnerData && !partnerData.optedIn && (
         <div className="partner-empty-card">
-          <div className="partner-empty-icon">🤝</div>
+          <div className="partner-empty-icon">◉</div>
           <div className="partner-empty-title">
             {isNL ? "Jij doet nog niet mee" : "You're not participating yet"}
           </div>
@@ -197,7 +197,7 @@ export default function PartnerPage() {
           {/* Partner header */}
           <div className="partner-card">
             <div className="partner-card-header">
-              <div className="partner-card-avatar">🤝</div>
+              <div className="partner-card-avatar">◉</div>
               <div>
                 <div className="partner-card-name">{partner.codename}</div>
                 <div className="partner-card-meta">

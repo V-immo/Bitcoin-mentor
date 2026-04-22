@@ -12,7 +12,7 @@ export default function LeaderboardPage() {
     <main className="page-container page-narrow">
       <div className="page-back-row">
         <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
-        <h1 className="page-title">🏆 {t("leaderboard_page_title")}</h1>
+        <h1 className="page-title">★ {t("leaderboard_page_title")}</h1>
       </div>
       <Leaderboard />
     </main>

@@ -124,7 +124,7 @@ export default function B2BDashboardPage() {
                       </span>
                     </td>
                     <td className="b2b-td-num">{m.xp}</td>
-                    <td className="b2b-td-num">🔥 {m.loginStreak}d</td>
+                    <td className="b2b-td-num">{m.loginStreak}d</td>
                     <td className="b2b-td-topics">
                       {m.weakTopics.length > 0
                         ? m.weakTopics.join(", ")
@@ -132,8 +132,8 @@ export default function B2BDashboardPage() {
                     </td>
                     <td>
                       {m.certReady
-                        ? <span className="b2b-cert-ready">✅ Klaar</span>
-                        : <span className="b2b-cert-pending">⏳ Bezig</span>}
+                        ? <span className="b2b-cert-ready">✓ Klaar</span>
+                        : <span className="b2b-cert-pending">Bezig</span>}
                     </td>
                     <td>
                       {m.activeToday
@@ -159,7 +159,7 @@ export default function B2BDashboardPage() {
             <div key={inv.token} className="b2b-invite-row">
               <span className="b2b-invite-num">Seat {idx + 1}</span>
               <button className="b2b-invite-copy" onClick={() => copyLink(inv.token)}>
-                {copiedToken === inv.token ? "✓ Gekopieerd" : "📋 Kopieer link"}
+                {copiedToken === inv.token ? "✓ Gekopieerd" : "Kopieer link"}
               </button>
             </div>
           ))}
@@ -171,7 +171,7 @@ export default function B2BDashboardPage() {
 
       {/* MiCA informatie */}
       <div className="b2b-mica-banner">
-        <div className="b2b-mica-icon">⚖️</div>
+        <div className="b2b-mica-icon">○</div>
         <div>
           <div className="b2b-mica-title">MiCA-conformiteit</div>
           <div className="b2b-mica-text">

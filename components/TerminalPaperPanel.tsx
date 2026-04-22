@@ -4,11 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const EMOTIONS = [
-    { value: 1, emoji: "😨", label: "Angstig" },
-    { value: 2, emoji: "😟", label: "Onzeker" },
-    { value: 3, emoji: "😐", label: "Neutraal" },
-    { value: 4, emoji: "😊", label: "Goed" },
-    { value: 5, emoji: "🔥", label: "Top" },
+    { value: 1, emoji: "1", label: "Angstig" },
+    { value: 2, emoji: "2", label: "Onzeker" },
+    { value: 3, emoji: "3", label: "Neutraal" },
+    { value: 4, emoji: "4", label: "Goed" },
+    { value: 5, emoji: "5", label: "Top" },
 ];
 
 type PaperTrade = {
@@ -510,7 +510,7 @@ export default function TerminalPaperPanel({
         const entrySnap = state.avgEntry;
         const btcSnap = state.openBtc;
         const newId = crypto.randomUUID();
-        const noteText = reason === "sl" ? "🛑 Stop Loss triggered" : "🎯 Take Profit triggered";
+        const noteText = reason === "sl" ? "Stop Loss triggered" : "Take Profit triggered";
         setState((prev) => ({
             ...prev,
             cash: prev.cash + valueNow,
@@ -667,7 +667,6 @@ export default function TerminalPaperPanel({
                     alignItems: "flex-start",
                     gap: 8,
                 }}>
-                    <span style={{ fontSize: 14, flexShrink: 0 }}>🧠</span>
                     <span style={{ lineHeight: 1.5 }}>
                         {complianceLoading ? "Marcus controleert je handelsplan…" : complianceMsg?.message}
                     </span>
@@ -931,7 +930,7 @@ export default function TerminalPaperPanel({
                     <>
                         {state.openBtc <= 0 ? (
                             <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text-secondary)" }}>
-                                <div style={{ fontSize: 24, marginBottom: 8 }}>📭</div>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>○</div>
                                 <div style={{ fontWeight: 600 }}>{t("paper_no_position")}</div>
                                 <div style={{ fontSize: 12, marginTop: 4 }}>{t("paper_no_position_hint")}</div>
                             </div>
@@ -1189,10 +1188,10 @@ export default function TerminalPaperPanel({
                                     <td style={{ color: "var(--text-secondary)", padding: "4px 0" }}>{t("paper_confirm_type")}</td>
                                     <td style={{ textAlign: "right", fontWeight: 600 }}>
                                         {confirmAction === "buy"
-                                            ? (orderType === "limit" ? "🔵 Limit BUY" : "🟢 Market BUY")
+                                            ? (orderType === "limit" ? "Limit BUY" : "Market BUY")
                                             : confirmAction === "partial"
-                                                ? `🔴 Partial SELL (${Math.round(confirmPct * 100)}%)`
-                                                : "🔴 Market SELL"}
+                                                ? `Partial SELL (${Math.round(confirmPct * 100)}%)`
+                                                : "Market SELL"}
                                     </td>
                                 </tr>
                                 <tr>
@@ -1283,7 +1282,7 @@ export default function TerminalPaperPanel({
             {pendingEmotionId && (
                 <div className="terminal-journal-prompt">
                     <div className="terminal-mini-label" style={{ marginBottom: 4 }}>
-                        {pendingEmotionSide === "buy" ? "🧠 Hoe voel je je bij deze aankoop?" : "🧠 Hoe voel je je bij het sluiten?"}
+                        {pendingEmotionSide === "buy" ? "Hoe voel je je bij deze aankoop?" : "Hoe voel je je bij het sluiten?"}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 10 }}>
                         Emotie-tracking helpt je patronen ontdekken in je tradinggedrag.
@@ -1393,7 +1392,7 @@ export default function TerminalPaperPanel({
                     <div className="terminal-progress-box">
                         <span className="terminal-progress-label">{t("paper_stats_streak")}</span>
                         <span className="terminal-progress-value" style={{ color: streakType === "win" ? "var(--green)" : streakType === "loss" ? "var(--red)" : "var(--text-muted)" }}>
-                            {currentStreak > 0 ? `${currentStreak}× ${streakType === "win" ? "🔥" : "❄️"}` : "—"}
+                            {currentStreak > 0 ? `${currentStreak}× ${streakType === "win" ? "+" : "-"}` : "—"}
                         </span>
                         <span className="terminal-progress-sub">{t("paper_stats_streak_sub")}</span>
                     </div>
@@ -1486,7 +1485,7 @@ export default function TerminalPaperPanel({
                                         {trade.note && (
                                             <tr key={`${trade.id}-note`}>
                                                 <td colSpan={5} style={{ paddingTop: 0 }}>
-                                                    <div className="terminal-journal-note">📓 {trade.note}</div>
+                                                    <div className="terminal-journal-note">{trade.note}</div>
                                                 </td>
                                             </tr>
                                         )}

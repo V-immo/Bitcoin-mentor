@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import EconomicCalendar from "@/components/EconomicCalendar";
 
 const EMOTIONS = [
-  { value: 1, label: "😨", desc: "Angstig" },
-  { value: 2, label: "😟", desc: "Onzeker" },
-  { value: 3, label: "😐", desc: "Neutraal" },
-  { value: 4, label: "😊", desc: "Goed" },
-  { value: 5, label: "🔥", desc: "Top" },
+  { value: 1, label: "1", desc: "Angstig" },
+  { value: 2, label: "2", desc: "Onzeker" },
+  { value: 3, label: "3", desc: "Neutraal" },
+  { value: 4, label: "4", desc: "Goed" },
+  { value: 5, label: "5", desc: "Top" },
 ];
 
 interface JournalEntry {
@@ -246,7 +246,7 @@ export default function AgendaPage() {
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">📅 Trading Agenda</h1>
+          <h1 className="page-title">Trading Agenda</h1>
           <p className="page-subtitle">Log je trades, emoties en notities per dag</p>
         </div>
         {/* Tab switcher */}
@@ -260,7 +260,7 @@ export default function AgendaPage() {
               color: agendaTab === t ? "var(--primary)" : "var(--text-muted)",
               transition: "all 0.15s",
             }}>
-              {t === "journaal" ? "📓 Journaal" : "🌍 Economisch"}
+              {t === "journaal" ? "Journaal" : "Economisch"}
             </button>
           ))}
         </div>
@@ -377,7 +377,7 @@ export default function AgendaPage() {
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 20 }}>📋</span>
+                  <span style={{ fontSize: 20 }}>○</span>
                   <div>
                     <span style={styles.statsTitle}>Wekelijkse review</span>
                     {weeklyWeekStart && (
@@ -416,7 +416,6 @@ export default function AgendaPage() {
           <div style={styles.marcusCard}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 20 }}>🧠</span>
                 <span style={styles.statsTitle}>Marcus analyseert</span>
               </div>
               <button
@@ -471,7 +470,7 @@ export default function AgendaPage() {
 
           {/* Maandoverzicht */}
           <div style={styles.statsCard}>
-            <div style={styles.statsTitle}>📊 {MONTH_NAMES[month]}</div>
+            <div style={styles.statsTitle}>{MONTH_NAMES[month]}</div>
             <div style={styles.statsGrid}>
               <div style={styles.statItem}>
                 <span style={styles.statLabel}>Totaal P&L</span>
@@ -497,7 +496,7 @@ export default function AgendaPage() {
           {/* Gedragspatronen kaart */}
           {patterns && patterns.totalTrades >= 3 && (
             <div style={styles.statsCard}>
-              <div style={styles.statsTitle}>🧠 Gedragspatronen</div>
+              <div style={styles.statsTitle}>Gedragspatronen</div>
               {/* Winrate per dag van de week */}
               <div style={{ marginBottom: 14 }}>
                 <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
@@ -563,7 +562,7 @@ export default function AgendaPage() {
                   borderRadius: 8, padding: "10px 12px",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                    <span style={{ fontSize: 14 }}>{patterns.revenge.revengeRatio >= 20 ? "⚠️" : "✅"}</span>
+                    <span style={{ fontSize: 14 }}>{patterns.revenge.revengeRatio >= 20 ? "!" : "✓"}</span>
                     <span style={{ fontSize: 12, fontWeight: 700, color: patterns.revenge.revengeRatio >= 20 ? "var(--red)" : "var(--green)" }}>
                       Revenge trading
                     </span>
@@ -679,7 +678,7 @@ export default function AgendaPage() {
 
               {/* Structurele reflectie */}
               <div style={{ marginBottom: 14 }}>
-                <div style={styles.fieldLabel}>✅ Wat ging goed?</div>
+                <div style={styles.fieldLabel}>✓ Wat ging goed?</div>
                 <textarea
                   value={whatWentWell}
                   onChange={e => setWhatWentWell(e.target.value)}
@@ -689,7 +688,7 @@ export default function AgendaPage() {
                 />
               </div>
               <div style={{ marginBottom: 14 }}>
-                <div style={styles.fieldLabel}>❌ Wat kon beter?</div>
+                <div style={styles.fieldLabel}>✗ Wat kon beter?</div>
                 <textarea
                   value={whatWentWrong}
                   onChange={e => setWhatWentWrong(e.target.value)}
@@ -699,7 +698,7 @@ export default function AgendaPage() {
                 />
               </div>
               <div style={{ marginBottom: 14 }}>
-                <div style={styles.fieldLabel}>💡 Leerpunten</div>
+                <div style={styles.fieldLabel}>○ Leerpunten</div>
                 <textarea
                   value={lessons}
                   onChange={e => setLessons(e.target.value)}
@@ -711,7 +710,7 @@ export default function AgendaPage() {
 
               {/* Vrije notitie */}
               <div style={{ marginBottom: 16 }}>
-                <div style={styles.fieldLabel}>📝 Extra notitie</div>
+                <div style={styles.fieldLabel}>Extra notitie</div>
                 <textarea
                   value={note}
                   onChange={e => setNote(e.target.value)}
@@ -726,7 +725,7 @@ export default function AgendaPage() {
                 disabled={saving}
                 style={styles.saveBtn}
               >
-                {saving ? "Opslaan + Marcus denkt na…" : "💾 Opslaan"}
+                {saving ? "Opslaan + Marcus denkt na…" : "Opslaan"}
               </button>
 
               {/* Marcus reflectievraag */}
@@ -748,7 +747,7 @@ export default function AgendaPage() {
             </div>
           ) : (
             <div style={styles.emptyState}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>👆</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>○</div>
               <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
                 Klik op een dag om je journal in te vullen
               </p>

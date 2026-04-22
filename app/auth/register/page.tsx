@@ -137,7 +137,7 @@ function RegisterForm() {
 
           {refCode && (
             <div className="referral-register-banner">
-              🎁 Uitnodigingscode actief: <strong>{refCode}</strong> — je krijgt +100 XP bij registratie
+              Uitnodigingscode actief: <strong>{refCode}</strong> — je krijgt +100 XP bij registratie
             </div>
           )}
 

@@ -6,10 +6,10 @@ import { signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 const NAV = [
-  { href: "/admin",         label: "📊 Overview",    exact: true },
-  { href: "/admin/users",   label: "👥 Users",        exact: false },
-  { href: "/admin/capital", label: "💰 Capital",      exact: false },
-  { href: "/admin/quiz",    label: "🧠 Quiz Pool",    exact: false },
+  { href: "/admin",         label: "Overview",    exact: true },
+  { href: "/admin/users",   label: "Users",        exact: false },
+  { href: "/admin/capital", label: "Capital",      exact: false },
+  { href: "/admin/quiz",    label: "Quiz Pool",    exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <div className="admin-logo">
-          <span style={{ color: "var(--primary)", fontSize: 20 }}>⚡</span> Admin
+          <span style={{ color: "var(--primary)", fontSize: 20 }}>★</span> Admin
           <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2, fontWeight: 400 }}>
             Bitcoin Mentor
           </div>
@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               cursor: "pointer", textAlign: "left", color: "var(--red)",
             }}
           >
-            🚪 Sign out
+            Sign out
           </button>
         </div>
       </aside>

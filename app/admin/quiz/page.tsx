@@ -77,12 +77,12 @@ export default function AdminQuizPage() {
     const data = await res.json();
     setSaving(false);
     if (data.ok) {
-      setSaveMsg("✅ Vraag toegevoegd!");
+      setSaveMsg("✓ Vraag toegevoegd!");
       setForm({ ...EMPTY_FORM });
       setShowForm(false);
       loadRows();
     } else {
-      setSaveMsg(`❌ ${data.error}`);
+      setSaveMsg(`✗ ${data.error}`);
     }
   }
 
@@ -104,10 +104,10 @@ export default function AdminQuizPage() {
     const data = await res.json();
     setGenerating(false);
     if (data.ok) {
-      setGenMsg(`✅ ${data.count} vragen gegenereerd en opgeslagen.`);
+      setGenMsg(`✓ ${data.count} vragen gegenereerd en opgeslagen.`);
       loadRows(); loadStats();
     } else {
-      setGenMsg(`❌ ${data.error}`);
+      setGenMsg(`✗ ${data.error}`);
     }
   }
 
@@ -134,10 +134,10 @@ export default function AdminQuizPage() {
     }
     setBulkGen(false);
     setBulkMsg(errors.length > 0
-      ? `⚠️ ${total} vragen gegenereerd. Fouten: ${errors.join(", ")}`
+      ? `! ${total} vragen gegenereerd. Fouten: ${errors.join(", ")}`
       : total > 0
-        ? `✅ ${total} vragen gegenereerd voor lege niveaus.`
-        : `ℹ️ Alle niveaus hebben al 20+ vragen.`
+        ? `✓ ${total} vragen gegenereerd voor lege niveaus.`
+        : `i Alle niveaus hebben al 20+ vragen.`
     );
     loadRows(); loadStats();
   }
@@ -155,14 +155,14 @@ export default function AdminQuizPage() {
       {/* Pool Statistieken */}
       <div className="admin-card" style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div className="admin-card-title" style={{ marginBottom: 0 }}>📊 Pool statistieken</div>
+          <div className="admin-card-title" style={{ marginBottom: 0 }}>Pool statistieken</div>
           <button
             className="admin-btn admin-btn-primary"
             onClick={handleBulkGenerate}
             disabled={bulkGen}
             style={{ fontSize: 12, padding: "5px 12px" }}
           >
-            {bulkGen ? "Genereren…" : "⚡ Vul lege niveaus bij"}
+            {bulkGen ? "Genereren…" : "Vul lege niveaus bij"}
           </button>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -182,7 +182,7 @@ export default function AdminQuizPage() {
                     const color = count === 0 ? "var(--red)" : count < 15 ? "var(--orange)" : "var(--green)";
                     return (
                       <td key={lang} style={{ padding: "7px 8px", color, fontWeight: 600 }}>
-                        {count} vragen {count < 15 ? "⚠️" : "✓"}
+                        {count} vragen {count < 15 ? "!" : "✓"}
                       </td>
                     );
                   })}
@@ -196,7 +196,7 @@ export default function AdminQuizPage() {
 
       {/* AI Genereren */}
       <div className="admin-card" style={{ marginBottom: 20 }}>
-        <div className="admin-card-title" style={{ marginBottom: 12 }}>🤖 Genereer vragen via AI</div>
+        <div className="admin-card-title" style={{ marginBottom: 12 }}>Genereer vragen via AI</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
             <label style={labelStyle}>Niveau</label>

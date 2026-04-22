@@ -5,7 +5,7 @@ import type { CalendarData, EconEvent, EarningsEvent } from "@/app/api/calendar/
 
 const IMPACT_COLOR = { 1: "var(--text-muted)", 2: "var(--orange)", 3: "var(--red)" };
 const IMPACT_LABEL = { 1: "laag", 2: "middel", 3: "hoog" };
-const IMPACT_DOT   = { 1: "🟢", 2: "🟡", 3: "🔴" };
+const IMPACT_DOT   = { 1: "●", 2: "◆", 3: "●" };
 
 const HOUR_LABEL: Record<string, string> = {
   bmo: "vóór markt",
@@ -59,7 +59,7 @@ function marcusWarning(events: EconEvent[], earnings: EarningsEvent[]): string |
   });
   if (thisWeek.length > 0) {
     const names = thisWeek.map(e => e.event).slice(0, 2).join(", ");
-    parts.push(`🔴 ${names} deze week — verhoog geen risico voor de release.`);
+    parts.push(`${names} deze week — verhoog geen risico voor de release.`);
   }
 
   // Earnings vandaag of morgen
@@ -131,7 +131,7 @@ export default function EconomicCalendar() {
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 20 }}>📅</span>
+            <span style={{ fontSize: 20 }}>○</span>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
                 Economische Kalender

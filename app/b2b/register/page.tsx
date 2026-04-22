@@ -58,7 +58,7 @@ export default function B2BRegisterPage() {
     return (
       <div className="b2b-register-page">
         <div className="b2b-register-card">
-          <div className="b2b-success-icon">✅</div>
+          <div className="b2b-success-icon">✓</div>
           <h1 className="b2b-register-title">Bedrijf aangemaakt</h1>
           <p className="b2b-register-sub">
             Stuur de onderstaande links naar je medewerkers. Elke link is eenmalig bruikbaar.

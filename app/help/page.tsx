@@ -7,7 +7,7 @@ export default function HelpPage() {
 
   const SECTIONS = [
     {
-      icon: "📈",
+      icon: "↑",
       title: t("help_section_trade"),
       items: [
         { q: t("help_q_trade1"), a: t("help_a_trade1") },
@@ -17,7 +17,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "👤",
+      icon: "○",
       title: t("help_section_marcus"),
       items: [
         { q: t("help_q_marcus1"), a: t("help_a_marcus1") },
@@ -27,7 +27,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "💰",
+      icon: "€",
       title: t("help_section_paper"),
       items: [
         { q: t("help_q_paper1"), a: t("help_a_paper1") },
@@ -37,7 +37,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "🎯",
+      icon: "◎",
       title: t("help_section_goal"),
       items: [
         { q: t("help_q_goal1"), a: t("help_a_goal1") },
@@ -45,7 +45,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "🧠",
+      icon: "○",
       title: t("help_section_quiz"),
       items: [
         { q: t("help_q_quiz1"), a: t("help_a_quiz1") },
@@ -53,14 +53,14 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "📊",
+      icon: "≡",
       title: t("help_section_stats"),
       items: [
         { q: t("help_q_stats1"), a: t("help_a_stats1") },
       ],
     },
     {
-      icon: "📰",
+      icon: "○",
       title: t("help_section_news"),
       items: [
         { q: t("help_q_news1"), a: t("help_a_news1") },
@@ -68,7 +68,7 @@ export default function HelpPage() {
       ],
     },
     {
-      icon: "🏆",
+      icon: "★",
       title: t("help_section_leaderboard"),
       items: [
         { q: t("help_q_lb1"), a: t("help_a_lb1") },

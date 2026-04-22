@@ -16,7 +16,7 @@ export default function TradeError({
   return (
     <main className="container-page clean-page">
       <div className="card" style={{ maxWidth: 480, margin: "60px auto", textAlign: "center" }}>
-        <div style={{ fontSize: 40, marginBottom: 12 }}>⚠️</div>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>!</div>
         <div className="value-sm red" style={{ marginBottom: 8 }}>Er ging iets mis</div>
         <p className="small-text muted" style={{ marginBottom: 16 }}>
           De handelspagina kon niet laden. Probeer opnieuw of herlaad de pagina.

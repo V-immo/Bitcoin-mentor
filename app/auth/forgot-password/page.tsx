@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
 
         {status === "sent" ? (
           <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>✉️</div>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>@</div>
             <p style={{ color: "var(--text-primary)", fontSize: 14, lineHeight: 1.6 }}>
               {t("forgot_sent_msg")}
             </p>

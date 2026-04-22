@@ -48,7 +48,7 @@ export default function PatternPanel() {
   return (
     <section className="stats-section">
       <div className="stats-section-header">
-        <h2 className="stats-section-title">🧠 Jouw Patronen</h2>
+        <h2 className="stats-section-title">Jouw Patronen</h2>
         <p className="stats-section-sub">Marcus analyseert je trades, emoties en gedrag over de afgelopen 60 dagen.</p>
       </div>
 

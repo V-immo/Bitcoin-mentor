@@ -22,7 +22,7 @@ type ActivityEvent = {
   detail: string;
 };
 
-const TYPE_ICON: Record<string, string> = { login: "🔑", quiz: "🧠", trade: "📈" };
+const TYPE_ICON: Record<string, string> = { login: "→", quiz: "○", trade: "↑" };
 const TYPE_LABEL: Record<string, string> = { login: "Login", quiz: "Quiz", trade: "Trade" };
 
 function fmtActivity(d: string | null) {
@@ -54,19 +54,19 @@ export default function AdminOverviewPage() {
   if (!stats) return <div className="admin-loading">Error loading stats.</div>;
 
   const tiles = [
-    { label: "Users", value: stats.totalUsers, icon: "👥", sub: `+ ${stats.totalAdmins} admins` },
-    { label: "Active today", value: stats.activeToday, icon: "🟢", sub: "logged in today" },
-    { label: "New this week", value: stats.newThisWeek, icon: "✨", sub: "new registrations" },
-    { label: "Inactive >7d", value: stats.inactive7d, icon: "⚠️", sub: "need attention", warn: stats.inactive7d > 0 },
-    { label: "Paper trades", value: stats.totalTrades, icon: "📈", sub: "platform-wide" },
+    { label: "Users", value: stats.totalUsers, icon: "○", sub: `+ ${stats.totalAdmins} admins` },
+    { label: "Active today", value: stats.activeToday, icon: "●", sub: "logged in today" },
+    { label: "New this week", value: stats.newThisWeek, icon: "★", sub: "new registrations" },
+    { label: "Inactive >7d", value: stats.inactive7d, icon: "!", sub: "need attention", warn: stats.inactive7d > 0 },
+    { label: "Paper trades", value: stats.totalTrades, icon: "↑", sub: "platform-wide" },
     {
       label: "Total P&L",
       value: `€ ${stats.totalPnl.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
-      icon: stats.totalPnl >= 0 ? "💚" : "🔴",
+      icon: "€",
       sub: "paper trading",
     },
-    { label: "Quiz today", value: stats.quizToday, icon: "🧠", sub: "completions" },
-    { label: "Avg. level", value: stats.avgLevel, icon: "⭐", sub: "quiz level" },
+    { label: "Quiz today", value: stats.quizToday, icon: "○", sub: "completions" },
+    { label: "Avg. level", value: stats.avgLevel, icon: "★", sub: "quiz level" },
   ];
 
   return (
@@ -93,10 +93,10 @@ export default function AdminOverviewPage() {
 
       <div className="admin-quick-links">
         <Link href="/admin/users" className="admin-quick-btn">
-          👥 View all users →
+          View all users →
         </Link>
         <Link href="/admin/capital" className="admin-quick-btn">
-          💰 Assign capital →
+          Assign capital →
         </Link>
       </div>
 

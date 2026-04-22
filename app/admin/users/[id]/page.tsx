@@ -221,7 +221,7 @@ export default function AdminUserDetailPage() {
               onClick={resetPassword}
               disabled={resetting}
             >
-              {resetting ? "Resetting…" : "🔑 Generate temporary password"}
+              {resetting ? "Resetting…" : "Generate temporary password"}
             </button>
             {tempPassword && (
               <div
@@ -278,7 +278,7 @@ export default function AdminUserDetailPage() {
               <div className="admin-quiz-stats">
                 <div className="admin-quiz-stat"><div className="admin-quiz-val">{quiz.level}</div><div>Level</div></div>
                 <div className="admin-quiz-stat"><div className="admin-quiz-val">{quiz.xp}</div><div>XP</div></div>
-                <div className="admin-quiz-stat"><div className="admin-quiz-val">{quiz.streak}🔥</div><div>Streak</div></div>
+                <div className="admin-quiz-stat"><div className="admin-quiz-val">{quiz.streak}</div><div>Streak</div></div>
               </div>
               {quiz.weakTopics.length > 0 && (
                 <div className="admin-weak-topics">
@@ -336,7 +336,7 @@ export default function AdminUserDetailPage() {
                       <span className={pnl >= 0 ? "admin-green" : "admin-red"}>P&L: € {pnl.toFixed(2)}</span>
                       {p.position && (
                         <span className="admin-badge">
-                          {p.position.side === "long" ? "📈" : "📉"} Open position
+                          {p.position.side === "long" ? "▲" : "▼"} Open position
                         </span>
                       )}
                     </div>

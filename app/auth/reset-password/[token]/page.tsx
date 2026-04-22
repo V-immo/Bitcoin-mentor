@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
 
         {status === "done" ? (
           <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>✓</div>
             <p style={{ color: "var(--text-primary)", fontSize: 14 }}>{t("reset_success_msg")}</p>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginTop: 8 }}>{t("reset_redirect_hint")}</p>
             <Link href="/auth/login" style={{ display: "inline-block", marginTop: 20, color: "var(--primary)", fontSize: 13, textDecoration: "none" }}>

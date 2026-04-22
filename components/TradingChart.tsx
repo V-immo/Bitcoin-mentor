@@ -667,13 +667,13 @@ export default function TradingChart({
               onClick={() => setChartType("candle")}
               className={`chart-type-btn${chartType === "candle" ? " active" : ""}`}
             >
-              🕯 {t("chart_candle_label")}
+              {t("chart_candle_label")}
             </button>
             <button
               onClick={() => setChartType("line")}
               className={`chart-type-btn${chartType === "line" ? " active" : ""}`}
             >
-              📈 {t("chart_line_label")}
+              {t("chart_line_label")}
             </button>
           </div>
           <button

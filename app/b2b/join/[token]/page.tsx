@@ -36,7 +36,7 @@ export default function B2BJoinPage() {
     return (
       <div className="b2b-join-page">
         <div className="b2b-join-card">
-          <div className="b2b-join-icon">✅</div>
+          <div className="b2b-join-icon">✓</div>
           <h1 className="b2b-join-title">Welkom bij {msg}!</h1>
           <p className="b2b-join-sub">
             Je bent gekoppeld aan het bedrijfsaccount. Start je eerste les en behaal je certificaat vóór 1 juli 2026.
@@ -51,7 +51,7 @@ export default function B2BJoinPage() {
     return (
       <div className="b2b-join-page">
         <div className="b2b-join-card">
-          <div className="b2b-join-icon">❌</div>
+          <div className="b2b-join-icon">✗</div>
           <h1 className="b2b-join-title">Uitnodiging ongeldig</h1>
           <p className="b2b-join-sub">{msg}</p>
           <Link href="/" className="b2b-join-cta">Terug naar home</Link>
@@ -63,7 +63,7 @@ export default function B2BJoinPage() {
   return (
     <div className="b2b-join-page">
       <div className="b2b-join-card">
-        <div className="b2b-join-icon">🏢</div>
+        <div className="b2b-join-icon">○</div>
         <h1 className="b2b-join-title">Uitnodiging accepteren</h1>
         <p className="b2b-join-sub">
           Je bent uitgenodigd om deel te nemen aan een bedrijfsaccount op Bitcoin Mentor.

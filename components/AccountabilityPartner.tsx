@@ -92,7 +92,7 @@ export default function AccountabilityPartner() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 22 }}>🤝</span>
+          <span style={{ fontSize: 22 }}>◉</span>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
               Accountability Partner
@@ -174,7 +174,7 @@ export default function AccountabilityPartner() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 20, flexShrink: 0,
                   }}>
-                    🤝
+                    ◉
                   </div>
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}>
