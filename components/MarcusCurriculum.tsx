@@ -4075,6 +4075,127 @@ Action: take the current BTC/EUR chart and find the next strong support zone. Sc
           explain: "A score of 1/6 means a weak signal. One factor alone gives too little reliability — the market can easily break through the 50 EMA. Wait until Fibonacci, support or RSI also confirm in the same zone. Patience is a trading skill.",
         },
       },
+      {
+        id: "l7-orderblocks",
+        icon: "▲",
+        titleNL: "Order Blocks, BOS en CHoCH — hoe instellingen de markt sturen",
+        titleEN: "Order Blocks, BOS and CHoCH — how institutions move markets",
+        contentNL: `Marcus stelt je de vraag die 99% van de retailers nooit stelt: wie staat er aan de andere kant van jouw trade?
+
+Het antwoord: instellingen. Banken, hedgefondsen en market makers verplaatsen miljarden. Ze kunnen niet in één keer kopen zonder de prijs tegen zichzelf te bewegen — dus bouwen ze posities op in zones. Die zones noemen we Order Blocks.
+
+Wat is een Order Block?
+De laatste bearish kaars vóór een grote bullish move. Op dat punt kochten instellingen massaal. Wanneer de prijs terugkeert naar die zone, kopen ze opnieuw — want hun positie staat nog open. Dat is waarom de prijs zo precies op die zones reageert.
+
+Hoe herken je een Order Block in de praktijk?
+1. Zoek een sterke impulsieve move omhoog (meerdere grote groene kaarsen na elkaar)
+2. Kijk naar de kaars net vóór die move — dit is jouw Order Block
+3. Markeer het lichaam van die kaars als zone (open tot close)
+4. Wacht totdat de prijs terugkeert naar die zone
+
+Break of Structure (BOS)
+BOS is de bevestiging dat de trend doorzet. In een uptrend: de prijs breekt door het vorige Higher High. Dit is geen signaal om te kopen — het is bevestiging dat de structuur intact is. Marcus gebruikt BOS om te filteren: alleen trades in de richting van de BOS.
+
+Change of Character (CHoCH)
+CHoCH is het vroegste signaal van een trendomkering. In een uptrend: de prijs breekt voor het eerst onder het vorige Higher Low. Dit is geen bevestiging, maar een waarschuwing. Marcus reageert niet op elke CHoCH — hij wacht op een BOS in de nieuwe richting als bevestiging.
+
+De combinatie die werkt:
+CHoCH → structuur toont mogelijk een omslag → wacht op BOS in nieuwe richting → zoek Order Block in die richting → entry als prijs terugkeert naar OB met confluentie (volume, Fibonacci, RSI).
+
+Waarom leert niemand dit zo? Omdat het scholen zijn die indicatoren als startpunt nemen. Marcus neemt de marktstructuur als startpunt en gebruikt indicatoren alleen ter bevestiging.`,
+        contentEN: `Marcus asks you the question 99% of retail traders never ask: who is on the other side of your trade?
+
+The answer: institutions. Banks, hedge funds and market makers move billions. They can't buy all at once without moving the price against themselves — so they build positions in zones. We call those zones Order Blocks.
+
+What is an Order Block?
+The last bearish candle before a large bullish move. At that point, institutions bought heavily. When price returns to that zone, they buy again — because their position is still open. That's why price reacts so precisely at those zones.
+
+How do you identify an Order Block in practice?
+1. Find a strong impulsive move upward (several large green candles in a row)
+2. Look at the candle just before that move — this is your Order Block
+3. Mark the body of that candle as a zone (open to close)
+4. Wait for price to return to that zone
+
+Break of Structure (BOS)
+BOS confirms the trend continues. In an uptrend: price breaks through the previous Higher High. This is not a buy signal — it confirms the structure is intact. Marcus uses BOS to filter: only trades in the direction of the BOS.
+
+Change of Character (CHoCH)
+CHoCH is the earliest signal of a trend reversal. In an uptrend: price breaks below the previous Higher Low for the first time. This is not confirmation, it's a warning. Marcus doesn't react to every CHoCH — he waits for a BOS in the new direction as confirmation.
+
+The combination that works:
+CHoCH → structure shows a possible shift → wait for BOS in new direction → find Order Block in that direction → entry when price returns to OB with confluence (volume, Fibonacci, RSI).
+
+Why doesn't anyone teach it this way? Because schools start with indicators. Marcus starts with market structure and uses indicators only for confirmation.`,
+        termsNL: [
+          { term: "Order Block (OB)", def: "De laatste bearish kaars vóór een grote bullish impuls. Zone waar instellingen posities hebben opgebouwd." },
+          { term: "Break of Structure (BOS)", def: "Prijs breekt door het vorige swing high (uptrend) of swing low (downtrend). Bevestigt dat de trend doorzet." },
+          { term: "Change of Character (CHoCH)", def: "Prijs breekt voor het eerst door een Higher Low (in uptrend). Vroeg signaal van mogelijke trendomkering." },
+          { term: "Impulsieve Move", def: "Snelle, sterke prijsbeweging met meerdere grote kaarsen in dezelfde richting — teken van institutionele activiteit." },
+          { term: "Mitigation", def: "Het moment waarop de prijs terugkeert naar een Order Block. Instellingen voegen posities toe op ditzelfde niveau." },
+        ],
+        termsEN: [
+          { term: "Order Block (OB)", def: "The last bearish candle before a large bullish impulse. Zone where institutions have built positions." },
+          { term: "Break of Structure (BOS)", def: "Price breaks through the previous swing high (uptrend) or swing low (downtrend). Confirms the trend continues." },
+          { term: "Change of Character (CHoCH)", def: "Price breaks below a Higher Low for the first time (in uptrend). Early signal of possible trend reversal." },
+          { term: "Impulsive Move", def: "Fast, strong price movement with multiple large candles in the same direction — sign of institutional activity." },
+          { term: "Mitigation", def: "The moment price returns to an Order Block. Institutions add to their positions at that same level." },
+        ],
+        diagram: (
+          <svg viewBox="0 0 320 170" style={{ width: "100%", maxWidth: 420, height: "auto" }} aria-hidden>
+            {/* Uptrend structuur */}
+            <polyline points="10,145 45,115 65,128 100,88 125,102 165,58 190,72" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinejoin="round" />
+            {/* BOS markering bij doorbraak HH */}
+            <line x1="100" y1="88" x2="100" y2="55" stroke="#22c55e" strokeWidth="1" strokeDasharray="4,3" />
+            <line x1="90" y1="55" x2="175" y2="55" stroke="#22c55e" strokeWidth="1" strokeDasharray="4,3" />
+            <text x="178" y="58" fill="#22c55e" fontSize="9" fontWeight="700">BOS</text>
+            {/* Labels HH HL */}
+            <text x="94" y="84" fill="#22c55e" fontSize="8" fontWeight="700">HH</text>
+            <text x="60" y="144" fill="#22c55e" fontSize="8" fontWeight="700">HL</text>
+            <text x="119" y="98" fill="#22c55e" fontSize="8" fontWeight="700">HL</text>
+            <text x="159" y="54" fill="#22c55e" fontSize="8" fontWeight="700">HH</text>
+            {/* Order Block zone */}
+            <rect x="150" y="68" width="22" height="14" fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="1.5" rx="2" />
+            <text x="175" y="80" fill="#f59e0b" fontSize="8" fontWeight="700">OB</text>
+            {/* Prijs keert terug naar OB (mitigation) */}
+            <polyline points="190,72 210,95 225,78 240,110 260,72" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinejoin="round" strokeDasharray="5,3" />
+            <circle cx="240" cy="75" r="4" fill="#f59e0b" />
+            <text x="245" y="70" fill="#f59e0b" fontSize="8" fontWeight="700">Mitigation</text>
+            {/* CHoCH markering */}
+            <line x1="125" y1="102" x2="125" y2="135" stroke="#ef4444" strokeWidth="1" strokeDasharray="4,3" />
+            <line x1="55" y1="135" x2="200" y2="135" stroke="#ef4444" strokeWidth="1" strokeDasharray="4,3" />
+            <text x="55" y="148" fill="#ef4444" fontSize="8" fontWeight="700">CHoCH — HL gebroken</text>
+            {/* Legenda */}
+            <rect x="10" y="155" width="8" height="8" fill="#22c55e" rx="1" />
+            <text x="21" y="162" fill="#22c55e" fontSize="8">BOS / structuur</text>
+            <rect x="100" y="155" width="8" height="8" fill="#f59e0b" rx="1" />
+            <text x="111" y="162" fill="#f59e0b" fontSize="8">Order Block</text>
+            <rect x="190" y="155" width="8" height="8" fill="#ef4444" rx="1" />
+            <text x="201" y="162" fill="#ef4444" fontSize="8">CHoCH</text>
+          </svg>
+        ),
+        checkNL: {
+          q: "BTC zit in een uptrend (reeks van HH en HL). De prijs doorbreekt plotseling het laatste Higher Low. Wat doe je?",
+          options: [
+            "Direct short gaan — de trend is gebroken",
+            "Niks doen, dit is normale volatiliteit",
+            "Dit is een CHoCH — waarschuwing. Wacht op BOS in tegengestelde richting voor bevestiging",
+            "Bijkopen — dips in uptrends zijn koopkansen",
+          ],
+          correct: 2,
+          explain: "Een CHoCH (doorbraak van een Higher Low) is een vroeg signaal maar geen bevestiging. Retailtraders springen er direct op en worden uitgestopt als de markt herstelt. Marcus wacht: pas als de prijs ook een Lower High maakt EN een BOS neerwaarts vormt, is de trendomkering bevestigd. Tot die tijd: geen positie.",
+        },
+        checkEN: {
+          q: "BTC is in an uptrend (series of HH and HL). Price suddenly breaks the last Higher Low. What do you do?",
+          options: [
+            "Go short immediately — the trend is broken",
+            "Do nothing, this is normal volatility",
+            "This is a CHoCH — warning signal. Wait for a BOS in the opposite direction for confirmation",
+            "Buy more — dips in uptrends are buying opportunities",
+          ],
+          correct: 2,
+          explain: "A CHoCH (break of a Higher Low) is an early signal but not confirmation. Retail traders jump in immediately and get stopped out when the market recovers. Marcus waits: only when price also forms a Lower High AND creates a downward BOS is the reversal confirmed. Until then: no position.",
+        },
+      },
     ],
   },
   {
