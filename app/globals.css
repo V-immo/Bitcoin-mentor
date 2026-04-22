@@ -9534,7 +9534,14 @@ textarea:focus-visible,
 .b2b-stat-val { font-size: 1.4rem; font-weight: 800; color: var(--text); }
 .b2b-stat-label { font-size: 0.72rem; color: var(--muted); }
 .b2b-section { margin-bottom: 32px; }
-.b2b-section-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+.b2b-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.b2b-section-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 0; }
+.b2b-export-btn {
+  font-size: 0.8rem; font-weight: 600; color: var(--primary);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  padding: 5px 12px; text-decoration: none; transition: background 0.15s;
+}
+.b2b-export-btn:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
 .b2b-section-sub { font-size: 0.82rem; color: var(--muted); margin: 0 0 12px; }
 .b2b-empty { font-size: 0.85rem; color: var(--muted); }
 .b2b-table-wrap { overflow-x: auto; }

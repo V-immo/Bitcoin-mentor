@@ -11,6 +11,7 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.role = (user as { role?: string }).role ?? "user";
         token.startCapital = (user as { startCapital?: number }).startCapital ?? 10000;
+        token.companyRole = (user as { companyRole?: string }).companyRole ?? "";
       }
       return token;
     },
@@ -19,6 +20,7 @@ export const authConfig: NextAuthConfig = {
         (session.user as { id?: string }).id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
         (session.user as { startCapital?: number }).startCapital = token.startCapital as number;
+        (session.user as { companyRole?: string }).companyRole = token.companyRole as string;
       }
       return session;
     },

@@ -45,6 +45,7 @@ export default function Nav() {
   const { t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
+  const isCompanyAdmin = (session?.user as { companyRole?: string })?.companyRole === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
@@ -145,6 +146,12 @@ export default function Nav() {
                   <Link href="/admin" className={`app-nav-dd-item app-nav-dd-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
                     <ShieldCheck size={15} />
                     <span>Admin</span>
+                  </Link>
+                )}
+                {isCompanyAdmin && (
+                  <Link href="/b2b/dashboard" className={`app-nav-dd-item${pathname.startsWith("/b2b") ? " active" : ""}`}>
+                    <Building2 size={15} />
+                    <span>Bedrijfsdashboard</span>
                   </Link>
                 )}
                 <div className="app-nav-dd-divider" />
@@ -249,6 +256,12 @@ export default function Nav() {
                 <Link href="/admin" className={`nav-mobile-link nav-mobile-admin${pathname.startsWith("/admin") ? " active" : ""}`}>
                   <ShieldCheck size={18} className="nav-mobile-link-icon" />
                   <span>Admin</span>
+                </Link>
+              )}
+              {isCompanyAdmin && (
+                <Link href="/b2b/dashboard" className={`nav-mobile-link${pathname.startsWith("/b2b") ? " active" : ""}`}>
+                  <Building2 size={18} className="nav-mobile-link-icon" />
+                  <span>Bedrijfsdashboard</span>
                 </Link>
               )}
             </div>

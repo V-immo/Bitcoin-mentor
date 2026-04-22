@@ -31,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             password_hash: string;
             role: string;
             start_capital: number;
+            company_role?: string;
             totp_enabled?: number;
             totp_secret?: string;
           } | undefined;
@@ -64,6 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           role: user.role,
           startCapital: user.start_capital,
+          companyRole: user.company_role ?? "",
         };
       },
     }),

@@ -20,7 +20,10 @@ type Member = {
 
 type Company = { name: string; seats: number; plan: string; invitesUsed: number };
 
-const LEVEL_LABELS = ["—", "Beginner", "Lerende", "Bewuste Trader", "Gedisciplineerde", "Pro"];
+const LEVEL_LABELS = [
+  "—", "Beginner", "Lerende", "Bewuste Trader", "Gedisciplineerde",
+  "Pro", "Geavanceerd", "TA Expert", "On-Chain", "Portfoliobeheer", "Professioneel",
+];
 
 export default function B2BDashboardPage() {
   const { data: session, status } = useSession();
@@ -91,7 +94,16 @@ export default function B2BDashboardPage() {
 
       {/* Medewerkers tabel */}
       <div className="b2b-section">
-        <h2 className="b2b-section-title">Voortgang medewerkers</h2>
+        <div className="b2b-section-header">
+          <h2 className="b2b-section-title">Voortgang medewerkers</h2>
+          <a
+            href="/api/b2b/export"
+            download
+            className="b2b-export-btn"
+          >
+            CSV exporteren
+          </a>
+        </div>
         {members.length === 0 ? (
           <p className="b2b-empty">Nog geen medewerkers. Stuur de uitnodigingslinks hieronder.</p>
         ) : (
