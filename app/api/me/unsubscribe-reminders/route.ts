@@ -20,7 +20,15 @@ export async function GET(req: NextRequest) {
 
   const db = getDb();
   const users = db.prepare("SELECT id FROM users").all() as { id: number }[];
-  const match = users.find(u => reminderToken(u.id) === token);
+
+  // Ondersteun HMAC tokens (cron endpoint) én base64 user-id tokens (market-poller)
+  let match = users.find(u => reminderToken(u.id) === token);
+  if (!match) {
+    try {
+      const decodedId = parseInt(Buffer.from(token, "base64url").toString("utf8"));
+      if (!isNaN(decodedId)) match = users.find(u => u.id === decodedId);
+    } catch { /* ongeldig token */ }
+  }
 
   if (!match) {
     return new Response("Link ongeldig of verlopen.", { status: 400, headers: { "Content-Type": "text/html; charset=utf-8" } });

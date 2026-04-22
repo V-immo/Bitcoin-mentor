@@ -479,8 +479,8 @@ export function startPoller(): void {
   // Externe data (FearGreed, CoinGecko, funding) elke 30 minuten
   setInterval(pollAll, POLL_INTERVAL);
 
-  // Dagelijkse reminder check elke minuut — stuurt email rond 19:00
-  setInterval(runDailyReminderJob, 60_000);
+  // Dagelijkse reminder wordt afgehandeld door /api/cron/daily-reminder (serverkant cron 19:00)
+  // setInterval(runDailyReminderJob, 60_000);  — uitgeschakeld om dubbele emails te voorkomen
 
   // Wekelijkse streak freeze reload elke minuut — herlaadt elke maandag om 06:00
   setInterval(runWeeklyFreezeReload, 60_000);

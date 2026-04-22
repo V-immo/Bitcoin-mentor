@@ -16,10 +16,10 @@ type ScriptData = {
 };
 
 const PLATFORMS = [
-  { key: "tiktok",  label: "TikTok",     emoji: "🎵" },
-  { key: "reels",   label: "Reels",      emoji: "📸" },
-  { key: "shorts",  label: "Shorts",     emoji: "▶️" },
-  { key: "twitter", label: "X / Twitter",emoji: "𝕏" },
+  { key: "tiktok",  label: "TikTok",      emoji: "▶" },
+  { key: "reels",   label: "Reels",       emoji: "◉" },
+  { key: "shorts",  label: "Shorts",      emoji: "▲" },
+  { key: "twitter", label: "X / Twitter", emoji: "✕" },
 ];
 
 export default function ContentPage() {

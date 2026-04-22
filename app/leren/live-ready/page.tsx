@@ -25,7 +25,7 @@ const EU_COUNTRIES = new Set([
 const EXCHANGES = {
   bitvavo: {
     name: "Bitvavo",
-    flag: "🇳🇱",
+    flag: "NL",
     taglineNL: "Laagste fees in de Benelux · iDEAL-storting · Nederlandse support",
     taglineEN: "Lowest fees in Benelux · Direct bank transfer · EU regulated",
     url: "https://bitvavo.com/?invite=BITCOINMENTOR",
@@ -369,7 +369,7 @@ export default function LiveReadyPage() {
                 : (isNL ? "Deel op social media" : "Share on social media")}
             </button>
             <button className="liveready-btn-secondary" onClick={() => window.print()}>
-              {isNL ? "🖨️ Print / Download" : "🖨️ Print / Download"}
+              {isNL ? "Print / Download" : "Print / Download"}
             </button>
           </div>
 

@@ -339,7 +339,7 @@ Action: open the chart on this platform now. Look at the price over the last 24 
       },
       {
         id: "l1-wallet",
-        icon: "🔐",
+        icon: "○",
         titleNL: "Wie bezit jouw Bitcoin eigenlijk?",
         titleEN: "Who actually owns your Bitcoin?",
         contentNL: `Marcus stelt je een vraag: jij zet €5.000 op Bitvavo en koopt Bitcoin. Bitvavo bevestigt: je hebt 0.06 BTC. Maar is dat BTC echt van jou?
@@ -509,7 +509,7 @@ Marcus says: I keep trading capital on an exchange — I need to be able to move
       },
       {
         id: "l1-groen-rood",
-        icon: "🟢",
+        icon: "●",
         titleNL: "Marktfases — bull, bear en sideways herkennen",
         titleEN: "Market phases — recognizing bull, bear and sideways",
         contentNL: `Marcus vraagt je iets: kijk naar de BTC grafiek van het afgelopen jaar. Je ziet maanden van stijging, dan een scherpe daling van weken, dan een periode waarbij de prijs nauwelijks beweegt. Hoe herken je in welke fase de markt nu zit — en waarom maakt dat verschil voor jouw beslissingen?
@@ -665,7 +665,7 @@ Marcus says: The market phase determines EVERYTHING. In a bull market you can ba
       },
       {
         id: "l1-altcoins",
-        icon: "🌐",
+        icon: "○",
         titleNL: "Altcoins en het ecosysteem — meer dan alleen Bitcoin",
         titleEN: "Altcoins and the ecosystem — more than just Bitcoin",
         contentNL: `Marcus stelt je een vraag: waarom bestaat er naast Bitcoin nog duizenden andere crypto's? Is Ethereum gewoon een goedkopere Bitcoin? Of is het iets totaal anders?
@@ -939,7 +939,7 @@ Marcus says: Price is marketing. Market cap is reality. Every beginner who puts 
       },
       {
         id: "l1-stablecoins",
-        icon: "💵",
+        icon: "€",
         titleNL: "Stablecoins en trading pairs — de taal van crypto-handel",
         titleEN: "Stablecoins and trading pairs — the language of crypto trading",
         contentNL: `Marcus vraagt je: wanneer je BTC 'verkoopt', wat ontvang je dan? Euros? Dollars? Of iets anders?
@@ -1077,7 +1077,7 @@ Marcus says: Stablecoins are your shelter. When the market crashes and you want 
       },
       {
         id: "l1-volatiliteit",
-        icon: "⚡",
+        icon: "▲",
         titleNL: "Volatiliteit — waarom crypto zo anders is",
         titleEN: "Volatility — why crypto is so different",
         contentNL: `Marcus stelt je een vraag: het is 2022. Je hebt €10.000 in BTC geïnvesteerd in november 2021. Een jaar later is je positie nog €1.700 waard. Dat is -83%. Hoe reageer je?
@@ -1225,7 +1225,7 @@ Marcus says: Volatility is the market's tuition fee. It eliminates weak hands. I
       },
       {
         id: "l1-exchange",
-        icon: "🏦",
+        icon: "▤",
         titleNL: "Een exchange gebruiken — van account tot eerste aankoop",
         titleEN: "Using an exchange — from account to first purchase",
         contentNL: `Marcus vraagt: als je nu €200 in BTC wilt kopen, weet je dan exact hoe? Welke exchange? Wat is KYC? Wat kost het? En hoe voorkom je veelgemaakte fouten bij je eerste aankoop?
@@ -1406,7 +1406,7 @@ Marcus says: Your first purchase does something to you. The price moves and you 
     lessons: [
       {
         id: "l2-candles",
-        icon: "🕯️",
+        icon: "◇",
         titleNL: "Candlestick kaarsen — de taal van de markt",
         titleEN: "Candlestick candles — the language of the market",
         contentNL: `Marcus stelt je een vraag: kijk naar één kaars op de grafiek. Één enkele kaars. Hoeveel informatie geeft die jou? De meeste beginners zien alleen 'groen' of 'rood'. Een ervaren trader ziet een volledig verhaal van een gevecht tussen kopers en verkopers.
@@ -1499,7 +1499,7 @@ Marcus says: Candles aren't symbols — they're battle reports. When you learn t
       },
       {
         id: "l2-wicks",
-        icon: "📌",
+        icon: "◎",
         titleNL: "Wicks lezen — waar het echte gevecht plaatsvindt",
         titleEN: "Reading wicks — where the real battle happens",
         contentNL: `Marcus vraagt je iets: waarom stopt de prijs soms halverwege een daling en keert dan plotseling om? Wie zijn die mysterieuze kopers die precies op het dieptepunt instappen — en hoe kun jij ze zien aankomen?
@@ -1838,7 +1838,7 @@ Marcus says: A market order is the emotional decision of the moment. A limit ord
       },
       {
         id: "l2-stoploss",
-        icon: "🛑",
+        icon: "✗",
         titleNL: "De stop-loss — jouw meest waardevolle order",
         titleEN: "The stop-loss — your most valuable order",
         contentNL: `Marcus stelt je een scenario voor: je hebt €3.000 belegd in BTC op €80.000. Je hebt geen stop-loss gezet — want 'BTC komt altijd terug'. De volgende ochtend staat hij op €62.000. Dat is -22.5%. Je verlies = €675.
@@ -2094,7 +2094,7 @@ Marcus says: The only trader guaranteed to go bankrupt is the trader who doesn't
       },
       {
         id: "l2-volume",
-        icon: "📶",
+        icon: "↑",
         titleNL: "Volume — de vergeten bevestiging",
         titleEN: "Volume — the forgotten confirmation",
         contentNL: `Marcus stelt je een vraag: twee breakouts. Bij de eerste doorbreekt BTC een resistance met 1.000 BTC verhandeld in die uur-kaars. Bij de tweede doorbreekt hij dezelfde resistance met 15.000 BTC in die kaars. Welke breakout vertrouw jij meer?
@@ -2226,7 +2226,7 @@ Marcus says: Price is what the market wants you to see. Volume is what the marke
       },
       {
         id: "l2-patterns",
-        icon: "🕯️",
+        icon: "◇",
         titleNL: "Kaarsenpatronen — de 5 meest betrouwbare signalen",
         titleEN: "Candle patterns — the 5 most reliable signals",
         contentNL: `Marcus stelt je een vraag: als één kaars al een verhaal vertelt, wat vertelt een combinatie van twee of drie kaarsen? Dat is het principe achter kaarsenpatronen — en sommige hebben een treffscore van 60-70% over duizenden historische trades.
@@ -2367,7 +2367,7 @@ Marcus says: Candle patterns aren't magic — they're the footprints of big play
     lessons: [
       {
         id: "l3-trend",
-        icon: "📉",
+        icon: "↓",
         titleNL: "Trendstructuur — het fundament van elke analyse",
         titleEN: "Trend structure — the foundation of every analysis",
         contentNL: `Marcus vraagt je iets concreets: kijk naar de BTC 1D grafiek. De prijs ging van €70.000 → €90.000 → €82.000 → €95.000 → €87.000 → €102.000. Is dit een uptrend? En wanneer is de trend officieel voorbij?
@@ -2475,7 +2475,7 @@ Marcus says: Everyone sees a chart. But who sees the structure behind the chart?
             "Sideways — de prijs beweegt maar een beetje",
           ],
           correct: 1,
-          explain: "Scherpe analyse! Tops: €70k → €85k → €95k ✓ (HH, HH). Maar €95k → €88k = LH ⚠️. Bodems: €60k → €72k → €80k ✓ (HL, HL). Maar €80k → €78k = LL ⚠️. Beide signalen aanwezig: LH + LL = trendbreuk bevestigd. De uptrend-structuur is gebroken. Geen nieuwe long trades totdat er een HH wordt gevormd.",
+          explain: "Scherpe analyse! Tops: €70k → €85k → €95k ✓ (HH, HH). Maar €95k → €88k = LH (!). Bodems: €60k → €72k → €80k ✓ (HL, HL). Maar €80k → €78k = LL (!). Beide signalen aanwezig: LH + LL = trendbreuk bevestigd. De uptrend-structuur is gebroken. Geen nieuwe long trades totdat er een HH wordt gevormd.",
         },
         checkEN: {
           q: "BTC peaks: €70k → €85k → €95k → €88k. BTC bottoms: €60k → €72k → €80k → €78k. What do you conclude?",
@@ -2486,13 +2486,13 @@ Marcus says: Everyone sees a chart. But who sees the structure behind the chart?
             "Sideways — price only moves a little",
           ],
           correct: 1,
-          explain: "Sharp analysis! Peaks: €70k → €85k → €95k ✓ (HH, HH). But €95k → €88k = LH ⚠️. Bottoms: €60k → €72k → €80k ✓ (HL, HL). But €80k → €78k = LL ⚠️. Both signals present: LH + LL = trend break confirmed. Uptrend structure is broken. No new long trades until a HH is formed.",
+          explain: "Sharp analysis! Peaks: €70k → €85k → €95k ✓ (HH, HH). But €95k → €88k = LH (!). Bottoms: €60k → €72k → €80k ✓ (HL, HL). But €80k → €78k = LL (!). Both signals present: LH + LL = trend break confirmed. Uptrend structure is broken. No new long trades until a HH is formed.",
         },
         diagram: TrendStructureDiagram,
       },
       {
         id: "l3-sr",
-        icon: "🧱",
+        icon: "▤",
         titleNL: "Support en Resistance — de bouwstenen",
         titleEN: "Support and Resistance — the building blocks",
         contentNL: `Support en resistance zijn de meest fundamentele concepten in technische analyse. Begrijp deze twee, en je begrijpt al 60% van grafiek-lezen.
@@ -2570,7 +2570,7 @@ Marcus says: Draw the horizontal zones on your chart. Those are your potential e
       },
       {
         id: "l3-rolerev",
-        icon: "🔄",
+        icon: "↔",
         titleNL: "Role Reversal — de meest onderschatte kracht in TA",
         titleEN: "Role Reversal — the most underestimated force in TA",
         contentNL: `Marcus stelt je een vraag: stel dat €69.000 jarenlang een muur was voor Bitcoin — elke keer dat de prijs daar aankwam, stuiterde hij terug. Dan, in november 2024, gaat de prijs er met kracht en volume doorheen. Twee weken later zakt hij terug naar €69.000. Wat verwacht jij nu — stuitert hij weer terug, of houdt €69.000 als vloer?
@@ -2787,7 +2787,7 @@ Marcus says: RSI is your thermometer. It tells you if the market is too hot (ove
       },
       {
         id: "l3-ma",
-        icon: "📐",
+        icon: "◇",
         titleNL: "Moving Averages — de richting in één oogopslag",
         titleEN: "Moving Averages — direction at a glance",
         contentNL: `Marcus stelt je een simpele vraag: als je iemand die nog nooit een grafiek heeft gezien moet uitleggen of BTC in een goede of slechte fase zit — in 5 seconden, zonder te tellen of technisch te analyseren — wat zou je laten zien?
@@ -2939,7 +2939,7 @@ Marcus says: The MA200 is the border between fear and greed. Above that line ins
       },
       {
         id: "l3-positiegrootte",
-        icon: "🔢",
+        icon: "≡",
         titleNL: "Positiegrootte berekenen — nooit gokken",
         titleEN: "Calculating position size — never guess",
         contentNL: `De meest onderschatte vaardigheid in trading: weten hoeveel je inzet.
@@ -3032,7 +3032,7 @@ Marcus says: Traders who blew up lost because they ignored position size — not
     lessons: [
       {
         id: "l4-mtf",
-        icon: "🔭",
+        icon: "○",
         titleNL: "Multi-timeframe analyse — de volledige context",
         titleEN: "Multi-timeframe analysis — the full context",
         contentNL: `De meeste beginners handelen op één timeframe. Ervaren traders kijken op meerdere tegelijk — en dat maakt het verschil.
@@ -3118,7 +3118,7 @@ Marcus says: If one timeframe says "buy" but the other two say "wait" — wait. 
       },
       {
         id: "l4-funding",
-        icon: "💸",
+        icon: "€",
         titleNL: "Funding rates en Open Interest — de futures markt begrijpen",
         titleEN: "Funding rates and Open Interest — understanding the futures market",
         contentNL: `Op Binance en Bybit kun je niet alleen kopen — je kunt ook 'long' of 'short' gaan met leverage. Dit noemen we de futures markt.
@@ -3209,7 +3209,7 @@ Marcus says: Funding rates are like a greed thermometer. If everyone is already 
     lessons: [
       {
         id: "l5-psychology",
-        icon: "🧠",
+        icon: "○",
         titleNL: "Trading psychologie — de echte edge",
         titleEN: "Trading psychology — the real edge",
         contentNL: `De markt is technisch bijna altijd leesbaar. Wat de meeste traders ruïneert is niet het niet begrijpen van de markt — het is het niet begrijpen van zichzelf.
@@ -3285,7 +3285,7 @@ Marcus says: The trader who controls their emotions beats the trader who 'knows 
       },
       {
         id: "l5-smc",
-        icon: "🏦",
+        icon: "▤",
         titleNL: "Smart Money Concepten — hoe grote spelers bewegen",
         titleEN: "Smart Money Concepts — how big players move",
         contentNL: `Grote instellingen (banken, hedge funds, 'smart money') bewegen de markt. Zij hebben de liquiditeit nodig om in en uit te stappen. Begrijp hoe ze denken, en je begrijpt de markt op een dieper niveau.
@@ -3366,7 +3366,7 @@ Marcus says: I don't follow smart money to copy them — I follow them to unders
     lessons: [
       {
         id: "l6-systeem",
-        icon: "⚙️",
+        icon: "○",
         titleNL: "Waarom 90% van de traders geen systeem heeft — en wat dat kost",
         titleEN: "Why 90% of traders have no system — and what it costs",
         contentNL: `Marcus stelt je een vraag: als je nu een trade opent — waarom precies op dit moment, dit paar, deze grootte? Als je antwoord vaag is, heb je geen systeem. Je hebt een gok.
@@ -3518,7 +3518,7 @@ Action: take your system from lesson 1 and backtest it on BTC/EUR for the past 3
       },
       {
         id: "l6-journal",
-        icon: "📓",
+        icon: "○",
         titleNL: "Het trading journal: het geheim van consistente traders",
         titleEN: "The trading journal: the secret of consistent traders",
         contentNL: `Marcus vraagt je iets ongemakkelijks: weet jij nog waarom je je laatste 5 trades hebt geopend? Wat je voelde? Of je je regels hebt gevolgd? Als het antwoord nee is, heb je een geheugenprobleem — en dat kost je geld.
@@ -3715,7 +3715,7 @@ Action: pick one of the three setups today. Search BTC/EUR over the past month a
     lessons: [
       {
         id: "l7-fibonacci",
-        icon: "🌀",
+        icon: "○",
         titleNL: "Fibonacci: waarom werkt een wiskundige reeks op de markt?",
         titleEN: "Fibonacci: why does a mathematical sequence work on markets?",
         contentNL: `Marcus stelt je de vraag die hij zichzelf jaren geleden ook stelde: wat heeft een wiskundige reeks uit de 13e eeuw te maken met Bitcoin in 2024? Het antwoord verrast de meeste mensen.
@@ -3793,7 +3793,7 @@ Action: open BTC/EUR on TradingView, find the last major upswing and draw the Fi
       },
       {
         id: "l7-bollinger",
-        icon: "📉",
+        icon: "↓",
         titleNL: "Bollinger Bands: volatiliteit lezen als een pro",
         titleEN: "Bollinger Bands: reading volatility like a pro",
         contentNL: `Marcus vraagt: wat als je kon zien wanneer de markt op het punt staat een grote move te maken — voordat die move begint? Bollinger Bands geven je precies dat signaal.
@@ -4086,7 +4086,7 @@ Action: take the current BTC/EUR chart and find the next strong support zone. Sc
     lessons: [
       {
         id: "l8-onchain",
-        icon: "🔗",
+        icon: "→",
         titleNL: "On-chain analyse: kijk wat grote spelers écht doen",
         titleEN: "On-chain analysis: see what big players really do",
         contentNL: `Marcus stelt je de vraag die aandelen-traders nooit kunnen beantwoorden: wat als je kon zien hoeveel BTC er van exchange naar cold wallet gaat? Of hoeveel BTC miners vasthouden versus verkopen?
@@ -4180,7 +4180,7 @@ Action: go to LookIntoBitcoin.com and check "Exchange Net Position Change". Is B
       },
       {
         id: "l8-cycles",
-        icon: "🔄",
+        icon: "↔",
         titleNL: "Bitcoin cycli: de 4-jaar cyclus en het halving model",
         titleEN: "Bitcoin cycles: the 4-year cycle and the halving model",
         contentNL: `Marcus vraagt: stel dat je wist dat BTC elke 4 jaar een vergelijkbaar patroon volgt — zou je dan anders handelen? De meeste ervaren crypto-traders handelen met dit patroon in het achterhoofd.
@@ -4270,7 +4270,7 @@ Action: Google "Bitcoin halving dates" and calculate how many months we are from
       },
       {
         id: "l8-feargreed",
-        icon: "😱",
+        icon: "!",
         titleNL: "Fear & Greed Index: gebruik emotie als contrarian signaal",
         titleEN: "Fear & Greed Index: use emotion as a contrarian signal",
         contentNL: `Marcus citeert Warren Buffett: "Wees bang als anderen hebzuchtig zijn, en hebzuchtig als anderen bang zijn." Dit klinkt simpel. Maar hoe meet je wanneer de markt bang of hebzuchtig is?
@@ -4368,7 +4368,7 @@ Action: go to alternative.me/crypto/fear-and-greed-index and check the current v
       },
       {
         id: "l8-derivatives",
-        icon: "📐",
+        icon: "◇",
         titleNL: "Derivatenmarkten: futures, funding en open interest",
         titleEN: "Derivatives markets: futures, funding and open interest",
         contentNL: `Marcus vraagt: wist je dat er meer BTC-futures worden verhandeld per dag dan echte BTC? De derivatenmarkt is vele malen groter dan de spotmarkt — en geeft unieke signalen.
@@ -4467,7 +4467,7 @@ Action: go to Coinglass.com → BTC → Funding Rate. Is the funding rate curren
     lessons: [
       {
         id: "l9-portfolio",
-        icon: "💼",
+        icon: "○",
         titleNL: "Portfolio-constructie: hoe bouw je een winstgevend crypto-portfolio?",
         titleEN: "Portfolio construction: how do you build a profitable crypto portfolio?",
         contentNL: `Marcus stelt je de vraag die de meeste beginners overslaan: wat is eigenlijk je strategie voor het geheel — niet alleen voor elke individuele trade?
@@ -4557,7 +4557,7 @@ Action: write down today what your current portfolio looks like. What percentage
       },
       {
         id: "l9-correlatie",
-        icon: "🔗",
+        icon: "→",
         titleNL: "Correlatie in crypto: waarom alles tegelijk daalt",
         titleEN: "Correlation in crypto: why everything drops at the same time",
         contentNL: `Marcus stelt je een vraag die veel mensen verrast: stel je hebt BTC, ETH, SOL en LINK in je portfolio — denk je dan dat je gediversifieerd bent?
@@ -4645,7 +4645,7 @@ Action: go to CoinMetrics.io or TradingView and look at the correlation between 
       },
       {
         id: "l9-drawdown",
-        icon: "📉",
+        icon: "↓",
         titleNL: "Drawdown management: overleven als de markt je aanvalt",
         titleEN: "Drawdown management: surviving when the market attacks you",
         contentNL: `Marcus stelt je de moeilijkste vraag in trading: wat doe je als je account 30% gedaald is en elke trade een verliezer lijkt?
@@ -4745,7 +4745,7 @@ Action: set your drawdown protocol now. Write down: at what % do you halve? At w
       },
       {
         id: "l9-sizing",
-        icon: "📏",
+        icon: "◇",
         titleNL: "Geavanceerde positiegroottes: Kelly Criterion en vaste fractionering",
         titleEN: "Advanced position sizing: Kelly Criterion and fixed fractional",
         contentNL: `Marcus stelt de vraag die de meeste traders nooit serieus nemen: hoeveel zet je precies op elke trade? Niet "een beetje" of "wat ik kan missen" — maar een exacte berekening.
@@ -4862,7 +4862,7 @@ Action: calculate for your last 10 trades what the correct position size should 
     lessons: [
       {
         id: "l10-business",
-        icon: "🏢",
+        icon: "▤",
         titleNL: "Trading als business: denk als een CEO, niet als een gokker",
         titleEN: "Trading as a business: think like a CEO, not a gambler",
         contentNL: `Marcus stelt je de vraag die het verschil maakt: ben jij een trader of een gokker? Het verschil zit niet in de resultaten van één week — het zit in de mindset.
@@ -5064,7 +5064,7 @@ Action: write down what you think your edge is. Support it with backtest data. I
       },
       {
         id: "l10-prop",
-        icon: "🏦",
+        icon: "▤",
         titleNL: "Prop trading en extern kapitaal: handelen met andermans geld",
         titleEN: "Prop trading and external capital: trading with other people's money",
         contentNL: `Marcus stelt je de vraag waar veel succesvolle traders uiteindelijk naartoe groeien: wat als je met meer kapitaal kon handelen dan je zelf hebt?
@@ -5295,7 +5295,7 @@ function CheckQuestion({ check, lang }: { check: Check; lang: string }) {
   return (
     <div className={`lesson-check${answered ? (correct ? " correct" : " wrong") : ""}`}>
       <div className="lesson-check-label">
-        {lang === "en" ? "🧠 Marcus checks:" : "🧠 Marcus checkt:"}
+        {lang === "en" ? "Marcus checks:" : "Marcus checkt:"}
       </div>
       <div className="lesson-check-question">{check.q}</div>
       <div className="lesson-check-options">
@@ -5353,7 +5353,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnl
     return (
       <div className="curriculum-card curriculum-card-locked">
         <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
-          <span className="curriculum-card-icon">🔒</span>
+          <span className="curriculum-card-icon">○</span>
           <span className="curriculum-card-title">{title}</span>
         </div>
       </div>
@@ -5364,7 +5364,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnl
     return (
       <div className="curriculum-card curriculum-card-locked">
         <div className="curriculum-card-header" style={{ cursor: "default", opacity: 0.6 }}>
-          <span className="curriculum-card-icon">🔒</span>
+          <span className="curriculum-card-icon">○</span>
           <span className="curriculum-card-title">{title}</span>
           <span style={{ fontSize: "0.75rem", color: "var(--color-muted)", marginLeft: "auto" }}>
             {lang === "en" ? "Complete previous lesson first" : "Rond vorige les af"}
@@ -5396,7 +5396,7 @@ function LessonCard({ lesson, lang, isRead, onRead, onQuizClick, isPublic, isUnl
           {terms && terms.length > 0 && (
             <div className="curriculum-terms">
               <div className="curriculum-terms-label">
-                {lang === "en" ? "📚 Key Terms" : "📚 Begrippen"}
+                {lang === "en" ? "Key Terms" : "Begrippen"}
               </div>
               <div className="curriculum-terms-grid">
                 {terms.map((t, i) => (
@@ -5575,7 +5575,7 @@ export default function MarcusCurriculum({ onQuizTabClick }: { onQuizTabClick?: 
       </div>
 
       <button className="curriculum-marcus-btn" onClick={askMarcus}>
-        👤 {lang === "en" ? "Ask Marcus for a practice exercise" : "Vraag Marcus om een oefening"}
+        {lang === "en" ? "Ask Marcus for a practice exercise" : "Vraag Marcus om een oefening"}
       </button>
     </div>
   );

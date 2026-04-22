@@ -54,7 +54,7 @@ export default function ProPage() {
     return (
       <div className="pro-page">
         <div className="pro-success-card">
-          <div className="pro-success-icon">🎉</div>
+          <div className="pro-success-icon">★</div>
           <h1 className="pro-success-title">
             {isNL ? "Aanvraag ontvangen!" : "Request received!"}
           </h1>
@@ -107,7 +107,7 @@ export default function ProPage() {
         {loading
           ? "…"
           : session?.user
-            ? (isNL ? "🚀 Activeer Marcus Pro" : "🚀 Activate Marcus Pro")
+            ? (isNL ? "▲ Activeer Marcus Pro" : "▲ Activate Marcus Pro")
             : (isNL ? "Gratis registreren →" : "Register for free →")}
       </button>
 
@@ -140,7 +140,7 @@ export default function ProPage() {
             ))}
             {FEATURES_PRO.map((f, i) => (
               <li key={i} className={`pro-compare-item pro-compare-item--pro ${f.star ? "pro-compare-item--star" : ""}`}>
-                <span className="pro-compare-check">⭐</span>
+                <span className="pro-compare-check">★</span>
                 {isNL ? f.nl : f.en}
               </li>
             ))}
