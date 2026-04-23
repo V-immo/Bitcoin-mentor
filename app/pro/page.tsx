@@ -16,6 +16,7 @@ const FEATURES_FREE = [
 const FEATURES_PRO = [
   { nl: "Alle 10 niveaus curriculum", en: "All 10 levels curriculum", star: true },
   { nl: "Onbeperkte Marcus chat", en: "Unlimited Marcus chat", star: true },
+  { nl: "Marcus Bot — automatische trading strategieën", en: "Marcus Bot — automated trading strategies", star: true },
   { nl: "Road to Live Trading certificaat", en: "Road to Live Trading certificate", star: true },
   { nl: "League systeem", en: "League system" },
   { nl: "Streak Freeze (wekelijks)", en: "Streak Freeze (weekly)" },
@@ -25,8 +26,8 @@ const FEATURES_PRO = [
 ];
 
 const PLANS = [
-  { key: "monthly", labelNL: "Maandelijks", labelEN: "Monthly", price: "€9,99", unit: "/maand", unitEN: "/month", saving: null },
-  { key: "yearly",  labelNL: "Jaarlijks",   labelEN: "Yearly",  price: "€79",   unit: "/jaar",  unitEN: "/year",  saving: "Bespaar €41" },
+  { key: "monthly", labelNL: "Maandelijks", labelEN: "Monthly", price: "€19,99", unit: "/maand", unitEN: "/month", saving: null },
+  { key: "yearly",  labelNL: "Jaarlijks",   labelEN: "Yearly",  price: "€149",   unit: "/jaar",  unitEN: "/year",  saving: "Bespaar €91" },
 ];
 
 export default function ProPage() {
@@ -67,8 +68,8 @@ export default function ProPage() {
         </h1>
         <p className="pro-hero-sub">
           {isNL
-            ? "Niveau 3-10, onbeperkte coaching, certificaat en alles wat je nodig hebt om klaar te zijn voor live trading."
-            : "Levels 3-10, unlimited coaching, certificate and everything you need to be ready for live trading."}
+            ? "Niveau 3-10, onbeperkte coaching, Marcus Bot en alles wat je nodig hebt om klaar te zijn voor live trading."
+            : "Levels 3-10, unlimited coaching, Marcus Bot and everything you need to be ready for live trading."}
         </p>
       </div>
 

@@ -31,6 +31,7 @@ export default auth((req) => {
     pathname.startsWith("/api/b2b/accept/") ||
     pathname.startsWith("/api/users/public/") ||
     pathname === "/api/alerts/check" ||
+    pathname === "/api/bots/run" ||
     pathname === "/api/briefing" ||
     pathname.startsWith("/api/market-scan") ||
     pathname.startsWith("/api/sentiment") ||

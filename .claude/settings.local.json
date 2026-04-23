@@ -34,7 +34,25 @@
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && pm2 delete bitcoin-mentor 2>/dev/null; rm -rf .next && npm run build 2>&1 | tail -20\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 start ecosystem.config.js && sleep 3 && pm2 status\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 status && pm2 logs bitcoin-mentor --lines 10 --nostream 2>&1 | tail -15\")",
-      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && pm2 delete bitcoin-mentor 2>/dev/null; rm -rf .next && npm run build 2>&1 | tail -5 && pm2 start ecosystem.config.js && pm2 status\")"
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && pm2 delete bitcoin-mentor 2>/dev/null; rm -rf .next && npm run build 2>&1 | tail -5 && pm2 start ecosystem.config.js && pm2 status\")",
+      "WebSearch",
+      "WebFetch(domain:www.forexpeacearmy.com)",
+      "WebFetch(domain:phidiaspropfirm.com)",
+      "WebFetch(domain:learntotrades.com)",
+      "WebFetch(domain:daytradereview.com)",
+      "Bash(xargs ls *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"require\\('stripe'\\)\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 list && pm2 logs bitcoin-mentor --lines 30 --nostream\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 start ecosystem.config.js && pm2 save\")",
+      "Bash(ssh root@202.71.14.150 \"sleep 4 && pm2 list && pm2 logs bitcoin-mentor --lines 10 --nostream\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 logs bitcoin-mentor --lines 50 --nostream 2>&1 | grep -i 'candle\\\\|ohlc\\\\|kline\\\\|chart\\\\|trade\\\\|error\\\\|Error' | tail -30\")",
+      "Bash(node -e \"const s = require\\('stripe'\\); console.log\\(s.LATEST_API_VERSION\\)\")",
+      "Bash(node -e \"const Stripe = require\\('stripe'\\); const s = new Stripe\\('sk_test_x'\\); console.log\\(s.VERSION\\)\")",
+      "Bash(node -e \"const Stripe = require\\('stripe'\\); const keys = Object.keys\\(new Stripe.Invoice || {}\\).filter\\(k=>k.includes\\('sub'\\)\\); console.log\\(keys\\)\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git log --oneline -3 && echo '---' && npm run build 2>&1 | tail -30\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && npm install --legacy-peer-deps && npm run build 2>&1 | tail -10\")",
+      "Bash(ssh root@202.71.14.150 \"sleep 90 && pm2 list\")"
     ]
   }
 }

@@ -46,6 +46,7 @@ jobs:
             node db/migrate-2fa.js || true
             node db/migrate-journal-v2.js || true
             node db/migrate-premarket-count.js || true
+            node db/migrate-bots.js || true
 
             # Backup huidige werkende build — site blijft online tijdens build
             rm -rf .next-backup || true
