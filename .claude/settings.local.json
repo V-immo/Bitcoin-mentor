@@ -55,7 +55,16 @@
       "Bash(ssh root@202.71.14.150 \"sleep 90 && pm2 list\")",
       "Read(//c/Users/devel/bitcoin-mentor/**)",
       "Bash(gh run *)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(ssh root@202.71.14.150 \"pm2 list && echo '---' && pm2 logs bitcoin-mentor --lines 30 --nostream\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 start ecosystem.config.js 2>&1 || pm2 start npm --name bitcoin-mentor -- start 2>&1\")",
+      "Bash(ssh root@202.71.14.150 \"sleep 5 && pm2 list && pm2 logs bitcoin-mentor --lines 15 --nostream\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull origin main && npm ci --production=false 2>&1 | tail -5 && echo 'DEPS OK'\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && npm install --legacy-peer-deps 2>&1 | tail -5 && echo 'DEPS OK'\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && npm run build 2>&1 | tail -30\")",
+      "Bash(ssh root@202.71.14.150 \"rm -f /var/www/bitcoin-mentor/.next/lock && cd /var/www/bitcoin-mentor && npm run build 2>&1 | tail -40\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 delete bitcoin-mentor; pm2 start ecosystem.config.js && sleep 4 && pm2 list\")",
+      "Bash(ssh root@202.71.14.150 \"cat /var/www/bitcoin-mentor/ecosystem.config.js && pm2 save\")"
     ]
   }
 }

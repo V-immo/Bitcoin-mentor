@@ -33,10 +33,14 @@ export async function POST(request: Request) {
   const userId = (session.user as { id?: string }).id;
   if (!userId) return Response.json({ error: "Geen userId" }, { status: 400 });
 
-  // PRO check
+  // PRO check — admins hebben altijd toegang
+  const role = (session.user as { role?: string }).role;
   const db = getDb();
-  const user = db.prepare("SELECT is_pro, pro_until FROM users WHERE id = ?").get(parseInt(userId)) as { is_pro: number; pro_until: string } | undefined;
-  const isPro = user?.is_pro === 1 && (!user.pro_until || user.pro_until >= new Date().toISOString().slice(0, 10));
+  let isPro = role === "admin";
+  if (!isPro) {
+    const user = db.prepare("SELECT is_pro, pro_until FROM users WHERE id = ?").get(parseInt(userId)) as { is_pro: number; pro_until: string } | undefined;
+    isPro = user?.is_pro === 1 && (!user.pro_until || user.pro_until >= new Date().toISOString().slice(0, 10));
+  }
   if (!isPro) return Response.json({ error: "PRO vereist" }, { status: 403 });
 
   const body = await request.json() as { name?: string; strategy?: string; config?: Record<string, unknown>; exchange?: string; symbol?: string; simulation?: boolean };
