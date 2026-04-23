@@ -5,6 +5,7 @@ import { usePushNotifications } from "@/lib/usePushNotifications";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { Currency } from "@/contexts/CurrencyContext";
+import type { Lang } from "@/lib/translations";
 import { CheckCircle2, XCircle, AlertTriangle, FlaskConical, Lock } from "lucide-react";
 
 type TradingMode = "day" | "swing" | "long";
@@ -15,7 +16,7 @@ type Settings = {
   riskLevel: RiskLevel;
   startCapital: number;
   preferredAssets: string[];
-  aiLanguage: "nl" | "en";
+  aiLanguage: Lang;
   bitvavoApiKey?: string;
   bitvavoApiSecret?: string;
 };
@@ -40,6 +41,7 @@ const RISK_LEVEL_KEYS: { key: RiskLevel; color: string }[] = [
 export default function SettingsPanel() {
   const { lang, setLang, t } = useLanguage();
   const { currency, setCurrency } = useCurrency();
+  const isNL = lang === "nl";
   // Initialiseer aiLanguage vanuit context (niet hardcoded "nl" default)
   const [settings, setSettings] = useState<Settings>({ ...DEFAULT_SETTINGS, aiLanguage: lang });
   const [saved, setSaved] = useState(false);

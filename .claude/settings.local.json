@@ -52,7 +52,9 @@
       "Bash(node -e \"const Stripe = require\\('stripe'\\); const keys = Object.keys\\(new Stripe.Invoice || {}\\).filter\\(k=>k.includes\\('sub'\\)\\); console.log\\(keys\\)\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git log --oneline -3 && echo '---' && npm run build 2>&1 | tail -30\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && npm install --legacy-peer-deps && npm run build 2>&1 | tail -10\")",
-      "Bash(ssh root@202.71.14.150 \"sleep 90 && pm2 list\")"
+      "Bash(ssh root@202.71.14.150 \"sleep 90 && pm2 list\")",
+      "Read(//c/Users/devel/bitcoin-mentor/**)",
+      "Bash(gh run *)"
     ]
   }
 }
