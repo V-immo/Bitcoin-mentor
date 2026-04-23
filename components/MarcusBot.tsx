@@ -435,11 +435,11 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
     return (
       <div className="bot-upgrade-wall">
         <div className="bot-upgrade-icon">◉</div>
-        <h2 className="bot-upgrade-title">Autopilot</h2>
+        <h2 className="bot-upgrade-title">Playbook</h2>
         <p className="bot-upgrade-text">
           {isNL
-            ? "Zet je strategie op Autopilot. DCA, RSI, breakout, EMA crossover — wordt automatisch uitgevoerd op jouw exchange account."
-            : "Put your strategy on Autopilot. DCA, RSI, breakout, EMA crossover — executed automatically on your exchange account."}
+            ? "Jouw trading strategieën in één Playbook. DCA, RSI, breakout, EMA crossover — automatisch uitgevoerd op jouw account."
+            : "Your trading strategies in one Playbook. DCA, RSI, breakout, EMA crossover — executed automatically on your account."}
         </p>
         <a href="/pro" className="bot-upgrade-btn">
           {isNL ? "Upgrade naar PRO →" : "Upgrade to PRO →"}
@@ -452,7 +452,7 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
     <div className="marcus-bot">
       <div className="bot-header">
         <div>
-          <h2 className="bot-title">Autopilot</h2>
+          <h2 className="bot-title">Playbook</h2>
           <p className="bot-subtitle">
             {isNL
               ? "Jouw automatische trading strategieën."
@@ -496,8 +496,8 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
 
       <div className="bot-disclaimer">
         {isNL
-          ? "Autopilot handelt via jouw eigen API-sleutel op jouw exchange account. Stel je sleutel in via Instellingen."
-          : "Autopilot trades via your own API key on your exchange account. Configure your key in Settings."}
+          ? "Playbook handelt via jouw eigen API-sleutel op jouw exchange account. Stel je sleutel in via Instellingen."
+          : "Playbook trades via your own API key on your exchange account. Configure your key in Settings."}
       </div>
 
       {showCreate && (

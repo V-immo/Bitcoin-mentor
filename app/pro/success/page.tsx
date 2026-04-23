@@ -16,8 +16,8 @@ export default function ProSuccessPage() {
         </h1>
         <p className="pro-success-text">
           {isNL
-            ? "Je betaling is bevestigd. Alle PRO-functies zijn nu actief — curriculum niveau 3–10, onbeperkte coaching, Autopilot en Live Ready certificaat."
-            : "Your payment is confirmed. All PRO features are now active — curriculum levels 3–10, unlimited coaching, Autopilot and Live Ready certificate."}
+            ? "Je betaling is bevestigd. Alle PRO-functies zijn nu actief — curriculum niveau 3–10, onbeperkte coaching, Playbook en Live Ready certificaat."
+            : "Your payment is confirmed. All PRO features are now active — curriculum levels 3–10, unlimited coaching, Playbook and Live Ready certificate."}
         </p>
         <Link href="/leren" className="pro-success-back">
           {isNL ? "Start met leren →" : "Start learning →"}
