@@ -1,18 +1,19 @@
 import { auth } from "@/auth";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-  apiVersion: "2026-03-25.dahlia",
-});
-
-const PRICES: Record<string, string> = {
-  monthly: process.env.STRIPE_PRICE_MONTHLY ?? "",
-  yearly:  process.env.STRIPE_PRICE_YEARLY  ?? "",
-};
-
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return Response.json({ error: "Niet ingelogd" }, { status: 401 });
+
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return Response.json({ error: "Stripe niet geconfigureerd" }, { status: 503 });
+
+  const stripe = new Stripe(key, { apiVersion: "2026-03-25.dahlia" });
+
+  const PRICES: Record<string, string> = {
+    monthly: process.env.STRIPE_PRICE_MONTHLY ?? "",
+    yearly:  process.env.STRIPE_PRICE_YEARLY  ?? "",
+  };
 
   const userId = (session.user as { id?: string }).id ?? "";
   const email  = session.user.email ?? "";
