@@ -26,7 +26,8 @@ function timeAgo(ms: number, lang: string): string {
   return `${Math.floor(h / 24)}d geleden`;
 }
 
-const QUICK_ASSETS = SCAN_ASSETS.filter(a => a.type === "crypto").slice(0, 8);
+// Alle assets gegroepeerd voor het nieuws filter
+const QUICK_ASSETS = SCAN_ASSETS;
 
 export default function NewsPage() {
   const { lang } = useLanguage();
@@ -64,20 +65,30 @@ export default function NewsPage() {
         </div>
       </div>
 
-      {/* ── Asset filter pills ── */}
+      {/* ── Asset filter pills gegroepeerd per type ── */}
       <div className="np-filters-wrap">
-        <div className="np-filters">
-          {QUICK_ASSETS.map(a => (
-            <button
-              key={a.symbol}
-              className={`np-pill${symbol === a.symbol ? " active" : ""}`}
-              onClick={() => setSymbol(a.symbol)}
-            >
-              <span className="np-pill-emoji">{a.emoji}</span>
-              <span className="np-pill-label">{a.ticker}</span>
-            </button>
-          ))}
-        </div>
+        {(["crypto", "etf", "stock", "metal"] as const).map(type => {
+          const group = QUICK_ASSETS.filter(a => a.type === type);
+          if (!group.length) return null;
+          const label: Record<string, string> = { crypto: "Crypto", etf: "ETF", stock: "Aandelen", metal: "Grondstoffen" };
+          return (
+            <div key={type} className="np-filter-group">
+              <div className="np-filter-group-label">{label[type]}</div>
+              <div className="np-filters">
+                {group.map(a => (
+                  <button
+                    key={a.symbol}
+                    className={`np-pill${symbol === a.symbol ? " active" : ""}`}
+                    onClick={() => setSymbol(a.symbol)}
+                  >
+                    <span className="np-pill-emoji">{a.emoji}</span>
+                    <span className="np-pill-label">{a.ticker}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* ── Feed ── */}

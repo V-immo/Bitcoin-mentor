@@ -11408,12 +11408,28 @@ html {
 .np-filters-wrap {
   padding: 20px 40px 0;
   border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.np-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.np-filter-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  padding-top: 8px;
 }
 .np-filters {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  padding-bottom: 16px;
+  padding-bottom: 4px;
 }
 .np-pill {
   display: inline-flex;
