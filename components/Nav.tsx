@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef, type ComponentType } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import type { Lang } from "@/lib/translations";
 import {
   Home, GraduationCap, Newspaper, Radar, TrendingUp, User,
   Calendar, BarChart3, Building2, FlaskConical, Trophy,
@@ -43,13 +44,15 @@ const ACCOUNT_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
 export default function Nav() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { t } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const isCompanyAdmin = (session?.user as { companyRole?: string })?.companyRole === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
   const [streak, setStreak] = useState<number>(0);
   const [isPro, setIsPro]   = useState(false);
 
@@ -65,7 +68,7 @@ export default function Nav() {
       .catch(() => {});
   }, [session]);
 
-  useEffect(() => { setMenuOpen(false); setDropOpen(false); }, [pathname]);
+  useEffect(() => { setMenuOpen(false); setDropOpen(false); setLangOpen(false); }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -78,6 +81,25 @@ export default function Nav() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [dropOpen]);
+
+  useEffect(() => {
+    if (!langOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [langOpen]);
+
+  const LANGS: { code: Lang; label: string }[] = [
+    { code: "nl", label: "NL" },
+    { code: "en", label: "EN" },
+    { code: "es", label: "ES" },
+    { code: "de", label: "DE" },
+    { code: "pt", label: "PT" },
+    { code: "fr", label: "FR" },
+    { code: "ar", label: "AR" },
+  ];
 
   if (pathname.startsWith("/auth/")) return null;
   if (pathname === "/") return null;
@@ -172,6 +194,30 @@ export default function Nav() {
             <div className="nav-pro-badge" title="Marcus Pro">✦ Pro</div>
           )}
 
+          {/* Taalwisselaar */}
+          <div ref={langRef} className="nav-lang-switcher">
+            <button
+              className="nav-lang-btn"
+              onClick={() => setLangOpen(v => !v)}
+              aria-label="Taal wisselen"
+            >
+              {lang.toUpperCase()}
+            </button>
+            {langOpen && (
+              <div className="nav-lang-dropdown">
+                {LANGS.map(({ code, label }) => (
+                  <button
+                    key={code}
+                    className={`nav-lang-option${lang === code ? " active" : ""}`}
+                    onClick={() => { setLang(code); setLangOpen(false); }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Thema toggle — altijd helemaal rechts, los van streak */}
           <button
             onClick={toggleTheme}
@@ -242,6 +288,19 @@ export default function Nav() {
                   </Link>
                 );
               })}
+
+              <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Taal</div>
+              <div className="nav-mobile-lang-row">
+                {LANGS.map(({ code, label }) => (
+                  <button
+                    key={code}
+                    className={`nav-mobile-lang-btn${lang === code ? " active" : ""}`}
+                    onClick={() => setLang(code)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
 
               <div className="nav-mobile-section-title" style={{ marginTop: 12 }}>Account</div>
               {ACCOUNT_LINKS.map((l) => {

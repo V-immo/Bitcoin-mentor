@@ -11,6 +11,7 @@ import { getDb } from "@/db/db";
 import { bitvavRequest } from "@/lib/bitvavo";
 import { binanceGetPrice, binanceGetCandles, binancePlaceOrder } from "@/lib/binance";
 import { bybitPlaceOrder, bybitGetPrice, bybitGetCandles } from "@/lib/bybit";
+import { sendEmail } from "@/lib/email";
 
 type BotRow = {
   id: number;
@@ -181,6 +182,52 @@ function logRun(
   ).run(botId, userId, action, symbol, side, amount, price, status, note);
 }
 
+async function notifyOrderEmail(
+  userId: number,
+  botName: string,
+  strategy: string,
+  symbol: string,
+  side: "buy" | "sell",
+  amount: number,
+  price: number
+) {
+  try {
+    const db = getDb();
+    const user = db.prepare("SELECT email FROM users WHERE id = ?").get(userId) as { email: string } | undefined;
+    if (!user?.email) return;
+
+    const sideLabel = side === "buy" ? "Gekocht" : "Verkocht";
+    const subject = `Playbook — ${sideLabel}: ${symbol}`;
+    const now = new Date().toLocaleString("nl-NL", { timeZone: "Europe/Amsterdam" });
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0e0810; color: #e5d4e7; max-width: 480px; margin: 0 auto; padding: 24px;">
+  <div style="background: linear-gradient(135deg, #1a0f18, #2a1a28); border: 1px solid #3d2a3b; border-radius: 12px; padding: 28px;">
+    <h1 style="color: #e91e63; font-size: 20px; margin: 0 0 16px 0;">Playbook — ${sideLabel}: ${symbol}</h1>
+    <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Actie</td><td style="color:#e5d4e7; font-weight:600;">${sideLabel}</td></tr>
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Symbool</td><td style="color:#e5d4e7; font-weight:600;">${symbol}</td></tr>
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Bedrag</td><td style="color:#e5d4e7; font-weight:600;">€${amount.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}</td></tr>
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Prijs</td><td style="color:#e5d4e7; font-weight:600;">€${price.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}</td></tr>
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Strategie</td><td style="color:#e5d4e7;">${strategy} — ${botName}</td></tr>
+      <tr><td style="color:#bf7a99; padding: 4px 0;">Tijdstip</td><td style="color:#e5d4e7;">${now}</td></tr>
+    </table>
+    <a href="https://bitcoinmentor.be/bots" style="display: inline-block; margin-top: 20px; background: #e91e63; color: #fff; text-decoration: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px;">
+      → Bekijk Playbook
+    </a>
+  </div>
+</body>
+</html>`.trim();
+
+    await sendEmail(user.email, subject, html);
+  } catch {
+    // Email mislukken mag de runner niet stoppen
+  }
+}
+
 // DCA: controleer of het interval verstreken is en koop dan
 async function runDca(bot: BotRow, cfg: DcaConfig, keys: ExchangeKeys) {
   const db = getDb();
@@ -196,6 +243,7 @@ async function runDca(bot: BotRow, cfg: DcaConfig, keys: ExchangeKeys) {
   const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
   const status = result.error ? "error" : bot.simulation ? "simulated" : "ok";
   logRun(bot.id, bot.user_id, "dca", bot.symbol, "buy", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+  if (status === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
 }
 
 // RSI: koop als RSI < buy_below, verkoop als RSI > sell_above
@@ -205,12 +253,14 @@ async function runRsi(bot: BotRow, cfg: RsiConfig, keys: ExchangeKeys) {
 
   if (rsi < (cfg.buy_below ?? 30)) {
     const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "rsi_buy", bot.symbol, "buy", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const status = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "rsi_buy", bot.symbol, "buy", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+    if (status === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
   } else if (rsi > (cfg.sell_above ?? 70)) {
     const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "rsi_sell", bot.symbol, "sell", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const status = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "rsi_sell", bot.symbol, "sell", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+    if (status === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "sell", cfg.amount_eur, price);
   }
 }
 
@@ -226,8 +276,9 @@ async function runBreakout(bot: BotRow, cfg: BreakoutConfig, keys: ExchangeKeys)
   if (recent) return;
 
   const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-  logRun(bot.id, bot.user_id, "breakout_buy", bot.symbol, "buy", cfg.amount_eur, price,
-    result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+  const brkStatus = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+  logRun(bot.id, bot.user_id, "breakout_buy", bot.symbol, "buy", cfg.amount_eur, price, brkStatus, result.error ?? result.orderId ?? "");
+  if (brkStatus === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
 }
 
 // EMA200: lang termijn trend volgen
@@ -248,12 +299,14 @@ async function runEma200(bot: BotRow, cfg: { amount_eur: number }, keys: Exchang
 
   if (aboveEma && lastAction !== "ema200_buy") {
     const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "ema200_buy", bot.symbol, "buy", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "ema200_buy", bot.symbol, "buy", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
   } else if (!aboveEma && lastAction === "ema200_buy") {
     const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "ema200_sell", bot.symbol, "sell", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "ema200_sell", bot.symbol, "sell", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "sell", cfg.amount_eur, price);
   }
 }
 
@@ -278,8 +331,9 @@ async function runPullback(bot: BotRow, cfg: { amount_eur: number }, keys: Excha
   if (recent) return;
 
   const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-  logRun(bot.id, bot.user_id, "pullback_buy", bot.symbol, "buy", cfg.amount_eur, price,
-    result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+  const pbStatus = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+  logRun(bot.id, bot.user_id, "pullback_buy", bot.symbol, "buy", cfg.amount_eur, price, pbStatus, result.error ?? result.orderId ?? "");
+  if (pbStatus === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
 }
 
 // EMA Cross 9/21 (1H)
@@ -297,12 +351,14 @@ async function runEmaCross(bot: BotRow, cfg: { amount_eur: number }, keys: Excha
 
   if (ema9_prev < ema21_prev && ema9_now > ema21_now) {
     const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "ema_cross_buy", bot.symbol, "buy", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "ema_cross_buy", bot.symbol, "buy", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
   } else if (ema9_prev > ema21_prev && ema9_now < ema21_now) {
     const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "ema_cross_sell", bot.symbol, "sell", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "ema_cross_sell", bot.symbol, "sell", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "sell", cfg.amount_eur, price);
   }
 }
 
@@ -313,12 +369,14 @@ async function runMacd(bot: BotRow, cfg: { amount_eur: number }, keys: ExchangeK
 
   if (prev_macd < prev_signal && macd > signal) {
     const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "macd_buy", bot.symbol, "buy", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "macd_buy", bot.symbol, "buy", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "buy", cfg.amount_eur, price);
   } else if (prev_macd > prev_signal && macd < signal) {
     const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur, !!bot.simulation);
-    logRun(bot.id, bot.user_id, "macd_sell", bot.symbol, "sell", cfg.amount_eur, price,
-      result.error ? "error" : bot.simulation ? "simulated" : "ok", result.error ?? result.orderId ?? "");
+    const s = result.error ? "error" : bot.simulation ? "simulated" : "ok";
+    logRun(bot.id, bot.user_id, "macd_sell", bot.symbol, "sell", cfg.amount_eur, price, s, result.error ?? result.orderId ?? "");
+    if (s === "ok") await notifyOrderEmail(bot.user_id, bot.name, bot.strategy, bot.symbol, "sell", cfg.amount_eur, price);
   }
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import OnboardingModal from "@/components/OnboardingModal";
+import AnnouncementsWidget from "@/components/AnnouncementsWidget";
 import DailyMissions from "@/components/DailyMissions";
 import DashboardBriefing from "@/components/DashboardBriefing";
 import DashboardStats from "@/components/DashboardStats";
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   return (
     <>
       <OnboardingModal />
+      <AnnouncementsWidget />
       <div className="dashboard-page">
 
         {/* ── Header ── */}
