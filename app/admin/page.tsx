@@ -13,6 +13,8 @@ type Stats = {
   totalPnl: number;
   quizToday: number;
   avgLevel: number;
+  proUsers: number;
+  proActive: number;
 };
 
 type ActivityEvent = {
@@ -67,6 +69,8 @@ export default function AdminOverviewPage() {
     },
     { label: "Quiz today", value: stats.quizToday, icon: "○", sub: "completions" },
     { label: "Avg. level", value: stats.avgLevel, icon: "★", sub: "quiz level" },
+    { label: "PRO users", value: stats.proUsers ?? 0, icon: "★", sub: "total subscriptions" },
+    { label: "Active PRO", value: stats.proActive ?? 0, icon: "◉", sub: "currently active" },
   ];
 
   return (
@@ -97,6 +101,12 @@ export default function AdminOverviewPage() {
         </Link>
         <Link href="/admin/capital" className="admin-quick-btn">
           Assign capital →
+        </Link>
+        <Link href="/admin/revenue" className="admin-quick-btn">
+          Revenue →
+        </Link>
+        <Link href="/admin/playbook" className="admin-quick-btn">
+          Playbook →
         </Link>
       </div>
 

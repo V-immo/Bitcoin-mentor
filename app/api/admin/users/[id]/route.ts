@@ -79,6 +79,16 @@ export async function PATCH(
     updates.push("role = ?");
     values.push(body.role);
   }
+  if (typeof body.is_pro === "number") {
+    updates.push("is_pro = ?");
+    values.push(body.is_pro);
+    if (body.pro_until === null) {
+      updates.push("pro_until = ''");
+    } else if (typeof body.pro_until === "string") {
+      updates.push("pro_until = ?");
+      values.push(body.pro_until);
+    }
+  }
 
   if (updates.length > 0) {
     values.push(userId);

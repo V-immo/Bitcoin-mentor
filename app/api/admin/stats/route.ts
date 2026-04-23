@@ -42,6 +42,12 @@ export async function GET() {
     .prepare("SELECT AVG(level) as avg FROM quiz_progress")
     .get() as { avg: number | null }).avg ?? 0;
 
+  const proUsers = n("SELECT COUNT(*) as c FROM users WHERE is_pro = 1");
+  const proActive = n(
+    "SELECT COUNT(*) as c FROM users WHERE is_pro = 1 AND (pro_until IS NULL OR pro_until = '' OR pro_until >= ?)",
+    today
+  );
+
   return Response.json({
     totalUsers,
     totalAdmins,
@@ -52,5 +58,7 @@ export async function GET() {
     totalPnl: Math.round(totalPnl * 100) / 100,
     quizToday,
     avgLevel: Math.round(avgLevel * 10) / 10,
+    proUsers,
+    proActive,
   });
 }

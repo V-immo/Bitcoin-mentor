@@ -6,10 +6,13 @@ import { signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 const NAV = [
-  { href: "/admin",         label: "Overview",    exact: true },
-  { href: "/admin/users",   label: "Users",        exact: false },
-  { href: "/admin/capital", label: "Capital",      exact: false },
-  { href: "/admin/quiz",    label: "Quiz Pool",    exact: false },
+  { href: "/admin",           label: "Overview",   exact: true },
+  { href: "/admin/users",     label: "Users",      exact: false },
+  { href: "/admin/capital",   label: "Capital",    exact: false },
+  { href: "/admin/quiz",      label: "Quiz Pool",  exact: false },
+  { href: "/admin/revenue",   label: "Revenue",    exact: false },
+  { href: "/admin/playbook",  label: "Playbook",   exact: false },
+  { href: "/admin/broadcast", label: "Broadcast",  exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
