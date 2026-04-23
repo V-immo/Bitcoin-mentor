@@ -77,7 +77,11 @@
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && node -e \\\\\"const db = require\\('better-sqlite3'\\)\\('./db/mentor.db'\\); const users = db.prepare\\('SELECT id, email, role, is_pro, pro_until FROM users ORDER BY id'\\).all\\(\\); console.log\\(JSON.stringify\\(users, null, 2\\)\\);\\\\\"\")",
       "Bash(ssh root@202.71.14.150 \"grep -r 'DB_PATH\\\\|new Database\\\\|bitcoin_mentor\\\\|mentor.db' /var/www/bitcoin-mentor/db/db.ts 2>/dev/null | head -10\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && node -e \\\\\"const db = require\\('better-sqlite3'\\)\\('./data/bitcoin-mentor.db'\\); const users = db.prepare\\('SELECT id, email, role, is_pro, pro_until FROM users ORDER BY id'\\).all\\(\\); console.log\\(JSON.stringify\\(users, null, 2\\)\\);\\\\\"\")",
-      "Bash(ssh root@202.71.14.150 'cd /var/www/bitcoin-mentor && node -e \" *)"
+      "Bash(ssh root@202.71.14.150 'cd /var/www/bitcoin-mentor && node -e \" *)",
+      "Bash(ssh root@202.71.14.150 \"pm2 list && ls /var/www/bitcoin-mentor/.next/BUILD_ID 2>/dev/null && echo 'BUILD OK' || echo 'NO BUILD'\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull origin main && rm -rf .next && NODE_OPTIONS='--max-old-space-size=1600' npm run build 2>&1 | tail -15\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && rm -rf .next && NODE_OPTIONS='--max-old-space-size=1600' npm run build 2>&1 | tail -15\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && node db/ensure-admin.js && pm2 delete bitcoin-mentor 2>/dev/null || true && pm2 start ecosystem.config.js && sleep 4 && pm2 list\")"
     ]
   }
 }

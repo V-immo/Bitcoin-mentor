@@ -11,7 +11,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -19,7 +19,7 @@ jobs:
           host: 202.71.14.150
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command_timeout: 14m
+          command_timeout: 24m
           script: |
             set -e
             cd /var/www/bitcoin-mentor
@@ -52,16 +52,19 @@ jobs:
             pm2 delete bitcoin-mentor 2>/dev/null || true
             rm -rf .next
 
-            # Eerste poging
-            NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-              echo "Eerste build mislukt — retry..."
+            # Build — max 3 pogingen door Turbopack race condition
+            for attempt in 1 2 3; do
+              echo "Build poging $attempt..."
               rm -rf .next
-              NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-                echo "Build mislukt na retry"
+              NODE_OPTIONS='--max-old-space-size=1600' npm run build && break
+              if [ $attempt -eq 3 ]; then
+                echo "Build mislukt na 3 pogingen"
                 exit 1
-              }
-            }
+              fi
+              sleep 5
+            done
 
+            pm2 delete bitcoin-mentor 2>/dev/null || true
             pm2 start ecosystem.config.js
             pm2 save
 
