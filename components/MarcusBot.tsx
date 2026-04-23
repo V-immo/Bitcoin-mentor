@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, Play, Pause, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SCAN_ASSETS } from "@/lib/assets";
 
 type BotConfig = {
   amount_eur?: number;
@@ -123,7 +124,10 @@ const STRATEGIES: StrategyDef[] = [
   },
 ];
 
-const SYMBOLS = ["BTC", "ETH", "SOL", "XRP", "ADA", "BNB"];
+// Alle crypto uit de centrale assets lijst — alleen wat verhandelbaar is op exchanges
+const SYMBOLS = SCAN_ASSETS
+  .filter(a => a.type === "crypto")
+  .map(a => a.ticker);
 
 const EXCHANGES = [
   { key: "bitvavo", label: "Bitvavo", region: "BE / NL" },
