@@ -64,7 +64,13 @@
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && npm run build 2>&1 | tail -30\")",
       "Bash(ssh root@202.71.14.150 \"rm -f /var/www/bitcoin-mentor/.next/lock && cd /var/www/bitcoin-mentor && npm run build 2>&1 | tail -40\")",
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 delete bitcoin-mentor; pm2 start ecosystem.config.js && sleep 4 && pm2 list\")",
-      "Bash(ssh root@202.71.14.150 \"cat /var/www/bitcoin-mentor/ecosystem.config.js && pm2 save\")"
+      "Bash(ssh root@202.71.14.150 \"cat /var/www/bitcoin-mentor/ecosystem.config.js && pm2 save\")",
+      "Bash(ssh root@202.71.14.150 \"pm2 list\")",
+      "Bash(ssh root@202.71.14.150 \"ls /var/www/bitcoin-mentor/.next/BUILD_ID 2>/dev/null && echo 'BUILD OK' || echo 'NO BUILD'\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull origin main && rm -f .next/lock && NODE_OPTIONS='--max-old-space-size=1600' npm run build 2>&1 | tail -20\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && rm -f .next/lock && NODE_OPTIONS='--max-old-space-size=1600' npm run build 2>&1 | tail -20\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && rm -rf .next && NODE_OPTIONS='--max-old-space-size=1600' npm run build 2>&1 | tail -25\")",
+      "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && pm2 delete bitcoin-mentor 2>/dev/null || true && pm2 start ecosystem.config.js && sleep 4 && pm2 list\")"
     ]
   }
 }

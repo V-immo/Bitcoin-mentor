@@ -48,30 +48,21 @@ jobs:
             node db/migrate-premarket-count.js || true
             node db/migrate-bots.js || true
 
-            # Backup huidige werkende build — site blijft online tijdens build
-            rm -rf .next-backup || true
-            cp -r .next .next-backup 2>/dev/null || true
-
-            # Build — stop server VOOR de build zodat .next niet gelockt is
+            # Stop server + clean build dir (Turbopack race fix)
             pm2 delete bitcoin-mentor 2>/dev/null || true
-            rm -f .next/lock
+            rm -rf .next
 
-            # Eerste poging: maakt .next/static/<hash>/ subdirectory aan (ook al faalt build)
+            # Eerste poging
             NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-              echo "Eerste build mislukt (Turbopack race) — retry zonder rm -rf..."
-              rm -f .next/lock
+              echo "Eerste build mislukt — retry..."
+              rm -rf .next
               NODE_OPTIONS='--max-old-space-size=1600' npm run build || {
-                echo "Build mislukt na retry — herstel backup"
-                rm -rf .next || true
-                mv .next-backup .next || true
+                echo "Build mislukt na retry"
                 exit 1
               }
             }
 
-            # Build geslaagd — backup opruimen en starten
-            rm -rf .next-backup || true
-
-            pm2 start ecosystem.config.js --env production
+            pm2 start ecosystem.config.js
             pm2 save
 
             echo "Deploy klaar"

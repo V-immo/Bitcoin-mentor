@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 
 const FEATURES_FREE = [
-  { nl: "Niveau 1 & 2 curriculum", en: "Level 1 & 2 curriculum" },
+  { nl: "Niveau 1, 2 & 3 curriculum", en: "Level 1, 2 & 3 curriculum" },
   { nl: "Dagelijkse quiz (basis)", en: "Daily quiz (basic)" },
   { nl: "5 Marcus-berichten/dag", en: "5 Marcus messages/day" },
   { nl: "Paper trading", en: "Paper trading" },
