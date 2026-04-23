@@ -11,30 +11,33 @@ fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
 db.pragma("foreign_keys = ON");
 
+// Zorg dat het hoofd-admin account altijd correct is ingesteld
+try {
+  const OWNER_EMAIL = "amryandrea@gmail.com";
+  const owner = db.prepare("SELECT id FROM users WHERE email = ?").get(OWNER_EMAIL);
+  if (owner) {
+    db.prepare(`
+      UPDATE users SET role = 'admin', is_pro = 1, pro_until = '2099-12-31'
+      WHERE email = ?
+    `).run(OWNER_EMAIL);
+    console.log("Admin account vastgezet: " + OWNER_EMAIL);
+  }
+} catch (e) {
+  console.error("Fout bij owner-fix:", e.message);
+}
+
+// Maak een fallback admin aan als er helemaal geen admin bestaat
 try {
   const adminExists = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
   if (!adminExists) {
     const hash = bcrypt.hashSync("Admin123!", 12);
     db.prepare(`
-      INSERT OR IGNORE INTO users (username, email, password_hash, role, start_capital)
-      VALUES (?, ?, ?, 'admin', 10000)
+      INSERT OR IGNORE INTO users (username, email, password_hash, role, is_pro, pro_until, start_capital)
+      VALUES (?, ?, ?, 'admin', 1, '2099-12-31', 10000)
     `).run("admin", "admin@bitcoinmentor.be", hash);
-    console.log("✅ Admin aangemaakt: admin / Admin123!");
-    console.log("⚠️  Verander het wachtwoord direct via het admin panel!");
-  } else {
-    console.log("ℹ️  Admin account bestaat al, overgeslagen.");
+    console.log("Fallback admin aangemaakt: admin@bitcoinmentor.be / Admin123!");
   }
 } catch (e) {
-  console.error("❌ Fout bij ensure-admin:", e.message);
-}
-
-// Eenmalige cleanup: verwijder dubbel admin account 'ms amary'
-try {
-  const result = db.prepare("DELETE FROM users WHERE username = ?").run("ms amary");
-  if (result.changes > 0) {
-    console.log("🗑️  Dubbel admin account 'ms amary' verwijderd.");
-  }
-} catch (e) {
-  console.error("❌ Fout bij cleanup ms amary:", e.message);
+  console.error("Fout bij ensure-admin:", e.message);
 }
 db.close();
