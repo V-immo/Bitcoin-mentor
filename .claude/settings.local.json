@@ -54,7 +54,8 @@
       "Bash(ssh root@202.71.14.150 \"cd /var/www/bitcoin-mentor && git pull && npm install --legacy-peer-deps && npm run build 2>&1 | tail -10\")",
       "Bash(ssh root@202.71.14.150 \"sleep 90 && pm2 list\")",
       "Read(//c/Users/devel/bitcoin-mentor/**)",
-      "Bash(gh run *)"
+      "Bash(gh run *)",
+      "Bash(npx next *)"
     ]
   }
 }

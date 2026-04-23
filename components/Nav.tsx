@@ -18,13 +18,14 @@ type NavIcon = ComponentType<LucideProps>;
 const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
   { href: "/dashboard", key: "nav_link_dashboard", Icon: Home },
   { href: "/leren",     key: "nav_link_learn",     Icon: GraduationCap },
-  { href: "/nieuws",    key: "nav_link_news",      Icon: Newspaper },
   { href: "/scanner",   key: "nav_link_scanner",   Icon: Radar },
   { href: "/trade",     key: "nav_link_trade",     Icon: TrendingUp },
+  { href: "/bots",      key: "nav_link_bots",      Icon: Bot },
   { href: "/profiel",   key: "nav_link_profile",   Icon: User },
 ];
 
 const EXTRA_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
+  { href: "/nieuws",       key: "nav_link_news",     Icon: Newspaper },
   { href: "/agenda",       key: "nav_link_agenda",   Icon: Calendar },
   { href: "/stats",        key: "nav_link_stats",    Icon: BarChart3 },
   { href: "/brokers",      key: "nav_link_brokers",  Icon: Building2 },
@@ -32,7 +33,6 @@ const EXTRA_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
   { href: "/leaderboard",  key: "more_menu_ranking", Icon: Trophy },
   { href: "/content",      key: "nav_link_content",  Icon: Video },
   { href: "/partner",      key: "nav_link_partner",  Icon: Users },
-  { href: "/bots",         key: "nav_link_bots",     Icon: Bot },
 ];
 
 const ACCOUNT_LINKS: { href: string; key: string; Icon: NavIcon }[] = [

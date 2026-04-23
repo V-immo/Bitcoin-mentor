@@ -281,7 +281,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
   const strat = STRATEGIES.find(s => s.key === strategy);
 
   async function submit() {
-    if (!name.trim()) { setError(isNL ? "Geef je bot een naam" : "Give your bot a name"); return; }
+    if (!name.trim()) { setError(isNL ? "Geef je strategie een naam" : "Give your strategy a name"); return; }
     setLoading(true);
     setError("");
 
@@ -306,7 +306,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box bot-create-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="modal-title">{isNL ? "Nieuwe bot aanmaken" : "Create new bot"}</h2>
+          <h2 className="modal-title">{isNL ? "Strategie aanmaken" : "Create strategy"}</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
@@ -316,7 +316,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
             className="bot-input"
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder={isNL ? "Mijn DCA bot" : "My DCA bot"}
+            placeholder={isNL ? "Mijn DCA strategie" : "My DCA strategy"}
             maxLength={40}
           />
 
@@ -433,7 +433,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
           {error && <div className="bot-error">{error}</div>}
 
           <button className="bot-create-btn" onClick={submit} disabled={loading}>
-            {loading ? "…" : (isNL ? "Bot aanmaken" : "Create bot")}
+            {loading ? "…" : (isNL ? "Aanmaken" : "Create")}
           </button>
         </div>
       </div>
@@ -467,7 +467,7 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
   }
 
   async function deleteBot(id: number) {
-    if (!confirm(isNL ? "Bot verwijderen?" : "Delete bot?")) return;
+    if (!confirm(isNL ? "Strategie verwijderen?" : "Delete strategy?")) return;
     await fetch(`/api/bots/${id}`, { method: "DELETE" });
     loadBots();
   }
@@ -502,7 +502,7 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
         </div>
         <button className="bot-new-btn" onClick={() => setShowCreate(true)}>
           <Plus size={16} />
-          {isNL ? "Nieuwe bot" : "New bot"}
+          {isNL ? "Nieuwe strategie" : "New strategy"}
         </button>
       </div>
 
@@ -513,12 +513,12 @@ export default function MarcusBot({ isPro }: { isPro: boolean }) {
           <div className="bot-empty-icon">◉</div>
           <p className="bot-empty-text">
             {isNL
-              ? "Nog geen bots. Maak je eerste strategie aan."
-              : "No bots yet. Create your first strategy."}
+              ? "Nog geen strategieën. Maak je eerste aan."
+              : "No strategies yet. Create your first one."}
           </p>
           <button className="bot-new-btn" onClick={() => setShowCreate(true)}>
             <Plus size={16} />
-            {isNL ? "Eerste bot aanmaken" : "Create first bot"}
+            {isNL ? "Eerste strategie aanmaken" : "Create first strategy"}
           </button>
         </div>
       )}
