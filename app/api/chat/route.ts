@@ -138,7 +138,15 @@ export async function POST(request: NextRequest) {
   let weakTopics: string[] = body.weakTopics ?? [];
   // Taal: ALTIJD body.lang gebruiken — dit is wat de gebruiker NU ziet in de UI
   // DB ai_language wordt volledig genegeerd (kan verouderd zijn)
-  const aiLanguage: "nl" | "en" = (body.lang === "en") ? "en" : "nl";
+  type ChatLang = "nl" | "en" | "es" | "de" | "pt" | "fr" | "ar";
+  const SUPPORTED_CHAT_LANGS: ChatLang[] = ["nl", "en", "es", "de", "pt", "fr", "ar"];
+  const aiLanguage: ChatLang = SUPPORTED_CHAT_LANGS.includes(body.lang) ? body.lang as ChatLang : "nl";
+
+  const LANG_NAMES: Record<ChatLang, string> = {
+    nl: "Dutch (Nederlands)", en: "English", es: "Spanish (Español)",
+    de: "German (Deutsch)", pt: "Portuguese (Português)", fr: "French (Français)",
+    ar: "Arabic (العربية)",
+  };
 
   let quizHistorySummary = "";
   let marcusNotes = "";
@@ -433,6 +441,79 @@ ${lines.join("\n")}`;
     } catch { /* geen Bybit data, doorgaan */ }
   }
 
+  // ── Playbook / bot status ────────────────────────────────────────────────────
+  let playbookContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const bots = db.prepare(
+        "SELECT name, strategy, symbol, exchange, active, simulation, config FROM bots WHERE user_id = ? ORDER BY active DESC LIMIT 10"
+      ).all(userId) as { name: string; strategy: string; symbol: string; exchange: string; active: number; simulation: number; config: string }[];
+
+      if (bots.length > 0) {
+        const botLines = bots.map(b => {
+          const cfg = JSON.parse(b.config ?? "{}") as Record<string, unknown>;
+          const mode = b.simulation ? "simulatie" : "live";
+          const status = b.active ? "actief" : "gepauzeerd";
+          const detail = b.strategy === "dca" ? `€${cfg.amount_eur ?? "?"} elke ${cfg.interval_minutes ?? 1440} min` :
+                         b.strategy === "rsi" ? `koop RSI<${cfg.buy_below ?? 30}, verkoop RSI>${cfg.sell_above ?? 70}` :
+                         b.strategy === "breakout" ? `breakout boven €${cfg.resistance ?? "?"}` :
+                         b.strategy;
+          return `  • ${b.name} (${b.symbol} / ${b.exchange} / ${b.strategy}) — ${status}, ${mode} — ${detail}`;
+        });
+
+        // Laatste 5 runs
+        const recentRuns = db.prepare(
+          "SELECT br.action, br.symbol, br.side, br.amount, br.price, br.status, br.note, br.created_at FROM bot_runs br INNER JOIN bots b ON br.bot_id = b.id WHERE b.user_id = ? ORDER BY br.created_at DESC LIMIT 5"
+        ).all(userId) as { action: string; symbol: string; side: string; amount: number; price: number; status: string; note: string; created_at: string }[];
+
+        const runLines = recentRuns.map(r =>
+          `  ${r.created_at.slice(0, 16)}: ${r.action} ${r.symbol} ${r.side} €${r.amount} @ €${r.price?.toFixed(0) ?? "?"} — ${r.status}${r.status === "error" ? ` (${r.note})` : ""}`
+        );
+
+        playbookContext = `PLAYBOOK STRATEGIEËN:\n${botLines.join("\n")}`;
+        if (runLines.length > 0) {
+          playbookContext += `\n\nRECENTE PLAYBOOK UITVOERINGEN:\n${runLines.join("\n")}`;
+        }
+      } else {
+        playbookContext = "Playbook: geen strategieën aangemaakt.";
+      }
+    } catch { /* ignore */ }
+  }
+
+  // ── Curriculum voortgang ─────────────────────────────────────────────────────
+  let curriculumContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const progress = db.prepare(
+        "SELECT completed_lessons, current_lesson FROM curriculum_progress WHERE user_id = ?"
+      ).get(userId) as { completed_lessons: string; current_lesson: string } | undefined;
+      if (progress) {
+        const completed: string[] = JSON.parse(progress.completed_lessons ?? "[]");
+        curriculumContext = `CURRICULUM VOORTGANG: ${completed.length} lessen afgerond. Huidige les: ${progress.current_lesson ?? "onbekend"}.`;
+        if (completed.length > 0) {
+          curriculumContext += ` Afgerond: ${completed.slice(-5).join(", ")}${completed.length > 5 ? " (en meer)" : ""}`;
+        }
+      }
+    } catch { /* ignore — tabel bestaat mogelijk nog niet */ }
+  }
+
+  // ── Actieve alerts ───────────────────────────────────────────────────────────
+  let alertsContext = "";
+  if (userId) {
+    try {
+      const db = getDb();
+      const alerts = db.prepare(
+        "SELECT asset, condition, price, created_at FROM alerts WHERE user_id = ? AND triggered = 0 LIMIT 10"
+      ).all(userId) as { asset: string; condition: string; price: number; created_at: string }[];
+      if (alerts.length > 0) {
+        alertsContext = `ACTIEVE ALERTS (${alerts.length}):\n` +
+          alerts.map(a => `  • ${a.asset} ${a.condition} €${a.price?.toLocaleString()}`).join("\n");
+      }
+    } catch { /* ignore */ }
+  }
+
   // Haal relevante trading kennis op uit de kennisbank
   let relevantKnowledge = "";
   if (userId) {
@@ -519,13 +600,11 @@ AANDELEN/ETFs: Kwartaalcijfers (earnings season), Fed-rente beslissingen, macro 
     ? `\nWEAK AREAS (pay extra attention to these): ${weakTopics.join(", ")}`
     : "";
 
-  const langNote = aiLanguage === "en"
-    ? "CRITICAL LANGUAGE RULE: You MUST respond in English ONLY. Every single message must be in English. Never switch to Dutch. The user has selected English as their language."
-    : "LANGUAGE RULE: Always respond in Dutch (Nederlands). Never in English.";
+  const langNote = `CRITICAL LANGUAGE RULE: You MUST respond in ${LANG_NAMES[aiLanguage]} ONLY. Every single message must be in ${LANG_NAMES[aiLanguage]}. Never switch languages. The user has selected ${LANG_NAMES[aiLanguage]} as their language.`;
 
   const systemPrompt = `You are Marcus. ${langNote}
 
-RESPONSE LANGUAGE: ${aiLanguage === "en" ? "ENGLISH" : "DUTCH (Nederlands)"} — mandatory for every single response.
+RESPONSE LANGUAGE: ${LANG_NAMES[aiLanguage].toUpperCase()} — mandatory for every single response.
 
 WHO YOU ARE:
 You are Marcus — a trader with 15 years of market experience. You've been through everything: crypto bull runs, oil shocks, gold peaks, stock market crashes. You trade ALL markets: crypto (BTC, ETH, SOL, ...), precious metals (gold, silver), commodities (WTI crude oil), stocks (NVDA, AAPL, TSLA, MSFT, GOOGL, AMZN, META, AMD, NFLX, PLTR) and ETFs (S&P 500, NASDAQ-100). You know each of these markets inside out — their seasonal patterns, drivers, sentiment, technical levels.
@@ -1560,6 +1639,16 @@ BYBIT LIVE PORTFOLIO (ECHTE USDT — dit is het echte geld van de gebruiker op B
 ${bybitContext
   ? bybitContext
   : "Niet gekoppeld of geen saldo. Als de gebruiker vraagt naar hun Bybit account, vertel hen dat ze de API key kunnen koppelen in Instellingen."}
+
+PLAYBOOK (GEAUTOMATISEERDE STRATEGIEËN VAN DEZE GEBRUIKER):
+${playbookContext || "Geen Playbook strategieën aangemaakt. Als de gebruiker vraagt over automatisch traden, verwijs naar /bots."}
+Gebruik dit actief: als de gebruiker vraagt "hoe doet mijn strategie het?" of "wanneer koopt mijn DCA bot?", geef je exact antwoord op basis van bovenstaande data. Je KUNT meekijken — zeg dat nooit anders.
+
+CURRICULUM VOORTGANG:
+${curriculumContext || "Nog geen curriculum data beschikbaar."}
+
+ACTIEVE PRIJSALERTS:
+${alertsContext || "Geen actieve alerts."}
 
 RELEVANTE KENNISBANK VOOR DEZE VRAAG:
 ${relevantKnowledge || "Geen specifieke lessen geselecteerd voor dit gesprek."}

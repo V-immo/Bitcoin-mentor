@@ -1,4 +1,4 @@
-export type Lang = "nl" | "en";
+export type Lang = "nl" | "en" | "es" | "de" | "pt" | "fr" | "ar";
 
 const translations = {
   nl: {
@@ -2120,8 +2120,65 @@ const translations = {
   },
 } as const;
 
+// ─── Gedeeltelijke vertalingen — vallen terug op Engels ────────────────────────
+// Voeg hier nieuwe talen toe — alleen de sleutels die afwijken van EN hoeven vertaald te worden.
+
+const partialTranslations: Partial<Record<Lang, Partial<Record<string, string>>>> = {
+  es: {
+    loading: "Cargando…", save: "Guardar", saving: "Guardando…", saved: "✓ Guardado",
+    back: "← Atrás", cancel: "Cancelar", confirm: "Confirmar", close: "Cerrar",
+    nav_link_dashboard: "Panel", nav_link_learn: "Aprender", nav_link_news: "Noticias",
+    nav_link_scanner: "Scanner", nav_link_trade: "Trading", nav_link_profile: "Perfil",
+    nav_link_settings: "Ajustes", nav_link_help: "Ayuda", nav_link_bots: "Playbook",
+    login: "Iniciar sesión", logout: "Cerrar sesión", register: "Registrarse",
+    pro_hero_title: "Aprende a operar como el 5% que lo logra",
+    pro_hero_sub: "Todos los niveles, coaching ilimitado, Playbook y todo lo que necesitas para el trading en vivo.",
+  },
+  de: {
+    loading: "Laden…", save: "Speichern", saving: "Speichern…", saved: "✓ Gespeichert",
+    back: "← Zurück", cancel: "Abbrechen", confirm: "Bestätigen", close: "Schließen",
+    nav_link_dashboard: "Dashboard", nav_link_learn: "Lernen", nav_link_news: "Nachrichten",
+    nav_link_scanner: "Scanner", nav_link_trade: "Trading", nav_link_profile: "Profil",
+    nav_link_settings: "Einstellungen", nav_link_help: "Hilfe", nav_link_bots: "Playbook",
+    login: "Anmelden", logout: "Abmelden", register: "Registrieren",
+  },
+  pt: {
+    loading: "Carregando…", save: "Salvar", saving: "Salvando…", saved: "✓ Salvo",
+    back: "← Voltar", cancel: "Cancelar", confirm: "Confirmar", close: "Fechar",
+    nav_link_dashboard: "Painel", nav_link_learn: "Aprender", nav_link_news: "Notícias",
+    nav_link_scanner: "Scanner", nav_link_trade: "Trading", nav_link_profile: "Perfil",
+    nav_link_settings: "Configurações", nav_link_help: "Ajuda", nav_link_bots: "Playbook",
+    login: "Entrar", logout: "Sair", register: "Registrar",
+  },
+  fr: {
+    loading: "Chargement…", save: "Enregistrer", saving: "Enregistrement…", saved: "✓ Enregistré",
+    back: "← Retour", cancel: "Annuler", confirm: "Confirmer", close: "Fermer",
+    nav_link_dashboard: "Tableau de bord", nav_link_learn: "Apprendre", nav_link_news: "Actualités",
+    nav_link_scanner: "Scanner", nav_link_trade: "Trading", nav_link_profile: "Profil",
+    nav_link_settings: "Paramètres", nav_link_help: "Aide", nav_link_bots: "Playbook",
+    login: "Connexion", logout: "Déconnexion", register: "S'inscrire",
+  },
+  ar: {
+    loading: "جار التحميل…", save: "حفظ", saving: "جار الحفظ…", saved: "✓ تم الحفظ",
+    back: "→ رجوع", cancel: "إلغاء", confirm: "تأكيد", close: "إغلاق",
+    nav_link_dashboard: "لوحة التحكم", nav_link_learn: "تعلم", nav_link_news: "الأخبار",
+    nav_link_scanner: "الماسح", nav_link_trade: "تداول", nav_link_profile: "الملف الشخصي",
+    nav_link_settings: "الإعدادات", nav_link_help: "المساعدة", nav_link_bots: "Playbook",
+    login: "تسجيل الدخول", logout: "تسجيل الخروج", register: "إنشاء حساب",
+  },
+};
+
 export type TranslationKey = keyof typeof translations.nl;
 
 export function getTranslations(lang: Lang): Record<TranslationKey, string> {
-  return translations[lang] as Record<TranslationKey, string>;
+  // NL en EN zijn volledig vertaald
+  if (lang === "nl" || lang === "en") return translations[lang] as Record<TranslationKey, string>;
+  // Andere talen: gebruik gedeeltelijke vertaling met EN als fallback
+  const partial = partialTranslations[lang] ?? {};
+  const base = translations.en as Record<string, string>;
+  return new Proxy(base, {
+    get(target, key: string) {
+      return partial[key] ?? target[key];
+    },
+  }) as Record<TranslationKey, string>;
 }

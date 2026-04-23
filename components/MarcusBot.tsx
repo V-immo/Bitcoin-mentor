@@ -20,6 +20,7 @@ type Bot = {
   exchange: string;
   symbol: string;
   active: boolean;
+  simulation: boolean;
   created_at: string;
 };
 
@@ -125,8 +126,9 @@ const STRATEGIES: StrategyDef[] = [
 const SYMBOLS = ["BTC", "ETH", "SOL", "XRP", "ADA", "BNB"];
 
 const EXCHANGES = [
-  { key: "bitvavo", label: "Bitvavo", region: "🇧🇪 🇳🇱" },
+  { key: "bitvavo", label: "Bitvavo", region: "BE / NL" },
   { key: "binance", label: "Binance", region: "Globaal" },
+  { key: "bybit",   label: "Bybit",   region: "Globaal" },
 ];
 
 function BotCard({ bot, onToggle, onDelete, isNL }: {
@@ -165,6 +167,7 @@ function BotCard({ bot, onToggle, onDelete, isNL }: {
           <span className={`bot-status-dot ${bot.active ? "bot-status-dot--on" : ""}`} />
           <span className="bot-card-name">{bot.name}</span>
           <span className="bot-card-meta">{bot.symbol} · {stratLabel} · {bot.exchange}</span>
+          {bot.simulation && <span className="bot-sim-badge">{isNL ? "Simulatie" : "Simulation"}</span>}
         </div>
         <div className="bot-card-actions" onClick={e => e.stopPropagation()}>
           <button
@@ -271,6 +274,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
   const [buyBelow, setBuyBelow] = useState(30);
   const [sellAbove, setSellAbove] = useState(70);
   const [resistance, setResistance] = useState(0);
+  const [simulation, setSimulation] = useState(true); // standaard simulatie — veiliger
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -289,7 +293,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
     const res = await fetch("/api/bots", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), strategy, config, exchange, symbol }),
+      body: JSON.stringify({ name: name.trim(), strategy, config, exchange, symbol, simulation }),
     });
     const data = await res.json() as { id?: number; error?: string };
     setLoading(false);
@@ -408,6 +412,23 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
               ◉ {isNL ? strat.descNL : strat.descEN}
             </div>
           )}
+
+          <div className="bot-sim-toggle">
+            <button
+              className={`bot-mode-btn ${simulation ? "bot-mode-btn--active" : ""}`}
+              onClick={() => setSimulation(true)}
+            >
+              {isNL ? "Simulatie" : "Simulation"}
+              <span className="bot-mode-desc">{isNL ? "Oefenen zonder echt geld" : "Practice without real money"}</span>
+            </button>
+            <button
+              className={`bot-mode-btn ${!simulation ? "bot-mode-btn--active bot-mode-btn--live" : ""}`}
+              onClick={() => setSimulation(false)}
+            >
+              {isNL ? "Live" : "Live"}
+              <span className="bot-mode-desc">{isNL ? "Echte orders op exchange" : "Real orders on exchange"}</span>
+            </button>
+          </div>
 
           {error && <div className="bot-error">{error}</div>}
 

@@ -55,3 +55,48 @@ export async function bybitRequest(
 
   return res.json() as Promise<{ retCode: number; retMsg: string; result: unknown }>;
 }
+
+// Spot marktorder plaatsen op Bybit
+export async function bybitPlaceOrder(
+  apiKey: string,
+  apiSecret: string,
+  symbol: string,
+  side: "Buy" | "Sell",
+  quoteQty: number // USDT bedrag
+): Promise<{ orderId?: string; error?: string }> {
+  const pair = symbol.includes("USDT") ? symbol : `${symbol}USDT`;
+  const result = await bybitRequest(apiKey, apiSecret, "POST", "/v5/order/create", undefined, {
+    category: "spot",
+    symbol: pair,
+    side,
+    orderType: "Market",
+    quoteQty: quoteQty.toString(),
+  }) as { retCode: number; retMsg: string; result: { orderId?: string } };
+
+  if (result.retCode !== 0) return { error: result.retMsg };
+  return { orderId: result.result?.orderId };
+}
+
+// Spot prijs ophalen via Bybit (publiek)
+export async function bybitGetPrice(symbol: string): Promise<number> {
+  const pair = symbol.includes("USDT") ? symbol : `${symbol}USDT`;
+  const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}`);
+  const data = await res.json() as { result?: { list?: { lastPrice: string }[] } };
+  return parseFloat(data.result?.list?.[0]?.lastPrice ?? "0");
+}
+
+// Spot candles ophalen via Bybit (publiek)
+export async function bybitGetCandles(symbol: string, interval: string, limit: number): Promise<number[]> {
+  const pair = symbol.includes("USDT") ? symbol : `${symbol}USDT`;
+  const intervalMap: Record<string, string> = {
+    "1m": "1", "5m": "5", "15m": "15", "1h": "60", "4h": "240", "1d": "D", "1W": "W",
+  };
+  const bybitInterval = intervalMap[interval] ?? "60";
+  const res = await fetch(
+    `https://api.bybit.com/v5/market/kline?category=spot&symbol=${pair}&interval=${bybitInterval}&limit=${limit}`
+  );
+  const data = await res.json() as { result?: { list?: string[][] } };
+  const candles = data.result?.list ?? [];
+  // Bybit geeft nieuwste eerst — omdraaien, close staat op index 4
+  return candles.map(c => parseFloat(c[4])).reverse();
+}

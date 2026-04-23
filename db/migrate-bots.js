@@ -52,6 +52,12 @@ if (!runCols.length) {
   console.log("ℹ️  Tabel bot_runs bestaat al");
 }
 
+// Simulation kolom toevoegen als die nog niet bestaat
+if (cols.length && !cols.includes("simulation")) {
+  db.exec("ALTER TABLE bots ADD COLUMN simulation INTEGER NOT NULL DEFAULT 0");
+  console.log("✅ Kolom simulation toegevoegd aan bots");
+}
+
 // Binance API key opslaan in settings (naast bitvavo)
 const settingsCols = db.pragma("table_info(settings)").map(c => c.name);
 

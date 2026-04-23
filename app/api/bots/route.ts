@@ -39,8 +39,8 @@ export async function POST(request: Request) {
   const isPro = user?.is_pro === 1 && (!user.pro_until || user.pro_until >= new Date().toISOString().slice(0, 10));
   if (!isPro) return Response.json({ error: "PRO vereist" }, { status: 403 });
 
-  const body = await request.json() as { name?: string; strategy?: string; config?: Record<string, unknown>; exchange?: string; symbol?: string };
-  const { name = "", strategy = "dca", config = {}, exchange = "bitvavo", symbol = "BTC" } = body;
+  const body = await request.json() as { name?: string; strategy?: string; config?: Record<string, unknown>; exchange?: string; symbol?: string; simulation?: boolean };
+  const { name = "", strategy = "dca", config = {}, exchange = "bitvavo", symbol = "BTC", simulation = true } = body;
 
   if (!name) return Response.json({ error: "Naam vereist" }, { status: 400 });
 
@@ -48,8 +48,8 @@ export async function POST(request: Request) {
   if (!VALID_STRATEGIES.includes(strategy)) return Response.json({ error: "Onbekende strategie" }, { status: 400 });
 
   const result = db.prepare(
-    "INSERT INTO bots (user_id, name, strategy, config, exchange, symbol) VALUES (?, ?, ?, ?, ?, ?)"
-  ).run(parseInt(userId), name, strategy, JSON.stringify(config), exchange, symbol);
+    "INSERT INTO bots (user_id, name, strategy, config, exchange, symbol, simulation) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  ).run(parseInt(userId), name, strategy, JSON.stringify(config), exchange, symbol, simulation ? 1 : 0);
 
   return Response.json({ id: result.lastInsertRowid });
 }

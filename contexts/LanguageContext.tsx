@@ -19,11 +19,19 @@ const LanguageContext = createContext<LanguageContextType>({
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("nl");
 
+  const SUPPORTED_LANGS: Lang[] = ["nl", "en", "es", "de", "pt", "fr", "ar"];
+
   // Detecteer browser-taal als fallback voor nieuwe gebruikers
   function detectBrowserLang(): Lang {
     if (typeof window === "undefined") return "en";
-    const nav = navigator.language ?? navigator.languages?.[0] ?? "";
-    return nav.toLowerCase().startsWith("nl") ? "nl" : "en";
+    const nav = (navigator.language ?? navigator.languages?.[0] ?? "").toLowerCase();
+    if (nav.startsWith("nl")) return "nl";
+    if (nav.startsWith("es")) return "es";
+    if (nav.startsWith("de")) return "de";
+    if (nav.startsWith("pt")) return "pt";
+    if (nav.startsWith("fr")) return "fr";
+    if (nav.startsWith("ar")) return "ar";
+    return "en";
   }
 
   // Laad taal: localStorage voor snelle initialisatie, DB is altijd de bron van waarheid
@@ -32,10 +40,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
     // Snelle render vanuit localStorage (voorkomt flash)
     const stored = localStorage.getItem("app_lang") as Lang | null;
-    if (stored === "nl" || stored === "en") {
+    if (stored && SUPPORTED_LANGS.includes(stored)) {
       setLangState(stored);
     } else {
-      // Geen opgeslagen voorkeur — gebruik browser-taal
       setLangState(detectBrowserLang());
     }
 
@@ -43,20 +50,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     fetch("/api/me/settings")
       .then(r => r.ok ? r.json() : null)
       .then(d => {
-        const dbLang = d?.aiLanguage;
-        if (dbLang === "en" || dbLang === "nl") {
+        const dbLang = d?.aiLanguage as Lang | undefined;
+        if (dbLang && SUPPORTED_LANGS.includes(dbLang)) {
           setLangState(dbLang);
           localStorage.setItem("app_lang", dbLang);
         } else if (!stored) {
-          // Nieuwe gebruiker zonder DB-voorkeur — gebruik browser-taal
           const detected = detectBrowserLang();
           setLangState(detected);
           localStorage.setItem("app_lang", detected);
         }
       })
       .catch(() => {
-        // Kon DB niet bereiken — behoud huidige waarde
-        if (!stored || (stored !== "nl" && stored !== "en")) {
+        if (!stored || !SUPPORTED_LANGS.includes(stored)) {
           setLangState(detectBrowserLang());
         }
       });
