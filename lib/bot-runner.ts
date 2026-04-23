@@ -1,16 +1,15 @@
 /**
  * Bot Runner — voert actieve bots uit
  *
- * Strategieën:
- *  - dca:      koop elke X minuten een vast bedrag
- *  - rsi:      koop als RSI < drempel, verkoop als RSI > drempel
- *  - breakout: koop als prijs boven resistance breekt
+ * Exchanges: bitvavo, binance, coinbase (later), kraken (later)
+ * Strategieën: dca, ema200, rsi, breakout, pullback, ema_cross, macd
  *
  * Wordt aangeroepen door /api/bots/run (cron-route, elke 5 minuten)
  */
 
 import { getDb } from "@/db/db";
 import { bitvavRequest } from "@/lib/bitvavo";
+import { binanceGetPrice, binanceGetCandles, binancePlaceOrder } from "@/lib/binance";
 
 type BotRow = {
   id: number;
@@ -26,41 +25,53 @@ type BotRow = {
 type Settings = {
   bitvavo_api_key: string;
   bitvavo_api_secret: string;
+  binance_api_key: string;
+  binance_api_secret: string;
+};
+
+type ExchangeKeys = {
+  apiKey: string;
+  apiSecret: string;
+  exchange: string;
 };
 
 type DcaConfig = {
-  amount_eur: number;       // te kopen bedrag per run in EUR
-  interval_minutes: number; // elke X minuten uitvoeren
+  amount_eur: number;
+  interval_minutes: number;
 };
 
 type RsiConfig = {
-  buy_below: number;   // RSI onder deze drempel: koop
-  sell_above: number;  // RSI boven deze drempel: verkoop
+  buy_below: number;
+  sell_above: number;
   amount_eur: number;
 };
 
 type BreakoutConfig = {
-  resistance: number;  // prijs boven dit niveau: koop
+  resistance: number;
   amount_eur: number;
 };
 
-// Haal huidige prijs op via Bitvavo public API
-async function getPrice(symbol: string): Promise<number> {
+// ─── Exchange-agnostische helpers ────────────────────────────────────────────
+
+async function getPrice(symbol: string, exchange: string): Promise<number> {
+  if (exchange === "binance") return binanceGetPrice(symbol);
+  // Bitvavo (default)
   const pair = symbol.includes("-") ? symbol : `${symbol}-EUR`;
   const res = await fetch(`https://api.bitvavo.com/v2/ticker/price?market=${pair}`);
   const data = await res.json() as { price?: string };
   return parseFloat(data.price ?? "0");
 }
 
-// Haal candles op van Bitvavo
-async function getCandles(symbol: string, interval: string, limit: number): Promise<number[]> {
+// Haal candles op — exchange-agnostisch
+async function getCandles(symbol: string, interval: string, limit: number, exchange = "bitvavo"): Promise<number[]> {
+  if (exchange === "binance") return binanceGetCandles(symbol, interval, limit);
+  // Bitvavo
   const pair = symbol.includes("-") ? symbol : `${symbol}-EUR`;
   const res = await fetch(
     `https://api.bitvavo.com/v2/${pair}/candles?interval=${interval}&limit=${limit}`
   );
   const candles = await res.json() as [number, string, string, string, string, string][];
   if (!Array.isArray(candles)) return [];
-  // Bitvavo geeft nieuwste eerst terug — omdraaien voor chronologische volgorde
   return candles.map(c => parseFloat(c[4])).reverse();
 }
 
@@ -79,8 +90,8 @@ function calcEma(closes: number[], period: number): number[] {
 }
 
 // Bereken RSI(14) op basis van 4H candles
-async function getRsi(symbol: string, period = 14, interval = "4h"): Promise<number> {
-  const closes = await getCandles(symbol, interval, period + 1);
+async function getRsi(symbol: string, period = 14, interval = "4h", exchange = "bitvavo"): Promise<number> {
+  const closes = await getCandles(symbol, interval, period + 1, exchange);
   if (closes.length < period + 1) return 50;
 
   let gains = 0, losses = 0;
@@ -96,8 +107,8 @@ async function getRsi(symbol: string, period = 14, interval = "4h"): Promise<num
 }
 
 // Bereken MACD (12, 26, 9) — geeft terug { macd, signal }
-async function getMacd(symbol: string): Promise<{ macd: number; signal: number; prev_macd: number; prev_signal: number }> {
-  const closes = await getCandles(symbol, "1h", 100);
+async function getMacd(symbol: string, exchange = "bitvavo"): Promise<{ macd: number; signal: number; prev_macd: number; prev_signal: number }> {
+  const closes = await getCandles(symbol, "1h", 100, exchange);
   if (closes.length < 35) return { macd: 0, signal: 0, prev_macd: 0, prev_signal: 0 };
 
   const ema12 = calcEma(closes, 12);
@@ -115,22 +126,24 @@ async function getMacd(symbol: string): Promise<{ macd: number; signal: number; 
   };
 }
 
-// Plaatst een marktorder via Bitvavo
+// Plaatst een marktorder — exchange-agnostisch
 async function placeOrder(
-  apiKey: string,
-  apiSecret: string,
+  keys: ExchangeKeys,
   symbol: string,
   side: "buy" | "sell",
-  amountEur: number
+  amount: number
 ): Promise<{ orderId?: string; error?: string }> {
+  if (keys.exchange === "binance") {
+    const result = await binancePlaceOrder(
+      keys.apiKey, keys.apiSecret, symbol,
+      side === "buy" ? "BUY" : "SELL", amount
+    );
+    return { orderId: result.orderId ? String(result.orderId) : undefined, error: result.error };
+  }
+  // Bitvavo (default)
   const pair = symbol.includes("-") ? symbol : `${symbol}-EUR`;
-  const body = {
-    market: pair,
-    side,
-    orderType: "market",
-    amountQuote: String(amountEur), // in EUR
-  };
-  const result = await bitvavRequest(apiKey, apiSecret, "POST", "/order", body) as { orderId?: string; error?: string };
+  const body = { market: pair, side, orderType: "market", amountQuote: String(amount) };
+  const result = await bitvavRequest(keys.apiKey, keys.apiSecret, "POST", "/order", body) as { orderId?: string; error?: string };
   return result;
 }
 
@@ -152,7 +165,7 @@ function logRun(
 }
 
 // DCA: controleer of het interval verstreken is en koop dan
-async function runDca(bot: BotRow, cfg: DcaConfig, apiKey: string, apiSecret: string) {
+async function runDca(bot: BotRow, cfg: DcaConfig, keys: ExchangeKeys) {
   const db = getDb();
   const lastRun = db.prepare(
     "SELECT created_at FROM bot_runs WHERE bot_id = ? AND action = 'dca' ORDER BY created_at DESC LIMIT 1"
@@ -162,147 +175,131 @@ async function runDca(bot: BotRow, cfg: DcaConfig, apiKey: string, apiSecret: st
   const lastTs = lastRun ? new Date(lastRun.created_at).getTime() : 0;
   if (Date.now() - lastTs < intervalMs) return; // nog niet tijd
 
-  const price = await getPrice(bot.symbol);
-  const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
+  const price = await getPrice(bot.symbol, keys.exchange);
+  const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
   const status = result.error ? "error" : "ok";
-  const note   = result.error ?? result.orderId ?? "";
-  logRun(bot.id, bot.user_id, "dca", bot.symbol, "buy", cfg.amount_eur, price, status, note);
+  logRun(bot.id, bot.user_id, "dca", bot.symbol, "buy", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
 }
 
 // RSI: koop als RSI < buy_below, verkoop als RSI > sell_above
-async function runRsi(bot: BotRow, cfg: RsiConfig, apiKey: string, apiSecret: string) {
-  const rsi = await getRsi(bot.symbol);
-  const price = await getPrice(bot.symbol);
+async function runRsi(bot: BotRow, cfg: RsiConfig, keys: ExchangeKeys) {
+  const rsi   = await getRsi(bot.symbol, 14, "4h", keys.exchange);
+  const price = await getPrice(bot.symbol, keys.exchange);
 
   if (rsi < (cfg.buy_below ?? 30)) {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
-    const status = result.error ? "error" : "ok";
-    logRun(bot.id, bot.user_id, "rsi_buy", bot.symbol, "buy", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+    const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
+    logRun(bot.id, bot.user_id, "rsi_buy", bot.symbol, "buy", cfg.amount_eur, price,
+      result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   } else if (rsi > (cfg.sell_above ?? 70)) {
-    // Verkoop alle holdings — gebruik amount_eur als indicatie maar verkoop in base currency
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "sell", cfg.amount_eur);
-    const status = result.error ? "error" : "ok";
-    logRun(bot.id, bot.user_id, "rsi_sell", bot.symbol, "sell", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+    const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur);
+    logRun(bot.id, bot.user_id, "rsi_sell", bot.symbol, "sell", cfg.amount_eur, price,
+      result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   }
 }
 
 // Breakout: koop als huidige prijs boven resistance
-async function runBreakout(bot: BotRow, cfg: BreakoutConfig, apiKey: string, apiSecret: string) {
-  const db = getDb();
-  const price = await getPrice(bot.symbol);
+async function runBreakout(bot: BotRow, cfg: BreakoutConfig, keys: ExchangeKeys) {
+  const db    = getDb();
+  const price = await getPrice(bot.symbol, keys.exchange);
   if (price <= cfg.resistance) return;
 
-  // Geen dubbele entry binnen 24 uur
   const recent = db.prepare(
     "SELECT id FROM bot_runs WHERE bot_id = ? AND action = 'breakout_buy' AND created_at > datetime('now', '-1 day') LIMIT 1"
   ).get(bot.id);
   if (recent) return;
 
-  const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
-  const status = result.error ? "error" : "ok";
-  logRun(bot.id, bot.user_id, "breakout_buy", bot.symbol, "buy", cfg.amount_eur, price, status, result.error ?? result.orderId ?? "");
+  const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
+  logRun(bot.id, bot.user_id, "breakout_buy", bot.symbol, "buy", cfg.amount_eur, price,
+    result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
 }
 
-// EMA200: koop als prijs > EMA200, verkoop als prijs < EMA200 (lang termijn trend)
-async function runEma200(bot: BotRow, cfg: { amount_eur: number }, apiKey: string, apiSecret: string) {
-  const db = getDb();
-  const closes = await getCandles(bot.symbol, "1d", 220);
+// EMA200: lang termijn trend volgen
+async function runEma200(bot: BotRow, cfg: { amount_eur: number }, keys: ExchangeKeys) {
+  const db     = getDb();
+  const closes = await getCandles(bot.symbol, "1d", 220, keys.exchange);
   if (closes.length < 200) return;
 
   const ema200arr = calcEma(closes, 200);
-  const ema200 = ema200arr[ema200arr.length - 1];
-  const price  = closes[closes.length - 1];
-  const aboveEma = price > ema200;
+  const ema200    = ema200arr[ema200arr.length - 1];
+  const price     = closes[closes.length - 1];
+  const aboveEma  = price > ema200;
 
-  const lastRun = db.prepare(
+  const lastRun   = db.prepare(
     "SELECT action FROM bot_runs WHERE bot_id = ? ORDER BY created_at DESC LIMIT 1"
   ).get(bot.id) as { action: string } | undefined;
-
   const lastAction = lastRun?.action ?? "";
 
   if (aboveEma && lastAction !== "ema200_buy") {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
+    const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "ema200_buy", bot.symbol, "buy", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   } else if (!aboveEma && lastAction === "ema200_buy") {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "sell", cfg.amount_eur);
+    const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "ema200_sell", bot.symbol, "sell", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   }
 }
 
-// Pullback naar EMA50: koop als in uptrend (prijs > EMA200) en prijs terugvalt naar EMA50
-async function runPullback(bot: BotRow, cfg: { amount_eur: number }, apiKey: string, apiSecret: string) {
-  const db = getDb();
-  const closes = await getCandles(bot.symbol, "4h", 220);
+// Pullback naar EMA50 in uptrend
+async function runPullback(bot: BotRow, cfg: { amount_eur: number }, keys: ExchangeKeys) {
+  const db     = getDb();
+  const closes = await getCandles(bot.symbol, "4h", 220, keys.exchange);
   if (closes.length < 200) return;
 
   const ema50arr  = calcEma(closes, 50);
   const ema200arr = calcEma(closes, 200);
-  const ema50  = ema50arr[ema50arr.length - 1];
-  const ema200 = ema200arr[ema200arr.length - 1];
-  const price  = closes[closes.length - 1];
+  const ema50     = ema50arr[ema50arr.length - 1];
+  const ema200    = ema200arr[ema200arr.length - 1];
+  const price     = closes[closes.length - 1];
 
-  const inUptrend  = price > ema200;
-  const nearEma50  = price <= ema50 * 1.01 && price >= ema50 * 0.99; // binnen 1% van EMA50
+  if (price <= ema200) return; // geen uptrend
+  if (price > ema50 * 1.01 || price < ema50 * 0.99) return; // niet dicht bij EMA50
 
-  if (!inUptrend || !nearEma50) return;
-
-  // Geen dubbele entry binnen 2 dagen
   const recent = db.prepare(
     "SELECT id FROM bot_runs WHERE bot_id = ? AND action = 'pullback_buy' AND created_at > datetime('now', '-2 day') LIMIT 1"
   ).get(bot.id);
   if (recent) return;
 
-  const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
+  const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
   logRun(bot.id, bot.user_id, "pullback_buy", bot.symbol, "buy", cfg.amount_eur, price,
     result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
 }
 
-// EMA Cross 9/21: koop bij golden cross, verkoop bij death cross (1H)
-async function runEmaCross(bot: BotRow, cfg: { amount_eur: number }, apiKey: string, apiSecret: string) {
-  const closes = await getCandles(bot.symbol, "1h", 60);
+// EMA Cross 9/21 (1H)
+async function runEmaCross(bot: BotRow, cfg: { amount_eur: number }, keys: ExchangeKeys) {
+  const closes = await getCandles(bot.symbol, "1h", 60, keys.exchange);
   if (closes.length < 22) return;
 
   const ema9arr  = calcEma(closes, 9);
   const ema21arr = calcEma(closes, 21);
-  const offset   = ema9arr.length - ema21arr.length;
-
   const ema9_now  = ema9arr[ema9arr.length - 1];
   const ema21_now = ema21arr[ema21arr.length - 1];
   const ema9_prev  = ema9arr[ema9arr.length - 2];
   const ema21_prev = ema21arr[ema21arr.length - 2];
-
-  const goldenCross = ema9_prev < ema21arr[ema21arr.length - 2 - offset + offset] && ema9_now > ema21_now;
-  const deathCross  = ema9_prev > ema21_prev && ema9_now < ema21_now;
-
   const price = closes[closes.length - 1];
 
-  if (goldenCross) {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
+  if (ema9_prev < ema21_prev && ema9_now > ema21_now) {
+    const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "ema_cross_buy", bot.symbol, "buy", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
-  } else if (deathCross) {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "sell", cfg.amount_eur);
+  } else if (ema9_prev > ema21_prev && ema9_now < ema21_now) {
+    const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "ema_cross_sell", bot.symbol, "sell", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   }
 }
 
-// MACD: koop bij bullish kruising, verkoop bij bearish kruising (1H)
-async function runMacd(bot: BotRow, cfg: { amount_eur: number }, apiKey: string, apiSecret: string) {
-  const { macd, signal, prev_macd, prev_signal } = await getMacd(bot.symbol);
-  const price = await getPrice(bot.symbol);
+// MACD kruising (1H)
+async function runMacd(bot: BotRow, cfg: { amount_eur: number }, keys: ExchangeKeys) {
+  const { macd, signal, prev_macd, prev_signal } = await getMacd(bot.symbol, keys.exchange);
+  const price = await getPrice(bot.symbol, keys.exchange);
 
-  const bullishCross = prev_macd < prev_signal && macd > signal;
-  const bearishCross = prev_macd > prev_signal && macd < signal;
-
-  if (bullishCross) {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "buy", cfg.amount_eur);
+  if (prev_macd < prev_signal && macd > signal) {
+    const result = await placeOrder(keys, bot.symbol, "buy", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "macd_buy", bot.symbol, "buy", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
-  } else if (bearishCross) {
-    const result = await placeOrder(apiKey, apiSecret, bot.symbol, "sell", cfg.amount_eur);
+  } else if (prev_macd > prev_signal && macd < signal) {
+    const result = await placeOrder(keys, bot.symbol, "sell", cfg.amount_eur);
     logRun(bot.id, bot.user_id, "macd_sell", bot.symbol, "sell", cfg.amount_eur, price,
       result.error ? "error" : "ok", result.error ?? result.orderId ?? "");
   }
@@ -310,25 +307,32 @@ async function runMacd(bot: BotRow, cfg: { amount_eur: number }, apiKey: string,
 
 // Hoofdfunctie — draait alle actieve bots
 export async function runAllBots() {
-  const db = getDb();
+  const db   = getDb();
   const bots = db.prepare("SELECT * FROM bots WHERE active = 1").all() as BotRow[];
 
   for (const bot of bots) {
     const settings = db.prepare(
-      "SELECT bitvavo_api_key, bitvavo_api_secret FROM settings WHERE user_id = ?"
+      "SELECT bitvavo_api_key, bitvavo_api_secret, binance_api_key, binance_api_secret FROM settings WHERE user_id = ?"
     ).get(bot.user_id) as Settings | undefined;
 
-    if (!settings?.bitvavo_api_key || !settings?.bitvavo_api_secret) continue;
+    // Kies de juiste API-sleutels op basis van exchange
+    let keys: ExchangeKeys | null = null;
+    if (bot.exchange === "binance" && settings?.binance_api_key && settings?.binance_api_secret) {
+      keys = { apiKey: settings.binance_api_key, apiSecret: settings.binance_api_secret, exchange: "binance" };
+    } else if (settings?.bitvavo_api_key && settings?.bitvavo_api_secret) {
+      keys = { apiKey: settings.bitvavo_api_key, apiSecret: settings.bitvavo_api_secret, exchange: "bitvavo" };
+    }
+    if (!keys) continue;
 
     const cfg = JSON.parse(bot.config);
     try {
-      if (bot.strategy === "dca")       await runDca(bot, cfg as DcaConfig, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "rsi")       await runRsi(bot, cfg as RsiConfig, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "breakout")  await runBreakout(bot, cfg as BreakoutConfig, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "ema200")    await runEma200(bot, cfg as { amount_eur: number }, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "pullback")  await runPullback(bot, cfg as { amount_eur: number }, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "ema_cross") await runEmaCross(bot, cfg as { amount_eur: number }, settings.bitvavo_api_key, settings.bitvavo_api_secret);
-      if (bot.strategy === "macd")      await runMacd(bot, cfg as { amount_eur: number }, settings.bitvavo_api_key, settings.bitvavo_api_secret);
+      if (bot.strategy === "dca")       await runDca(bot, cfg as DcaConfig, keys);
+      if (bot.strategy === "rsi")       await runRsi(bot, cfg as RsiConfig, keys);
+      if (bot.strategy === "breakout")  await runBreakout(bot, cfg as BreakoutConfig, keys);
+      if (bot.strategy === "ema200")    await runEma200(bot, cfg as { amount_eur: number }, keys);
+      if (bot.strategy === "pullback")  await runPullback(bot, cfg as { amount_eur: number }, keys);
+      if (bot.strategy === "ema_cross") await runEmaCross(bot, cfg as { amount_eur: number }, keys);
+      if (bot.strategy === "macd")      await runMacd(bot, cfg as { amount_eur: number }, keys);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       logRun(bot.id, bot.user_id, "error", bot.symbol, "", 0, 0, "error", msg);

@@ -111,6 +111,18 @@ export async function PUT(request: NextRequest) {
     }
   }
 
+  // Binance live sleutels opslaan
+  if (body.binanceApiKey !== undefined && body.binanceApiSecret !== undefined) {
+    db.prepare(`
+      UPDATE settings SET
+        binance_api_key = ?,
+        binance_api_secret = ?,
+        updated_at = datetime('now')
+      WHERE user_id = ?
+    `).run(body.binanceApiKey ?? "", body.binanceApiSecret ?? "", userId);
+    return Response.json({ ok: true });
+  }
+
   // Binance Testnet sleutels opslaan indien meegestuurd
   if (body.testnetKey !== undefined && body.testnetSecret !== undefined) {
     try {

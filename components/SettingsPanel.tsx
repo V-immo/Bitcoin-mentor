@@ -60,6 +60,13 @@ export default function SettingsPanel() {
   const [memoryResetting, setMemoryResetting] = useState(false);
   const [memoryLoaded, setMemoryLoaded]     = useState(false);
 
+  // Binance
+  const [binanceKey, setBinanceKey]           = useState("");
+  const [binanceSecret, setBinanceSecret]     = useState("");
+  const [binanceConnected, setBinanceConnected] = useState<boolean | null>(null);
+  const [binanceSaved, setBinanceSaved]       = useState(false);
+  const [binanceSaving, setBinanceSaving]     = useState(false);
+
   // Bybit
   const [bybitKey, setBybitKey]             = useState("");
   const [bybitSecret, setBybitSecret]       = useState("");
@@ -508,6 +515,62 @@ export default function SettingsPanel() {
               </button>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Binance koppeling */}
+      <section className="settings-card">
+        <div className="settings-card-title">Binance</div>
+        <div className="settings-card-desc">
+          {isNL
+            ? "Koppel je Binance account voor wereldwijde toegang. Vereist voor Playbook-strategieën op Binance."
+            : "Connect your Binance account for global access. Required for Playbook strategies on Binance."}
+        </div>
+
+        {binanceConnected === true && (
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13 }}>
+              {isNL ? "Binance gekoppeld" : "Binance connected"} ✓
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+          <input
+            type="text"
+            value={binanceKey}
+            onChange={e => setBinanceKey(e.target.value)}
+            placeholder={binanceConnected ? "••••••••••••••••" : "API Key"}
+            style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+          />
+          <input
+            type="password"
+            value={binanceSecret}
+            onChange={e => setBinanceSecret(e.target.value)}
+            placeholder={binanceConnected ? "••••••••••••••••" : "Secret Key"}
+            style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+          />
+          <button
+            className="terminal-btn terminal-btn-primary"
+            disabled={binanceSaving || (!binanceKey && !binanceSecret)}
+            style={{ alignSelf: "flex-start" }}
+            onClick={async () => {
+              if (!binanceKey || !binanceSecret) return;
+              setBinanceSaving(true);
+              await fetch("/api/me/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...settings, binanceApiKey: binanceKey, binanceApiSecret: binanceSecret }),
+              });
+              setBinanceConnected(true);
+              setBinanceSaved(true);
+              setBinanceKey(""); setBinanceSecret("");
+              setTimeout(() => setBinanceSaved(false), 3000);
+              setBinanceSaving(false);
+            }}
+          >
+            {binanceSaving ? "…" : binanceSaved ? (isNL ? "Opgeslagen ✓" : "Saved ✓") : (isNL ? "Opslaan" : "Save")}
+          </button>
         </div>
       </section>
 

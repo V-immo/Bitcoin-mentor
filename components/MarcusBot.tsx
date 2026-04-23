@@ -124,6 +124,11 @@ const STRATEGIES: StrategyDef[] = [
 
 const SYMBOLS = ["BTC", "ETH", "SOL", "XRP", "ADA", "BNB"];
 
+const EXCHANGES = [
+  { key: "bitvavo", label: "Bitvavo", region: "🇧🇪 🇳🇱" },
+  { key: "binance", label: "Binance", region: "Globaal" },
+];
+
 function BotCard({ bot, onToggle, onDelete, isNL }: {
   bot: Bot;
   onToggle: (id: number, active: boolean) => void;
@@ -159,7 +164,7 @@ function BotCard({ bot, onToggle, onDelete, isNL }: {
         <div className="bot-card-info">
           <span className={`bot-status-dot ${bot.active ? "bot-status-dot--on" : ""}`} />
           <span className="bot-card-name">{bot.name}</span>
-          <span className="bot-card-meta">{bot.symbol} · {stratLabel}</span>
+          <span className="bot-card-meta">{bot.symbol} · {stratLabel} · {bot.exchange}</span>
         </div>
         <div className="bot-card-actions" onClick={e => e.stopPropagation()}>
           <button
@@ -260,6 +265,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
   const [name, setName] = useState("");
   const [strategy, setStrategy] = useState("dca");
   const [symbol, setSymbol] = useState("BTC");
+  const [exchange, setExchange] = useState("bitvavo");
   const [amountEur, setAmountEur] = useState(50);
   const [intervalMinutes, setIntervalMinutes] = useState(1440);
   const [buyBelow, setBuyBelow] = useState(30);
@@ -283,7 +289,7 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
     const res = await fetch("/api/bots", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), strategy, config, exchange: "bitvavo", symbol }),
+      body: JSON.stringify({ name: name.trim(), strategy, config, exchange, symbol }),
     });
     const data = await res.json() as { id?: number; error?: string };
     setLoading(false);
@@ -309,6 +315,20 @@ function CreateBotModal({ onClose, onCreate, isNL }: {
             placeholder={isNL ? "Mijn DCA bot" : "My DCA bot"}
             maxLength={40}
           />
+
+          <label className="bot-label">{isNL ? "Exchange" : "Exchange"}</label>
+          <div className="bot-symbol-grid">
+            {EXCHANGES.map(e => (
+              <button
+                key={e.key}
+                className={`bot-symbol-btn ${exchange === e.key ? "bot-symbol-btn--active" : ""}`}
+                onClick={() => setExchange(e.key)}
+              >
+                <span>{e.label}</span>
+                <span style={{ fontSize: "0.7em", opacity: 0.6 }}>{e.region}</span>
+              </button>
+            ))}
+          </div>
 
           <label className="bot-label">{isNL ? "Munt" : "Asset"}</label>
           <div className="bot-symbol-grid">
