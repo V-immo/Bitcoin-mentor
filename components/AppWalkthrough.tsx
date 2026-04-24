@@ -13,9 +13,6 @@ const DONE_KEY    = "walkthrough-v5";
 const PENDING_KEY = "walkthrough-pending";
 const PAD         = 10;
 
-// Off-screen 1×1 px → box-shadow 9999px bedekt hele viewport, geen zichtbaar gat
-const NO_SPOT = { top: -2, left: -2, width: 1, height: 1 };
-
 type Step = { icon: LucideIcon; title: string; text: string; accent: string; selector?: string };
 
 const STEPS: Step[] = [
@@ -127,13 +124,23 @@ export default function AppWalkthrough() {
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
-  const W = vw || (typeof window !== "undefined" ? window.innerWidth : 1440);
+  const W = vw || (typeof window !== "undefined" ? window.innerWidth  : 1440);
   const H = vh || (typeof window !== "undefined" ? window.innerHeight : 900);
 
-  // Spotlight: gebruik spot als beschikbaar, anders NO_SPOT (off-screen 1px → shadow bedekt alles)
-  const sp = spot ?? NO_SPOT;
+  // Clip-path: alles in px zodat CSS transition werkt.
+  // No-spot: 0×0 gat in het midden = volledig donker scherm.
+  // Met spot: rechthoekig gat op de positie van het element.
+  const hL = spot ? spot.left              : W / 2;
+  const hT = spot ? spot.top               : H / 2;
+  const hR = spot ? spot.left + spot.width : W / 2;
+  const hB = spot ? spot.top + spot.height : H / 2;
 
-  // Tooltip-positie
+  const clipPath =
+    `polygon(evenodd,` +
+    `0px 0px,${W}px 0px,${W}px ${H}px,0px ${H}px,` +          // buitenste rechthoek (volledig scherm)
+    `${hL}px ${hT}px,${hL}px ${hB}px,${hR}px ${hB}px,${hR}px ${hT}px)`;  // gat
+
+  // Tooltip positie
   function cardStyle(): React.CSSProperties {
     const TW = Math.min(360, W - 32);
     if (!spot) return { left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: TW };
@@ -147,27 +154,40 @@ export default function AppWalkthrough() {
 
   const overlay = visible ? (
     <>
-      {/* Spotlight: één div met box-shadow — beweegt soepel naar elk element */}
+      {/* Donkere overlay met clip-path gat — toont element door het gat heen */}
       <div
         style={{
-          position:     "fixed",
-          zIndex:       9900,
+          position:   "fixed",
+          inset:      0,
+          zIndex:     9900,
+          background: "rgba(0,0,0,0.82)",
+          clipPath,
+          transition: "clip-path 0.35s cubic-bezier(0.4,0,0.2,1)",
           pointerEvents: "none",
-          top:          sp.top,
-          left:         sp.left,
-          width:        sp.width,
-          height:       sp.height,
-          borderRadius: spot ? 10 : 0,
-          boxShadow:    `0 0 0 9999px rgba(0,0,0,0.82)`,
-          border:       spot ? `2px solid ${current.accent}` : "none",
-          transition:   "top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), border-color .25s ease",
         }}
       />
 
-      {/* Klik buiten de kaart sluit de tour */}
+      {/* Kliklaag: sluit tour als buiten de kaart geklikt */}
       <div
-        style={{ position: "fixed", inset: 0, zIndex: 9901, cursor: "pointer" }}
+        style={{ position: "fixed", inset: 0, zIndex: 9899 }}
         onClick={closeTour}
+      />
+
+      {/* Gekleurde ring rond het element */}
+      <div
+        style={{
+          position:      "fixed",
+          zIndex:        9901,
+          pointerEvents: "none",
+          top:           spot ? spot.top               : H / 2,
+          left:          spot ? spot.left              : W / 2,
+          width:         spot ? spot.width             : 0,
+          height:        spot ? spot.height            : 0,
+          opacity:       spot ? 1 : 0,
+          border:        `2px solid ${current.accent}`,
+          borderRadius:  10,
+          transition:    "top .35s ease,left .35s ease,width .35s ease,height .35s ease,opacity .25s ease,border-color .25s ease",
+        }}
       />
 
       {/* Tooltip card */}
