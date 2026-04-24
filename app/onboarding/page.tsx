@@ -118,6 +118,8 @@ export default function OnboardingPage() {
         body: JSON.stringify({ startCapital: parseFloat(capital) || 1000 }),
       });
       setSaving(false);
+      // Zet flag zodat AppWalkthrough eenmalig start na onboarding
+      localStorage.setItem("walkthrough-pending", "1");
       router.push("/dashboard");
       router.refresh();
       return;

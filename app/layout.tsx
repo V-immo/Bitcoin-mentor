@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
 import FloatingMarcus from "@/components/FloatingMarcus";
 import AppWalkthrough from "@/components/AppWalkthrough";
+import MarcusDailyBrief from "@/components/MarcusDailyBrief";
 import Toaster from "@/components/Toaster";
 import BadgeUnlock from "@/components/BadgeUnlock";
 import MarcusDebrief from "@/components/MarcusDebrief";
@@ -71,6 +72,7 @@ export default function RootLayout({
                   <Nav />
                   <div className="app-content">{children}</div>
                   <FloatingMarcus />
+                  <MarcusDailyBrief />
                   <AppWalkthrough />
                   <BadgeUnlock />
                   <MarcusDebrief />
