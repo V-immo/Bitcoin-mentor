@@ -211,6 +211,10 @@ export default function AppWalkthrough() {
       >
         <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
         <div className="walkthrough-step-counter">{step + 1} / {STEPS.length}</div>
+        {/* DEBUG — tijdelijk */}
+        <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",marginBottom:4,wordBreak:"break-all"}}>
+          sel:{STEPS[step]?.selector||"none"} | spot:{spot?`L${Math.round(spot.left)} T${Math.round(spot.top)} W${Math.round(spot.width)}`:"null"} | vw:{vw}
+        </div>
         <div className="walkthrough-icon-wrap" style={{ background: `${current.accent}18`, border: `1px solid ${current.accent}30` }}>
           <current.icon size={26} style={{ color: current.accent }} />
         </div>
