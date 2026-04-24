@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Bitcoin Mentor is a private web application — not for public indexing.

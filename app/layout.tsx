@@ -28,6 +28,7 @@ export const metadata: Metadata = {
   title: "Bitcoin Mentor",
   description: "Leer traden met Marcus, jouw persoonlijke mentor — Bitcoin Mentor",
   manifest: "/manifest.webmanifest",
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -61,6 +62,20 @@ export default function RootLayout({
               navigator.serviceWorker.register('/sw.js').catch(function() {});
             });
           }
+        `}} />
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+            // Block devtools keyboard shortcuts
+            document.addEventListener('keydown', function(e){
+              if(
+                e.key==='F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j'||e.key==='C'||e.key==='c')) ||
+                (e.ctrlKey && (e.key==='U'||e.key==='u'||e.key==='S'||e.key==='s'))
+              ){ e.preventDefault(); e.stopPropagation(); return false; }
+            });
+          })();
         `}} />
       </head>
       <body className={inter.className}>
