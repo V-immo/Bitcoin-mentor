@@ -50,9 +50,12 @@ export default function AppWalkthrough() {
   const [mounted, setMounted] = useState(false);
 
   // Refs voor DOM-manipulatie
-  const raisedNavRef  = useRef<HTMLElement | null>(null);
-  const ringedElRef   = useRef<HTMLElement | null>(null);
-  const savedElCss    = useRef("");
+  const raisedNavRef     = useRef<HTMLElement | null>(null);
+  const raisedNavOrigCss = useRef("");
+  const raisedElRef      = useRef<HTMLElement | null>(null);   // element buiten nav (bijv. Marcus-knop)
+  const raisedElOrigCss  = useRef("");
+  const ringedElRef      = useRef<HTMLElement | null>(null);
+  const savedElCss       = useRef("");
 
   useEffect(() => {
     setMounted(true);
@@ -65,12 +68,19 @@ export default function AppWalkthrough() {
   // Verwijder highlight van vorig element
   function clearHighlight() {
     if (raisedNavRef.current) {
-      raisedNavRef.current.style.removeProperty("z-index");
+      raisedNavRef.current.style.cssText = raisedNavOrigCss.current;
       raisedNavRef.current = null;
+      raisedNavOrigCss.current = "";
+    }
+    if (raisedElRef.current) {
+      raisedElRef.current.style.cssText = raisedElOrigCss.current;
+      raisedElRef.current = null;
+      raisedElOrigCss.current = "";
     }
     if (ringedElRef.current) {
       ringedElRef.current.style.cssText = savedElCss.current;
       ringedElRef.current = null;
+      savedElCss.current = "";
     }
   }
 
@@ -89,18 +99,32 @@ export default function AppWalkthrough() {
           const r = el.getBoundingClientRect();
           if (r.width <= 0 || r.height <= 0) continue;
 
-          // Zet nav boven de overlay (z-index 9900)
+          // Sla el's originele cssText op VÓÓR enige wijziging
+          const elOrigCss = el.style.cssText;
+
+          // Zit het element IN de nav? Dan nav omhoog + backdrop-filter wegnemen.
           const nav = document.querySelector<HTMLElement>("nav.app-nav");
-          if (nav) {
-            nav.style.setProperty("z-index", "9902", "important");
+          const inNav = !!(nav && nav.contains(el));
+
+          if (inNav && nav) {
+            // Sla nav originele stijl op VÓÓR elke wijziging
+            raisedNavOrigCss.current = nav.style.cssText;
+            nav.style.setProperty("z-index",                "9902", "important");
+            nav.style.setProperty("backdrop-filter",         "none", "important");
+            nav.style.setProperty("-webkit-backdrop-filter", "none", "important");
             raisedNavRef.current = nav;
+          } else {
+            // Element staat buiten de nav (bijv. Marcus-knop): verhoog het element zelf
+            raisedElOrigCss.current = elOrigCss;
+            el.style.setProperty("z-index", "9902", "important");
+            raisedElRef.current = el;
           }
 
           // Voeg gekleurde ring toe aan het specifieke element
-          savedElCss.current = el.style.cssText;
+          savedElCss.current = elOrigCss;   // altijd de originele cssText
           el.style.setProperty("outline",        `3px solid ${STEPS[s].accent}`, "important");
-          el.style.setProperty("outline-offset", "3px",  "important");
-          el.style.setProperty("border-radius",  "8px",  "important");
+          el.style.setProperty("outline-offset", "3px", "important");
+          el.style.setProperty("border-radius",  "8px", "important");
           ringedElRef.current = el;
 
           return { top: r.top - 8, left: r.left - 8, width: r.width + 16, height: r.height + 16 };
