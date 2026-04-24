@@ -258,12 +258,12 @@ Stel me gerust een vraag over Bitcoin, trading of hoe je moet starten.`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden, pathname]);
 
-  // Auto-verstuur alleen bij user-initiated prompts (curriculum "Vraag Marcus")
+  // Auto-verstuur zonder gebruikers-bubble (curriculum / quiz auto-prompts)
   useEffect(() => {
     if (!open || !pendingDebrief || loading) return;
     const msg = pendingDebrief;
     setPendingDebrief(null);
-    send(msg);
+    sendSilent(msg);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, pendingDebrief, loading]);
 
@@ -425,6 +425,63 @@ Stel me gerust een vraag over Bitcoin, trading of hoe je moet starten.`;
       setLoading(false);
       setStreaming(false);
       // Spreek het antwoord voor als voice aan staat
+      if (full && voiceEnabled) speakText(full);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, loading, voiceEnabled]);
+
+  // sendSilent — stuurt context naar Marcus zonder zichtbare gebruikers-bubble
+  const sendSilent = useCallback(async (text: string) => {
+    if (!text.trim() || loading) return;
+    const contextMessages = [...messages, { role: "user" as const, content: text.trim() }];
+    setLoading(true);
+    setStreaming(true);
+    stopSpeaking();
+
+    const placeholder: Message = { role: "assistant", content: "" };
+    setMessages(m => [...m, placeholder]);
+
+    abortRef.current = new AbortController();
+    let full = "";
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: contextMessages,
+          asset: "BTCUSDT",
+          appContext: { activeTab: "floating" },
+        }),
+        signal: abortRef.current.signal,
+      });
+
+      if (res.status === 429) {
+        const err = await res.json().catch(() => ({})) as { reply?: string };
+        full = err.reply ?? "Je hebt het daglimiet bereikt. Upgrade naar Marcus Pro voor onbeperkte coaching.";
+        setMessages(m => { const copy = [...m]; copy[copy.length - 1] = { role: "assistant", content: full }; return copy; });
+        setLoading(false); setStreaming(false);
+        return;
+      }
+
+      if (!res.ok || !res.body) throw new Error("fout");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        full += chunk;
+        setMessages(m => { const copy = [...m]; copy[copy.length - 1] = { role: "assistant", content: full }; return copy; });
+      }
+    } catch (e: unknown) {
+      if ((e as Error)?.name !== "AbortError") {
+        full = "Marcus is even niet beschikbaar. Probeer opnieuw.";
+        setMessages(m => { const copy = [...m]; copy[copy.length - 1] = { role: "assistant", content: full }; return copy; });
+      }
+    } finally {
+      setLoading(false);
+      setStreaming(false);
       if (full && voiceEnabled) speakText(full);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
