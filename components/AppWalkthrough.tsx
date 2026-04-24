@@ -38,23 +38,20 @@ const STEPS: Step[] = [
 type Spot = { top: number; left: number; width: number; height: number };
 
 function measureEl(selector: string): Spot | null {
-  const fallbacks = [selector, "nav.app-nav"];
-  for (const sel of fallbacks) {
-    try {
-      const els = document.querySelectorAll<HTMLElement>(sel);
-      for (const el of Array.from(els)) {
-        const r = el.getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          return {
-            top:    r.top    - PAD,
-            left:   r.left   - PAD,
-            width:  r.width  + PAD * 2,
-            height: r.height + PAD * 2,
-          };
-        }
+  try {
+    const els = document.querySelectorAll<HTMLElement>(selector);
+    for (const el of Array.from(els)) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        return {
+          top:    r.top    - PAD,
+          left:   r.left   - PAD,
+          width:  r.width  + PAD * 2,
+          height: r.height + PAD * 2,
+        };
       }
-    } catch { /* */ }
-  }
+    }
+  } catch { /* */ }
   return null;
 }
 
