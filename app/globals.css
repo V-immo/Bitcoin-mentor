@@ -12843,42 +12843,52 @@ html {
 }
 
 /* ══════════════════════════════════════════
-   APP WALKTHROUGH — clean card tour
+   APP WALKTHROUGH — spotlight tour
    ══════════════════════════════════════════ */
 
-.walkthrough-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(5px);
+/* Transparante overlay — de SVG regelt de donkere achtergrond */
+.walkthrough-overlay {
+  position: fixed; inset: 0;
   z-index: 9500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  opacity: 0;
-  transition: opacity 0.24s ease;
+  opacity: 0; transition: opacity 0.24s ease;
 }
-.walkthrough-backdrop.entered { opacity: 1; }
+.walkthrough-overlay.entered { opacity: 1; }
 
-.walkthrough-modal {
+/* SVG spotlight animaties */
+.spotlight-hole {
+  transition: x 0.35s cubic-bezier(0.4,0,0.2,1),
+              y 0.35s cubic-bezier(0.4,0,0.2,1),
+              width 0.35s cubic-bezier(0.4,0,0.2,1),
+              height 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.spotlight-ring {
+  transition: x 0.35s cubic-bezier(0.4,0,0.2,1),
+              y 0.35s cubic-bezier(0.4,0,0.2,1),
+              width 0.35s cubic-bezier(0.4,0,0.2,1),
+              height 0.35s cubic-bezier(0.4,0,0.2,1),
+              stroke 0.3s ease;
+}
+
+/* Tooltip card — positioneert via inline style */
+.walkthrough-card {
+  position: fixed;
   background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: 22px;
-  width: 100%;
-  max-width: 400px;
-  padding: 28px 24px 24px;
-  position: relative;
+  border-radius: 18px;
+  padding: 22px 20px 18px;
+  max-width: 340px;
+  width: calc(100vw - 32px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.60);
+  z-index: 9501;
   text-align: center;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.55);
-  transform: translateY(24px) scale(0.96);
+  transform: translateY(10px) scale(0.97);
   transition: transform 0.24s ease;
 }
-.walkthrough-modal.entered { transform: none; }
+.walkthrough-card.entered { transform: none; }
 
 .walkthrough-close {
-  position: absolute; top: 14px; right: 14px;
-  width: 28px; height: 28px; border-radius: 8px;
+  position: absolute; top: 12px; right: 12px;
+  width: 26px; height: 26px; border-radius: 7px;
   background: var(--surface-1); border: 1px solid var(--border);
   color: var(--text-muted); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -12888,34 +12898,34 @@ html {
 
 .walkthrough-step-counter {
   font-size: 11px; color: var(--text-muted);
-  font-weight: 600; margin-bottom: 16px;
+  font-weight: 600; margin-bottom: 14px;
   letter-spacing: 0.06em;
 }
 
 .walkthrough-icon-wrap {
-  width: 64px; height: 64px; border-radius: 18px;
-  margin: 0 auto 18px;
+  width: 52px; height: 52px; border-radius: 15px;
+  margin: 0 auto 14px;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.3s, border-color 0.3s;
 }
 
 .walkthrough-title {
-  font-size: 18px; font-weight: 800;
-  color: var(--text); margin: 0 0 10px;
+  font-size: 16px; font-weight: 800;
+  color: var(--text); margin: 0 0 8px;
   line-height: 1.25;
 }
 .walkthrough-text {
-  font-size: 13px; line-height: 1.65;
+  font-size: 13px; line-height: 1.6;
   color: var(--text-secondary);
-  margin: 0 0 22px;
+  margin: 0 0 18px;
 }
 
 .walkthrough-dots {
   display: flex; align-items: center; justify-content: center;
-  gap: 7px; margin-bottom: 22px;
+  gap: 6px; margin-bottom: 18px;
 }
 .walkthrough-dot {
-  width: 7px; height: 7px; border-radius: 50%;
+  width: 6px; height: 6px; border-radius: 50%;
   background: var(--surface-2); border: 1px solid var(--border);
   cursor: pointer; transition: background 0.2s, transform 0.15s;
   padding: 0;
@@ -12925,17 +12935,14 @@ html {
   background: var(--primary); border-color: var(--primary);
   transform: scale(1.2);
 }
-.walkthrough-dot.done {
-  background: var(--primary);
-  opacity: 0.4;
-}
+.walkthrough-dot.done { background: var(--primary); opacity: 0.4; }
 
 .walkthrough-nav {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; margin-bottom: 10px;
+  gap: 8px; margin-bottom: 8px;
 }
 .walkthrough-btn-back {
-  padding: 10px 16px; border-radius: 10px;
+  padding: 9px 14px; border-radius: 9px;
   background: var(--surface-1); border: 1px solid var(--border);
   color: var(--text-secondary); font-size: 13px; font-weight: 600;
   cursor: pointer; transition: border-color 0.15s;
@@ -12943,12 +12950,12 @@ html {
 .walkthrough-btn-back:hover { border-color: var(--border-hover); }
 
 .walkthrough-btn-next {
-  flex: 1; padding: 11px 16px; border-radius: 10px;
-  background: var(--primary); border: none;
-  color: #fff; font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: background 0.15s;
+  flex: 1; padding: 10px 14px; border-radius: 9px;
+  border: none; color: #fff;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: opacity 0.15s;
 }
-.walkthrough-btn-next:hover { background: var(--primary-hover); }
+.walkthrough-btn-next:hover { opacity: 0.88; }
 
 .walkthrough-skip {
   background: none; border: none;
@@ -12958,6 +12965,7 @@ html {
 }
 .walkthrough-skip:hover { color: var(--text-secondary); }
 
+/* Help knop rechtsonder */
 .walkthrough-help-btn {
   position: fixed; bottom: 90px; right: 20px; z-index: 9400;
   width: 30px; height: 30px; border-radius: 50%;
