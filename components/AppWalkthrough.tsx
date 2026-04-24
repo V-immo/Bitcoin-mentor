@@ -13,22 +13,25 @@ const DONE_KEY    = "walkthrough-v5";
 const PENDING_KEY = "walkthrough-pending";
 const PAD         = 10;
 
+// Off-screen 1×1 px → box-shadow 9999px bedekt hele viewport, geen zichtbaar gat
+const NO_SPOT = { top: -2, left: -2, width: 1, height: 1 };
+
 type Step = { icon: LucideIcon; title: string; text: string; accent: string; selector?: string };
 
 const STEPS: Step[] = [
-  { icon: Brain,          title: "Welkom — ik ben Marcus",         accent: "#e91e63",
+  { icon: Brain,           title: "Welkom — ik ben Marcus",    accent: "#e91e63",
     text: "Jouw persoonlijke tradingcoach. Geen hype, geen valse beloftes. Ik leer je nadenken vóór je handelt." },
-  { icon: LayoutDashboard, title: "Dashboard",                     accent: "#3b82f6", selector: '[href="/dashboard"]',
+  { icon: LayoutDashboard, title: "Dashboard",                  accent: "#3b82f6", selector: '[data-tour="dashboard"]',
     text: "Start hier elke dag. Persoonlijke marktbriefing, dagelijkse missies en voortgang in één overzicht." },
-  { icon: Radar,           title: "Scanner",                       accent: "#f59e0b", selector: '[href="/scanner"]',
+  { icon: Radar,           title: "Scanner",                    accent: "#f59e0b", selector: '[data-tour="scanner"]',
     text: "Welke assets zijn klaar voor een setup? Score 70+ = technisch interessant. Klik aan voor mijn analyse." },
-  { icon: TrendingUp,      title: "Handelen",                      accent: "#22c55e", selector: '[href="/trade"]',
+  { icon: TrendingUp,      title: "Handelen",                   accent: "#22c55e", selector: '[data-tour="trade"]',
     text: "Paper trading met nepgeld — leer zonder risico. Stel altijd een stop-loss in. Na elke trade geef ik feedback." },
-  { icon: GraduationCap,   title: "Leren",                         accent: "#8b5cf6", selector: '[href="/leren"]',
+  { icon: GraduationCap,   title: "Leren",                      accent: "#8b5cf6", selector: '[data-tour="leren"]',
     text: "Dagelijkse quizzes die meegroeien met jouw niveau. Hoe meer je weet, hoe scherper mijn coaching." },
-  { icon: BarChart3,       title: "Stats",                         accent: "#06b6d4", selector: '[href="/stats"]',
-    text: "Jouw winrate, gedragspatronen, beste en slechtste dagen. Zelfkennis is je grootste voordeel." },
-  { icon: MessageSquare,   title: "Ik ben altijd bereikbaar",      accent: "#e91e63", selector: ".float-marcus-btn",
+  { icon: BarChart3,       title: "Stats & meer",               accent: "#06b6d4", selector: ".app-nav-account-btn",
+    text: "Via het accountmenu vind je Stats, Brokers, Nieuws en meer. Zelfkennis is je grootste voordeel." },
+  { icon: MessageSquare,   title: "Ik ben altijd bereikbaar",   accent: "#e91e63", selector: ".float-marcus-btn",
     text: "De M-knop rechtsonder — dat ben ik. Vraag me alles: markt, trade, plan. 24/7." },
 ];
 
@@ -42,7 +45,12 @@ function measureEl(selector: string): Spot | null {
       for (const el of Array.from(els)) {
         const r = el.getBoundingClientRect();
         if (r.width > 0 && r.height > 0) {
-          return { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
+          return {
+            top:    r.top    - PAD,
+            left:   r.left   - PAD,
+            width:  r.width  + PAD * 2,
+            height: r.height + PAD * 2,
+          };
         }
       }
     } catch { /* */ }
@@ -122,54 +130,48 @@ export default function AppWalkthrough() {
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
-  // 4-div positieberekening — altijd in de DOM, transitie via CSS
   const W = vw || (typeof window !== "undefined" ? window.innerWidth : 1440);
   const H = vh || (typeof window !== "undefined" ? window.innerHeight : 900);
 
-  const topH    = spot ? Math.max(0, spot.top)                   : H;
-  const botTop  = spot ? spot.top + spot.height                  : H;
-  const leftW   = spot ? Math.max(0, spot.left)                  : 0;
-  const rightL  = spot ? spot.left + spot.width                  : W;
-  const sideTop = spot ? spot.top                                : 0;
-  const sideH   = spot ? spot.height                             : 0;
+  // Spotlight: gebruik spot als beschikbaar, anders NO_SPOT (off-screen 1px → shadow bedekt alles)
+  const sp = spot ?? NO_SPOT;
 
-  // Tooltip positie
+  // Tooltip-positie
   function cardStyle(): React.CSSProperties {
     const TW = Math.min(360, W - 32);
     if (!spot) return { left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: TW };
     const cx   = spot.left + spot.width / 2;
-    let left   = cx - TW / 2;
-    left       = Math.max(16, Math.min(left, W - TW - 16));
+    let   left = cx - TW / 2;
+    left = Math.max(16, Math.min(left, W - TW - 16));
     const below = H - (spot.top + spot.height) - 16;
     if (below >= 180) return { left, top: spot.top + spot.height + 16, width: TW };
     return { left, bottom: H - spot.top + 16, width: TW };
   }
 
-  const shadeStyle: React.CSSProperties = {
-    position: "fixed", background: "rgba(0,0,0,0.82)", zIndex: 9900,
-    transition: "top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), bottom .35s cubic-bezier(.4,0,.2,1)",
-  };
-
   const overlay = visible ? (
     <>
-      {/* Top */}
-      <div style={{ ...shadeStyle, top: 0, left: 0, right: 0, height: topH }} onClick={closeTour} />
-      {/* Bottom */}
-      <div style={{ ...shadeStyle, top: botTop, left: 0, right: 0, bottom: 0 }} onClick={closeTour} />
-      {/* Left */}
-      <div style={{ ...shadeStyle, top: sideTop, left: 0, width: leftW, height: sideH }} onClick={closeTour} />
-      {/* Right */}
-      <div style={{ ...shadeStyle, top: sideTop, left: rightL, right: 0, height: sideH }} onClick={closeTour} />
+      {/* Spotlight: één div met box-shadow — beweegt soepel naar elk element */}
+      <div
+        style={{
+          position:     "fixed",
+          zIndex:       9900,
+          pointerEvents: "none",
+          top:          sp.top,
+          left:         sp.left,
+          width:        sp.width,
+          height:       sp.height,
+          borderRadius: spot ? 10 : 0,
+          boxShadow:    `0 0 0 9999px rgba(0,0,0,0.82)`,
+          border:       spot ? `2px solid ${current.accent}` : "none",
+          transition:   "top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), border-color .25s ease",
+        }}
+      />
 
-      {/* Gekleurde ring */}
-      {spot && (
-        <div style={{
-          position: "fixed", zIndex: 9901, pointerEvents: "none",
-          top: spot.top, left: spot.left, width: spot.width, height: spot.height,
-          border: `2px solid ${current.accent}`, borderRadius: 10,
-          transition: "top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), border-color .25s ease",
-        }} />
-      )}
+      {/* Klik buiten de kaart sluit de tour */}
+      <div
+        style={{ position: "fixed", inset: 0, zIndex: 9901, cursor: "pointer" }}
+        onClick={closeTour}
+      />
 
       {/* Tooltip card */}
       <div
@@ -186,8 +188,11 @@ export default function AppWalkthrough() {
         <p className="walkthrough-text">{current.text}</p>
         <div className="walkthrough-dots">
           {STEPS.map((_, i) => (
-            <button key={i} className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
-              onClick={() => applyStep(i)} aria-label={`Stap ${i + 1}`} />
+            <button key={i}
+              className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
+              onClick={() => applyStep(i)}
+              aria-label={`Stap ${i + 1}`}
+            />
           ))}
         </div>
         <div className="walkthrough-nav">

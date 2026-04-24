@@ -16,11 +16,11 @@ import {
 
 type NavIcon = ComponentType<LucideProps>;
 
-const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
-  { href: "/dashboard", key: "nav_link_dashboard", Icon: Home },
-  { href: "/leren",     key: "nav_link_learn",     Icon: GraduationCap },
-  { href: "/scanner",   key: "nav_link_scanner",   Icon: Radar },
-  { href: "/trade",     key: "nav_link_trade",     Icon: TrendingUp },
+const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon; tour?: string }[] = [
+  { href: "/dashboard", key: "nav_link_dashboard", Icon: Home,         tour: "dashboard" },
+  { href: "/leren",     key: "nav_link_learn",     Icon: GraduationCap, tour: "leren" },
+  { href: "/scanner",   key: "nav_link_scanner",   Icon: Radar,        tour: "scanner" },
+  { href: "/trade",     key: "nav_link_trade",     Icon: TrendingUp,   tour: "trade" },
   { href: "/bots",      key: "nav_link_bots",      Icon: Bot },
   { href: "/profiel",   key: "nav_link_profile",   Icon: User },
 ];
@@ -123,7 +123,8 @@ export default function Nav() {
           {PRIMARY_LINKS.map((l) => {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
-              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}>
+              <Link key={l.href} href={l.href} className={`app-nav-link${active ? " active" : ""}`}
+                {...(l.tour ? { "data-tour": l.tour } : {})}>
                 <l.Icon size={17} className="app-nav-icon" />
                 <span className="app-nav-label">{rl(l.key)}</span>
               </Link>
