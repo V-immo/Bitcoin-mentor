@@ -12846,38 +12846,28 @@ html {
    APP WALKTHROUGH — spotlight tour
    ══════════════════════════════════════════ */
 
-/* Transparante wrapper — shade-divs vullen het scherm */
+/* Donkere overlay — clip-path maakt een gat rondom het actieve element */
 .walkthrough-overlay {
   position: fixed; inset: 0;
   z-index: 9500;
-  pointer-events: auto;
-  opacity: 0; transition: opacity 0.24s ease;
+  background: rgba(0, 0, 0, 0.80);
+  opacity: 0;
+  transition: opacity 0.24s ease,
+              clip-path 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .walkthrough-overlay.entered { opacity: 1; }
 
-/* Donkere shade-tegels rondom het spotlight-element */
-.wt-shade {
-  position: fixed;
-  background: rgba(0, 0, 0, 0.80);
-  transition: top 0.32s cubic-bezier(0.4,0,0.2,1),
-              left 0.32s cubic-bezier(0.4,0,0.2,1),
-              right 0.32s cubic-bezier(0.4,0,0.2,1),
-              bottom 0.32s cubic-bezier(0.4,0,0.2,1),
-              width 0.32s cubic-bezier(0.4,0,0.2,1),
-              height 0.32s cubic-bezier(0.4,0,0.2,1);
-  pointer-events: auto;
-}
-
-/* Gekleurde ring rondom het gehighlighte element */
+/* Gekleurde ring rondom het gehighlighte element — aparte laag boven overlay */
 .wt-ring {
   position: fixed;
+  z-index: 9502;
   border: 2px solid;
   border-radius: 10px;
   pointer-events: none;
-  transition: top 0.32s cubic-bezier(0.4,0,0.2,1),
-              left 0.32s cubic-bezier(0.4,0,0.2,1),
-              width 0.32s cubic-bezier(0.4,0,0.2,1),
-              height 0.32s cubic-bezier(0.4,0,0.2,1),
+  transition: top 0.35s cubic-bezier(0.4,0,0.2,1),
+              left 0.35s cubic-bezier(0.4,0,0.2,1),
+              width 0.35s cubic-bezier(0.4,0,0.2,1),
+              height 0.35s cubic-bezier(0.4,0,0.2,1),
               border-color 0.25s ease;
 }
 
@@ -12891,7 +12881,7 @@ html {
   max-width: 340px;
   width: calc(100vw - 32px);
   box-shadow: 0 20px 60px rgba(0,0,0,0.60);
-  z-index: 9501;
+  z-index: 9503;
   text-align: center;
   transform: translateY(10px) scale(0.97);
   transition: transform 0.24s ease;
