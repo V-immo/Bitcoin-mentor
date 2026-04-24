@@ -33,28 +33,24 @@ const STEPS: Step[] = [
 ];
 
 type Spot = { top: number; left: number; width: number; height: number };
-// Geen spotlight — klein puntje in midden (zodat clip-path altijd 8 punten heeft en kan transitioneren)
-const NO_SPOT: Spot = { top: -1, left: -1, width: 0, height: 0 };
+// Off-screen standaard — box-shadow bedekt dan heel het scherm
+const NO_SPOT: Spot = { top: -300, left: -300, width: 2, height: 2 };
 
 function measureEl(selector: string): Spot {
-  try {
-    // Loop door alle matches — pak het eerste zichtbare element (display:none geeft w=h=0)
-    const els = document.querySelectorAll<HTMLElement>(selector);
-    for (const el of Array.from(els)) {
-      const r = el.getBoundingClientRect();
-      if (r.width > 0 && r.height > 0) {
-        return { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
+  // Probeer opgegeven selector, val terug op nav balk als element verborgen is (mobiel)
+  const candidates = [selector, "nav.app-nav", ".app-nav"];
+  for (const sel of candidates) {
+    try {
+      const els = document.querySelectorAll<HTMLElement>(sel);
+      for (const el of Array.from(els)) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          return { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
+        }
       }
-    }
-  } catch { /* */ }
+    } catch { /* */ }
+  }
   return NO_SPOT;
-}
-
-function toClip(s: Spot): string {
-  const { top: t, left: l, width: w, height: h } = s;
-  const r = l + w, b = t + h;
-  // evenodd: buitenste rechthoek - binnenste rechthoek = gat
-  return `polygon(evenodd, 0% 0%, 100% 0%, 100% 100%, 0% 100%, ${l}px ${t}px, ${r}px ${t}px, ${r}px ${b}px, ${l}px ${b}px)`;
 }
 
 export default function AppWalkthrough() {
@@ -139,7 +135,7 @@ export default function AppWalkthrough() {
     return { position: "fixed", left, bottom: H - spot.top + 12, width: TW };
   }
 
-  const isSpot = spot !== NO_SPOT && spot.width > 0;
+  const isSpot = spot.width > 2; // groter dan de NO_SPOT fallback
 
   return (
     <>
@@ -149,24 +145,21 @@ export default function AppWalkthrough() {
 
       {visible && (
         <>
-          {/* Donkere overlay met clip-path gat — één div, één CSS transition */}
-          <div
-            className={`walkthrough-overlay${entered ? " entered" : ""}`}
-            style={{ clipPath: toClip(spot) }}
-            onClick={closeTour}
-          />
+          {/* Klik-catcher voor sluiten (transparant, achterste laag) */}
+          <div className={`walkthrough-overlay${entered ? " entered" : ""}`} onClick={closeTour} />
 
-          {/* Gekleurde ring rondom element — buiten overlay zodat clip-path hem niet wegknipt */}
-          {isSpot && (
-            <div
-              className="wt-ring"
-              style={{
-                top: spot.top, left: spot.left,
-                width: spot.width, height: spot.height,
-                borderColor: current.accent,
-              }}
-            />
-          )}
+          {/* Spotlight div — box-shadow bedekt de rest van het scherm */}
+          <div
+            className="wt-spotlight"
+            style={{
+              top:    spot.top,
+              left:   spot.left,
+              width:  spot.width,
+              height: spot.height,
+              borderColor: isSpot ? current.accent : "transparent",
+              boxShadow: `0 0 0 9999px rgba(0,0,0,0.82)${isSpot ? `, 0 0 0 3px ${current.accent}` : ""}`,
+            }}
+          />
 
           {/* Tooltip card */}
           <div

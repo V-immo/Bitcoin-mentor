@@ -12846,29 +12846,27 @@ html {
    APP WALKTHROUGH — spotlight tour
    ══════════════════════════════════════════ */
 
-/* Donkere overlay — clip-path maakt een gat rondom het actieve element */
+/* Transparante klik-catcher — sluit de tour bij klik buiten de spotlight */
 .walkthrough-overlay {
   position: fixed; inset: 0;
   z-index: 9500;
-  background: rgba(0, 0, 0, 0.80);
+  background: transparent;
   opacity: 0;
-  transition: opacity 0.24s ease,
-              clip-path 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.24s ease;
 }
 .walkthrough-overlay.entered { opacity: 1; }
 
-/* Gekleurde ring rondom het gehighlighte element — aparte laag boven overlay */
-.wt-ring {
+/* Spotlight div — box-shadow bedekt alles buiten het element */
+.wt-spotlight {
   position: fixed;
-  z-index: 9502;
-  border: 2px solid;
+  z-index: 9501;
   border-radius: 10px;
   pointer-events: none;
-  transition: top 0.35s cubic-bezier(0.4,0,0.2,1),
-              left 0.35s cubic-bezier(0.4,0,0.2,1),
-              width 0.35s cubic-bezier(0.4,0,0.2,1),
-              height 0.35s cubic-bezier(0.4,0,0.2,1),
-              border-color 0.25s ease;
+  transition: top    0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              left   0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              width  0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Tooltip card — positioneert via inline style */
