@@ -258,6 +258,20 @@ Stel me gerust een vraag over Bitcoin, trading of hoe je moet starten.`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden, pathname]);
 
+  // Morning Brief "Opdracht gedaan" — stille context naar Marcus, geen user-bubble
+  useEffect(() => {
+    if (hidden) return;
+    function onTaskDone(e: Event) {
+      const msg = (e as CustomEvent<{ message: string }>).detail?.message;
+      if (!msg) return;
+      setPendingDebrief(msg);
+      setOpen(true);
+    }
+    window.addEventListener("marcus-brief-task-done", onTaskDone);
+    return () => window.removeEventListener("marcus-brief-task-done", onTaskDone);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden]);
+
   // Auto-verstuur zonder gebruikers-bubble (curriculum / quiz auto-prompts)
   useEffect(() => {
     if (!open || !pendingDebrief || loading) return;

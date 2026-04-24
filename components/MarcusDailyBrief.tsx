@@ -3,9 +3,10 @@
 // MarcusDailyBrief — één gecombineerde dagelijkse popup voor morning brief + debrief.
 // Verschijnt automatisch eenmalig per dag zodra de gebruiker ingelogd is.
 // Kan gesloten worden (opgeslagen in localStorage) en heropen worden via een kleine knop.
+// "Opdracht gedaan" stuurt een stille context-melding naar Marcus (geen user-bubble).
 
 import React, { useEffect, useState } from "react";
-import { X, Share2 } from "lucide-react";
+import { X, Share2, CheckCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -17,7 +18,8 @@ type BriefData = {
   content: string | null;
 };
 
-const TODAY_KEY = () => `brief-seen-${new Date().toISOString().slice(0, 10)}`;
+const TODAY_KEY      = () => `brief-seen-${new Date().toISOString().slice(0, 10)}`;
+const TASK_DONE_KEY  = () => `brief-task-done-${new Date().toISOString().slice(0, 10)}`;
 
 function renderInline(text: string): React.ReactNode {
   return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, i) => {
@@ -27,17 +29,37 @@ function renderInline(text: string): React.ReactNode {
   });
 }
 
+// Dispatch een custom event zodat FloatingMarcus het op kan vangen en verwerken
+function notifyMarcusTaskDone(briefContent: string, isNL: boolean) {
+  const summary = briefContent
+    .split("\n")
+    .filter(l => l.trim() && !/^#{1,3} /.test(l))
+    .slice(0, 3)
+    .join(" ")
+    .slice(0, 300);
+
+  const msg = isNL
+    ? `Ik heb de dagelijkse opdracht uit de Morning Brief gedaan. De brief van vandaag ging over: "${summary}". Geef me kort feedback.`
+    : `I completed today's daily task from the Morning Brief. Today's brief was about: "${summary}". Give me brief feedback.`;
+
+  window.dispatchEvent(new CustomEvent("marcus-brief-task-done", { detail: { message: msg } }));
+}
+
 export default function MarcusDailyBrief() {
   const { data: session } = useSession();
   const { lang } = useLanguage();
   const isNL = lang !== "en";
-  const [data, setData]       = useState<BriefData | null>(null);
-  const [visible, setVisible] = useState(false);
-  const [copied, setCopied]   = useState(false);
-  const [entered, setEntered] = useState(false);
+  const [data, setData]           = useState<BriefData | null>(null);
+  const [visible, setVisible]     = useState(false);
+  const [copied, setCopied]       = useState(false);
+  const [entered, setEntered]     = useState(false);
+  const [taskDone, setTaskDone]   = useState(false);
 
   useEffect(() => {
     if (!session?.user) return;
+    // Herstel taskDone status voor vandaag
+    if (localStorage.getItem(TASK_DONE_KEY())) setTaskDone(true);
+
     fetch("/api/me/morning-brief")
       .then(r => r.ok ? r.json() : null)
       .then((d: BriefData | null) => {
@@ -69,6 +91,15 @@ export default function MarcusDailyBrief() {
     ).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
   }
 
+  function handleTaskDone() {
+    if (taskDone || !data?.content) return;
+    setTaskDone(true);
+    localStorage.setItem(TASK_DONE_KEY(), "1");
+    notifyMarcusTaskDone(data.content, isNL);
+    // Sluit brief na korte vertraging zodat gebruiker de check ziet
+    setTimeout(() => close(), 800);
+  }
+
   const groupLabel = ({ 1: isNL ? "Beginner" : "Beginner", 2: isNL ? "Gevorderd" : "Advanced", 3: isNL ? "Expert" : "Expert" } as Record<number, string>)[data?.group ?? 0] ?? "";
 
   return (
@@ -90,7 +121,7 @@ export default function MarcusDailyBrief() {
               <div className="daily-brief-header-left">
                 <div className="daily-brief-avatar">M</div>
                 <div>
-                  <div className="daily-brief-title">{isNL ? "Marcus Daily Brief" : "Marcus Daily Brief"}</div>
+                  <div className="daily-brief-title">Marcus Daily Brief</div>
                   <div className="daily-brief-meta">{groupLabel} · {data.date}</div>
                 </div>
               </div>
@@ -116,6 +147,16 @@ export default function MarcusDailyBrief() {
 
             {/* Footer */}
             <div className="daily-brief-footer">
+              <button
+                className={`daily-brief-task-btn${taskDone ? " done" : ""}`}
+                onClick={handleTaskDone}
+                disabled={taskDone}
+              >
+                <CheckCircle size={15} />
+                {taskDone
+                  ? (isNL ? "Opdracht gedaan ✓" : "Task done ✓")
+                  : (isNL ? "Opdracht gedaan" : "Task done")}
+              </button>
               <button className="daily-brief-done-btn" onClick={close}>
                 {isNL ? "Begrepen, aan de slag" : "Got it, let's go"} →
               </button>
