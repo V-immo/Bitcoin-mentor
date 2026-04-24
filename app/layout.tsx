@@ -10,6 +10,7 @@ import BadgeUnlock from "@/components/BadgeUnlock";
 import MarcusDebrief from "@/components/MarcusDebrief";
 import LuckyXPToast from "@/components/LuckyXPToast";
 import SessionWrapper from "@/components/SessionWrapper";
+import DevtoolsBlocker from "@/components/DevtoolsBlocker";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -63,20 +64,6 @@ export default function RootLayout({
             });
           }
         `}} />
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){
-            // Disable right-click context menu
-            document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
-            // Block devtools keyboard shortcuts
-            document.addEventListener('keydown', function(e){
-              if(
-                e.key==='F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j'||e.key==='C'||e.key==='c')) ||
-                (e.ctrlKey && (e.key==='U'||e.key==='u'||e.key==='S'||e.key==='s'))
-              ){ e.preventDefault(); e.stopPropagation(); return false; }
-            });
-          })();
-        `}} />
       </head>
       <body className={inter.className}>
         <SessionWrapper>
@@ -93,6 +80,7 @@ export default function RootLayout({
                   <MarcusDebrief />
                   <LuckyXPToast />
                   <Toaster />
+                  <DevtoolsBlocker />
                 </ProProvider>
               </CurrencyProvider>
             </LanguageProvider>
