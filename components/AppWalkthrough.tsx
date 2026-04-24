@@ -11,7 +11,6 @@ import {
 
 const DONE_KEY    = "walkthrough-v5";
 const PENDING_KEY = "walkthrough-pending";
-const PAD         = 12;
 
 type Step = { icon: LucideIcon; title: string; text: string; accent: string; selector?: string };
 
@@ -30,7 +29,7 @@ const STEPS: Step[] = [
   { icon: GraduationCap,   title: "Leren",                      accent: "#8b5cf6",
     selector: '[data-tour="leren"]',
     text: "Dagelijkse quizzes die meegroeien met jouw niveau. Hoe meer je weet, hoe scherper mijn coaching." },
-  { icon: BarChart3,       title: "Stats & meer",               accent: "#06b6d4",
+  { icon: BarChart3,       title: "Account & meer",             accent: "#06b6d4",
     selector: ".app-nav-account-btn",
     text: "Via het accountmenu vind je Stats, Brokers, Nieuws en meer. Zelfkennis is je grootste voordeel." },
   { icon: MessageSquare,   title: "Ik ben altijd bereikbaar",   accent: "#e91e63",
@@ -39,28 +38,6 @@ const STEPS: Step[] = [
 ];
 
 type Spot = { top: number; left: number; width: number; height: number };
-
-function measureEl(selector: string): Spot | null {
-  // Probeer primaire selector, val terug op hamburger-knop (mobiel), dan heel nav
-  const candidates = [selector, ".nav-hamburger", "nav.app-nav"];
-  for (const sel of candidates) {
-    try {
-      const els = document.querySelectorAll<HTMLElement>(sel);
-      for (const el of Array.from(els)) {
-        const r = el.getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          return {
-            top:    r.top    - PAD,
-            left:   r.left   - PAD,
-            width:  r.width  + PAD * 2,
-            height: r.height + PAD * 2,
-          };
-        }
-      }
-    } catch { /* */ }
-  }
-  return null;
-}
 
 export default function AppWalkthrough() {
   const { data: session } = useSession();
@@ -72,27 +49,92 @@ export default function AppWalkthrough() {
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
 
-  // Viewport meten
+  // Refs voor DOM-manipulatie
+  const raisedNavRef  = useRef<HTMLElement | null>(null);
+  const ringedElRef   = useRef<HTMLElement | null>(null);
+  const savedElCss    = useRef("");
+
   useEffect(() => {
     setMounted(true);
-    const update = () => { setVw(window.innerWidth); setVh(window.innerHeight); };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    const upd = () => { setVw(window.innerWidth); setVh(window.innerHeight); };
+    upd();
+    window.addEventListener("resize", upd);
+    return () => window.removeEventListener("resize", upd);
   }, []);
 
-  // (spot wordt direct gezet via goToStep — geen effect nodig)
+  // Verwijder highlight van vorig element
+  function clearHighlight() {
+    if (raisedNavRef.current) {
+      raisedNavRef.current.style.removeProperty("z-index");
+      raisedNavRef.current = null;
+    }
+    if (ringedElRef.current) {
+      ringedElRef.current.style.cssText = savedElCss.current;
+      ringedElRef.current = null;
+    }
+  }
 
-  // Resize: herbereken spot
-  useEffect(() => {
-    if (!visible) return;
-    const onResize = () => {
-      const sel = STEPS[step]?.selector;
-      setSpot(sel ? measureEl(sel) : null);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [visible, step]);
+  // Zet highlight op element voor stap s, geeft positie terug voor kaart
+  function applyHighlight(s: number): Spot | null {
+    clearHighlight();
+    const sel = STEPS[s]?.selector;
+    if (!sel) return null;
+
+    // Probeer: exacte selector → hamburger → hele nav
+    const fallbacks = [sel, ".nav-hamburger", "nav.app-nav"];
+    for (const candidate of fallbacks) {
+      try {
+        const els = document.querySelectorAll<HTMLElement>(candidate);
+        for (const el of Array.from(els)) {
+          const r = el.getBoundingClientRect();
+          if (r.width <= 0 || r.height <= 0) continue;
+
+          // Zet nav boven de overlay (z-index 9900)
+          const nav = document.querySelector<HTMLElement>("nav.app-nav");
+          if (nav) {
+            nav.style.setProperty("z-index", "9902", "important");
+            raisedNavRef.current = nav;
+          }
+
+          // Voeg gekleurde ring toe aan het specifieke element
+          savedElCss.current = el.style.cssText;
+          el.style.setProperty("outline",        `3px solid ${STEPS[s].accent}`, "important");
+          el.style.setProperty("outline-offset", "3px",  "important");
+          el.style.setProperty("border-radius",  "8px",  "important");
+          ringedElRef.current = el;
+
+          return { top: r.top - 8, left: r.left - 8, width: r.width + 16, height: r.height + 16 };
+        }
+      } catch { /* */ }
+    }
+    return null;
+  }
+
+  // Ga naar stap s
+  function goToStep(s: number) {
+    const sp = applyHighlight(s);
+    setStep(s);
+    setSpot(sp);
+  }
+
+  function openTour(s = 0) {
+    goToStep(s);
+    setVisible(true);
+    setTimeout(() => setEntered(true), 30);
+  }
+
+  function closeTour() {
+    clearHighlight();
+    setEntered(false);
+    setTimeout(() => { setVisible(false); setSpot(null); }, 240);
+    localStorage.setItem(DONE_KEY, "done");
+  }
+
+  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goToStep(step + 1); }
+  function prev() { if (step > 0) goToStep(step - 1); }
+
+  // Cleanup bij unmount
+  useEffect(() => () => clearHighlight(), []);
 
   // Keyboard + pending tour
   useEffect(() => {
@@ -114,48 +156,13 @@ export default function AppWalkthrough() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  // Ga direct naar een stap — meet het element NU (nav is altijd in DOM)
-  function goToStep(s: number) {
-    const sel = STEPS[s]?.selector;
-    const sp  = sel ? measureEl(sel) : null;
-    setStep(s);
-    setSpot(sp);
-  }
-
-  function openTour(s = 0) {
-    goToStep(s);
-    setVisible(true);
-    setTimeout(() => setEntered(true), 30);
-  }
-
-  function closeTour() {
-    setEntered(false);
-    setTimeout(() => { setVisible(false); setSpot(null); }, 240);
-    localStorage.setItem(DONE_KEY, "done");
-  }
-
-  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goToStep(step + 1); }
-  function prev() { if (step > 0) goToStep(step - 1); }
-
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
   const W = vw || (typeof window !== "undefined" ? window.innerWidth  : 1440);
   const H = vh || (typeof window !== "undefined" ? window.innerHeight : 900);
 
-  // Clip-path: alles in px voor soepele CSS-transitie.
-  // Geen spot → 0×0 gat in midden = volledig donker scherm
-  const hL = spot ? spot.left              : W / 2;
-  const hT = spot ? spot.top               : H / 2;
-  const hR = spot ? spot.left + spot.width : W / 2;
-  const hB = spot ? spot.top + spot.height : H / 2;
-
-  const clipPath =
-    `polygon(evenodd,` +
-    `0px 0px,${W}px 0px,${W}px ${H}px,0px ${H}px,` +
-    `${hL}px ${hT}px,${hL}px ${hB}px,${hR}px ${hB}px,${hR}px ${hT}px)`;
-
-  // Tooltip positie
+  // Kaart-positie
   function cardStyle(): React.CSSProperties {
     const TW = Math.min(360, W - 32);
     if (!spot) return { left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: TW };
@@ -169,52 +176,23 @@ export default function AppWalkthrough() {
 
   const overlay = visible ? (
     <>
-      {/* Kliklaag achter alles — sluit tour bij klik buiten kaart */}
-      <div
-        style={{ position: "fixed", inset: 0, zIndex: 9898, cursor: "pointer" }}
-        onClick={closeTour}
-      />
-
-      {/* Donkere overlay met clip-path gat */}
+      {/* Donkere overlay — nav staat BOVEN dit (z-index 9902 > 9900) */}
       <div style={{
-        position:      "fixed",
-        inset:         0,
-        zIndex:        9900,
-        background:    "rgba(0,0,0,0.82)",
-        clipPath,
-        transition:    "clip-path 0.4s cubic-bezier(0.4,0,0.2,1)",
-        pointerEvents: "none",
-        willChange:    "clip-path",
-      }} />
+        position:   "fixed",
+        inset:      0,
+        zIndex:     9900,
+        background: "rgba(0,0,0,0.82)",
+        cursor:     "pointer",
+      }} onClick={closeTour} />
 
-      {/* Gekleurde ring */}
-      <div style={{
-        position:      "fixed",
-        zIndex:        9901,
-        pointerEvents: "none",
-        top:           spot ? spot.top               : H / 2,
-        left:          spot ? spot.left              : W / 2,
-        width:         spot ? spot.width             : 0,
-        height:        spot ? spot.height            : 0,
-        opacity:       spot ? 1 : 0,
-        border:        `2px solid ${current.accent}`,
-        borderRadius:  10,
-        transition:    "top .4s ease,left .4s ease,width .4s ease,height .4s ease,opacity .3s ease,border-color .25s ease",
-        willChange:    "top,left,width,height",
-      }} />
-
-      {/* Tooltip card */}
+      {/* Kaart staat boven nav (9903 > 9902) */}
       <div
         className={`walkthrough-card${entered ? " entered" : ""}`}
-        style={{ ...cardStyle(), position: "fixed", zIndex: 9902 }}
+        style={{ ...cardStyle(), position: "fixed", zIndex: 9903 }}
         onClick={e => e.stopPropagation()}
       >
         <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
         <div className="walkthrough-step-counter">{step + 1} / {STEPS.length}</div>
-        {/* DEBUG — tijdelijk */}
-        <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",marginBottom:4,wordBreak:"break-all"}}>
-          sel:{STEPS[step]?.selector||"none"} | spot:{spot?`L${Math.round(spot.left)} T${Math.round(spot.top)} W${Math.round(spot.width)}`:"null"} | vw:{vw}
-        </div>
         <div className="walkthrough-icon-wrap" style={{ background: `${current.accent}18`, border: `1px solid ${current.accent}30` }}>
           <current.icon size={26} style={{ color: current.accent }} />
         </div>
