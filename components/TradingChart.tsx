@@ -481,7 +481,12 @@ export default function TradingChart({
 
   // Update candle data — incremental update voor live candles, full reset bij nieuw interval/asset
   useEffect(() => {
-    if (!seriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
+    if (!seriesRef.current || !volumeSeriesRef.current || candles.length === 0) {
+      // Reset prev bij lege candles (asset-wissel) — anders denkt isLiveUpdate-check
+      // dat de eerste nieuwe candles een live-update zijn van het vorige asset.
+      if (candles.length === 0) prevCandlesRef.current = [];
+      return;
+    }
 
     const prev = prevCandlesRef.current;
     // Detecteer live kline-update op basis van de LAATSTE candle — niet de eerste.

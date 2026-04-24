@@ -153,6 +153,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   const [bottomTab, setBottomTab] = useState<BottomTab>("paper");
   const [signalStripOpen, setSignalStripOpen] = useState(false);
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
+  const [assetSearch, setAssetSearch] = useState("");
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1200px)");
@@ -744,33 +745,75 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
 
       {/* ── Asset picker overlay ── */}
       {assetPickerOpen && (
-        <div className="asset-overlay-backdrop" onClick={() => setAssetPickerOpen(false)}>
+        <div className="asset-overlay-backdrop" onClick={() => { setAssetPickerOpen(false); setAssetSearch(""); }}>
           <div className="asset-overlay-panel" onClick={e => e.stopPropagation()}>
             <div className="asset-overlay-header">
               <span>{t("asset_picker_title")}</span>
-              <button className="asset-overlay-close" onClick={() => setAssetPickerOpen(false)}><X size={16} /></button>
+              <button className="asset-overlay-close" onClick={() => { setAssetPickerOpen(false); setAssetSearch(""); }}><X size={16} /></button>
             </div>
-            {ASSET_GROUPS.map((group) => {
-              const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
-              return (
-                <div key={group.label} className="asset-overlay-group">
-                  <div className="asset-overlay-group-label">{group.label}</div>
-                  <div className="asset-overlay-grid">
-                    {groupAssets.map((a) => (
-                      <button
-                        key={a.symbol}
-                        className={`asset-overlay-btn${asset === a.symbol ? " active" : ""}`}
-                        onClick={() => { handleAssetChange(a.symbol); setAssetPickerOpen(false); }}
-                      >
-                        <span className="asset-overlay-emoji">{a.emoji}</span>
-                        <span className="asset-overlay-ticker">{a.ticker}</span>
-                        <span className="asset-overlay-name">{a.name}</span>
-                      </button>
-                    ))}
+            <div className="asset-overlay-search-wrap">
+              <input
+                className="asset-overlay-search"
+                type="text"
+                placeholder="Zoeken..."
+                value={assetSearch}
+                onChange={e => setAssetSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
+            {(() => {
+              const q = assetSearch.toLowerCase().trim();
+              if (q) {
+                const results = SCAN_ASSETS.filter(a =>
+                  a.name.toLowerCase().includes(q) ||
+                  a.ticker.toLowerCase().includes(q) ||
+                  a.symbol.toLowerCase().includes(q)
+                );
+                return (
+                  <div className="asset-overlay-group">
+                    <div className="asset-overlay-grid">
+                      {results.map((a) => (
+                        <button
+                          key={a.symbol}
+                          className={`asset-overlay-btn${asset === a.symbol ? " active" : ""}`}
+                          onClick={() => { handleAssetChange(a.symbol); setAssetPickerOpen(false); setAssetSearch(""); }}
+                        >
+                          <span className="asset-overlay-emoji">{a.emoji}</span>
+                          <span className="asset-overlay-ticker">{a.ticker}</span>
+                          <span className="asset-overlay-name">{a.name}</span>
+                        </button>
+                      ))}
+                      {results.length === 0 && (
+                        <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--text-muted)", padding: "24px 0", fontSize: 13 }}>
+                          Geen resultaten voor &ldquo;{assetSearch}&rdquo;
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              }
+              return ASSET_GROUPS.map((group) => {
+                const groupAssets = SCAN_ASSETS.filter(a => group.types.includes(a.type));
+                return (
+                  <div key={group.label} className="asset-overlay-group">
+                    <div className="asset-overlay-group-label">{group.label}</div>
+                    <div className="asset-overlay-grid">
+                      {groupAssets.map((a) => (
+                        <button
+                          key={a.symbol}
+                          className={`asset-overlay-btn${asset === a.symbol ? " active" : ""}`}
+                          onClick={() => { handleAssetChange(a.symbol); setAssetPickerOpen(false); setAssetSearch(""); }}
+                        >
+                          <span className="asset-overlay-emoji">{a.emoji}</span>
+                          <span className="asset-overlay-ticker">{a.ticker}</span>
+                          <span className="asset-overlay-name">{a.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       )}

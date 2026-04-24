@@ -16,6 +16,7 @@ function TradePageInner() {
   const [showPicker, setShowPicker] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [error, setError] = useState(false);
+  const [pickerSearch, setPickerSearch] = useState("");
 
   useEffect(() => {
     const paramAsset = searchParams.get("asset");
@@ -65,6 +66,15 @@ function TradePageInner() {
 
   // Asset picker (eerste bezoek)
   if (showPicker) {
+    const q = pickerSearch.toLowerCase().trim();
+    const filteredAssets = q
+      ? SCAN_ASSETS.filter(a =>
+          a.name.toLowerCase().includes(q) ||
+          a.ticker.toLowerCase().includes(q) ||
+          a.symbol.toLowerCase().includes(q)
+        )
+      : SCAN_ASSETS;
+
     return (
       <main className="container-page">
         <div style={{ marginBottom: 12 }}>
@@ -77,8 +87,18 @@ function TradePageInner() {
           <div className="asset-picker-sub">
             {t("trade_picker_sub")}
           </div>
+          <div className="asset-picker-search-wrap">
+            <input
+              className="asset-picker-search"
+              type="text"
+              placeholder="Zoeken..."
+              value={pickerSearch}
+              onChange={e => setPickerSearch(e.target.value)}
+              autoFocus
+            />
+          </div>
           <div className="asset-picker-grid">
-            {SCAN_ASSETS.map((a) => (
+            {filteredAssets.map((a) => (
               <button
                 key={a.symbol}
                 className="asset-picker-card"
@@ -92,6 +112,11 @@ function TradePageInner() {
                 </span>
               </button>
             ))}
+            {filteredAssets.length === 0 && (
+              <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--text-muted)", padding: "32px 0", fontSize: 14 }}>
+                Geen resultaten voor &ldquo;{pickerSearch}&rdquo;
+              </div>
+            )}
           </div>
         </div>
       </main>

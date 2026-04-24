@@ -6116,6 +6116,48 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
   padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
+.asset-picker-search-wrap {
+  margin-bottom: 16px;
+}
+.asset-picker-search {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.asset-picker-search:focus {
+  border-color: var(--primary);
+}
+.asset-picker-search::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Asset overlay search ── */
+.asset-overlay-search-wrap {
+  padding: 8px 16px 4px;
+}
+.asset-overlay-search {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.asset-overlay-search:focus {
+  border-color: var(--primary);
+}
+.asset-overlay-search::placeholder {
+  color: var(--text-muted);
+}
 
 /* ── Paper trading nieuwe elementen ── */
 .paper-help-box {
