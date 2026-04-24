@@ -16,15 +16,15 @@ type Step = { icon: LucideIcon; title: string; text: string; accent: string; sel
 const STEPS: Step[] = [
   { icon: Home,          title: "Welkom bij Bitcoin Mentor",  accent: "#e91e63",
     text: "Ik ben Marcus — jouw persoonlijke trading coach. Deze tour laat je zien wat elk onderdeel doet. Volg de highlight." },
-  { icon: Home,          title: "Dashboard",                   accent: "#3b82f6", selector: 'a.app-nav-link[href="/dashboard"]',
+  { icon: Home,          title: "Dashboard",                   accent: "#3b82f6", selector: '[href="/dashboard"]',
     text: "Start hier elke dag. Mijn persoonlijke marktbriefing, dagelijkse missies en overzicht van je voortgang." },
-  { icon: GraduationCap, title: "Leren",                       accent: "#8b5cf6", selector: 'a.app-nav-link[href="/leren"]',
+  { icon: GraduationCap, title: "Leren",                       accent: "#8b5cf6", selector: '[href="/leren"]',
     text: "Dagelijkse quizzes die meegroeien met jouw niveau. Hoe meer je leert, hoe beter ik je coach." },
-  { icon: Radar,         title: "Scanner",                     accent: "#f59e0b", selector: 'a.app-nav-link[href="/scanner"]',
+  { icon: Radar,         title: "Scanner",                     accent: "#f59e0b", selector: '[href="/scanner"]',
     text: "Welke assets zijn klaar voor een setup? Score 70+ = technisch interessant. Klik een asset aan voor mijn analyse." },
-  { icon: TrendingUp,    title: "Handelen",                    accent: "#22c55e", selector: 'a.app-nav-link[href="/trade"]',
+  { icon: TrendingUp,    title: "Handelen",                    accent: "#22c55e", selector: '[href="/trade"]',
     text: "Paper trading met nepgeld — leer zonder risico. Stel altijd een stop-loss in. Na elke trade geef ik feedback." },
-  { icon: User,          title: "Profiel",                     accent: "#06b6d4", selector: 'a.app-nav-link[href="/profiel"]',
+  { icon: User,          title: "Profiel",                     accent: "#06b6d4", selector: '[href="/profiel"]',
     text: "Stel hier je tradingstijl en maximaal risico in. Hoe beter je profiel, hoe scherper mijn coaching." },
   { icon: MessageCircle, title: "Marcus — altijd bereikbaar",  accent: "#e91e63", selector: ".float-marcus-btn",
     text: "De M-knop rechtsonder — dat ben ik. Vraag me alles: marktanalyse, je trade, je plan. 24/7 beschikbaar." },
@@ -38,12 +38,16 @@ const NO_SPOT: Spot = { top: -1, left: -1, width: 0, height: 0 };
 
 function measureEl(selector: string): Spot {
   try {
-    const el = document.querySelector<HTMLElement>(selector);
-    if (!el) return NO_SPOT;
-    const r = el.getBoundingClientRect();
-    if (r.width === 0 && r.height === 0) return NO_SPOT;
-    return { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
-  } catch { return NO_SPOT; }
+    // Loop door alle matches — pak het eerste zichtbare element (display:none geeft w=h=0)
+    const els = document.querySelectorAll<HTMLElement>(selector);
+    for (const el of Array.from(els)) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        return { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
+      }
+    }
+  } catch { /* */ }
+  return NO_SPOT;
 }
 
 function toClip(s: Spot): string {
