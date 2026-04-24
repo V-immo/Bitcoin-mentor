@@ -71,7 +71,6 @@ export default function AppWalkthrough() {
   const [vw, setVw]           = useState(0);
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
-  const timerRef              = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Viewport meten
   useEffect(() => {
@@ -82,16 +81,7 @@ export default function AppWalkthrough() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Element meten telkens als step of visible verandert
-  useEffect(() => {
-    if (!visible) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const sel = STEPS[step]?.selector;
-      setSpot(sel ? measureEl(sel) : null);
-    }, 80); // 80ms: geeft React en browser tijd om layout te finaliseren
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [step, visible]);
+  // (spot wordt direct gezet via goToStep — geen effect nodig)
 
   // Resize: herbereken spot
   useEffect(() => {
@@ -124,22 +114,28 @@ export default function AppWalkthrough() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  function openTour(s = 0) {
+  // Ga direct naar een stap — meet het element NU (nav is altijd in DOM)
+  function goToStep(s: number) {
+    const sel = STEPS[s]?.selector;
+    const sp  = sel ? measureEl(sel) : null;
     setStep(s);
-    setSpot(null);
+    setSpot(sp);
+  }
+
+  function openTour(s = 0) {
+    goToStep(s);
     setVisible(true);
     setTimeout(() => setEntered(true), 30);
   }
 
   function closeTour() {
     setEntered(false);
-    if (timerRef.current) clearTimeout(timerRef.current);
     setTimeout(() => { setVisible(false); setSpot(null); }, 240);
     localStorage.setItem(DONE_KEY, "done");
   }
 
-  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } setStep(s => s + 1); }
-  function prev() { if (step > 0) setStep(s => s - 1); }
+  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goToStep(step + 1); }
+  function prev() { if (step > 0) goToStep(step - 1); }
 
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
@@ -224,7 +220,7 @@ export default function AppWalkthrough() {
           {STEPS.map((_, i) => (
             <button key={i}
               className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
-              onClick={() => setStep(i)}
+              onClick={() => goToStep(i)}
               aria-label={`Stap ${i + 1}`}
             />
           ))}
