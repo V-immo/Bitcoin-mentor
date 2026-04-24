@@ -1,23 +1,19 @@
 "use client";
 
-// AppWalkthrough — spotlight-tour die langs echte pagina-elementen beweegt.
-// Start automatisch na voltooide onboarding (PENDING_KEY gezet).
-// Kan altijd handmatig geopend worden via de ? knop.
-
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { X, type LucideIcon, Home, GraduationCap, Radar, TrendingUp, User, MessageCircle, HelpCircle } from "lucide-react";
+import { X, Home, GraduationCap, Radar, TrendingUp, User, MessageCircle, HelpCircle, type LucideIcon } from "lucide-react";
 
 const DONE_KEY    = "walkthrough-v5";
 const PENDING_KEY = "walkthrough-pending";
-const PAD         = 10; // spotlight padding rondom element (px)
+const PAD         = 10;
 
 type Step = {
   icon: LucideIcon;
   title: string;
   text: string;
   accent: string;
-  selector?: string; // CSS-selector voor het te highlighten element
+  selector?: string;
 };
 
 const STEPS: Step[] = [
@@ -37,28 +33,28 @@ const STEPS: Step[] = [
   {
     icon: GraduationCap,
     title: "Leren",
-    text: "Dagelijkse quizzes die meegroeien met jouw niveau — van beginner tot expert. Hoe meer je leert, hoe beter ik je coach.",
+    text: "Dagelijkse quizzes die meegroeien met jouw niveau. Hoe meer je leert, hoe beter ik je coach.",
     accent: "#8b5cf6",
     selector: 'a.app-nav-link[href="/leren"]',
   },
   {
     icon: Radar,
     title: "Scanner",
-    text: "Hier zie je welke assets klaar zijn voor een setup. Score 70+ = technisch interessant. Klik een asset aan en ik analyseer hem direct.",
+    text: "Hier zie je welke assets klaar zijn voor een setup. Score 70+ = technisch interessant. Klik een asset aan voor mijn analyse.",
     accent: "#f59e0b",
     selector: 'a.app-nav-link[href="/scanner"]',
   },
   {
     icon: TrendingUp,
     title: "Handelen",
-    text: "Paper trading met nepgeld — leer zonder risico. Stel altijd een stop-loss in. Na elke trade geef ik je feedback.",
+    text: "Paper trading met nepgeld — leer zonder risico. Stel altijd een stop-loss in. Na elke trade geef ik feedback.",
     accent: "#22c55e",
     selector: 'a.app-nav-link[href="/trade"]',
   },
   {
     icon: User,
     title: "Profiel",
-    text: "Stel hier je tradingstijl, maximaal risico en dagverlies in. Hoe beter je profiel, hoe scherper mijn coaching.",
+    text: "Stel hier je tradingstijl en maximaal risico in. Hoe beter je profiel, hoe scherper mijn coaching.",
     accent: "#06b6d4",
     selector: 'a.app-nav-link[href="/profiel"]',
   },
@@ -72,224 +68,176 @@ const STEPS: Step[] = [
   {
     icon: HelpCircle,
     title: "Tour opnieuw starten",
-    text: "Wil je deze tour later nog een keer bekijken? Druk op de ? knop rechtsonder, of druk op de ? toets op je toetsenbord.",
+    text: "Wil je deze tour later nog bekijken? Druk op de ? knop rechtsonder, of druk de ? toets op je toetsenbord.",
     accent: "#e91e63",
   },
 ];
 
-type Rect = { x: number; y: number; w: number; h: number };
+type Spot = { top: number; left: number; width: number; height: number };
 
-function getRect(selector: string): Rect | null {
-  const el = document.querySelector(selector);
+function measureEl(selector: string): Spot | null {
+  const el = document.querySelector<HTMLElement>(selector);
   if (!el) return null;
   const r = el.getBoundingClientRect();
   if (r.width === 0 && r.height === 0) return null;
   return {
-    x: r.left - PAD,
-    y: r.top  - PAD,
-    w: r.width  + PAD * 2,
-    h: r.height + PAD * 2,
+    top:    r.top    - PAD,
+    left:   r.left   - PAD,
+    width:  r.width  + PAD * 2,
+    height: r.height + PAD * 2,
   };
 }
 
 export default function AppWalkthrough() {
   const { data: session } = useSession();
-  const [step, setStep]         = useState(0);
-  const [visible, setVisible]   = useState(false);
-  const [entered, setEntered]   = useState(false);
-  const [rect, setRect]         = useState<Rect | null>(null);
-  const [vw, setVw]             = useState(0);
-  const [vh, setVh]             = useState(0);
+  const [step, setStep]       = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [spot, setSpot]       = useState<Spot | null>(null);
+  const rafRef                = useRef<number | null>(null);
 
-  // Herbereken rect als stap of venstergrootte verandert
-  const recalc = useCallback((s: number) => {
-    setVw(window.innerWidth);
-    setVh(window.innerHeight);
+  const applyStep = useCallback((s: number) => {
+    setStep(s);
     const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
+    if (sel) {
+      // RAF zodat DOM gesettled is
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        setSpot(measureEl(sel));
+      });
+    } else {
+      setSpot(null);
+    }
   }, []);
 
+  // Herbereken bij resize
   useEffect(() => {
     if (!visible) return;
-    recalc(step);
-    const onResize = () => recalc(step);
+    const onResize = () => applyStep(step);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [visible, step, recalc]);
+  }, [visible, step, applyStep]);
 
-  // Auto-start na onboarding
+  // Auto-start na onboarding + keyboard shortcut
   useEffect(() => {
     if (!session?.user) return;
     const pending = localStorage.getItem(PENDING_KEY);
     const done    = localStorage.getItem(DONE_KEY);
     if (pending === "1" && !done) {
       localStorage.removeItem(PENDING_KEY);
-      setTimeout(() => open(0), 1200);
+      setTimeout(() => openTour(0), 1200);
     }
-
     function onKey(e: KeyboardEvent) {
       const el = document.activeElement;
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
-      if (e.key === "?" || e.key === "h") open(0);
-      if (e.key === "Escape") close();
+      if (e.key === "?" || e.key === "h") openTour(0);
+      if (e.key === "Escape") closeTour();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  function open(s = 0) {
-    setStep(s);
-    setVw(window.innerWidth);
-    setVh(window.innerHeight);
-    const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
+  function openTour(s = 0) {
+    applyStep(s);
     setVisible(true);
     setTimeout(() => setEntered(true), 30);
   }
 
-  function close() {
+  function closeTour() {
     setEntered(false);
-    setTimeout(() => { setVisible(false); setRect(null); }, 240);
+    setTimeout(() => { setVisible(false); setSpot(null); }, 240);
     localStorage.setItem(DONE_KEY, "done");
   }
 
-  function goTo(s: number) {
-    setStep(s);
-    const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
-  }
-
-  function next() {
-    if (step >= STEPS.length - 1) { close(); return; }
-    goTo(step + 1);
-  }
-  function prev() { if (step > 0) goTo(step - 1); }
+  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } applyStep(step + 1); }
+  function prev() { if (step > 0) applyStep(step - 1); }
 
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
-  // Tooltip positie berekenen op basis van spotlight-rect
-  function tooltipStyle(): React.CSSProperties {
-    if (!rect || vw === 0) {
-      // Geen element → gecentreerd midden in beeld
-      return { position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)" };
+  // Bereken tooltip positie
+  function cardStyle(): React.CSSProperties {
+    if (!spot) {
+      return { position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: "min(340px, calc(100vw - 32px))" };
     }
-
-    const TW = Math.min(340, vw - 32); // tooltip breedte
-    const BELOW_SPACE = vh - (rect.y + rect.h + PAD);
-    const ABOVE_SPACE = rect.y - PAD;
-
-    // Horizontaal: gecentreerd op het element, geclamped binnen scherm
-    const cx    = rect.x + rect.w / 2;
-    let left    = cx - TW / 2;
-    left        = Math.max(16, Math.min(left, vw - TW - 16));
-
-    if (BELOW_SPACE >= 180 || BELOW_SPACE >= ABOVE_SPACE) {
-      // Onder het element
-      return { position: "fixed", left, top: rect.y + rect.h + PAD + 8, width: TW };
-    } else {
-      // Boven het element
-      return { position: "fixed", left, bottom: vh - rect.y + PAD + 8, width: TW };
+    const TW  = Math.min(340, window.innerWidth - 32);
+    const cx  = spot.left + spot.width / 2;
+    let left  = cx - TW / 2;
+    left      = Math.max(16, Math.min(left, window.innerWidth - TW - 16));
+    const below = window.innerHeight - (spot.top + spot.height) - 12;
+    if (below >= 160) {
+      return { position: "fixed", left, top: spot.top + spot.height + 12, width: TW };
     }
+    return { position: "fixed", left, bottom: window.innerHeight - spot.top + 12, width: TW };
   }
+
+  const vw = typeof window !== "undefined" ? window.innerWidth  : 1920;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
 
   return (
     <>
-      {/* Help knop — alleen als ingelogd en tour niet open */}
       {session?.user && !visible && (
-        <button className="walkthrough-help-btn" onClick={() => open(0)} title="App tour (? toets)">?</button>
+        <button className="walkthrough-help-btn" onClick={() => openTour(0)} title="App tour (? toets)">?</button>
       )}
 
       {visible && (
-        <div
-          className={`walkthrough-overlay${entered ? " entered" : ""}`}
-          onClick={close}
-          aria-modal="true"
-          role="dialog"
-        >
-          {/* SVG spotlight overlay — donker met transparant gat rondom element */}
-          <svg
-            className="walkthrough-svg"
-            width={vw}
-            height={vh}
-            style={{ position: "fixed", inset: 0, pointerEvents: "none" }}
-          >
-            <defs>
-              <mask id="wt-mask">
-                {/* Alles donker */}
-                <rect width={vw} height={vh} fill="white" />
-                {/* Gat rondom het element */}
-                {rect && (
-                  <rect
-                    className="spotlight-hole"
-                    x={rect.x}
-                    y={rect.y}
-                    width={rect.w}
-                    height={rect.h}
-                    rx={10}
-                    fill="black"
-                  />
-                )}
-              </mask>
-            </defs>
-            <rect
-              width={vw}
-              height={vh}
-              fill="rgba(0,0,0,0.78)"
-              mask="url(#wt-mask)"
-            />
-            {/* Spotlight border glow rondom element */}
-            {rect && (
-              <rect
-                className="spotlight-ring"
-                x={rect.x}
-                y={rect.y}
-                width={rect.w}
-                height={rect.h}
-                rx={10}
-                fill="none"
-                stroke={current.accent}
-                strokeWidth={2}
-                opacity={0.7}
+        <div className={`walkthrough-overlay${entered ? " entered" : ""}`} onClick={closeTour}>
+
+          {/* 4-delige overlay rondom het element */}
+          {spot ? (
+            <>
+              {/* Boven */}
+              <div className="wt-shade" style={{ top: 0, left: 0, right: 0, height: spot.top }} />
+              {/* Onder */}
+              <div className="wt-shade" style={{ top: spot.top + spot.height, left: 0, right: 0, bottom: 0 }} />
+              {/* Links */}
+              <div className="wt-shade" style={{ top: spot.top, left: 0, width: spot.left, height: spot.height }} />
+              {/* Rechts */}
+              <div className="wt-shade" style={{ top: spot.top, left: spot.left + spot.width, right: 0, height: spot.height }} />
+              {/* Gekleurde ring rondom element */}
+              <div
+                className="wt-ring"
+                style={{
+                  top: spot.top, left: spot.left,
+                  width: spot.width, height: spot.height,
+                  borderColor: current.accent,
+                }}
               />
-            )}
-          </svg>
+            </>
+          ) : (
+            /* Geen element → volledig donker */
+            <div className="wt-shade" style={{ inset: 0 }} />
+          )}
 
           {/* Tooltip card */}
           <div
             className={`walkthrough-card${entered ? " entered" : ""}`}
-            style={tooltipStyle()}
+            style={cardStyle()}
             onClick={e => e.stopPropagation()}
           >
-            {/* Sluit */}
-            <button className="walkthrough-close" onClick={close}><X size={15} /></button>
+            <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
 
-            {/* Stap teller */}
             <div className="walkthrough-step-counter">{step + 1} / {STEPS.length}</div>
 
-            {/* Icoon */}
             <div className="walkthrough-icon-wrap" style={{ background: `${current.accent}18`, border: `1px solid ${current.accent}30` }}>
               <current.icon size={22} style={{ color: current.accent }} />
             </div>
 
-            {/* Tekst */}
             <h2 className="walkthrough-title">{current.title}</h2>
             <p className="walkthrough-text">{current.text}</p>
 
-            {/* Progress dots */}
             <div className="walkthrough-dots">
               {STEPS.map((_, i) => (
                 <button
                   key={i}
                   className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
-                  onClick={() => goTo(i)}
+                  onClick={() => applyStep(i)}
                   aria-label={`Stap ${i + 1}`}
                 />
               ))}
             </div>
 
-            {/* Navigatie */}
             <div className="walkthrough-nav">
               {step > 0
                 ? <button className="walkthrough-btn-back" onClick={prev}>← Terug</button>
@@ -301,11 +249,13 @@ export default function AppWalkthrough() {
             </div>
 
             {!isLast && (
-              <button className="walkthrough-skip" onClick={close}>Overslaan</button>
+              <button className="walkthrough-skip" onClick={closeTour}>Overslaan</button>
             )}
           </div>
         </div>
       )}
+      {/* suppress unused var warning */}
+      <span style={{ display: "none" }}>{vw}{vh}</span>
     </>
   );
 }
