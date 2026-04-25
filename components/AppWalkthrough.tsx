@@ -48,6 +48,7 @@ export default function AppWalkthrough() {
   const [vw, setVw]           = useState(0);
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [dbg, setDbg]         = useState("—");   // DEBUG — verwijder na diagnose
 
   // Refs voor DOM-manipulatie (alleen voor nav/element omhoog brengen)
   const raisedNavRef     = useRef<HTMLElement | null>(null);
@@ -81,9 +82,8 @@ export default function AppWalkthrough() {
   function applyHighlight(s: number): Spot | null {
     clearHighlight();
     const sel = STEPS[s]?.selector;
-    if (!sel) return null;
+    if (!sel) { setDbg(`s${s}: geen selector`); return null; }
 
-    // Probeer: exacte selector → hamburger → hele nav
     const fallbacks = [sel, ".nav-hamburger", "nav.app-nav"];
     for (const candidate of fallbacks) {
       try {
@@ -96,23 +96,26 @@ export default function AppWalkthrough() {
           const inNav = !!(nav && nav.contains(el));
 
           if (inNav && nav) {
-            // Sla originele stijl op VÓÓR wijziging
             raisedNavOrigCss.current = nav.style.cssText;
             nav.style.setProperty("z-index",                "9902", "important");
             nav.style.setProperty("backdrop-filter",         "none", "important");
             nav.style.setProperty("-webkit-backdrop-filter", "none", "important");
             raisedNavRef.current = nav;
           } else {
-            // Element buiten de nav (bijv. Marcus-knop)
             raisedElOrigCss.current = el.style.cssText;
             el.style.setProperty("z-index", "9902", "important");
             raisedElRef.current = el;
           }
 
+          // DEBUG
+          setDbg(`s${s} | "${candidate}" | ${Math.round(r.width)}x${Math.round(r.height)} @ ${Math.round(r.left)},${Math.round(r.top)} | vp:${window.innerWidth}x${window.innerHeight}`);
+
           return { top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 };
         }
       } catch { /* */ }
     }
+
+    setDbg(`s${s} | "${sel}" → niets gevonden`);
     return null;
   }
 
@@ -191,7 +194,7 @@ export default function AppWalkthrough() {
         cursor:     "pointer",
       }} onClick={closeTour} />
 
-      {/* Highlight-ring — puur React state, beweegt gegarandeerd mee */}
+      {/* Highlight-ring */}
       {spot && (
         <div style={{
           position:      "fixed",
@@ -207,7 +210,7 @@ export default function AppWalkthrough() {
         }} />
       )}
 
-      {/* Kaart staat boven ring (9904 > 9903) */}
+      {/* Kaart */}
       <div
         className={`walkthrough-card${entered ? " entered" : ""}`}
         style={{ ...cardStyle(), position: "fixed", zIndex: 9904 }}
@@ -220,6 +223,12 @@ export default function AppWalkthrough() {
         </div>
         <h2 className="walkthrough-title">{current.title}</h2>
         <p className="walkthrough-text">{current.text}</p>
+
+        {/* ── DEBUG — verwijder na diagnose ── */}
+        <div style={{ marginTop: 8, padding: "4px 8px", background: "#0004", borderRadius: 6, fontFamily: "monospace", fontSize: 10, color: "#fff8", wordBreak: "break-all", lineHeight: 1.4 }}>
+          {dbg}
+        </div>
+
         <div className="walkthrough-dots">
           {STEPS.map((_, i) => (
             <button key={i}
