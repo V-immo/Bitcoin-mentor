@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -12,6 +12,7 @@ import {
 
 const DONE_KEY    = "walkthrough-v5";
 const PENDING_KEY = "walkthrough-pending";
+const PAD         = 10;
 
 type Step = { icon: LucideIcon; title: string; text: string; accent: string; selector?: string };
 
@@ -38,106 +39,54 @@ const STEPS: Step[] = [
     text: "De M-knop rechtsonder — dat ben ik. Vraag me alles: markt, trade, plan. 24/7." },
 ];
 
-type Spot = { top: number; left: number; width: number; height: number };
+type Rect = { x: number; y: number; w: number; h: number };
+
+function getRect(selector: string): Rect | null {
+  // Probeer exacte selector, dan alleen a[href=...] variant
+  const candidates = [selector, selector.startsWith("a.") ? selector.replace(/^a\.[^\[]+/, "a") : null].filter(Boolean) as string[];
+  for (const sel of candidates) {
+    try {
+      const els = Array.from(document.querySelectorAll<HTMLElement>(sel));
+      for (const el of els) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
+        }
+      }
+    } catch { /* */ }
+  }
+  return null;
+}
 
 export default function AppWalkthrough() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  // Tour werkt alleen op app-pagina's waar de nav bestaat
   const tourAllowed = pathname !== "/" && !pathname.startsWith("/auth/");
+
   const [step, setStep]       = useState(0);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [spot, setSpot]       = useState<Spot | null>(null);
+  const [rect, setRect]       = useState<Rect | null>(null);
   const [vw, setVw]           = useState(0);
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
 
-  const raisedNavRef     = useRef<HTMLElement | null>(null);
-  const raisedNavOrigCss = useRef("");
-  const raisedElRef      = useRef<HTMLElement | null>(null);
-  const raisedElOrigCss  = useRef("");
+  useEffect(() => { setMounted(true); }, []);
 
-  useEffect(() => {
-    setMounted(true);
-    const upd = () => { setVw(window.innerWidth); setVh(window.innerHeight); };
-    upd();
-    window.addEventListener("resize", upd);
-    return () => window.removeEventListener("resize", upd);
+  const recalc = useCallback((s: number) => {
+    setVw(window.innerWidth);
+    setVh(window.innerHeight);
+    const sel = STEPS[s]?.selector;
+    setRect(sel ? getRect(sel) : null);
   }, []);
 
-  function clearHighlight() {
-    if (raisedNavRef.current) {
-      raisedNavRef.current.style.cssText = raisedNavOrigCss.current;
-      raisedNavRef.current = null;
-      raisedNavOrigCss.current = "";
-    }
-    if (raisedElRef.current) {
-      raisedElRef.current.style.cssText = raisedElOrigCss.current;
-      raisedElRef.current = null;
-      raisedElOrigCss.current = "";
-    }
-  }
-
-  function applyHighlight(s: number): Spot | null {
-    clearHighlight();
-    const sel = STEPS[s]?.selector;
-    if (!sel) return null;
-
-    const candidates = [sel, "nav", ".nav-hamburger"];
-    for (const candidate of candidates) {
-      try {
-        const els = Array.from(document.querySelectorAll<HTMLElement>(candidate));
-        for (const el of els) {
-          const r = el.getBoundingClientRect();
-          const hasSize = r.width > 0 && r.height > 0;
-          if (!hasSize) continue;
-
-          const nav = document.querySelector<HTMLElement>("nav");
-          const inNav = !!(nav && (nav === el || nav.contains(el)));
-
-          if (inNav && nav) {
-            raisedNavOrigCss.current = nav.style.cssText;
-            nav.style.setProperty("z-index",                  "9902", "important");
-            nav.style.setProperty("backdrop-filter",           "none", "important");
-            nav.style.setProperty("-webkit-backdrop-filter",   "none", "important");
-            raisedNavRef.current = nav;
-          } else {
-            raisedElOrigCss.current = el.style.cssText;
-            el.style.setProperty("z-index", "9902", "important");
-            raisedElRef.current = el;
-          }
-
-          return { top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 };
-        }
-      } catch { /* */ }
-    }
-    return null;
-  }
-
-  function goToStep(s: number) {
-    const sp = applyHighlight(s);
-    setStep(s);
-    setSpot(sp);
-  }
-
-  function openTour(s = 0) {
-    goToStep(s);
-    setVisible(true);
-    setTimeout(() => setEntered(true), 30);
-  }
-
-  function closeTour() {
-    clearHighlight();
-    setEntered(false);
-    setTimeout(() => { setVisible(false); setSpot(null); }, 240);
-    localStorage.setItem(DONE_KEY, "done");
-  }
-
-  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goToStep(step + 1); }
-  function prev() { if (step > 0) goToStep(step - 1); }
-
-  useEffect(() => () => clearHighlight(), []);
+  useEffect(() => {
+    if (!visible) return;
+    recalc(step);
+    const onResize = () => recalc(step);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [visible, step, recalc]);
 
   useEffect(() => {
     if (!session?.user || !tourAllowed) return;
@@ -158,51 +107,76 @@ export default function AppWalkthrough() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, tourAllowed]);
 
+  function openTour(s = 0) {
+    setStep(s);
+    setVw(window.innerWidth);
+    setVh(window.innerHeight);
+    const sel = STEPS[s]?.selector;
+    setRect(sel ? getRect(sel) : null);
+    setVisible(true);
+    setTimeout(() => setEntered(true), 30);
+  }
+
+  function closeTour() {
+    setEntered(false);
+    setTimeout(() => { setVisible(false); setRect(null); }, 240);
+    localStorage.setItem(DONE_KEY, "done");
+  }
+
+  function goTo(s: number) {
+    setStep(s);
+    const sel = STEPS[s]?.selector;
+    setRect(sel ? getRect(sel) : null);
+  }
+
+  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goTo(step + 1); }
+  function prev() { if (step > 0) goTo(step - 1); }
+
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
-  const W = vw || (typeof window !== "undefined" ? window.innerWidth  : 1440);
-  const H = vh || (typeof window !== "undefined" ? window.innerHeight : 900);
-
   function cardStyle(): React.CSSProperties {
-    const TW = Math.min(360, W - 32);
-    if (!spot) return { left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: TW };
-    const cx   = spot.left + spot.width / 2;
-    let   left = cx - TW / 2;
-    left = Math.max(16, Math.min(left, W - TW - 16));
-    const below = H - (spot.top + spot.height) - 16;
-    if (below >= 180) return { left, top: spot.top + spot.height + 16, width: TW };
-    return { left, bottom: H - spot.top + 16, width: TW };
+    if (!rect || vw === 0) return { position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)" };
+    const TW    = Math.min(340, vw - 32);
+    const cx    = rect.x + rect.w / 2;
+    let   left  = Math.max(16, Math.min(cx - TW / 2, vw - TW - 16));
+    const below = vh - (rect.y + rect.h + PAD);
+    const above = rect.y - PAD;
+    if (below >= 180 || below >= above) return { position: "fixed", left, top:    rect.y + rect.h + PAD + 8, width: TW };
+    else                                return { position: "fixed", left, bottom: vh - rect.y + PAD + 8,     width: TW };
   }
 
-  const overlay = visible ? (
-    <>
-      {/* Donkere overlay */}
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 9900,
-        background: "rgba(0,0,0,0.82)", cursor: "pointer",
-      }} onClick={closeTour} />
-
-      {/* Highlight-ring — beweegt via React state */}
-      {spot && (
-        <div style={{
-          position:      "fixed",
-          top:           spot.top,
-          left:          spot.left,
-          width:         spot.width,
-          height:        spot.height,
-          zIndex:        9903,
-          borderRadius:  10,
-          border:        `2px solid ${current.accent}`,
-          boxShadow:     `0 0 0 4px ${current.accent}33, 0 0 20px 6px ${current.accent}66`,
-          pointerEvents: "none",
-        }} />
-      )}
+  const overlay = (
+    <div
+      className={`walkthrough-overlay${entered ? " entered" : ""}`}
+      onClick={closeTour}
+      aria-modal="true"
+      role="dialog"
+    >
+      {/* SVG spotlight — donkere overlay met transparant gat rondom het element */}
+      <svg
+        width={vw} height={vh}
+        style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 9900 }}
+      >
+        <defs>
+          <mask id="wt-mask">
+            <rect width={vw} height={vh} fill="white" />
+            {rect && <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={10} fill="black" />}
+          </mask>
+        </defs>
+        <rect width={vw} height={vh} fill="rgba(0,0,0,0.80)" mask="url(#wt-mask)" />
+        {rect && (
+          <rect
+            x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={10}
+            fill="none" stroke={current.accent} strokeWidth={2} opacity={0.85}
+          />
+        )}
+      </svg>
 
       {/* Kaart */}
       <div
         className={`walkthrough-card${entered ? " entered" : ""}`}
-        style={{ ...cardStyle(), position: "fixed", zIndex: 9904 }}
+        style={{ ...cardStyle(), zIndex: 9901 }}
         onClick={e => e.stopPropagation()}
       >
         <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
@@ -216,7 +190,7 @@ export default function AppWalkthrough() {
           {STEPS.map((_, i) => (
             <button key={i}
               className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
-              onClick={() => goToStep(i)}
+              onClick={() => goTo(i)}
               aria-label={`Stap ${i + 1}`}
             />
           ))}
@@ -231,8 +205,8 @@ export default function AppWalkthrough() {
         </div>
         {!isLast && <button className="walkthrough-skip" onClick={closeTour}>Overslaan</button>}
       </div>
-    </>
-  ) : null;
+    </div>
+  );
 
   return (
     <>
