@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -39,15 +39,20 @@ const STEPS: Step[] = [
     text: "De M-knop rechtsonder — dat ben ik. Vraag me alles: markt, trade, plan. 24/7." },
 ];
 
-type Rect = { x: number; y: number; w: number; h: number };
+type Spot = { top: number; left: number; width: number; height: number };
 
-function getRect(selector: string): Rect | null {
+function measureEl(selector: string): Spot | null {
   try {
-    const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
-    for (const el of els) {
+    const els = document.querySelectorAll<HTMLElement>(selector);
+    for (const el of Array.from(els)) {
       const r = el.getBoundingClientRect();
       if (r.width > 0 && r.height > 0) {
-        return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
+        return {
+          top:    r.top    - PAD,
+          left:   r.left   - PAD,
+          width:  r.width  + PAD * 2,
+          height: r.height + PAD * 2,
+        };
       }
     }
   } catch { /* */ }
@@ -56,33 +61,42 @@ function getRect(selector: string): Rect | null {
 
 export default function AppWalkthrough() {
   const { data: session } = useSession();
-  const pathname = usePathname();
+  const pathname    = usePathname();
   const tourAllowed = pathname !== "/" && !pathname.startsWith("/auth/");
 
   const [step, setStep]       = useState(0);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [rect, setRect]       = useState<Rect | null>(null);
+  const [spot, setSpot]       = useState<Spot | null>(null);
   const [vw, setVw]           = useState(0);
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
+  const rafRef                = useRef<number | null>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    const update = () => { setVw(window.innerWidth); setVh(window.innerHeight); };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
-  const recalc = useCallback((s: number) => {
-    setVw(window.innerWidth);
-    setVh(window.innerHeight);
-    const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
+  const applyStep = useCallback((s: number) => {
+    setStep(s);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const sel = STEPS[s]?.selector;
+      setSpot(sel ? measureEl(sel) : null);
+    });
   }, []);
 
   useEffect(() => {
     if (!visible) return;
-    recalc(step);
-    const onResize = () => recalc(step);
+    applyStep(step);
+    const onResize = () => applyStep(step);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [visible, step, recalc]);
+  }, [visible, step, applyStep]);
 
   useEffect(() => {
     if (!session?.user || !tourAllowed) return;
@@ -104,75 +118,89 @@ export default function AppWalkthrough() {
   }, [session, tourAllowed]);
 
   function openTour(s = 0) {
-    setStep(s);
-    setVw(window.innerWidth);
-    setVh(window.innerHeight);
-    const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
+    applyStep(s);
     setVisible(true);
     setTimeout(() => setEntered(true), 30);
   }
 
   function closeTour() {
     setEntered(false);
-    setTimeout(() => { setVisible(false); setRect(null); }, 240);
+    setTimeout(() => { setVisible(false); setSpot(null); }, 240);
     localStorage.setItem(DONE_KEY, "done");
   }
 
-  function goTo(s: number) {
-    setStep(s);
-    const sel = STEPS[s]?.selector;
-    setRect(sel ? getRect(sel) : null);
-  }
-
-  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } goTo(step + 1); }
-  function prev() { if (step > 0) goTo(step - 1); }
+  function next() { if (step >= STEPS.length - 1) { closeTour(); return; } applyStep(step + 1); }
+  function prev() { if (step > 0) applyStep(step - 1); }
 
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
+  const W = vw || (typeof window !== "undefined" ? window.innerWidth  : 1440);
+  const H = vh || (typeof window !== "undefined" ? window.innerHeight : 900);
+
+  // Clip-path: rechthoekig gat (evenodd) op positie van het nav-element.
+  // Geen spot → microscopisch klein gat in midden (volledig donker scherm, maar zelfde punt-structuur voor soepele CSS transition).
+  const hL = spot ? spot.left              : W / 2;
+  const hT = spot ? spot.top               : H / 2;
+  const hR = spot ? spot.left + spot.width : W / 2;
+  const hB = spot ? spot.top  + spot.height: H / 2;
+
+  const clipPath =
+    `polygon(evenodd,` +
+    `0px 0px,${W}px 0px,${W}px ${H}px,0px ${H}px,` +
+    `${hL}px ${hT}px,${hR}px ${hT}px,${hR}px ${hB}px,${hL}px ${hB}px)`;
+
   function cardStyle(): React.CSSProperties {
-    if (!rect || vw === 0) return { position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)" };
-    const TW    = Math.min(340, vw - 32);
-    const cx    = rect.x + rect.w / 2;
-    let   left  = Math.max(16, Math.min(cx - TW / 2, vw - TW - 16));
-    const below = vh - (rect.y + rect.h + PAD);
-    const above = rect.y - PAD;
-    if (below >= 180 || below >= above) return { position: "fixed", left, top:    rect.y + rect.h + PAD + 8, width: TW };
-    else                                return { position: "fixed", left, bottom: vh - rect.y + PAD + 8,     width: TW };
+    const TW = Math.min(340, W - 32);
+    if (!spot) return { left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: TW };
+    const cx   = spot.left + spot.width / 2;
+    let   left = Math.max(16, Math.min(cx - TW / 2, W - TW - 16));
+    const below = H - (spot.top + spot.height) - 16;
+    if (below >= 180) return { left, top: spot.top + spot.height + 16, width: TW };
+    return { left, bottom: H - spot.top + 16, width: TW };
   }
 
   const overlay = (
-    <div
-      className={`walkthrough-overlay${entered ? " entered" : ""}`}
-      onClick={closeTour}
-      aria-modal="true"
-      role="dialog"
-    >
-      {/* SVG spotlight — donkere overlay met transparant gat rondom het element */}
-      <svg
-        width={vw} height={vh}
-        style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 9900 }}
-      >
-        <defs>
-          <mask id="wt-mask">
-            <rect width={vw} height={vh} fill="white" />
-            {rect && <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={10} fill="black" />}
-          </mask>
-        </defs>
-        <rect width={vw} height={vh} fill="rgba(0,0,0,0.80)" mask="url(#wt-mask)" />
-        {rect && (
-          <rect
-            x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={10}
-            fill="none" stroke={current.accent} strokeWidth={2} opacity={0.85}
-          />
-        )}
-      </svg>
+    <>
+      {/* Donkere overlay met clip-path gat — smooth animatie tussen posities */}
+      <div
+        style={{
+          position:   "fixed",
+          inset:      0,
+          zIndex:     9900,
+          background: "rgba(0,0,0,0.82)",
+          clipPath,
+          transition: entered ? "clip-path 0.35s cubic-bezier(0.4,0,0.2,1)" : "none",
+          pointerEvents: "none",
+        }}
+      />
 
-      {/* Kaart */}
+      {/* Kliklaag buiten de kaart */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 9899 }} onClick={closeTour} />
+
+      {/* Gekleurde ring rond het element */}
+      {spot && (
+        <div
+          style={{
+            position:      "fixed",
+            zIndex:        9901,
+            pointerEvents: "none",
+            top:           spot.top,
+            left:          spot.left,
+            width:         spot.width,
+            height:        spot.height,
+            border:        `2px solid ${current.accent}`,
+            borderRadius:  10,
+            boxShadow:     `0 0 0 1px ${current.accent}40`,
+            transition:    "top .35s ease,left .35s ease,width .35s ease,height .35s ease,border-color .25s",
+          }}
+        />
+      )}
+
+      {/* Tooltip card */}
       <div
         className={`walkthrough-card${entered ? " entered" : ""}`}
-        style={{ ...cardStyle(), zIndex: 9901 }}
+        style={{ ...cardStyle(), position: "fixed", zIndex: 9902 }}
         onClick={e => e.stopPropagation()}
       >
         <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
@@ -186,7 +214,7 @@ export default function AppWalkthrough() {
           {STEPS.map((_, i) => (
             <button key={i}
               className={`walkthrough-dot${i === step ? " active" : i < step ? " done" : ""}`}
-              onClick={() => goTo(i)}
+              onClick={() => applyStep(i)}
               aria-label={`Stap ${i + 1}`}
             />
           ))}
@@ -201,7 +229,7 @@ export default function AppWalkthrough() {
         </div>
         {!isLast && <button className="walkthrough-skip" onClick={closeTour}>Overslaan</button>}
       </div>
-    </div>
+    </>
   );
 
   return (
