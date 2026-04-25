@@ -9895,11 +9895,44 @@ textarea:focus-visible,
   color: #fff; text-decoration: none;
 }
 
-/* Nav pro badge */
+/* Nav pro badge (los element — niet meer gebruikt, maar behouden voor compat) */
 .nav-pro-badge {
   font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em;
   background: linear-gradient(135deg, #f59e0b, #e91e63);
   color: #fff; border-radius: 99px; padding: 3px 9px;
+}
+
+/* Pro inline in accountknop */
+.nav-pro-inline {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #f59e0b, #e91e63);
+  color: #fff; border-radius: 99px; padding: 2px 6px; margin-left: 4px;
+}
+
+/* Pro badge in mobiel menu */
+.nav-pro-badge-mobile {
+  font-size: 0.65rem; font-weight: 800;
+  background: linear-gradient(135deg, #f59e0b, #e91e63);
+  color: #fff; border-radius: 99px; padding: 2px 7px;
+}
+
+/* Scheidingslijn tussen primaire links en account-sectie */
+.app-nav-divider {
+  width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0;
+}
+
+/* Account dropdown rechts uitgelijnd (niet overschrijven door right:0) */
+.app-nav-dropdown-right { right: 0; left: auto; }
+
+/* Stats pagina — onderste rij naast elkaar */
+.stats-bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+@media (max-width: 768px) {
+  .stats-bottom-row { grid-template-columns: 1fr; }
 }
 
 /* Curriculum tab pro-required stijl */

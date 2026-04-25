@@ -6,13 +6,9 @@ import DailyMissions from "@/components/DailyMissions";
 import DashboardBriefing from "@/components/DashboardBriefing";
 import DashboardStats from "@/components/DashboardStats";
 import MarketOverview from "@/components/MarketOverview";
-import CommunitySentiment from "@/components/CommunitySentiment";
-import CommunityScoreboard from "@/components/CommunityScoreboard";
 import FriendsStreaks from "@/components/FriendsStreaks";
-import AccountabilityPartner from "@/components/AccountabilityPartner";
 import LeagueWidget from "@/components/LeagueWidget";
 import FirstSteps from "@/components/FirstSteps";
-import SocialProof from "@/components/SocialProof";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -31,7 +27,7 @@ export default function DashboardPage() {
       <AnnouncementsWidget />
       <div className="dashboard-page">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <div className="dashboard-header">
           <div>
             <h1 className="dashboard-title">Dashboard</h1>
@@ -39,26 +35,24 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ── Hoofdlayout: main + sidebar naast elkaar ── */}
+        {/* Eerste stappen — verbergt zichzelf als klaar */}
+        <FirstSteps />
+
+        {/* Hoofdlayout */}
         <div className="dashboard-layout">
 
-          {/* ── Linker kolom: hoofd content ── */}
+          {/* Linker kolom: kern content */}
           <div className="dashboard-main">
-            <FirstSteps />
-            <SocialProof />
             <DailyMissions />
-            <DashboardStats />
             <DashboardBriefing />
+            <DashboardStats />
           </div>
 
-          {/* ── Rechter kolom: sticky sidebar ── */}
+          {/* Rechter kolom: sidebar */}
           <aside className="dashboard-sidebar">
             <LeagueWidget />
             <FriendsStreaks />
             <MarketOverview compact />
-            <AccountabilityPartner />
-            <CommunitySentiment />
-            <CommunityScoreboard />
           </aside>
 
         </div>

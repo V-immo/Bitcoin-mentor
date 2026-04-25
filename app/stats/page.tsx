@@ -2,7 +2,6 @@
 
 import StatsPanel from "@/components/StatsPanel";
 import GoalTracker from "@/components/GoalTracker";
-import Leaderboard from "@/components/Leaderboard";
 import PatternPanel from "@/components/PatternPanel";
 import MarcusSignals from "@/components/MarcusSignals";
 import AccountabilityPartner from "@/components/AccountabilityPartner";
@@ -18,21 +17,21 @@ export default function StatsPage() {
         <p className="stats-subtitle">{t("stats_subtitle")}</p>
       </div>
 
+      {/* Doelen + persoonlijke stats naast elkaar */}
       <div className="stats-grid">
         <GoalTracker />
         <StatsPanel />
       </div>
 
+      {/* Gedragspatronen */}
       <div style={{ marginTop: 24 }}>
         <PatternPanel />
       </div>
 
-      <MarcusSignals />
-
-      <AccountabilityPartner />
-
-      <div style={{ marginTop: 24 }}>
-        <Leaderboard />
+      {/* Marcus inzichten + accountability */}
+      <div className="stats-bottom-row">
+        <MarcusSignals />
+        <AccountabilityPartner />
       </div>
     </div>
   );
