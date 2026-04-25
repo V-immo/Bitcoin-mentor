@@ -49,13 +49,11 @@ export default function AppWalkthrough() {
   const [vh, setVh]           = useState(0);
   const [mounted, setMounted] = useState(false);
 
-  // Refs voor DOM-manipulatie
+  // Refs voor DOM-manipulatie (alleen voor nav/element omhoog brengen)
   const raisedNavRef     = useRef<HTMLElement | null>(null);
   const raisedNavOrigCss = useRef("");
-  const raisedElRef      = useRef<HTMLElement | null>(null);   // element buiten nav (bijv. Marcus-knop)
+  const raisedElRef      = useRef<HTMLElement | null>(null);
   const raisedElOrigCss  = useRef("");
-  const ringedElRef      = useRef<HTMLElement | null>(null);
-  const savedElCss       = useRef("");
 
   useEffect(() => {
     setMounted(true);
@@ -65,7 +63,7 @@ export default function AppWalkthrough() {
     return () => window.removeEventListener("resize", upd);
   }, []);
 
-  // Verwijder highlight van vorig element
+  // Herstel nav/element z-index en backdrop-filter
   function clearHighlight() {
     if (raisedNavRef.current) {
       raisedNavRef.current.style.cssText = raisedNavOrigCss.current;
@@ -77,14 +75,9 @@ export default function AppWalkthrough() {
       raisedElRef.current = null;
       raisedElOrigCss.current = "";
     }
-    if (ringedElRef.current) {
-      ringedElRef.current.style.cssText = savedElCss.current;
-      ringedElRef.current = null;
-      savedElCss.current = "";
-    }
   }
 
-  // Zet highlight op element voor stap s, geeft positie terug voor kaart
+  // Breng het juiste element boven de overlay, geeft positie terug voor de highlight-ring + kaart
   function applyHighlight(s: number): Spot | null {
     clearHighlight();
     const sel = STEPS[s]?.selector;
@@ -99,35 +92,24 @@ export default function AppWalkthrough() {
           const r = el.getBoundingClientRect();
           if (r.width <= 0 || r.height <= 0) continue;
 
-          // Sla el's originele cssText op VÓÓR enige wijziging
-          const elOrigCss = el.style.cssText;
-
-          // Zit het element IN de nav? Dan nav omhoog + backdrop-filter wegnemen.
           const nav = document.querySelector<HTMLElement>("nav.app-nav");
           const inNav = !!(nav && nav.contains(el));
 
           if (inNav && nav) {
-            // Sla nav originele stijl op VÓÓR elke wijziging
+            // Sla originele stijl op VÓÓR wijziging
             raisedNavOrigCss.current = nav.style.cssText;
             nav.style.setProperty("z-index",                "9902", "important");
             nav.style.setProperty("backdrop-filter",         "none", "important");
             nav.style.setProperty("-webkit-backdrop-filter", "none", "important");
             raisedNavRef.current = nav;
           } else {
-            // Element staat buiten de nav (bijv. Marcus-knop): verhoog het element zelf
-            raisedElOrigCss.current = elOrigCss;
+            // Element buiten de nav (bijv. Marcus-knop)
+            raisedElOrigCss.current = el.style.cssText;
             el.style.setProperty("z-index", "9902", "important");
             raisedElRef.current = el;
           }
 
-          // Voeg gekleurde ring toe aan het specifieke element
-          savedElCss.current = elOrigCss;   // altijd de originele cssText
-          el.style.setProperty("outline",        `3px solid ${STEPS[s].accent}`, "important");
-          el.style.setProperty("outline-offset", "3px", "important");
-          el.style.setProperty("border-radius",  "8px", "important");
-          ringedElRef.current = el;
-
-          return { top: r.top - 8, left: r.left - 8, width: r.width + 16, height: r.height + 16 };
+          return { top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 };
         }
       } catch { /* */ }
     }
@@ -200,7 +182,7 @@ export default function AppWalkthrough() {
 
   const overlay = visible ? (
     <>
-      {/* Donkere overlay — nav staat BOVEN dit (z-index 9902 > 9900) */}
+      {/* Donkere overlay */}
       <div style={{
         position:   "fixed",
         inset:      0,
@@ -209,10 +191,26 @@ export default function AppWalkthrough() {
         cursor:     "pointer",
       }} onClick={closeTour} />
 
-      {/* Kaart staat boven nav (9903 > 9902) */}
+      {/* Highlight-ring — puur React state, beweegt gegarandeerd mee */}
+      {spot && (
+        <div style={{
+          position:      "fixed",
+          top:           spot.top,
+          left:          spot.left,
+          width:         spot.width,
+          height:        spot.height,
+          zIndex:        9903,
+          borderRadius:  10,
+          border:        `2px solid ${current.accent}`,
+          boxShadow:     `0 0 0 4px ${current.accent}33, 0 0 18px 4px ${current.accent}55`,
+          pointerEvents: "none",
+        }} />
+      )}
+
+      {/* Kaart staat boven ring (9904 > 9903) */}
       <div
         className={`walkthrough-card${entered ? " entered" : ""}`}
-        style={{ ...cardStyle(), position: "fixed", zIndex: 9903 }}
+        style={{ ...cardStyle(), position: "fixed", zIndex: 9904 }}
         onClick={e => e.stopPropagation()}
       >
         <button className="walkthrough-close" onClick={closeTour}><X size={15} /></button>
