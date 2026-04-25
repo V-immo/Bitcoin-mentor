@@ -80,14 +80,42 @@ export default function AppWalkthrough() {
     const sel = STEPS[s]?.selector;
     if (!sel) return null;
 
-    // Probeer de exacte selector, dan nav als geheel, dan hamburger
-    const candidates = [sel, "nav", ".nav-hamburger"];
+    // Uitgebreide debug: elke selector + dimensies
+    const probes = [
+      sel,
+      'a[href="/dashboard"]', 'a[href="/scanner"]',
+      "nav", "nav.app-nav", ".app-nav",
+      ".desktop-nav-links", ".nav-hamburger",
+      ".app-nav-link", "header", "body",
+    ];
+    const lines: string[] = [`s${s} vp:${window.innerWidth}x${window.innerHeight}`];
+    for (const p of probes) {
+      try {
+        const el = document.querySelector<HTMLElement>(p);
+        if (!el) { lines.push(`${p}: null`); continue; }
+        const r = el.getBoundingClientRect();
+        lines.push(`${p}: bcr=${Math.round(r.width)}x${Math.round(r.height)} off=${el.offsetWidth}x${el.offsetHeight} top=${Math.round(r.top)}`);
+      } catch { lines.push(`${p}: ERR`); }
+    }
+    // Zet debug zichtbaar op het scherm
+    const dbgEl = document.getElementById("__tourDbg");
+    if (dbgEl) dbgEl.textContent = lines.join("\n");
+    else {
+      const d = document.createElement("pre");
+      d.id = "__tourDbg";
+      d.style.cssText = "position:fixed;top:0;left:0;z-index:99999;background:#000c;color:#0f0;font:10px monospace;padding:6px 8px;max-width:100vw;white-space:pre-wrap;pointer-events:none";
+      d.textContent = lines.join("\n");
+      document.body.appendChild(d);
+    }
+
+    const candidates = [sel, "nav", ".desktop-nav-links", ".nav-hamburger"];
     for (const candidate of candidates) {
       try {
         const els = Array.from(document.querySelectorAll<HTMLElement>(candidate));
         for (const el of els) {
           const r = el.getBoundingClientRect();
-          if (r.width <= 0 || r.height <= 0) continue;
+          const hasSize = r.width > 0 && r.height > 0;
+          if (!hasSize) continue;
 
           const nav = document.querySelector<HTMLElement>("nav");
           const inNav = !!(nav && (nav === el || nav.contains(el)));
