@@ -84,15 +84,23 @@ export default function AppWalkthrough() {
     const sel = STEPS[s]?.selector;
     if (!sel) { setDbg(`s${s}: geen selector`); return null; }
 
-    const fallbacks = [sel, ".nav-hamburger", "nav.app-nav"];
+    const fallbacks = [sel, ".nav-hamburger", "nav", "body"];
+    const lines: string[] = [`s${s} | vp:${window.innerWidth}x${window.innerHeight}`];
+
     for (const candidate of fallbacks) {
       try {
         const els = document.querySelectorAll<HTMLElement>(candidate);
+        const info = Array.from(els).map(e => {
+          const r = e.getBoundingClientRect();
+          return `${Math.round(r.width)}x${Math.round(r.height)}@${Math.round(r.left)},${Math.round(r.top)}`;
+        }).join(" / ") || "—";
+        lines.push(`"${candidate}"(${els.length}): ${info}`);
+
         for (const el of Array.from(els)) {
           const r = el.getBoundingClientRect();
           if (r.width <= 0 || r.height <= 0) continue;
 
-          const nav = document.querySelector<HTMLElement>("nav.app-nav");
+          const nav = document.querySelector<HTMLElement>("nav");
           const inNav = !!(nav && nav.contains(el));
 
           if (inNav && nav) {
@@ -107,15 +115,13 @@ export default function AppWalkthrough() {
             raisedElRef.current = el;
           }
 
-          // DEBUG
-          setDbg(`s${s} | "${candidate}" | ${Math.round(r.width)}x${Math.round(r.height)} @ ${Math.round(r.left)},${Math.round(r.top)} | vp:${window.innerWidth}x${window.innerHeight}`);
-
+          setDbg(lines.join("\n") + `\n→ FOUND "${candidate}"`);
           return { top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 };
         }
-      } catch { /* */ }
+      } catch (err) { lines.push(`"${candidate}" ERR: ${err}`); }
     }
 
-    setDbg(`s${s} | "${sel}" → niets gevonden`);
+    setDbg(lines.join("\n") + "\n→ NIETS");
     return null;
   }
 
