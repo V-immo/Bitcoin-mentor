@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import {
   Brain, LayoutDashboard, Radar, TrendingUp,
   GraduationCap, BarChart3, MessageSquare, X,
@@ -41,6 +42,9 @@ type Spot = { top: number; left: number; width: number; height: number };
 
 export default function AppWalkthrough() {
   const { data: session } = useSession();
+  const pathname = usePathname();
+  // Tour werkt alleen op app-pagina's waar de nav bestaat
+  const tourAllowed = pathname !== "/" && !pathname.startsWith("/auth/");
   const [step, setStep]       = useState(0);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
@@ -80,35 +84,7 @@ export default function AppWalkthrough() {
     const sel = STEPS[s]?.selector;
     if (!sel) return null;
 
-    // Uitgebreide debug: elke selector + dimensies
-    const probes = [
-      sel,
-      'a[href="/dashboard"]', 'a[href="/scanner"]',
-      "nav", "nav.app-nav", ".app-nav",
-      ".desktop-nav-links", ".nav-hamburger",
-      ".app-nav-link", "header", "body",
-    ];
-    const lines: string[] = [`s${s} vp:${window.innerWidth}x${window.innerHeight}`];
-    for (const p of probes) {
-      try {
-        const el = document.querySelector<HTMLElement>(p);
-        if (!el) { lines.push(`${p}: null`); continue; }
-        const r = el.getBoundingClientRect();
-        lines.push(`${p}: bcr=${Math.round(r.width)}x${Math.round(r.height)} off=${el.offsetWidth}x${el.offsetHeight} top=${Math.round(r.top)}`);
-      } catch { lines.push(`${p}: ERR`); }
-    }
-    // Zet debug zichtbaar op het scherm
-    const dbgEl = document.getElementById("__tourDbg");
-    if (dbgEl) dbgEl.textContent = lines.join("\n");
-    else {
-      const d = document.createElement("pre");
-      d.id = "__tourDbg";
-      d.style.cssText = "position:fixed;top:0;left:0;z-index:99999;background:#000c;color:#0f0;font:10px monospace;padding:6px 8px;max-width:100vw;white-space:pre-wrap;pointer-events:none";
-      d.textContent = lines.join("\n");
-      document.body.appendChild(d);
-    }
-
-    const candidates = [sel, "nav", ".desktop-nav-links", ".nav-hamburger"];
+    const candidates = [sel, "nav", ".nav-hamburger"];
     for (const candidate of candidates) {
       try {
         const els = Array.from(document.querySelectorAll<HTMLElement>(candidate));
@@ -164,7 +140,7 @@ export default function AppWalkthrough() {
   useEffect(() => () => clearHighlight(), []);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user || !tourAllowed) return;
     const pending = localStorage.getItem(PENDING_KEY);
     const done    = localStorage.getItem(DONE_KEY);
     if (pending === "1" && !done) {
@@ -180,7 +156,7 @@ export default function AppWalkthrough() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, tourAllowed]);
 
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
@@ -260,7 +236,7 @@ export default function AppWalkthrough() {
 
   return (
     <>
-      {session?.user && !visible && (
+      {session?.user && !visible && tourAllowed && (
         <button className="walkthrough-help-btn" onClick={() => openTour(0)} title="App tour (? toets)">?</button>
       )}
       {mounted && visible && createPortal(overlay, document.body)}
