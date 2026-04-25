@@ -2495,13 +2495,13 @@ details[open] .terminal-checklist-summary::before { transform: rotate(90deg); }
 
 .app-nav-link:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(233, 30, 99, 0.06);
 }
 
 .app-nav-link.active {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border);
+  background: rgba(233, 30, 99, 0.08);
+  border: 1px solid rgba(233, 30, 99, 0.18);
 }
 
 .app-nav-icon { width: 17px; height: 17px; flex-shrink: 0; }
@@ -10700,10 +10700,13 @@ textarea:focus-visible,
   backdrop-filter: blur(20px) !important;
   border-bottom: 1px solid rgba(0,0,0,0.07) !important;
 }
-.app-nav-link.active {
-  background: rgba(233,30,99,0.08);
-  border: 1px solid rgba(233,30,99,0.18);
-  box-shadow: 0 0 12px rgba(233,30,99,0.08);
+[data-theme="light"] .app-nav-link:hover {
+  background: rgba(233, 30, 99, 0.06);
+}
+[data-theme="light"] .app-nav-link.active {
+  background: rgba(233, 30, 99, 0.08);
+  border: 1px solid rgba(233, 30, 99, 0.18);
+  box-shadow: 0 0 12px rgba(233,30,99,0.06);
   color: var(--text);
 }
 
