@@ -42,19 +42,15 @@ const STEPS: Step[] = [
 type Rect = { x: number; y: number; w: number; h: number };
 
 function getRect(selector: string): Rect | null {
-  // Probeer exacte selector, dan alleen a[href=...] variant
-  const candidates = [selector, selector.startsWith("a.") ? selector.replace(/^a\.[^\[]+/, "a") : null].filter(Boolean) as string[];
-  for (const sel of candidates) {
-    try {
-      const els = Array.from(document.querySelectorAll<HTMLElement>(sel));
-      for (const el of els) {
-        const r = el.getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
-        }
+  try {
+    const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
       }
-    } catch { /* */ }
-  }
+    }
+  } catch { /* */ }
   return null;
 }
 
