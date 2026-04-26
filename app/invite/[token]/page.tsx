@@ -58,7 +58,7 @@ export default function InvitePage() {
   const name = friendName || (isNL ? "een trader" : "a trader");
 
   return (
-    <main className="container-page" style={{ maxWidth: 480, margin: "0 auto" }}>
+    <main className="page-container page-narrow">
       <div className="card" style={{ textAlign: "center", padding: "40px 24px" }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>◉</div>
 

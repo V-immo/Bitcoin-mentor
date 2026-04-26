@@ -326,7 +326,7 @@ export default function ChartChallengePage() {
   const isCorrect = selected === scenario.correctIndex;
 
   return (
-    <main className="container-page">
+    <main className="page-container">
       <div style={{ marginBottom: 12 }}>
         <Link href="/leren" className="page-back-btn">
           ← {isNL ? "Terug naar leren" : "Back to learning"}

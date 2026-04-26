@@ -180,7 +180,7 @@ export default function LiveReadyPage() {
 
   if (loading) {
     return (
-      <main className="container-page">
+      <main className="page-container">
         <div className="liveready-loading">
           <div className="liveready-loading-pulse" />
           {isNL ? "Marcus beoordeelt jouw voortgang…" : "Marcus is reviewing your progress…"}
@@ -191,7 +191,7 @@ export default function LiveReadyPage() {
 
   if (!data) {
     return (
-      <main className="container-page">
+      <main className="page-container">
         <Link href="/leren" className="page-back-btn" style={{ display: "inline-block", marginBottom: 16 }}>
           ← {isNL ? "Terug" : "Back"}
         </Link>
@@ -205,7 +205,7 @@ export default function LiveReadyPage() {
   const doneCount = [data.curriculum.done, data.trades.done, data.streak.done].filter(Boolean).length;
 
   return (
-    <main className="container-page">
+    <main className="page-container">
       {/* Terug */}
       <div style={{ marginBottom: 12 }} className="no-print">
         <Link href="/leren" className="page-back-btn">
