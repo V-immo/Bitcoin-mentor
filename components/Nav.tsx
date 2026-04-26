@@ -22,13 +22,12 @@ const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon; tour?: string }
   { href: "/leren",     key: "nav_link_learn",     Icon: GraduationCap, tour: "leren"     },
   { href: "/scanner",   key: "nav_link_scanner",   Icon: Radar,         tour: "scanner"   },
   { href: "/trade",     key: "nav_link_trade",     Icon: TrendingUp,    tour: "trade"     },
-  { href: "/profiel",   key: "nav_link_profile",   Icon: User                             },
+  { href: "/stats",     key: "nav_link_stats",     Icon: BarChart3                        },
 ];
 
 const MORE_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
   { href: "/nieuws",      key: "nav_link_news",     Icon: Newspaper    },
   { href: "/agenda",      key: "nav_link_agenda",   Icon: Calendar     },
-  { href: "/stats",       key: "nav_link_stats",    Icon: BarChart3    },
   { href: "/brokers",     key: "nav_link_brokers",  Icon: Building2    },
   { href: "/bots",        key: "nav_link_bots",     Icon: Bot          },
   { href: "/content",     key: "nav_link_content",  Icon: Video        },
@@ -38,8 +37,9 @@ const MORE_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
 ];
 
 const ACCOUNT_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
-  { href: "/instellingen", key: "nav_link_settings", Icon: Settings   },
-  { href: "/help",         key: "nav_link_help",     Icon: HelpCircle },
+  { href: "/profiel",    key: "nav_link_profile",  Icon: User        },
+  { href: "/instellingen", key: "nav_link_settings", Icon: Settings  },
+  { href: "/help",       key: "nav_link_help",     Icon: HelpCircle  },
 ];
 
 export default function Nav() {

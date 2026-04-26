@@ -80,10 +80,10 @@ export default function LerenPage() {
   const levelName = LEVEL_NAMES[quizLevel] ?? `Level ${quizLevel}`;
 
   const TABS = [
-    { id: "lessons",   label: t("leren_tab_lessons"),   icon: "" },
-    { id: "quiz",      label: t("leren_tab_quiz"),       icon: "" },
-    { id: "resources", label: t("leren_tab_resources"),  icon: "" },
-    { id: "league",    label: lang === "nl" ? "Liga" : "League", icon: "" },
+    { id: "lessons",   label: t("leren_tab_lessons"),  icon: "○" },
+    { id: "quiz",      label: t("leren_tab_quiz"),      icon: "◉" },
+    { id: "resources", label: t("leren_tab_resources"), icon: "≡" },
+    { id: "league",    label: lang === "nl" ? "Liga" : "League", icon: "★" },
   ];
 
   return (
@@ -93,9 +93,7 @@ export default function LerenPage() {
       <div className="lp2-hero">
         <div className="lp2-hero-orb" aria-hidden="true" />
         <div className="lp2-hero-inner">
-          <div className="lp2-hero-label">
-            {lang === "nl" ? "Marcus Curriculum" : "Marcus Curriculum"}
-          </div>
+          <div className="lp2-hero-label">Marcus Curriculum</div>
           <h1 className="lp2-hero-h1">
             {lang === "nl" ? "Leren" : "Learn"}
             <span className="lp2-hero-accent"> & Groeien</span>

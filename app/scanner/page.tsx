@@ -5,7 +5,7 @@ export default function ScannerPage() {
   return (
     <>
       <AssetScanner />
-      <div className="page-container page-full" style={{ paddingTop: 0 }}>
+      <div className="page-container page-full" style={{ paddingTop: 0, paddingBottom: 32 }}>
         <CommunitySentiment />
       </div>
     </>
