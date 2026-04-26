@@ -76,7 +76,7 @@ function TradePageInner() {
       : SCAN_ASSETS;
 
     return (
-      <main className="container-page">
+      <main className="page-container">
         <div style={{ marginBottom: 12 }}>
           <Link href="/leren" className="page-back-btn">
             {t("trade_back_learn")}
@@ -125,13 +125,13 @@ function TradePageInner() {
 
   if (error) {
     return (
-      <main className="container-page clean-page">
+      <main className="page-container page-narrow">
         <div className="card">
           <div className="value-sm red">{t("trade_error_load")}</div>
           <p className="small-text muted" style={{ marginTop: 8 }}>
             {t("trade_error_desc")}
           </p>
-          <button className="admin-btn admin-btn-primary" style={{ marginTop: 12 }} onClick={() => selectedAsset && loadSignal(selectedAsset)}>
+          <button className="btn-primary" style={{ marginTop: 12 }} onClick={() => selectedAsset && loadSignal(selectedAsset)}>
             {t("trade_error_retry")}
           </button>
         </div>
@@ -142,7 +142,7 @@ function TradePageInner() {
   if (!signal) {
     const assetDef = SCAN_ASSETS.find(a => a.symbol === selectedAsset);
     return (
-      <main className="container-page">
+      <main className="page-container">
         <div className="trade-loading">
           <div className="trade-loading-text">{t("trade_loading_text")}</div>
           <div className="trade-loading-sub">

@@ -7,10 +7,10 @@ export default function InstellingenPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="settings-page">
-      <div className="settings-header">
-        <h1 className="settings-title">{t("instellingen_title")}</h1>
-        <p className="settings-subtitle">{t("instellingen_subtitle")}</p>
+    <div className="page-container page-narrow">
+      <div className="page-header">
+        <h1 className="page-title">{t("instellingen_title")}</h1>
+        <p className="page-subtitle">{t("instellingen_subtitle")}</p>
       </div>
       <SettingsPanel />
     </div>
