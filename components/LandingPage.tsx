@@ -22,7 +22,7 @@ const copy = {
     feat2_s: "Oefen met echte marktprijzen zonder risico. Zie je P&L groeien terwijl je leert.",
     feat3_t: "Dagelijkse missies",
     feat3_s: "Elke dag één concrete opdracht. Kleine stappen, grote resultaten.",
-    feat4_t: "Curriculum niveau 1–6",
+    feat4_t: "Curriculum niveau 1–10",
     feat4_s: "Van basis tot Smart Money Concepts. Quizzes, lessen en live diagrammen.",
     feat5_t: "Prijs alerts",
     feat5_s: "Slaap rustig. Marcus waarschuwt je als de markt beweegt.",
@@ -31,6 +31,18 @@ const copy = {
     stats_traders: "Actieve traders",
     stats_trades: "Paper trades",
     stats_rating: "Gemiddelde score",
+    price_title: "Begin gratis. Groei naar Pro.",
+    price_sub: "Gratis geeft je een solide basis. Pro ontgrendelt alles wat je nodig hebt om klaar te zijn voor live trading.",
+    price_free_label: "Gratis",
+    price_free_cta: "Start gratis →",
+    price_pro_label: "Marcus Pro",
+    price_pro_month: "€19,99",
+    price_pro_unit: "/maand",
+    price_pro_year: "of €149/jaar",
+    price_pro_cta: "Activeer Pro →",
+    price_pro_badge: "Meest gekozen",
+    price_free_features: ["Niveau 1, 2 & 3 curriculum", "5 Marcus-berichten/dag", "Paper trading", "Streak & missies", "Dagelijkse quiz"],
+    price_pro_features: ["Alle 10 niveaus curriculum", "Onbeperkte Marcus chat", "Playbook — automatische strategieën", "Road to Live Trading certificaat", "Slump detectie & bijsturing", "Wekelijkse Streak Freeze"],
     proof_title: "Traders over Marcus",
     proof1_q: "Na 3 maanden steeg mijn winrate van 35% naar 62%. Marcus leerde me stoppen met impulsief traden.",
     proof1_n: "Thomas K.", proof1_c: "Swing trader",
@@ -39,7 +51,7 @@ const copy = {
     proof3_q: "De paper trading modus is geniaal. Ik maak fouten zonder het te betalen met echt geld.",
     proof3_n: "Marco D.", proof3_c: "Day trader",
     cta_h: "Klaar om te beginnen?",
-    cta_sub: "Gratis. Geen creditcard. Volledige toegang.",
+    cta_sub: "Gratis starten. Geen creditcard. Direct toegang.",
     cta_btn: "Maak een account aan →",
     cta_login: "Inloggen",
   },
@@ -60,7 +72,7 @@ const copy = {
     feat2_s: "Practice with real market prices without risk. Watch your P&L grow as you learn.",
     feat3_t: "Daily missions",
     feat3_s: "One concrete assignment every day. Small steps, big results.",
-    feat4_t: "Curriculum level 1–6",
+    feat4_t: "Curriculum level 1–10",
     feat4_s: "From basics to Smart Money Concepts. Quizzes, lessons and live diagrams.",
     feat5_t: "Price alerts",
     feat5_s: "Sleep well. Marcus warns you when the market moves.",
@@ -69,6 +81,18 @@ const copy = {
     stats_traders: "Active traders",
     stats_trades: "Paper trades",
     stats_rating: "Average rating",
+    price_title: "Start free. Grow to Pro.",
+    price_sub: "Free gives you a solid foundation. Pro unlocks everything you need to be ready for live trading.",
+    price_free_label: "Free",
+    price_free_cta: "Start free →",
+    price_pro_label: "Marcus Pro",
+    price_pro_month: "€19.99",
+    price_pro_unit: "/month",
+    price_pro_year: "or €149/year",
+    price_pro_cta: "Activate Pro →",
+    price_pro_badge: "Most popular",
+    price_free_features: ["Level 1, 2 & 3 curriculum", "5 Marcus messages/day", "Paper trading", "Streak & missions", "Daily quiz"],
+    price_pro_features: ["All 10 levels curriculum", "Unlimited Marcus chat", "Playbook — automated strategies", "Road to Live Trading certificate", "Slump detection & adjustment", "Weekly Streak Freeze"],
     proof_title: "Traders about Marcus",
     proof1_q: "After 3 months my winrate went from 35% to 62%. Marcus taught me to stop trading impulsively.",
     proof1_n: "Thomas K.", proof1_c: "Swing trader",
@@ -77,7 +101,7 @@ const copy = {
     proof3_q: "The paper trading mode is genius. I make mistakes without paying for them with real money.",
     proof3_n: "Marco D.", proof3_c: "Day trader",
     cta_h: "Ready to start?",
-    cta_sub: "Free. No credit card. Full access.",
+    cta_sub: "Start free. No credit card. Instant access.",
     cta_btn: "Create an account →",
     cta_login: "Log in",
   },
@@ -163,7 +187,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
               </>
             )}
           </div>
-          <div className="lp-hero-note">Gratis · Geen creditcard · Volledig toegankelijk</div>
+          <div className="lp-hero-note">Gratis · Geen creditcard · Direct toegang</div>
         </div>
 
         {/* Marcus preview card */}
@@ -194,7 +218,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
               <div className="lp-card-m">M</div>
               <div className="lp-card-bubble">
                 <div className="lp-card-bubble-text">BTC breekt uit boven weerstand. Goed moment voor een swing long.</div>
-                <div className="lp-card-mission">📌 Opdracht: open een paper trade van max 2% risico</div>
+                <div className="lp-card-mission">→ Opdracht: open een paper trade van max 2% risico</div>
               </div>
             </div>
             <div className="lp-card-missions">
@@ -245,6 +269,52 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
               <p className="lp-feat-sub">{f.s}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Pricing ── */}
+      <section className="lp-pricing">
+        <h2 className="lp-section-h">{c.price_title}</h2>
+        <p className="lp-pricing-sub">{c.price_sub}</p>
+        <div className="lp-pricing-grid">
+
+          {/* Free tier */}
+          <div className="lp-price-card">
+            <div className="lp-price-label">{c.price_free_label}</div>
+            <div className="lp-price-amount">€0</div>
+            <ul className="lp-price-list">
+              {c.price_free_features.map((f, i) => (
+                <li key={i} className="lp-price-item lp-price-item--free">
+                  <span className="lp-price-check">✓</span>{f}
+                </li>
+              ))}
+            </ul>
+            <Link href="/auth/register" className="lp-btn-ghost lp-price-cta">{c.price_free_cta}</Link>
+          </div>
+
+          {/* Pro tier */}
+          <div className="lp-price-card lp-price-card--pro">
+            <div className="lp-price-badge">{c.price_pro_badge}</div>
+            <div className="lp-price-label">{c.price_pro_label}</div>
+            <div className="lp-price-amount">
+              {c.price_pro_month}<span className="lp-price-unit">{c.price_pro_unit}</span>
+            </div>
+            <div className="lp-price-year">{c.price_pro_year}</div>
+            <ul className="lp-price-list">
+              {c.price_free_features.map((f, i) => (
+                <li key={i} className="lp-price-item lp-price-item--included">
+                  <span className="lp-price-check">✓</span>{f}
+                </li>
+              ))}
+              {c.price_pro_features.map((f, i) => (
+                <li key={i} className="lp-price-item lp-price-item--pro">
+                  <span className="lp-price-check">★</span>{f}
+                </li>
+              ))}
+            </ul>
+            <Link href="/pro" className="lp-btn-primary lp-price-cta">{c.price_pro_cta}</Link>
+          </div>
+
         </div>
       </section>
 
