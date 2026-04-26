@@ -107,12 +107,19 @@ const copy = {
   },
 };
 
-const TICKER_ITEMS = [
-  { sym: "BTC", price: "$97,420", chg: "+2.4%", up: true },
-  { sym: "ETH", price: "$3,210", chg: "+1.8%", up: true },
-  { sym: "SOL", price: "$142", chg: "-0.9%", up: false },
-  { sym: "BNB", price: "$610", chg: "+0.5%", up: true },
-  { sym: "XRP", price: "$0.62", chg: "-1.2%", up: false },
+const TICKER_SYMBOLS = [
+  { sym: "BTC",  api: "BTCUSDT"  },
+  { sym: "ETH",  api: "ETHUSDT"  },
+  { sym: "SOL",  api: "SOLUSDT"  },
+  { sym: "BNB",  api: "BNBUSDT"  },
+  { sym: "XRP",  api: "XRPUSDT"  },
+  { sym: "DOGE", api: "DOGEUSDT" },
+  { sym: "ADA",  api: "ADAUSDT"  },
+  { sym: "AVAX", api: "AVAXUSDT" },
+  { sym: "NVDA", api: "NVDA"     },
+  { sym: "TSLA", api: "TSLA"     },
+  { sym: "AAPL", api: "AAPL"     },
+  { sym: "GOLD", api: "GC=F"     },
 ];
 
 const FEATURES = (c: typeof copy["nl"]) => [
@@ -124,12 +131,43 @@ const FEATURES = (c: typeof copy["nl"]) => [
   { icon: <Trophy size={22} />, t: c.feat6_t, s: c.feat6_s, accent: false },
 ];
 
+type TickerItem = { sym: string; price: string; chg: string; up: boolean };
+
 export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }) {
   const [lang, setLang] = useState<"nl" | "en">("nl");
+  const [ticker, setTicker] = useState<TickerItem[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem("app_lang");
     if (stored === "en") setLang("en");
+  }, []);
+
+  useEffect(() => {
+    async function loadTicker() {
+      const results = await Promise.all(
+        TICKER_SYMBOLS.map(async ({ sym, api }) => {
+          try {
+            const r = await fetch(`/api/price?symbol=${api}`);
+            const d = await r.json() as { price: number; change24h: number };
+            if (!d.price) return null;
+            const price = d.price < 1
+              ? `$${d.price.toFixed(4)}`
+              : d.price < 10
+              ? `$${d.price.toFixed(3)}`
+              : d.price < 1000
+              ? `$${d.price.toFixed(2)}`
+              : `$${d.price.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+            const up = d.change24h >= 0;
+            const chg = `${up ? "+" : ""}${d.change24h.toFixed(2)}%`;
+            return { sym, price, chg, up };
+          } catch { return null; }
+        })
+      );
+      setTicker(results.filter(Boolean) as TickerItem[]);
+    }
+    loadTicker();
+    const iv = setInterval(loadTicker, 30000);
+    return () => clearInterval(iv);
   }, []);
 
   function switchLang(l: "nl" | "en") {
@@ -139,6 +177,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
 
   const c = copy[lang];
   const feats = FEATURES(c);
+  const tickerItems = ticker.length > 0 ? ticker : TICKER_SYMBOLS.map(t => ({ sym: t.sym, price: "—", chg: "—", up: true }));
 
   return (
     <div className="lp-root">
@@ -234,7 +273,7 @@ export default function LandingPage({ loggedIn = false }: { loggedIn?: boolean }
       <div className="lp-ticker">
         <span className="lp-ticker-label">{c.ticker_label}</span>
         <div className="lp-ticker-track">
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((t, i) => (
+          {[...tickerItems, ...tickerItems].map((t, i) => (
             <div key={i} className="lp-ticker-item">
               <span className="lp-ticker-sym">{t.sym}</span>
               <span className="lp-ticker-price">{t.price}</span>
