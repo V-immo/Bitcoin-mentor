@@ -40,7 +40,7 @@ export default function LivePage() {
     <main className="page-container page-narrow">
       <div className="page-back-row">
         <Link href="/trade" className="page-back-btn">{t("page_back")}</Link>
-        <h1 className="page-title">⚡ {t("live_page_title")}</h1>
+        <h1 className="page-title">▲ {t("live_page_title")}</h1>
       </div>
 
       {/* Asset selector */}
@@ -63,8 +63,8 @@ export default function LivePage() {
       {/* Exchange tabs */}
       <div style={{ display: "flex", gap: 0, marginBottom: 16, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
         {([
-          { key: "bitvavo" as Exchange, label: "💶 Bitvavo", desc: t("live_exchange_bitvavo_desc") },
-          { key: "bybit"   as Exchange, label: "💛 Bybit",   desc: t("live_exchange_bybit_desc") },
+          { key: "bitvavo" as Exchange, label: "Bitvavo", desc: t("live_exchange_bitvavo_desc") },
+          { key: "bybit"   as Exchange, label: "Bybit",   desc: t("live_exchange_bybit_desc") },
         ]).map(ex => (
           <button
             key={ex.key}

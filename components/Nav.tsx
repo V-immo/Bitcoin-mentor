@@ -10,7 +10,7 @@ import type { Lang } from "@/lib/translations";
 import {
   Home, GraduationCap, Newspaper, Radar, TrendingUp, User,
   Calendar, BarChart3, Building2, FlaskConical, Trophy,
-  Settings, HelpCircle, ShieldCheck, LogOut, Sun, Moon, Flame, X, Video, Users, Bot,
+  Settings, HelpCircle, ShieldCheck, LogOut, Sun, Moon, Flame, X, Video, Users, Zap, BookOpen,
   MoreHorizontal,
   type LucideProps,
 } from "lucide-react";
@@ -26,10 +26,11 @@ const PRIMARY_LINKS: { href: string; key: string; Icon: NavIcon; tour?: string }
 ];
 
 const MORE_LINKS: { href: string; key: string; Icon: NavIcon }[] = [
+  { href: "/live",        key: "nav_link_live",     Icon: Zap          },
+  { href: "/bots",        key: "nav_link_bots",     Icon: BookOpen     },
   { href: "/nieuws",      key: "nav_link_news",     Icon: Newspaper    },
   { href: "/agenda",      key: "nav_link_agenda",   Icon: Calendar     },
   { href: "/brokers",     key: "nav_link_brokers",  Icon: Building2    },
-  { href: "/bots",        key: "nav_link_bots",     Icon: Bot          },
   { href: "/content",     key: "nav_link_content",  Icon: Video        },
   { href: "/partner",     key: "nav_link_partner",  Icon: Users        },
   { href: "/leaderboard", key: "more_menu_ranking", Icon: Trophy       },
