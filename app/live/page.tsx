@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import BitvavoPanel from "@/components/BitvavoPanel";
 import BybitPanel from "@/components/BybitPanel";
+import OKXPanel from "@/components/OKXPanel";
 import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-type Exchange = "bitvavo" | "bybit";
+type Exchange = "bitvavo" | "bybit" | "okx";
 
 export default function LivePage() {
   const { t } = useLanguage();
@@ -65,6 +66,7 @@ export default function LivePage() {
         {([
           { key: "bitvavo" as Exchange, label: "Bitvavo", desc: t("live_exchange_bitvavo_desc") },
           { key: "bybit"   as Exchange, label: "Bybit",   desc: t("live_exchange_bybit_desc") },
+          { key: "okx"     as Exchange, label: "OKX",     desc: "Global spot" },
         ]).map(ex => (
           <button
             key={ex.key}
@@ -94,6 +96,7 @@ export default function LivePage() {
       {/* Panel */}
       {exchange === "bitvavo" && <BitvavoPanel currentPrice={price} asset={asset} />}
       {exchange === "bybit"   && <BybitPanel   currentPrice={price} asset={asset} />}
+      {exchange === "okx"     && <OKXPanel     currentPrice={price} asset={asset} />}
     </main>
   );
 }

@@ -78,6 +78,16 @@ export default function SettingsPanel() {
   const [bybitSaving, setBybitSaving]       = useState(false);
   const [bybitChecking, setBybitChecking]   = useState(false);
 
+  // OKX
+  const [okxKey, setOkxKey]               = useState("");
+  const [okxSecret, setOkxSecret]         = useState("");
+  const [okxPassphrase, setOkxPassphrase] = useState("");
+  const [okxConnected, setOkxConnected]   = useState<boolean | null>(null);
+  const [okxSaved, setOkxSaved]           = useState(false);
+  const [okxBalance, setOkxBalance]       = useState<{ symbol: string; walletBalance: string }[] | null>(null);
+  const [okxSaving, setOkxSaving]         = useState(false);
+  const [okxChecking, setOkxChecking]     = useState(false);
+
   // Binance Testnet
   const [testnetKey, setTestnetKey]         = useState("");
   const [testnetSecret, setTestnetSecret]   = useState("");
@@ -157,6 +167,19 @@ export default function SettingsPanel() {
         }
       })
       .catch(() => setBybitConnected(false));
+
+    // Check of OKX al gekoppeld is
+    fetch("/api/okx/balance")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.connected) {
+          setOkxConnected(true);
+          setOkxBalance(data.balance ?? []);
+        } else {
+          setOkxConnected(false);
+        }
+      })
+      .catch(() => setOkxConnected(false));
   }, []);
 
   function update<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -669,6 +692,115 @@ export default function SettingsPanel() {
                 }}
               >
                 {bybitChecking ? "Laden…" : "Vernieuwen"}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* OKX koppeling */}
+      <section className="settings-card">
+        <div className="settings-card-title">OKX Live Trading</div>
+        <div className="settings-card-desc">
+          Koppel je OKX account voor live trading vanuit Bitcoin Mentor. Maak een API key aan op{" "}
+          <a href="https://www.okx.com/account/my-api" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+            okx.com/account/my-api →
+          </a>{" "}
+          Zet alleen <strong>Spot Trading</strong> aan. OKX vereist ook een <strong>Passphrase</strong>.
+        </div>
+
+        {okxConnected === true && (
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> OKX gekoppeld</div>
+            {okxBalance && okxBalance.length > 0 ? (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {okxBalance.map((b) => (
+                  <span key={b.symbol} style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 20%, transparent)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "var(--green)" }}>
+                    {b.symbol}: {parseFloat(b.walletBalance).toFixed(4)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div style={{ color: "var(--green)", fontSize: 13 }}>Geen saldo gevonden</div>
+            )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Key</label>
+            <input
+              type="text"
+              value={okxKey}
+              onChange={e => setOkxKey(e.target.value)}
+              placeholder={okxConnected ? "••••••••••••••••" : "Plak je OKX API Key"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Secret</label>
+            <input
+              type="password"
+              value={okxSecret}
+              onChange={e => setOkxSecret(e.target.value)}
+              placeholder={okxConnected ? "••••••••••••••••" : "Plak je OKX API Secret"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Passphrase</label>
+            <input
+              type="password"
+              value={okxPassphrase}
+              onChange={e => setOkxPassphrase(e.target.value)}
+              placeholder={okxConnected ? "••••••••••••••••" : "OKX API Passphrase"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              className="terminal-btn terminal-btn-primary"
+              disabled={okxSaving || (!okxKey && !okxSecret && !okxPassphrase)}
+              style={{ alignSelf: "flex-start" }}
+              onClick={async () => {
+                if (!okxKey || !okxSecret || !okxPassphrase) return;
+                setOkxSaving(true);
+                await fetch("/api/me/settings", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ okxApiKey: okxKey, okxApiSecret: okxSecret, okxPassphrase }),
+                });
+                setOkxChecking(true);
+                const res = await fetch("/api/okx/balance");
+                const data = await res.json();
+                if (data?.connected) {
+                  setOkxConnected(true);
+                  setOkxBalance(data.balance ?? []);
+                  setOkxSaved(true);
+                  setOkxKey(""); setOkxSecret(""); setOkxPassphrase("");
+                  setTimeout(() => setOkxSaved(false), 3000);
+                } else {
+                  setOkxConnected(false);
+                  alert(data.error ?? "Verbinding mislukt — controleer je keys en passphrase");
+                }
+                setOkxSaving(false);
+                setOkxChecking(false);
+              }}
+            >
+              {okxSaving ? (okxChecking ? "Testen…" : "Opslaan…") : okxSaved ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Gekoppeld!</span> : "Opslaan & testen"}
+            </button>
+            {okxConnected && (
+              <button
+                className="terminal-btn terminal-btn-muted"
+                onClick={async () => {
+                  setOkxChecking(true);
+                  const res = await fetch("/api/okx/balance");
+                  const data = await res.json();
+                  if (data?.connected) setOkxBalance(data.balance ?? []);
+                  setOkxChecking(false);
+                }}
+              >
+                {okxChecking ? "Laden…" : "Vernieuwen"}
               </button>
             )}
           </div>

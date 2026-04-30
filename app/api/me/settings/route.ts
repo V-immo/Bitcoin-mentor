@@ -111,6 +111,28 @@ export async function PUT(request: NextRequest) {
     }
   }
 
+  // OKX sleutels opslaan indien meegestuurd
+  if (body.okxApiKey !== undefined && body.okxApiSecret !== undefined && body.okxPassphrase !== undefined) {
+    try {
+      db.prepare(`
+        UPDATE settings SET
+          okx_api_key = ?,
+          okx_api_secret = ?,
+          okx_passphrase = ?,
+          updated_at = datetime('now')
+        WHERE user_id = ?
+      `).run(
+        body.okxApiKey ?? "",
+        body.okxApiSecret ?? "",
+        body.okxPassphrase ?? "",
+        userId
+      );
+      return Response.json({ ok: true });
+    } catch {
+      return Response.json({ error: "OKX kolommen ontbreken, voer db/migrate-okx.js uit" }, { status: 500 });
+    }
+  }
+
   // Binance live sleutels opslaan
   if (body.binanceApiKey !== undefined && body.binanceApiSecret !== undefined) {
     db.prepare(`
