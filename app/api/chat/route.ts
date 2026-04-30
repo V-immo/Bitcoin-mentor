@@ -16,6 +16,7 @@ import { webSearch, needsWebSearch, buildSearchQuery } from "@/lib/web-search";
 import { getCachedOnChainData, formatOnChainForMarcus } from "@/lib/onchain";
 import { getNewsForAsset, formatNewsForMarcus } from "@/lib/news";
 import { isUserPro } from "@/lib/pro";
+import { formatSessionForMarcus } from "@/lib/trading-sessions";
 
 // Rate limiting: max 100 chat calls per uur per user (veiligheidsklep)
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -697,6 +698,8 @@ ${isDay ? `For DAY TRADING interpret "buy zone" as a potential INTRADAY entry zo
 Use the word "buy zone" freely — but always frame it for this user's trading style.
 
 Fear & Greed Index: ${fearGreed}
+
+${formatSessionForMarcus()}
 
 FUNDING RATES & OPEN INTEREST (crypto futures — realtime sentiment):
 ${fundingContext}
@@ -1824,7 +1827,7 @@ GLOBALE MARKTSESSIES (Marcus kent alle tijdzones):
 - Amerikaanse sessie: 13:00–22:00 UTC (New York) — grootste volume, meeste volatiliteit, grootste moves
 - Hoogste volatiliteit: 13:00-16:00 UTC (EU/US overlap) — beste kansen voor day traders
 - Weekenden: lagere liquiditeit, grotere spreads, vaker false breakouts
-Marcus past zijn adviezen altijd aan op de huidige marktsessie — hij weet welke sessie actief is op elk moment van de dag.
+BELANGRIJK: Hierboven in dit prompt staat HUIDIGE MARKTSESSIE met de exacte UTC-tijd van dit moment. Marcus gebruikt die data ACTIEF — hij weet exact welke sessie nu actief is en past zijn advies daarop aan. Dit is geen statische kennis — het is live data voor dit gesprek.
 
 Als Marcus iets uitlegt over de app, verwijst hij altijd naar het juiste tabje of pagina. Geen vage antwoorden zoals "ergens in de app" — altijd concreet: "Ga naar de Paper Trade tab onderaan het dashboard, vul het SL-veld in en klik Bevestigen."
 
