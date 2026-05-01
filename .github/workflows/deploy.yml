@@ -50,22 +50,28 @@ jobs:
             node db/migrate-okx.js || true
             node db/migrate-mexc.js || true
 
-            # Stop server + clean build dir (Turbopack race fix)
-            pm2 delete bitcoin-mentor 2>/dev/null || true
-            rm -rf .next
+            # Build terwijl de oude versie nog draait — site blijft online
+            # Bouw naar tijdelijke map, wissel pas na succesvolle build
+            rm -rf .next_new
 
-            # Build — max 3 pogingen door Turbopack race condition
+            BUILD_OK=0
             for attempt in 1 2 3; do
               echo "Build poging $attempt..."
-              rm -rf .next
-              NODE_OPTIONS='--max-old-space-size=1600' npm run build && break
-              if [ $attempt -eq 3 ]; then
-                echo "Build mislukt na 3 pogingen"
-                exit 1
+              rm -rf .next_new
+              if NODE_OPTIONS='--max-old-space-size=1600' npm run build; then
+                BUILD_OK=1
+                break
               fi
+              echo "Build poging $attempt mislukt, wacht 5s..."
               sleep 5
             done
 
+            if [ $BUILD_OK -ne 1 ]; then
+              echo "Build mislukt na 3 pogingen — site blijft op oude versie"
+              exit 1
+            fi
+
+            # Build geslaagd — wissel nu snel
             pm2 delete bitcoin-mentor 2>/dev/null || true
             pm2 start ecosystem.config.js
             pm2 save
