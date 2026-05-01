@@ -11,6 +11,7 @@ import { getDb } from "@/db/db";
 import { SCAN_ASSETS } from "./assets";
 import { sendReminderEmail } from "./mailer";
 import { computeSignalHash, computeMerkleRoot } from "./signal-hash";
+import { openCopyTrade, closeCopyTrade, getCopyUsers, getOpenCopyTradesForSignal } from "./copy-trading";
 
 const POLL_INTERVAL       = 30 * 60 * 1000; // 30 minuten (externe data)
 const CRYPTO_POLL_INTERVAL =  5 * 60 * 1000; //  5 minuten (alle crypto assets)
@@ -378,13 +379,20 @@ function runSignalEngine(): void {
         db.prepare("UPDATE marcus_signals SET signal_hash = ? WHERE id = ?").run(hash, signalId);
       } catch { /* negeer hash-fout, signaal blijft geldig */ }
 
-      // Auto-copy voor gebruikers met copy_trading ingeschakeld
-      const copyUsers = db.prepare(
+      // Paper trade auto-copy
+      const basicCopyUsers = db.prepare(
         "SELECT user_id FROM settings WHERE copy_trading = 1"
       ).all() as { user_id: number }[];
 
-      for (const { user_id } of copyUsers) {
+      for (const { user_id } of basicCopyUsers) {
         autoOpenPaperTrade(db, user_id, entry.name ?? entry.ticker, entry.symbol, entry.price, sl, target, signalId);
+      }
+
+      // Echte exchange copy trade (asynchroon, fouten worden gelogd)
+      const newSignal = { id: signalId, asset: entry.name ?? entry.ticker, symbol: entry.symbol, direction: "long", entry_price: entry.price, stop_loss: sl, target };
+      const realCopyUsers = getCopyUsers();
+      for (const cu of realCopyUsers) {
+        openCopyTrade(cu, newSignal).catch(() => {/* gelogd in DB */});
       }
     }
 
@@ -407,6 +415,16 @@ function runSignalEngine(): void {
       if (newStatus) {
         db.prepare("UPDATE marcus_signals SET status = ?, close_price = ?, closed_at = ? WHERE id = ?")
           .run(newStatus, p, now, sig.id);
+
+        // Sluit bijbehorende echte copy trades (asynchroon)
+        if (newStatus !== "expired") {
+          const openCopies = getOpenCopyTradesForSignal(sig.id);
+          const realUsers = getCopyUsers();
+          for (const copy of openCopies) {
+            const cu = realUsers.find(u => u.user_id === copy.user_id);
+            if (cu) closeCopyTrade(copy.id, p, cu).catch(() => {/* gelogd in DB */});
+          }
+        }
       }
     }
   } catch { /* stilletjes falen */ }

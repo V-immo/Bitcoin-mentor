@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
-import MarcusBot from "@/components/MarcusBot";
+import BotsPageClient from "@/components/BotsPageClient";
 
 export default async function BotsPage() {
   const session = await auth();
@@ -9,7 +9,6 @@ export default async function BotsPage() {
 
   let isPro = false;
   if (userId) {
-    // Admins hebben altijd toegang
     if (role === "admin") {
       isPro = true;
     } else {
@@ -19,5 +18,5 @@ export default async function BotsPage() {
     }
   }
 
-  return <MarcusBot isPro={isPro} />;
+  return <BotsPageClient isPro={isPro} />;
 }
