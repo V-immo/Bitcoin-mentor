@@ -48,6 +48,7 @@ jobs:
             node db/migrate-premarket-count.js || true
             node db/migrate-bots.js || true
             node db/migrate-okx.js || true
+            node db/migrate-mexc.js || true
 
             # Stop server + clean build dir (Turbopack race fix)
             pm2 delete bitcoin-mentor 2>/dev/null || true

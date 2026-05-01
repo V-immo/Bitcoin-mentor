@@ -78,6 +78,15 @@ export default function SettingsPanel() {
   const [bybitSaving, setBybitSaving]       = useState(false);
   const [bybitChecking, setBybitChecking]   = useState(false);
 
+  // MEXC
+  const [mexcKey, setMexcKey]             = useState("");
+  const [mexcSecret, setMexcSecret]       = useState("");
+  const [mexcConnected, setMexcConnected] = useState<boolean | null>(null);
+  const [mexcSaved, setMexcSaved]         = useState(false);
+  const [mexcBalance, setMexcBalance]     = useState<{ symbol: string; available: string }[] | null>(null);
+  const [mexcSaving, setMexcSaving]       = useState(false);
+  const [mexcChecking, setMexcChecking]   = useState(false);
+
   // OKX
   const [okxKey, setOkxKey]               = useState("");
   const [okxSecret, setOkxSecret]         = useState("");
@@ -167,6 +176,19 @@ export default function SettingsPanel() {
         }
       })
       .catch(() => setBybitConnected(false));
+
+    // Check of MEXC al gekoppeld is
+    fetch("/api/mexc/balance")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.connected) {
+          setMexcConnected(true);
+          setMexcBalance(data.balance ?? []);
+        } else {
+          setMexcConnected(false);
+        }
+      })
+      .catch(() => setMexcConnected(false));
 
     // Check of OKX al gekoppeld is
     fetch("/api/okx/balance")
@@ -801,6 +823,105 @@ export default function SettingsPanel() {
                 }}
               >
                 {okxChecking ? "Laden…" : "Vernieuwen"}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* MEXC koppeling */}
+      <section className="settings-card">
+        <div className="settings-card-title">MEXC Live Trading</div>
+        <div className="settings-card-desc">
+          Koppel je MEXC account voor live trading. MEXC heeft <strong>0% maker fees</strong> — de laagste ter wereld. Maak een API key aan op{" "}
+          <a href="https://www.mexc.com/user/openapi" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+            mexc.com/user/openapi →
+          </a>{" "}
+          Zet alleen <strong>Spot Trading</strong> aan.
+        </div>
+
+        {mexcConnected === true && (
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 25%, transparent)", borderRadius: 8 }}>
+            <div style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> MEXC gekoppeld</div>
+            {mexcBalance && mexcBalance.length > 0 ? (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {mexcBalance.map((b) => (
+                  <span key={b.symbol} style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--green) 20%, transparent)", borderRadius: 6, padding: "3px 10px", fontSize: 13, color: "var(--green)" }}>
+                    {b.symbol}: {parseFloat(b.available).toFixed(4)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div style={{ color: "var(--green)", fontSize: 13 }}>Geen saldo gevonden</div>
+            )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>API Key</label>
+            <input
+              type="text"
+              value={mexcKey}
+              onChange={e => setMexcKey(e.target.value)}
+              placeholder={mexcConnected ? "••••••••••••••••" : "Plak je MEXC API Key"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)" }}>Secret Key</label>
+            <input
+              type="password"
+              value={mexcSecret}
+              onChange={e => setMexcSecret(e.target.value)}
+              placeholder={mexcConnected ? "••••••••••••••••" : "Plak je MEXC Secret Key"}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              className="terminal-btn terminal-btn-primary"
+              disabled={mexcSaving || (!mexcKey && !mexcSecret)}
+              style={{ alignSelf: "flex-start" }}
+              onClick={async () => {
+                if (!mexcKey || !mexcSecret) return;
+                setMexcSaving(true);
+                await fetch("/api/me/settings", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ mexcApiKey: mexcKey, mexcApiSecret: mexcSecret }),
+                });
+                setMexcChecking(true);
+                const res = await fetch("/api/mexc/balance");
+                const data = await res.json();
+                if (data?.connected) {
+                  setMexcConnected(true);
+                  setMexcBalance(data.balance ?? []);
+                  setMexcSaved(true);
+                  setMexcKey(""); setMexcSecret("");
+                  setTimeout(() => setMexcSaved(false), 3000);
+                } else {
+                  setMexcConnected(false);
+                  alert(data.error ?? "Verbinding mislukt — controleer je keys");
+                }
+                setMexcSaving(false);
+                setMexcChecking(false);
+              }}
+            >
+              {mexcSaving ? (mexcChecking ? "Testen…" : "Opslaan…") : mexcSaved ? <span style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={13} /> Gekoppeld!</span> : "Opslaan & testen"}
+            </button>
+            {mexcConnected && (
+              <button
+                className="terminal-btn terminal-btn-muted"
+                onClick={async () => {
+                  setMexcChecking(true);
+                  const res = await fetch("/api/mexc/balance");
+                  const data = await res.json();
+                  if (data?.connected) setMexcBalance(data.balance ?? []);
+                  setMexcChecking(false);
+                }}
+              >
+                {mexcChecking ? "Laden…" : "Vernieuwen"}
               </button>
             )}
           </div>

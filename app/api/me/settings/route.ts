@@ -111,6 +111,22 @@ export async function PUT(request: NextRequest) {
     }
   }
 
+  // MEXC sleutels opslaan indien meegestuurd
+  if (body.mexcApiKey !== undefined && body.mexcApiSecret !== undefined) {
+    try {
+      db.prepare(`
+        UPDATE settings SET
+          mexc_api_key = ?,
+          mexc_api_secret = ?,
+          updated_at = datetime('now')
+        WHERE user_id = ?
+      `).run(body.mexcApiKey ?? "", body.mexcApiSecret ?? "", userId);
+      return Response.json({ ok: true });
+    } catch {
+      return Response.json({ error: "MEXC kolommen ontbreken, voer db/migrate-mexc.js uit" }, { status: 500 });
+    }
+  }
+
   // OKX sleutels opslaan indien meegestuurd
   if (body.okxApiKey !== undefined && body.okxApiSecret !== undefined && body.okxPassphrase !== undefined) {
     try {
