@@ -5,6 +5,7 @@ import type { QuizQuestion, QuizResponse } from "@/app/api/quiz/route";
 import QuizChat from "@/components/QuizChat";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Flame, AlertTriangle } from "lucide-react";
+import { notifyRewardEarned } from "@/components/RewardsWidget";
 
 const XP_PER_CORRECT = 40;
 const XP_PER_LEVEL = 500;
@@ -118,11 +119,15 @@ export default function DailyQuiz() {
 
   const saveHistory = useCallback(async (newHistory: QuizHistory) => {
     try {
-      await fetch("/api/me/quiz", {
+      const res = await fetch("/api/me/quiz", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newHistory),
       });
+      if (res.ok) {
+        const json = await res.json().catch(() => ({}));
+        if (json.rewardSats > 0) notifyRewardEarned(json.rewardSats);
+      }
     } catch { /* ignore */ }
   }, []);
 

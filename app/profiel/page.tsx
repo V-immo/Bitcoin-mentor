@@ -7,6 +7,7 @@ import { SCAN_ASSETS } from "@/lib/assets";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TrophyWall from "@/components/TrophyWall";
 import ReferralCard from "@/components/ReferralCard";
+import RewardsWidget from "@/components/RewardsWidget";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -278,6 +279,9 @@ export default function ProfielPage() {
               <span>Streak: {Math.min(quiz?.streak ?? 0, 7)}/7 dagen</span>
             </div>
           </div>
+
+          {/* ── Learn-to-Earn saldo ── */}
+          <RewardsWidget />
 
           {/* ── Referral ── */}
           <ReferralCard />

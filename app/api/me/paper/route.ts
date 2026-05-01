@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
+import { awardSats, getTodayTradeRewardCount, REWARD_AMOUNTS } from "@/lib/rewards";
 import type { Session } from "next-auth";
 
 function getUserId(session: Session | null): number | null {
@@ -56,8 +57,8 @@ export async function PUT(request: NextRequest) {
 
   // Zorg dat rij bestaat
   const existing = db
-    .prepare("SELECT id FROM paper_trading WHERE user_id = ? AND asset = ?")
-    .get(userId, asset);
+    .prepare("SELECT id, history FROM paper_trading WHERE user_id = ? AND asset = ?")
+    .get(userId, asset) as { id: number; history: string } | undefined;
 
   if (!existing) {
     const user = db
@@ -68,6 +69,38 @@ export async function PUT(request: NextRequest) {
       INSERT INTO paper_trading (user_id, asset, cash, position, history, starting_balance)
       VALUES (?, ?, ?, NULL, '[]', ?)
     `).run(userId, asset, startCapital, startCapital);
+  }
+
+  // ── Learn-to-Earn: detecteer nieuwe winstgevende sell ───────────────────
+  let rewardSats = 0;
+  type TradeEntry = { side?: string; pnl?: number; timestamp?: number; entryPrice?: number };
+  const oldHistory: TradeEntry[] = existing ? JSON.parse(existing.history || "[]") : [];
+  const newHistory: TradeEntry[] = body.history ?? [];
+  const oldSells = oldHistory.filter(t => (t.side === "sell" || t.side === "SELL") && typeof t.pnl === "number");
+  const newSells = newHistory.filter(t => (t.side === "sell" || t.side === "SELL") && typeof t.pnl === "number");
+
+  if (newSells.length > oldSells.length) {
+    // Nieuwe sell-trades ontdekken
+    const addedCount = newSells.length - oldSells.length;
+    const latestSells = newSells.slice(0, addedCount);
+    const todayCount = getTodayTradeRewardCount(userId);
+    let todaySoFar = todayCount;
+
+    for (const trade of latestSells) {
+      if (todaySoFar >= 3) break; // max 3 trade-rewards/dag
+      if ((trade.pnl ?? 0) > 0) {
+        // Bereken P&L percentage (ruw: pnl / entry * qty — vereenvoudigd: kijk naar pnl abs)
+        const isExcellent = (trade.pnl ?? 0) >= 200; // ≥$200 winst op $10k kapitaal ≈ 2%
+        if (isExcellent && todaySoFar === 0) {
+          awardSats(userId, REWARD_AMOUNTS.TRADE_EXCELLENT, "trade_excellent", { pnl: trade.pnl, asset });
+          rewardSats += REWARD_AMOUNTS.TRADE_EXCELLENT;
+        } else {
+          awardSats(userId, REWARD_AMOUNTS.TRADE_PROFIT, "trade_profit", { pnl: trade.pnl, asset });
+          rewardSats += REWARD_AMOUNTS.TRADE_PROFIT;
+        }
+        todaySoFar++;
+      }
+    }
   }
 
   db.prepare(`
@@ -81,11 +114,11 @@ export async function PUT(request: NextRequest) {
   `).run(
     body.cash ?? 0,
     body.position ? JSON.stringify(body.position) : null,
-    JSON.stringify(body.history ?? []),
+    JSON.stringify(newHistory),
     body.startingBalance ?? 10000,
     userId,
     asset
   );
 
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, rewardSats });
 }
