@@ -113,6 +113,8 @@ export async function POST(request: NextRequest) {
   const messages: { role: string; content: string }[] = body.messages ?? [];
   const marketContext: string = body.marketContext ?? "";
   const questionContext: string = body.questionContext ?? ""; // quiz question context
+  // Chart image upload — optioneel meegegeven als base64
+  const imageData: { base64: string; mediaType: string } | null = body.imageData ?? null;
 
   // Live app context — wat de gebruiker nu ziet in de interface
   const appContext: {
@@ -2143,7 +2145,12 @@ QUIZ CONTEXT:
 ${questionContext}
 Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
 
-  const filtered = messages
+  type TextBlock  = { type: "text";  text: string };
+  type ImageBlock = { type: "image"; source: { type: "base64"; media_type: "image/jpeg" | "image/png" | "image/gif" | "image/webp"; data: string } };
+  type ContentBlock = TextBlock | ImageBlock;
+  type AnthropicMessage = { role: "user" | "assistant"; content: string | ContentBlock[] };
+
+  const filtered: AnthropicMessage[] = messages
     .filter((m) => m.role === "user" || m.role === "assistant")
     .slice(-12)
     .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
@@ -2153,6 +2160,22 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
 
   if (filtered.length === 0) {
     return new Response("Geen geldige vraag ontvangen.", { status: 400 });
+  }
+
+  // Als er een afbeelding meegestuurd is: vervang het laatste user-bericht met image + text content
+  if (imageData?.base64 && filtered.length > 0) {
+    const lastIdx = filtered.length - 1;
+    const lastMsg = filtered[lastIdx];
+    if (lastMsg.role === "user") {
+      const textContent = typeof lastMsg.content === "string" ? lastMsg.content : "";
+      filtered[lastIdx] = {
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: (imageData.mediaType || "image/jpeg") as "image/jpeg" | "image/png" | "image/gif" | "image/webp", data: imageData.base64 } },
+          { type: "text", text: textContent || "Analyseer deze chart als mijn trading coach." },
+        ],
+      };
+    }
   }
 
   // ── Streaming response ─────────────────────────────────────────────────────
@@ -2165,8 +2188,9 @@ Beantwoord kort en helder, max 3-4 zinnen.` : ""}`;
       const encoder = new TextEncoder();
       try {
         const stream = getClient().messages.stream({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 1000,
+          // Sonnet voor chart-analyse (vision), Haiku voor tekst (sneller + goedkoper)
+          model: imageData?.base64 ? "claude-sonnet-4-5" : "claude-haiku-4-5-20251001",
+          max_tokens: imageData?.base64 ? 1500 : 1000,
           system: systemPrompt,
           messages: filtered,
         });

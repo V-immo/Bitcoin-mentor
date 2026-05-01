@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Star } from "lucide-react";
+import { Star, ImagePlus, X } from "lucide-react";
 
 function escape(s: string) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -56,7 +56,40 @@ function markdownToHtml(text: string): string {
 type Message = {
     role: "user" | "assistant";
     content: string;
+    imagePreviewUrl?: string; // alleen voor weergave in de chat
 };
+
+type PendingImage = {
+    base64: string;
+    mediaType: string;
+    previewUrl: string;
+};
+
+// Comprimeer afbeelding naar max 1024px JPEG voor de API
+async function compressImage(file: File, maxSide = 1024): Promise<PendingImage> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+            URL.revokeObjectURL(url);
+            resolve({
+                base64: dataUrl.split(",")[1],
+                mediaType: "image/jpeg",
+                previewUrl: dataUrl,
+            });
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Afbeelding laden mislukt")); };
+        img.src = url;
+    });
+}
 
 type AppContext = {
     asset?: string;
@@ -99,6 +132,9 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
     const [userSending, setUserSending] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [quizProfile, setQuizProfile] = useState({ level: 1, weakTopics: [] as string[] });
+    const [pendingImage, setPendingImage] = useState<PendingImage | null>(null);
+    const [imageLoading, setImageLoading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const didAutoBriefRef = useRef(false);
 
@@ -263,21 +299,40 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
         }
     }
 
-    async function send(text: string) {
-        if (!text.trim() || userSending) return;
+    async function send(text: string, imageOverride?: PendingImage | null) {
+        const img = imageOverride !== undefined ? imageOverride : pendingImage;
+        const textTrimmed = text.trim();
+        if (!textTrimmed && !img) return;
+        if (userSending) return;
 
-        const userMsg: Message = { role: "user", content: text.trim() };
+        const userMsg: Message = {
+            role: "user",
+            content: textTrimmed || "Analyseer deze chart.",
+            imagePreviewUrl: img?.previewUrl,
+        };
         const next = [...messages, userMsg];
-        setMessages(next); // toon user bericht, nog geen assistant placeholder
+        setMessages(next);
         setInput("");
-        setLoading(true); // toont typing dots
+        setPendingImage(null);
+        setLoading(true);
         setUserSending(true);
+
+        // Stuur alleen de tekstinhoud naar de API (image apart via imageData)
+        const apiMessages = next.map(m => ({ role: m.role, content: m.content }));
 
         try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
+                body: JSON.stringify({
+                    messages: apiMessages,
+                    marketContext,
+                    traderLevel: quizProfile.level,
+                    weakTopics: quizProfile.weakTopics,
+                    lang,
+                    appContext,
+                    imageData: img ? { base64: img.base64, mediaType: img.mediaType } : undefined,
+                }),
             });
 
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -359,7 +414,19 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                                 </div>
                                 <div dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }} />
                             </>
-                        ) : msg.content}
+                        ) : (
+                            <>
+                                {msg.imagePreviewUrl && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        src={msg.imagePreviewUrl}
+                                        alt="chart"
+                                        style={{ display: "block", maxWidth: "100%", maxHeight: 220, borderRadius: 8, marginBottom: msg.content !== "Analyseer deze chart." ? 6 : 0, border: "1px solid var(--border)" }}
+                                    />
+                                )}
+                                {msg.content !== "Analyseer deze chart." && msg.content}
+                            </>
+                        )}
                     </div>
                 ))}
 
@@ -393,18 +460,79 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                 ))}
             </div>
 
+            {/* Pending image preview */}
+            {pendingImage && (
+                <div style={{ position: "relative", marginBottom: 8, display: "inline-block" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src={pendingImage.previewUrl}
+                        alt="chart preview"
+                        style={{ maxHeight: 120, maxWidth: "100%", borderRadius: 8, border: "1px solid var(--border)", display: "block" }}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setPendingImage(null)}
+                        style={{ position: "absolute", top: 4, right: 4, background: "rgba(0,0,0,0.6)", border: "none", borderRadius: "50%", width: 20, height: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}
+                    >
+                        <X size={12} color="#fff" />
+                    </button>
+                </div>
+            )}
+
+            {/* Hidden file input */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setImageLoading(true);
+                    try {
+                        const compressed = await compressImage(file);
+                        setPendingImage(compressed);
+                        // Als er nog geen tekst is, prefill
+                        if (!input.trim()) setInput("Analyseer deze chart.");
+                    } catch { /* negeer */ }
+                    setImageLoading(false);
+                    e.target.value = "";
+                }}
+            />
+
             <form className="terminal-chat-form" onSubmit={handleSubmit}>
+                {/* Upload knop */}
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading || imageLoading}
+                    title="Chart uploaden"
+                    style={{
+                        background: pendingImage ? "var(--accent)" : "var(--surface-2)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
+                        padding: "0 10px",
+                        cursor: "pointer",
+                        color: pendingImage ? "#fff" : "var(--text-secondary)",
+                        display: "flex",
+                        alignItems: "center",
+                        height: "100%",
+                        flexShrink: 0,
+                    }}
+                >
+                    {imageLoading ? <span style={{ fontSize: 11 }}>…</span> : <ImagePlus size={16} />}
+                </button>
                 <input
                     className="terminal-terminal-input"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={t("chat_placeholder")}
+                    placeholder={pendingImage ? "Voeg een vraag toe (optioneel)…" : t("chat_placeholder")}
                     disabled={loading}
                 />
                 <button
                     type="submit"
                     className="terminal-btn terminal-btn-primary"
-                    disabled={loading || !input.trim()}
+                    disabled={loading || (!input.trim() && !pendingImage)}
                 >
                     →
                 </button>
