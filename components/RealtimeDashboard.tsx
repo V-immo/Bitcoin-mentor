@@ -6,6 +6,7 @@ import TradingChart from "./TradingChart";
 import TerminalPaperPanel from "./TerminalPaperPanel";
 import MentorChat from "./MentorChat";
 import RisicoCalculator from "./RisicoCalculator";
+import WellnessWidget from "./WellnessWidget";
 import EntryChecklist from "./EntryChecklist";
 import type { Candle, MentorSignal } from "@/lib/types";
 import { SCAN_ASSETS, isFinnhubAsset, getAssetDef, getFinnhubSymbol } from "@/lib/assets";
@@ -1044,7 +1045,14 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
                 </details>
               </>
             )}
-            {bottomTab === "chat" && <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />}
+            {bottomTab === "chat" && (
+              <>
+                <div style={{ marginBottom: 10 }}>
+                  <WellnessWidget />
+                </div>
+                <MentorChat key={`chat-tab-${asset}`} marketContext={marketContext} asset={asset} appContext={appContext} />
+              </>
+            )}
             {bottomTab === "plan" && <TradePlanValidator asset={asset} currentPrice={chartPrice} />}
             {bottomTab === "ritual" && <PreMarketRitual asset={asset} />}
             {bottomTab === "alerts"     && <PriceAlerts currentAsset={asset} currentPrice={chartPrice > 0 ? chartPrice : undefined} />}

@@ -52,6 +52,7 @@ jobs:
             node db/migrate-learn-to-earn.js || true
             node db/migrate-signal-hash.js || true
             node db/migrate-copy-trading.js || true
+            node db/migrate-wellness.js || true
 
             # Build terwijl de oude versie nog draait — site blijft online
             # Bouw naar tijdelijke map, wissel pas na succesvolle build

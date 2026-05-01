@@ -17,6 +17,7 @@ import { getCachedOnChainData, formatOnChainForMarcus } from "@/lib/onchain";
 import { getNewsForAsset, formatNewsForMarcus } from "@/lib/news";
 import { isUserPro } from "@/lib/pro";
 import { formatSessionForMarcus } from "@/lib/trading-sessions";
+import { formatWellnessForMarcus } from "@/lib/wellness";
 
 // Rate limiting: max 100 chat calls per uur per user (veiligheidsklep)
 const chatRateMap = new Map<string, { count: number; resetAt: number }>();
@@ -702,6 +703,8 @@ Use the word "buy zone" freely — but always frame it for this user's trading s
 Fear & Greed Index: ${fearGreed}
 
 ${formatSessionForMarcus()}
+
+${userId ? formatWellnessForMarcus(userId) : ""}
 
 FUNDING RATES & OPEN INTEREST (crypto futures — realtime sentiment):
 ${fundingContext}
