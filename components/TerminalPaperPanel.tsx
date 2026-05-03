@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import TradeReplay, { type ReplayTrade } from "@/components/TradeReplay";
+import TradePremortem from "@/components/TradePremortem";
 
 const EMOTIONS = [
     { value: 1, emoji: "1", label: "Angstig" },
@@ -193,6 +195,8 @@ export default function TerminalPaperPanel({
     const [showGoalInput, setShowGoalInput] = useState(false);
     const [notification, setNotification] = useState<{ msg: string; type: "success" | "warning" | "danger" } | null>(null);
     const [confirmReset, setConfirmReset] = useState(false);
+    const [replayTrade, setReplayTrade] = useState<ReplayTrade | null>(null);
+    const [showPremortem, setShowPremortem] = useState(false);
     const [state, setState] = useState<PaperState>({
         startCapital: 10000,
         cash: 10000,
@@ -546,7 +550,7 @@ export default function TerminalPaperPanel({
             if (!Number.isFinite(lp) || lp <= 0) return;
             if (currentPrice <= lp) {
                 setConfirmAction("buy");
-                setShowConfirm(true);
+                setShowPremortem(true);
             } else {
                 setPendingLimitOrder({ amount, price: lp });
             }
@@ -557,7 +561,7 @@ export default function TerminalPaperPanel({
         if (!inZone && !force) { setZoneWarning(true); return; }
         setZoneWarning(false);
         setConfirmAction("buy");
-        setShowConfirm(true);
+        setShowPremortem(true);
     }
 
     function requestPartialClose(pct: number) {
@@ -638,6 +642,7 @@ export default function TerminalPaperPanel({
         : 0;
 
     return (
+    <>
         <section className="terminal-side-card" style={{ position: "relative" }}>
 
             {/* Notification toast */}
@@ -1441,6 +1446,7 @@ export default function TerminalPaperPanel({
                                     <th style={{ textAlign: "right" }}>Prijs</th>
                                     <th style={{ textAlign: "right" }}>Bedrag</th>
                                     <th style={{ textAlign: "right" }}>P&L</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1481,6 +1487,21 @@ export default function TerminalPaperPanel({
                                                     </span>
                                                 ) : "—"}
                                             </td>
+                                            <td>
+                                                {trade.side === "sell" && typeof trade.pnl === "number" && (
+                                                    <button
+                                                        title="Replay"
+                                                        onClick={() => setReplayTrade(trade as ReplayTrade)}
+                                                        style={{
+                                                            background: "none", border: "1px solid var(--border)",
+                                                            borderRadius: 4, padding: "1px 6px", cursor: "pointer",
+                                                            fontSize: 9, color: "var(--text-secondary)",
+                                                        }}
+                                                    >
+                                                        ▶
+                                                    </button>
+                                                )}
+                                            </td>
                                         </tr>
                                         {trade.note && (
                                             <tr key={`${trade.id}-note`}>
@@ -1497,5 +1518,35 @@ export default function TerminalPaperPanel({
                 </div>
             </details>
         </section>
+
+        {replayTrade && (
+            <TradeReplay
+                trade={replayTrade}
+                allTrades={state.trades as ReplayTrade[]}
+                asset={asset}
+                onClose={() => setReplayTrade(null)}
+            />
+        )}
+
+        {showPremortem && (
+            <TradePremortem
+                asset={asset}
+                side="buy"
+                amount={Number(buyAmount)}
+                price={orderType === "limit" ? Number(limitPrice) : currentPrice}
+                stopLoss={state.activeSL}
+                takeProfit={state.activeTP}
+                onConfirm={() => {
+                    setShowPremortem(false);
+                    confirmOrder();
+                }}
+                onCancel={() => {
+                    setShowPremortem(false);
+                    setConfirmAction(null);
+                    setZoneWarning(false);
+                }}
+            />
+        )}
+    </>
     );
 }

@@ -10,6 +10,8 @@ import { calculateRsi } from "./market";
 import { getDb } from "@/db/db";
 import { SCAN_ASSETS } from "./assets";
 import { sendReminderEmail } from "./mailer";
+import { computeSignalHash, computeMerkleRoot } from "./signal-hash";
+import { openCopyTrade, closeCopyTrade, getCopyUsers, getOpenCopyTradesForSignal } from "./copy-trading";
 
 const POLL_INTERVAL       = 30 * 60 * 1000; // 30 minuten (externe data)
 const CRYPTO_POLL_INTERVAL =  5 * 60 * 1000; //  5 minuten (alle crypto assets)
@@ -358,6 +360,7 @@ function runSignalEngine(): void {
       const sl = parseFloat((entry.price * 0.97).toFixed(2));
       const target = parseFloat((entry.price * 1.06).toFixed(2));
 
+      // Voeg eerst in zonder hash (om id te krijgen), hash daarna
       db.prepare(`
         INSERT INTO marcus_signals (asset, symbol, direction, entry_price, stop_loss, target, rsi, score, trend)
         VALUES (?, ?, 'long', ?, ?, ?, ?, ?, ?)
@@ -365,13 +368,31 @@ function runSignalEngine(): void {
 
       const signalId = (db.prepare("SELECT last_insert_rowid() as id").get() as { id: number }).id;
 
-      // Auto-copy voor gebruikers met copy_trading ingeschakeld
-      const copyUsers = db.prepare(
+      // Bereken en sla hash op
+      try {
+        const newRow = db.prepare("SELECT * FROM marcus_signals WHERE id = ?").get(signalId) as {
+          id: number; asset: string; symbol: string; direction: string;
+          entry_price: number; stop_loss: number; target: number;
+          rsi: number; score: number; trend: string; created_at: string;
+        };
+        const hash = computeSignalHash(newRow);
+        db.prepare("UPDATE marcus_signals SET signal_hash = ? WHERE id = ?").run(hash, signalId);
+      } catch { /* negeer hash-fout, signaal blijft geldig */ }
+
+      // Paper trade auto-copy
+      const basicCopyUsers = db.prepare(
         "SELECT user_id FROM settings WHERE copy_trading = 1"
       ).all() as { user_id: number }[];
 
-      for (const { user_id } of copyUsers) {
+      for (const { user_id } of basicCopyUsers) {
         autoOpenPaperTrade(db, user_id, entry.name ?? entry.ticker, entry.symbol, entry.price, sl, target, signalId);
+      }
+
+      // Echte exchange copy trade (asynchroon, fouten worden gelogd)
+      const newSignal = { id: signalId, asset: entry.name ?? entry.ticker, symbol: entry.symbol, direction: "long", entry_price: entry.price, stop_loss: sl, target };
+      const realCopyUsers = getCopyUsers();
+      for (const cu of realCopyUsers) {
+        openCopyTrade(cu, newSignal).catch(() => {/* gelogd in DB */});
       }
     }
 
@@ -394,6 +415,16 @@ function runSignalEngine(): void {
       if (newStatus) {
         db.prepare("UPDATE marcus_signals SET status = ?, close_price = ?, closed_at = ? WHERE id = ?")
           .run(newStatus, p, now, sig.id);
+
+        // Sluit bijbehorende echte copy trades (asynchroon)
+        if (newStatus !== "expired") {
+          const openCopies = getOpenCopyTradesForSignal(sig.id);
+          const realUsers = getCopyUsers();
+          for (const copy of openCopies) {
+            const cu = realUsers.find(u => u.user_id === copy.user_id);
+            if (cu) closeCopyTrade(copy.id, p, cu).catch(() => {/* gelogd in DB */});
+          }
+        }
       }
     }
   } catch { /* stilletjes falen */ }
@@ -490,6 +521,9 @@ export function startPoller(): void {
 
   // Dagelijkse morning brief elke minuut — genereert om 08:45
   setInterval(runMorningBriefJob, 60_000);
+
+  // Dagelijkse Merkle-root anchor om 00:05 UTC
+  setInterval(runDailySignalAnchor, 60_000);
 }
 
 // --- Wekelijks league systeem (zondag 23:55) ---
@@ -644,6 +678,73 @@ Write in the language that matches the market data language provided.`,
       db.prepare("INSERT OR IGNORE INTO market_briefs (date, level_group, content) VALUES (?, ?, ?)").run(today, group, content);
     } catch { /* stilletjes falen — morgen opnieuw */ }
   }
+}
+
+// --- Dagelijkse Merkle-root anchor (00:05 UTC) ---
+
+let anchorDate = "";
+
+function runDailySignalAnchor(): void {
+  const now = new Date();
+  if (now.getUTCHours() !== 0 || now.getUTCMinutes() < 5) return;
+  const today = now.toISOString().slice(0, 10);
+  if (anchorDate === today) return;
+  anchorDate = today;
+
+  try {
+    const db = getDb();
+
+    // Haal alle signalen van gisteren op (nog niet geanchordt)
+    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+    const rows = db.prepare(`
+      SELECT id, signal_hash FROM marcus_signals
+      WHERE date(created_at) = ? AND signal_hash IS NOT NULL
+    `).all(yesterday) as { id: number; signal_hash: string }[];
+
+    if (rows.length === 0) return;
+
+    const hashes = rows.map(r => r.signal_hash);
+    const merkleRoot = computeMerkleRoot(hashes);
+    const signalIds = rows.map(r => r.id).join(",");
+
+    // Controleer of we al een anchor voor gisteren hebben
+    const existing = db.prepare(
+      "SELECT id FROM signal_anchor_log WHERE date(created_at) = ?"
+    ).get(today);
+    if (existing) return;
+
+    db.prepare(`
+      INSERT INTO signal_anchor_log (merkle_root, signal_ids, chain, created_at)
+      VALUES (?, ?, 'bitcoin-mentor-internal', datetime('now'))
+    `).run(merkleRoot, signalIds);
+
+    // Optioneel: post naar Ethereum/Polygon als private key geconfigureerd is
+    // Wordt asynchroon afgehandeld — niet geblokkeerd
+    postMerkleRootOnchain(merkleRoot).catch(() => {/* geen key, geen probleem */});
+  } catch { /* stilletjes */ }
+}
+
+async function postMerkleRootOnchain(merkleRoot: string): Promise<void> {
+  const privateKey = process.env.ANCHOR_PRIVATE_KEY;
+  const rpcUrl = process.env.ANCHOR_RPC_URL; // bijv. https://polygon-rpc.com
+  if (!privateKey || !rpcUrl) return;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { ethers } = await import("ethers" as any);
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const wallet = new ethers.Wallet(privateKey, provider);
+    // Stuur een 0-waarde transactie met merkleRoot als data
+    const tx = await wallet.sendTransaction({
+      to: wallet.address,
+      value: BigInt(0),
+      data: "0x" + merkleRoot,
+    });
+    // Sla tx hash op in anchor log
+    const db = getDb();
+    db.prepare("UPDATE signal_anchor_log SET tx_hash = ?, chain = ? WHERE merkle_root = ?")
+      .run(tx.hash, rpcUrl.includes("polygon") ? "polygon" : "ethereum", merkleRoot);
+  } catch { /* geen geld/key — skip */ }
 }
 
 // --- Dagelijkse missie-reminder om 19:00 ---

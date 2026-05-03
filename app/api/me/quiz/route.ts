@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db/db";
+import { awardSats, REWARD_AMOUNTS } from "@/lib/rewards";
 import type { Session } from "next-auth";
 
 function getUserId(session: Session | null): number | null {
@@ -58,7 +59,33 @@ export async function PUT(request: NextRequest) {
   const body: Partial<QuizHistory> = await request.json().catch(() => ({}));
   const db = getDb();
 
-  getOrCreate(userId); // zorg dat rij bestaat
+  const oldData = getOrCreate(userId); // zorg dat rij bestaat
+
+  // ── Learn-to-Earn: detecteer nieuwe quiz sessie ──────────────────────────
+  let rewardSats = 0;
+  const newSessions = body.history ?? [];
+  const oldSessions = oldData.history;
+  const isNewSession =
+    newSessions.length > 0 &&
+    (oldSessions.length === 0 || newSessions[0].date !== oldSessions[0]?.date);
+
+  if (isNewSession) {
+    const latest = newSessions[0];
+    const pct = latest.total > 0 ? (latest.score / latest.total) * 100 : 0;
+    if (pct === 100) {
+      awardSats(userId, REWARD_AMOUNTS.QUIZ_PERFECT, "quiz_perfect", { score: latest.score, total: latest.total });
+      rewardSats += REWARD_AMOUNTS.QUIZ_PERFECT;
+    } else if (pct >= 70) {
+      awardSats(userId, REWARD_AMOUNTS.QUIZ_PASSED, "quiz_passed", { score: latest.score, total: latest.total, pct: Math.round(pct) });
+      rewardSats += REWARD_AMOUNTS.QUIZ_PASSED;
+    }
+  }
+  // Level-up bonus
+  const newLevel = body.level ?? 1;
+  if (newLevel > oldData.level) {
+    awardSats(userId, REWARD_AMOUNTS.QUIZ_LEVEL_UP, "quiz_level_up", { oldLevel: oldData.level, newLevel });
+    rewardSats += REWARD_AMOUNTS.QUIZ_LEVEL_UP;
+  }
 
   db.prepare(`
     UPDATE quiz_progress SET
@@ -80,5 +107,5 @@ export async function PUT(request: NextRequest) {
     userId
   );
 
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, rewardSats });
 }

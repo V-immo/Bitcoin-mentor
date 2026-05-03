@@ -42,6 +42,9 @@ function getOrCreateSettings(userId: number) {
     goal: (row.goal as number | undefined) ?? 0,
     preferredCurrency: (row.preferred_currency as string | undefined) ?? "EUR",
     copyTrading: !!((row.copy_trading as number | undefined) ?? 0),
+    copyExchange: (row.copy_exchange as string | undefined) ?? "none",
+    copySizeUsdt: (row.copy_size_usdt as number | undefined) ?? 100,
+    copyMaxOpen: (row.copy_max_open as number | undefined) ?? 3,
   };
 }
 
@@ -177,10 +180,18 @@ export async function PUT(request: NextRequest) {
     }
   }
 
-  // Copy trading toggle
-  if (body.copyTrading !== undefined && Object.keys(body).length === 1) {
-    db.prepare("UPDATE settings SET copy_trading = ?, updated_at = datetime('now') WHERE user_id = ?")
-      .run(body.copyTrading ? 1 : 0, userId);
+  // Copy trading instellingen
+  if (body.copyTrading !== undefined || body.copyExchange !== undefined || body.copySizeUsdt !== undefined || body.copyMaxOpen !== undefined) {
+    const cols: string[] = [];
+    const vals: unknown[] = [];
+    if (body.copyTrading  !== undefined) { cols.push("copy_trading = ?");   vals.push(body.copyTrading ? 1 : 0); }
+    if (body.copyExchange !== undefined) { cols.push("copy_exchange = ?");  vals.push(body.copyExchange); }
+    if (body.copySizeUsdt !== undefined) { cols.push("copy_size_usdt = ?"); vals.push(Number(body.copySizeUsdt)); }
+    if (body.copyMaxOpen  !== undefined) { cols.push("copy_max_open = ?");  vals.push(Number(body.copyMaxOpen)); }
+    if (cols.length > 0) {
+      db.prepare(`UPDATE settings SET ${cols.join(", ")}, updated_at = datetime('now') WHERE user_id = ?`)
+        .run(...vals, userId);
+    }
     return Response.json({ ok: true });
   }
 

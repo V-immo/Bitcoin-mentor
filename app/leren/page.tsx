@@ -6,6 +6,7 @@ import DailyQuiz from "@/components/DailyQuiz";
 import LearningResources from "@/components/LearningResources";
 import MarcusCurriculum from "@/components/MarcusCurriculum";
 import LeagueWidget from "@/components/LeagueWidget";
+import RewardsWidget from "@/components/RewardsWidget";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const XP_PER_LEVEL = 500;
@@ -178,6 +179,11 @@ export default function LerenPage() {
             <span className="lp2-tab-label">{tabItem.label}</span>
           </button>
         ))}
+      </div>
+
+      {/* ── Rewards widget ── */}
+      <div style={{ marginBottom: 16 }}>
+        <RewardsWidget />
       </div>
 
       {/* ── Tab content ── */}

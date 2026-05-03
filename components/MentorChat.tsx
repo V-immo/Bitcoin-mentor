@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Star } from "lucide-react";
+import { Star, ImagePlus, X, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { useVoice } from "@/lib/use-voice";
 
 function escape(s: string) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -56,7 +57,40 @@ function markdownToHtml(text: string): string {
 type Message = {
     role: "user" | "assistant";
     content: string;
+    imagePreviewUrl?: string; // alleen voor weergave in de chat
 };
+
+type PendingImage = {
+    base64: string;
+    mediaType: string;
+    previewUrl: string;
+};
+
+// Comprimeer afbeelding naar max 1024px JPEG voor de API
+async function compressImage(file: File, maxSide = 1024): Promise<PendingImage> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+            URL.revokeObjectURL(url);
+            resolve({
+                base64: dataUrl.split(",")[1],
+                mediaType: "image/jpeg",
+                previewUrl: dataUrl,
+            });
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Afbeelding laden mislukt")); };
+        img.src = url;
+    });
+}
 
 type AppContext = {
     asset?: string;
@@ -99,8 +133,47 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
     const [userSending, setUserSending] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [quizProfile, setQuizProfile] = useState({ level: 1, weakTopics: [] as string[] });
+    const [pendingImage, setPendingImage] = useState<PendingImage | null>(null);
+    const [imageLoading, setImageLoading] = useState(false);
+    const [voiceMode, setVoiceMode] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return localStorage.getItem("btcmentor-voice-mode") === "1";
+    });
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const didAutoBriefRef = useRef(false);
+
+    // Refs so async callbacks always read the latest values
+    const voiceModeRef = useRef(voiceMode);
+    useEffect(() => { voiceModeRef.current = voiceMode; }, [voiceMode]);
+
+    const pendingVoiceSubmitRef = useRef<string | null>(null);
+    // sendRef is updated every render so effects always call the current send()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sendRef = useRef<(text: string, img?: PendingImage | null) => Promise<void>>(null as any);
+
+    const handleTranscript = useCallback((text: string, isFinal: boolean) => {
+        setInput(text);
+        if (isFinal && text.trim()) {
+            pendingVoiceSubmitRef.current = text.trim();
+        }
+    }, []);
+
+    const { isListening, isSpeaking, isSupported, ttsSupported, startListening, stopListening, speak, stopSpeaking } = useVoice({
+        lang,
+        onTranscript: handleTranscript,
+    });
+
+    // Auto-submit when voice recognition ends with a final transcript
+    useEffect(() => {
+        if (!isListening && pendingVoiceSubmitRef.current) {
+            const text = pendingVoiceSubmitRef.current;
+            pendingVoiceSubmitRef.current = null;
+            setInput("");
+            sendRef.current(text, null);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isListening]);
 
     const saveMessages = useCallback(async (msgs: Message[]) => {
         try {
@@ -256,6 +329,7 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             const finalMessages: Message[] = [{ role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
+            if (voiceModeRef.current) speak(clean);
         } catch {
             setMessages([{ role: "assistant", content: t("chat_error_start") }]);
         } finally {
@@ -263,21 +337,43 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
         }
     }
 
-    async function send(text: string) {
-        if (!text.trim() || userSending) return;
+    async function send(text: string, imageOverride?: PendingImage | null) {
+        const img = imageOverride !== undefined ? imageOverride : pendingImage;
+        const textTrimmed = text.trim();
+        if (!textTrimmed && !img) return;
+        if (userSending) return;
 
-        const userMsg: Message = { role: "user", content: text.trim() };
+        // Stop any ongoing TTS when user sends a new message
+        stopSpeaking();
+
+        const userMsg: Message = {
+            role: "user",
+            content: textTrimmed || "Analyseer deze chart.",
+            imagePreviewUrl: img?.previewUrl,
+        };
         const next = [...messages, userMsg];
-        setMessages(next); // toon user bericht, nog geen assistant placeholder
+        setMessages(next);
         setInput("");
-        setLoading(true); // toont typing dots
+        setPendingImage(null);
+        setLoading(true);
         setUserSending(true);
+
+        // Stuur alleen de tekstinhoud naar de API (image apart via imageData)
+        const apiMessages = next.map(m => ({ role: m.role, content: m.content }));
 
         try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: next, marketContext, traderLevel: quizProfile.level, weakTopics: quizProfile.weakTopics, lang, appContext }),
+                body: JSON.stringify({
+                    messages: apiMessages,
+                    marketContext,
+                    traderLevel: quizProfile.level,
+                    weakTopics: quizProfile.weakTopics,
+                    lang,
+                    appContext,
+                    imageData: img ? { base64: img.base64, mediaType: img.mediaType } : undefined,
+                }),
             });
 
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -295,6 +391,7 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             const finalMessages: Message[] = [...next, { role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
+            if (voiceModeRef.current) speak(clean);
         } catch {
             setMessages((prev) => [
                 ...prev,
@@ -305,6 +402,9 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             setUserSending(false);
         }
     }
+
+    // Always keep sendRef pointing to the latest send (so voice auto-submit works)
+    sendRef.current = send;
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -325,16 +425,45 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                         </div>
                     </div>
                 </div>
-                {messages.length > 0 && (
-                    <button
-                        className="terminal-btn terminal-btn-muted"
-                        onClick={clearChat}
-                        style={{ fontSize: 11, padding: "2px 8px", height: 24 }}
-                        title={t("chat_clear_title")}
-                    >
-                        {t("chat_clear_btn")}
-                    </button>
-                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {ttsSupported && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const next = !voiceMode;
+                                setVoiceMode(next);
+                                localStorage.setItem("btcmentor-voice-mode", next ? "1" : "0");
+                                if (!next) stopSpeaking();
+                            }}
+                            title={voiceMode ? "Stem uit" : "Stem aan"}
+                            style={{
+                                background: voiceMode ? "var(--accent)" : "var(--surface-2)",
+                                border: "1px solid var(--border)",
+                                borderRadius: 6,
+                                width: 28,
+                                height: 24,
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: voiceMode ? "#fff" : "var(--text-secondary)",
+                                flexShrink: 0,
+                            }}
+                        >
+                            {isSpeaking ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                        </button>
+                    )}
+                    {messages.length > 0 && (
+                        <button
+                            className="terminal-btn terminal-btn-muted"
+                            onClick={clearChat}
+                            style={{ fontSize: 11, padding: "2px 8px", height: 24 }}
+                            title={t("chat_clear_title")}
+                        >
+                            {t("chat_clear_btn")}
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="terminal-chat-messages" ref={messagesContainerRef}>
@@ -359,7 +488,19 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                                 </div>
                                 <div dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }} />
                             </>
-                        ) : msg.content}
+                        ) : (
+                            <>
+                                {msg.imagePreviewUrl && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        src={msg.imagePreviewUrl}
+                                        alt="chart"
+                                        style={{ display: "block", maxWidth: "100%", maxHeight: 220, borderRadius: 8, marginBottom: msg.content !== "Analyseer deze chart." ? 6 : 0, border: "1px solid var(--border)" }}
+                                    />
+                                )}
+                                {msg.content !== "Analyseer deze chart." && msg.content}
+                            </>
+                        )}
                     </div>
                 ))}
 
@@ -393,18 +534,102 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                 ))}
             </div>
 
+            {/* Pending image preview */}
+            {pendingImage && (
+                <div style={{ position: "relative", marginBottom: 8, display: "inline-block" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src={pendingImage.previewUrl}
+                        alt="chart preview"
+                        style={{ maxHeight: 120, maxWidth: "100%", borderRadius: 8, border: "1px solid var(--border)", display: "block" }}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setPendingImage(null)}
+                        style={{ position: "absolute", top: 4, right: 4, background: "rgba(0,0,0,0.6)", border: "none", borderRadius: "50%", width: 20, height: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}
+                    >
+                        <X size={12} color="#fff" />
+                    </button>
+                </div>
+            )}
+
+            {/* Hidden file input */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setImageLoading(true);
+                    try {
+                        const compressed = await compressImage(file);
+                        setPendingImage(compressed);
+                        // Als er nog geen tekst is, prefill
+                        if (!input.trim()) setInput("Analyseer deze chart.");
+                    } catch { /* negeer */ }
+                    setImageLoading(false);
+                    e.target.value = "";
+                }}
+            />
+
             <form className="terminal-chat-form" onSubmit={handleSubmit}>
+                {/* Upload knop */}
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading || imageLoading}
+                    title="Chart uploaden"
+                    style={{
+                        background: pendingImage ? "var(--accent)" : "var(--surface-2)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
+                        padding: "0 10px",
+                        cursor: "pointer",
+                        color: pendingImage ? "#fff" : "var(--text-secondary)",
+                        display: "flex",
+                        alignItems: "center",
+                        height: "100%",
+                        flexShrink: 0,
+                    }}
+                >
+                    {imageLoading ? <span style={{ fontSize: 11 }}>…</span> : <ImagePlus size={16} />}
+                </button>
+                {isSupported && (
+                    <button
+                        type="button"
+                        onClick={() => isListening ? stopListening() : startListening()}
+                        disabled={loading || userSending}
+                        title={isListening ? "Stop opname" : "Spreek in"}
+                        style={{
+                            background: isListening ? "var(--accent)" : "var(--surface-2)",
+                            border: "1px solid var(--border)",
+                            borderRadius: 8,
+                            padding: "0 10px",
+                            cursor: "pointer",
+                            color: isListening ? "#fff" : "var(--text-secondary)",
+                            display: "flex",
+                            alignItems: "center",
+                            height: "100%",
+                            flexShrink: 0,
+                            animation: isListening ? "pulse 1.2s ease-in-out infinite" : undefined,
+                        }}
+                    >
+                        {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                    </button>
+                )}
                 <input
                     className="terminal-terminal-input"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={t("chat_placeholder")}
+                    placeholder={isListening ? "Luisteren…" : pendingImage ? "Voeg een vraag toe (optioneel)…" : t("chat_placeholder")}
                     disabled={loading}
                 />
                 <button
                     type="submit"
                     className="terminal-btn terminal-btn-primary"
-                    disabled={loading || !input.trim()}
+                    disabled={loading || (!input.trim() && !pendingImage)}
                 >
                     →
                 </button>
