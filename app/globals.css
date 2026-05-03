@@ -12105,12 +12105,34 @@ html {
 [data-theme="light"] .lp-proof-card,
 [data-theme="light"] .lp-stat,
 [data-theme="light"] .lp-price-card {
-  background: #ffffff !important;
+  background: var(--surface) !important;
   border-color: var(--border) !important;
 }
 [data-theme="light"] .lp-price-card--pro {
-  background: linear-gradient(145deg, rgba(233,30,99,0.04) 0%, #ffffff 60%) !important;
+  background: linear-gradient(145deg, rgba(233,30,99,0.06) 0%, var(--surface-2) 60%) !important;
   border-color: rgba(233,30,99,0.35) !important;
+}
+/* Hero in light mode: donkere achtergrond bewust houden — consistent met branding */
+[data-theme="light"] .lp-hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 75% 10%, rgba(233,30,99,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 5%  85%, rgba(120,20,160,0.16) 0%, transparent 55%),
+    linear-gradient(175deg, #2a1024 0%, #1f0d17 50%, #261020 100%);
+}
+[data-theme="light"] .lp-root {
+  background: var(--bg);
+}
+[data-theme="light"] .lp-features {
+  background: var(--surface-1);
+}
+[data-theme="light"] .lp-proof {
+  background: var(--surface);
+}
+[data-theme="light"] .lp-pricing {
+  background: var(--surface-1);
+}
+[data-theme="light"] .lp-cta-section {
+  background: var(--surface);
 }
 
 /* ── MARCUS DEBRIEF ── */
