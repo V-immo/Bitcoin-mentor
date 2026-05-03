@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Star, ImagePlus, X } from "lucide-react";
+import { Star, ImagePlus, X, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { useVoice } from "@/lib/use-voice";
 
 function escape(s: string) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -134,9 +135,45 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
     const [quizProfile, setQuizProfile] = useState({ level: 1, weakTopics: [] as string[] });
     const [pendingImage, setPendingImage] = useState<PendingImage | null>(null);
     const [imageLoading, setImageLoading] = useState(false);
+    const [voiceMode, setVoiceMode] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return localStorage.getItem("btcmentor-voice-mode") === "1";
+    });
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
     const didAutoBriefRef = useRef(false);
+
+    // Refs so async callbacks always read the latest values
+    const voiceModeRef = useRef(voiceMode);
+    useEffect(() => { voiceModeRef.current = voiceMode; }, [voiceMode]);
+
+    const pendingVoiceSubmitRef = useRef<string | null>(null);
+    // sendRef is updated every render so effects always call the current send()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sendRef = useRef<(text: string, img?: PendingImage | null) => Promise<void>>(null as any);
+
+    const handleTranscript = useCallback((text: string, isFinal: boolean) => {
+        setInput(text);
+        if (isFinal && text.trim()) {
+            pendingVoiceSubmitRef.current = text.trim();
+        }
+    }, []);
+
+    const { isListening, isSpeaking, isSupported, ttsSupported, startListening, stopListening, speak, stopSpeaking } = useVoice({
+        lang,
+        onTranscript: handleTranscript,
+    });
+
+    // Auto-submit when voice recognition ends with a final transcript
+    useEffect(() => {
+        if (!isListening && pendingVoiceSubmitRef.current) {
+            const text = pendingVoiceSubmitRef.current;
+            pendingVoiceSubmitRef.current = null;
+            setInput("");
+            sendRef.current(text, null);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isListening]);
 
     const saveMessages = useCallback(async (msgs: Message[]) => {
         try {
@@ -292,6 +329,7 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             const finalMessages: Message[] = [{ role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
+            if (voiceModeRef.current) speak(clean);
         } catch {
             setMessages([{ role: "assistant", content: t("chat_error_start") }]);
         } finally {
@@ -304,6 +342,9 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
         const textTrimmed = text.trim();
         if (!textTrimmed && !img) return;
         if (userSending) return;
+
+        // Stop any ongoing TTS when user sends a new message
+        stopSpeaking();
 
         const userMsg: Message = {
             role: "user",
@@ -350,6 +391,7 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             const finalMessages: Message[] = [...next, { role: "assistant", content: clean }];
             setMessages(finalMessages);
             await saveMessages(finalMessages);
+            if (voiceModeRef.current) speak(clean);
         } catch {
             setMessages((prev) => [
                 ...prev,
@@ -360,6 +402,9 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
             setUserSending(false);
         }
     }
+
+    // Always keep sendRef pointing to the latest send (so voice auto-submit works)
+    sendRef.current = send;
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -380,16 +425,45 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                         </div>
                     </div>
                 </div>
-                {messages.length > 0 && (
-                    <button
-                        className="terminal-btn terminal-btn-muted"
-                        onClick={clearChat}
-                        style={{ fontSize: 11, padding: "2px 8px", height: 24 }}
-                        title={t("chat_clear_title")}
-                    >
-                        {t("chat_clear_btn")}
-                    </button>
-                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {ttsSupported && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const next = !voiceMode;
+                                setVoiceMode(next);
+                                localStorage.setItem("btcmentor-voice-mode", next ? "1" : "0");
+                                if (!next) stopSpeaking();
+                            }}
+                            title={voiceMode ? "Stem uit" : "Stem aan"}
+                            style={{
+                                background: voiceMode ? "var(--accent)" : "var(--surface-2)",
+                                border: "1px solid var(--border)",
+                                borderRadius: 6,
+                                width: 28,
+                                height: 24,
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: voiceMode ? "#fff" : "var(--text-secondary)",
+                                flexShrink: 0,
+                            }}
+                        >
+                            {isSpeaking ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                        </button>
+                    )}
+                    {messages.length > 0 && (
+                        <button
+                            className="terminal-btn terminal-btn-muted"
+                            onClick={clearChat}
+                            style={{ fontSize: 11, padding: "2px 8px", height: 24 }}
+                            title={t("chat_clear_title")}
+                        >
+                            {t("chat_clear_btn")}
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="terminal-chat-messages" ref={messagesContainerRef}>
@@ -522,11 +596,34 @@ export default function MentorChat({ marketContext, asset, appContext }: Props) 
                 >
                     {imageLoading ? <span style={{ fontSize: 11 }}>…</span> : <ImagePlus size={16} />}
                 </button>
+                {isSupported && (
+                    <button
+                        type="button"
+                        onClick={() => isListening ? stopListening() : startListening()}
+                        disabled={loading || userSending}
+                        title={isListening ? "Stop opname" : "Spreek in"}
+                        style={{
+                            background: isListening ? "var(--accent)" : "var(--surface-2)",
+                            border: "1px solid var(--border)",
+                            borderRadius: 8,
+                            padding: "0 10px",
+                            cursor: "pointer",
+                            color: isListening ? "#fff" : "var(--text-secondary)",
+                            display: "flex",
+                            alignItems: "center",
+                            height: "100%",
+                            flexShrink: 0,
+                            animation: isListening ? "pulse 1.2s ease-in-out infinite" : undefined,
+                        }}
+                    >
+                        {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                    </button>
+                )}
                 <input
                     className="terminal-terminal-input"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={pendingImage ? "Voeg een vraag toe (optioneel)…" : t("chat_placeholder")}
+                    placeholder={isListening ? "Luisteren…" : pendingImage ? "Voeg een vraag toe (optioneel)…" : t("chat_placeholder")}
                     disabled={loading}
                 />
                 <button
