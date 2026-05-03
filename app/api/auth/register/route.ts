@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getDb } from "@/db/db";
 import bcrypt from "bcryptjs";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const EUROPE_CODES = new Set([
   "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR",
@@ -113,6 +114,9 @@ export async function POST(request: NextRequest) {
       db.prepare("UPDATE users SET streak_freeze = streak_freeze + 1, referral_xp_earned = referral_xp_earned + ? WHERE id = ?")
         .run(REFERRAL_XP, referrerId);
     }
+
+    // Stuur welkomstmail op de achtergrond (niet blokkeren)
+    sendWelcomeEmail({ to: email.trim().toLowerCase(), name: username.trim() }).catch(() => {});
 
     return Response.json({ ok: true, id: userId });
   } catch (e) {

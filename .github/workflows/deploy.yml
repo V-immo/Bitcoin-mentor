@@ -76,6 +76,12 @@ jobs:
               exit 1
             fi
 
+            # Cron jobs registreren (idempotent)
+            CRON_REMINDER="0 19 * * * curl -s \"https://bitcoinmentor.be/api/cron/daily-reminder?secret=\$CRON_SECRET\" > /dev/null 2>&1"
+            CRON_COMEBACK="0 9 * * * curl -s \"https://bitcoinmentor.be/api/cron/comeback?secret=\$CRON_SECRET\" > /dev/null 2>&1"
+            CRON_DRIP="0 10 * * * curl -s \"https://bitcoinmentor.be/api/cron/drip-email?secret=\$CRON_SECRET\" > /dev/null 2>&1"
+            (crontab -l 2>/dev/null | grep -v "drip-email\|daily-reminder\|comeback"; echo "$CRON_REMINDER"; echo "$CRON_COMEBACK"; echo "$CRON_DRIP") | crontab -
+
             # Build geslaagd — wissel nu snel
             pm2 delete bitcoin-mentor 2>/dev/null || true
             pm2 start ecosystem.config.js

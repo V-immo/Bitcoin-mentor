@@ -11,6 +11,7 @@ import MarcusDebrief from "@/components/MarcusDebrief";
 import LuckyXPToast from "@/components/LuckyXPToast";
 import SessionWrapper from "@/components/SessionWrapper";
 import DevtoolsBlocker from "@/components/DevtoolsBlocker";
+import Analytics from "@/components/Analytics";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -80,6 +81,7 @@ export default function RootLayout({
                   <MarcusDebrief />
                   <LuckyXPToast />
                   <Toaster />
+                  <Analytics />
                   <DevtoolsBlocker />
                 </ProProvider>
               </CurrencyProvider>
