@@ -279,7 +279,7 @@ export default function RealtimeDashboard({ initialData, initialAsset = "BTCUSDT
   // Periodieke REST refresh — vangt gemiste candles op als kline WebSocket offline was
   // Elke 30s controleren: is er een nieuwe candle die de WebSocket gemist heeft?
   useEffect(() => {
-    if (activeInterval === "multi" || !isBinance) return;
+    if (activeInterval === "multi") return;
     const timer = setInterval(async () => {
       // Alleen fetchen als WebSocket niet live is — anders doet die het werk
       if (klineWsState === "live") return;
